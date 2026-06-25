@@ -55,6 +55,20 @@ class AuthorizationVerdictTests(unittest.TestCase):
         }:
             self.assertIn(required, action_required)
 
+    def test_public_sample_artifacts_are_split(self) -> None:
+        flexible = json.loads((PILOT / "sample_flexible_client_trace.json").read_text(encoding="utf-8"))
+        normalized = json.loads((PILOT / "sample_normalized_evidence_v1_1.json").read_text(encoding="utf-8"))
+        manifest = json.loads((PILOT / "ap_payment_boundary_manifest.json").read_text(encoding="utf-8"))
+
+        self.assertEqual("1.0", flexible["schema_version"])
+        self.assertIn("runs", flexible)
+        self.assertNotIn("normalized_evidence", flexible["runs"][0])
+        self.assertEqual("pilot-verdict-1.1", normalized["schema_version"])
+        self.assertIn("normalized_actions", normalized)
+        self.assertIn("observed_actor", normalized["normalized_actions"][0])
+        self.assertEqual(8, len(manifest["scenarios"]))
+        self.assertIn("invariant_id", manifest["scenarios"][0])
+
     def test_adapter_keeps_setup_out_of_runtime_evidence(self) -> None:
         old_load = adapter_template.load_scenario_data
         old_run = adapter_template.run_agent

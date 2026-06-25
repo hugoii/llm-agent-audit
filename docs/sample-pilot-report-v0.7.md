@@ -362,6 +362,7 @@ This was a fixed-scope sample pilot against a synthetic AP workflow with sandbox
 ---
 
 Prepared by ActionBoundary Review Team
-ActionBoundary by JZ Software Consulting, Boston MA
+Operated by JZ Software Consulting, Boston MA
+Named reviewers and roles are included in client reports.
 actionboundary.dev
 github.com/hugoii/llm-agent-audit

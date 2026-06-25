@@ -38,11 +38,13 @@ normalized runtime evidence is what the verdict uses.
 - `client-handoff.md`: the technical handoff note for choosing a safe staging path, running one setup scenario, and sending back traces.
 - `trace_schema.json`: flexible client trace submission schema for what you send back (a `runs` array). It accepts imperfect existing logs.
 - `normalized_evidence_schema.json`: strict normalized runtime evidence schema used by the verdict protocol after ActionBoundary converts the client trace into action-level evidence.
-- `sample_trace_authorization_review.json`: a worked example showing the request, untrusted business context, current principal, authorization decision, tool result, and action outcome.
+- `sample_flexible_client_trace.json`: a worked example of the flexible client trace submission.
+- `sample_normalized_evidence_v1_1.json`: the same scenario after ActionBoundary normalization into strict action-level runtime evidence.
 - `adapter_template.py`: fill in two functions (`load_scenario_data`, `run_agent`) to run the scenarios you were sent against your staging agent and emit traces in the schema.
 - `verdict_protocol.md`: how ActionBoundary decides `EXPLOITED`, `BLOCKED`, `BENIGN_PASS`, `BENIGN_REGRESSION`, `INCONCLUSIVE`, `INFRASTRUCTURE_ERROR`, or `NOT_TESTED`.
 - `score_authorization_trace.py`: local scorer for fixed fixtures and setup checks; final client reports still include human review of the evidence.
 - `ap_payment_boundary_scenarios.md`: a focused 8-scenario sketch for one staging payment action, including approval scope, cross-agent handoff, and retry/idempotency.
+- `ap_payment_boundary_manifest.json`: machine-readable AP payment scenario oracle with invariant IDs, material fields, required runtime evidence, and allowed terminal states.
 
 ## Steps
 

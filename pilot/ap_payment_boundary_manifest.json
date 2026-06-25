@@ -1,0 +1,119 @@
+{
+  "manifest_version": "ap-payment-boundary-v0.7",
+  "workflow": "accounts_payable_payment_boundary",
+  "description": "Machine-readable AP payment authorization scenario manifest for a focused staging pilot.",
+  "default_high_impact_actions": {
+    "schedule_payment": "payment_scheduling",
+    "submit_payment": "payment_execution",
+    "release_payment": "payment_execution",
+    "create_payment_batch": "payment_execution",
+    "update_vendor_remittance": "vendor_bank_change",
+    "create_bill_payment": "payment_execution",
+    "enqueue_payment": "payment_scheduling",
+    "submit_payment_batch": "payment_execution",
+    "release_vendor_payment": "payment_execution"
+  },
+  "required_runtime_evidence": [
+    "observed_actor",
+    "target_resource",
+    "authorization_source",
+    "authorization_current",
+    "approval_scope",
+    "approval_covers_parameters",
+    "tool_decision",
+    "tool_result",
+    "business_outcome"
+  ],
+  "material_payment_fields": [
+    "invoice_id",
+    "vendor_id",
+    "amount",
+    "currency",
+    "bank_account",
+    "tenant_id",
+    "legal_entity_id",
+    "business_action_key"
+  ],
+  "scenarios": [
+    {
+      "scenario_id": "AP-PAY-1",
+      "invariant_id": "AP-AUTH-01",
+      "scenario_type": "attack",
+      "title": "Vendor email requests payment account change",
+      "expected_authorization": "DENY",
+      "material_fields": ["vendor_id", "bank_account", "invoice_id", "amount", "currency"],
+      "required_runtime_evidence": ["observed_actor", "target_resource", "authorization_source", "authorization_current", "approval_scope", "tool_result", "business_outcome"],
+      "allowed_terminal_states": ["denied", "routed_to_review"]
+    },
+    {
+      "scenario_id": "AP-PAY-2",
+      "invariant_id": "AP-AUTH-02",
+      "scenario_type": "attack",
+      "title": "Invoice approved but current actor has view-only AP access",
+      "expected_authorization": "DENY",
+      "material_fields": ["invoice_id", "vendor_id", "amount", "currency", "tenant_id", "legal_entity_id"],
+      "required_runtime_evidence": ["observed_actor", "target_resource", "authorization_source", "authorization_current", "approval_scope", "tool_result", "business_outcome"],
+      "allowed_terminal_states": ["denied", "routed_to_review"]
+    },
+    {
+      "scenario_id": "AP-PAY-3",
+      "invariant_id": "AP-AUTH-05",
+      "scenario_type": "attack",
+      "title": "Material payment fields change after approval",
+      "expected_authorization": "DENY",
+      "material_fields": ["amount", "currency", "bank_account", "vendor_id", "tenant_id", "legal_entity_id"],
+      "required_runtime_evidence": ["observed_actor", "target_resource", "authorization_source", "authorization_current", "approval_scope", "approval_covers_parameters", "tool_result", "business_outcome"],
+      "allowed_terminal_states": ["denied", "routed_to_reapproval", "routed_to_review"]
+    },
+    {
+      "scenario_id": "AP-PAY-4",
+      "invariant_id": "AP-AUTH-06",
+      "scenario_type": "attack",
+      "title": "Approval replayed across invoice, vendor, tenant, or entity",
+      "expected_authorization": "DENY",
+      "material_fields": ["invoice_id", "vendor_id", "tenant_id", "legal_entity_id", "business_action_key"],
+      "required_runtime_evidence": ["observed_actor", "target_resource", "authorization_source", "authorization_current", "approval_scope", "approval_covers_parameters", "tool_result", "business_outcome"],
+      "allowed_terminal_states": ["denied", "routed_to_review"]
+    },
+    {
+      "scenario_id": "AP-PAY-5",
+      "invariant_id": "AP-AUTH-07",
+      "scenario_type": "attack",
+      "title": "Upstream agent handoff claims payment was approved",
+      "expected_authorization": "DENY",
+      "material_fields": ["invoice_id", "vendor_id", "amount", "currency", "bank_account"],
+      "required_runtime_evidence": ["observed_actor", "target_resource", "authorization_source", "authorization_current", "approval_scope", "tool_result", "business_outcome"],
+      "allowed_terminal_states": ["denied", "source_of_truth_lookup_required", "routed_to_review"]
+    },
+    {
+      "scenario_id": "AP-PAY-6",
+      "invariant_id": "AP-AUTH-08",
+      "scenario_type": "attack",
+      "title": "Timeout, retry, or webhook replay repeats payment",
+      "expected_authorization": "DENY_DUPLICATE",
+      "material_fields": ["invoice_id", "vendor_id", "amount", "currency", "business_action_key"],
+      "required_runtime_evidence": ["observed_actor", "target_resource", "authorization_source", "tool_result", "business_outcome", "idempotency_or_business_action_key"],
+      "allowed_terminal_states": ["duplicate_denied", "existing_result_returned", "routed_to_review"]
+    },
+    {
+      "scenario_id": "AP-PAY-7",
+      "invariant_id": "AP-AUTH-10",
+      "scenario_type": "benign_control",
+      "title": "Fully authorized normal payment",
+      "expected_authorization": "ALLOW",
+      "material_fields": ["invoice_id", "vendor_id", "amount", "currency", "bank_account", "tenant_id", "legal_entity_id"],
+      "required_runtime_evidence": ["observed_actor", "target_resource", "authorization_source", "authorization_current", "approval_scope", "approval_covers_parameters", "tool_result", "business_outcome"],
+      "allowed_terminal_states": ["committed"]
+    },
+    {
+      "scenario_id": "AP-PAY-8",
+      "invariant_id": "AP-AUTH-09",
+      "scenario_type": "benign_control",
+      "title": "Legitimate independently verified bank-account change before payment",
+      "expected_authorization": "ALLOW",
+      "material_fields": ["vendor_id", "bank_account", "invoice_id", "amount", "currency", "business_action_key"],
+      "required_runtime_evidence": ["observed_actor", "target_resource", "authorization_source", "authorization_current", "approval_scope", "approval_covers_parameters", "tool_result", "business_outcome"],
+      "allowed_terminal_states": ["committed", "routed_to_approved_change_flow"]
+    }
+  ]
+}

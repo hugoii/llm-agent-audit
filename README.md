@@ -10,7 +10,7 @@ I help teams shipping tool-using AI agents produce staging trace evidence for cu
 ![staging only](https://img.shields.io/badge/scope-staging--only-155e75)
 ![MIT license](https://img.shields.io/badge/license-MIT-155e75)
 
-**Start here:** [Service page](https://actionboundary.dev/) | [Evidence flow](docs/evidence-flow.md) | [Sample report](docs/sample-pilot-report.md)
+**Start here:** [Service page](https://actionboundary.dev/) | [Evidence flow](docs/evidence-flow.md) | [Sample report](docs/sample-pilot-report-v0.7.md)
 
 **Want the 3 scenarios I would test for your agent?** [Email me](mailto:jiahao@actionboundary.dev?subject=3%20scenarios%20for%20our%20agent) | [LinkedIn](https://www.linkedin.com/in/jiahao-zhang-12999b319)
 
@@ -42,13 +42,15 @@ A poisoned ticket, invoice, or tool response can look like normal business conte
 <p align="center">
   <img src="docs/sample-report-preview.png" alt="Rendered preview of the sample evidence report PDF showing executive summary, risk summary, scope, and scenario matrix excerpt" width="820">
 </p>
-<p align="center"><sub>Rendered from <code>docs/sample-pilot-report.md</code> by <code>scripts/render_sample_report.py</code>. Synthetic AP workflow; real reports use your agent, tools, traces, and workflow-specific authorization rules.</sub></p>
+<p align="center"><sub>Rendered from <code>docs/sample-pilot-report-v0.7.md</code> by <code>scripts/render_sample_report.py</code>. Synthetic AP workflow; real reports use your agent, tools, traces, and workflow-specific authorization rules.</sub></p>
 
-- **[Sample evidence report](docs/sample-pilot-report.md)**: what you receive, with findings, trace evidence, severity, authorization evidence, fixes, and retest rules.
+- **[Sample evidence report](docs/sample-pilot-report-v0.7.md)**: what you receive, with findings, trace evidence, severity, authorization evidence, fixes, and retest rules.
 - **[Rendered PDF sample](docs/sample-evidence-report-v0.7.pdf)**: a polished report-style preview generated from the public sample report source.
 - **[Evidence flow](docs/evidence-flow.md)**: how untrusted content, tool calls, authorization evidence, findings, fixes, and retests connect.
 - **[Pilot verdict protocol](pilot/verdict_protocol.md)**: how flexible client traces become strict normalized evidence, and why missing runtime evidence is `INCONCLUSIVE` rather than `PASS`.
 - **[AP payment boundary scenarios](pilot/ap_payment_boundary_scenarios.md)**: an 8-scenario sketch for testing one staging payment action deeply, including post-approval changes, cross-agent handoff, and retry/idempotency.
+- **[AP authorization invariants](docs/ap-authorization-invariants.md)** and **[AP methodology](docs/ap-agent-authorization-methodology.md)**: the payment-boundary rules behind the AP pilot shape.
+- **[AP payment manifest](pilot/ap_payment_boundary_manifest.json)**: machine-readable scenario oracle for the AP payment boundary.
 - **[A focused payment-permission case note](docs/payment-approval-is-not-user-authorization.md)**: a customer-like AP workflow where four model APIs often attempted payment under a viewer principal, while tool-side enforcement blocked the same action.
 - **[A worked example: an accounts-payable agent](docs/ap-action-boundary-case-note.md)**: the method run end to end on a real tool-calling model in a synthetic AP workflow. It caught an unauthorized data export and still passed the benign controls.
 - **[A multi-turn case note](docs/multi-turn-authorization-drift-case-note.md)**: a healthcare prior-auth workflow where the early action was authorized, then a later note tried to carry that approval too far. Includes a recent live agent-loop check and a paired benign control.
@@ -62,7 +64,7 @@ A poisoned ticket, invoice, or tool response can look like normal business conte
 | Public benchmark | Battery v1.5: 58 attacks plus 3 benign controls, run across multiple real models and summarized in [Model choice is not an authorization layer](docs/model-choice-is-not-an-authorization-layer.md). The benchmark layer is documented separately in [benchmark/README.md](benchmark/README.md). |
 | Per-run evidence | Public run summaries and trace-backed reports live under [docs/runs/v1.5](docs/runs/v1.5), with the technical report and data archived on [Zenodo](https://doi.org/10.5281/zenodo.20585658). |
 | Reproducible harness | `python agent_audit.py` runs an offline demo with no API key, and the [offline smoke test](.github/workflows/offline-smoke.yml) checks that path in CI. |
-| Sample deliverable | The [rendered PDF sample](docs/sample-evidence-report-v0.7.pdf) is generated from [docs/sample-pilot-report.md](docs/sample-pilot-report.md), not a standalone marketing mockup. |
+| Sample deliverable | The [rendered PDF sample](docs/sample-evidence-report-v0.7.pdf) is generated from [docs/sample-pilot-report-v0.7.md](docs/sample-pilot-report-v0.7.md), not a standalone marketing mockup. |
 | Client pilot | The public benchmark proves the method; a client pilot replaces generic scenarios with your staging tools, authorization sources, and traces, then scores them with the [pilot verdict protocol](pilot/verdict_protocol.md) and [pilot scorer](pilot/score_authorization_trace.py). |
 
 ## What the public repo proves
@@ -72,8 +74,8 @@ This repository is the reproducible public method, not a copy of a customer's pr
 | Layer | Public evidence | What it proves |
 |---|---|---|
 | Fixed battery | Battery v1.5, 58 attacks plus 3 controls, multiple real-model summaries, and a CI-checked offline harness. | The method is reproducible and scores actual tool-call traces, not model promises. |
-| Customer-like workflows | [AP payment approval](docs/payment-approval-is-not-user-authorization.md), [AP payment boundary scenarios](pilot/ap_payment_boundary_scenarios.md), [multi-turn prior-auth](docs/multi-turn-authorization-drift-case-note.md), source-of-truth authorization, current-user authority, scope, timing, idempotency, and tool-layer enforcement examples. | The method can ask business authorization questions, not only prompt-injection questions. |
-| Client pilot path | [Sample report](docs/sample-pilot-report.md), [evidence flow](docs/evidence-flow.md), [flexible trace schema](pilot/trace_schema.json), [strict normalized evidence schema](pilot/normalized_evidence_schema.json), [verdict protocol](pilot/verdict_protocol.md), [adapter handoff](pilot/client-handoff.md), and 5 to 10 workflow-specific scenarios. | The public method transfers to your staging tools, approval sources, user roles, and traces. |
+| Customer-like workflows | [AP payment approval](docs/payment-approval-is-not-user-authorization.md), [AP payment boundary scenarios](pilot/ap_payment_boundary_scenarios.md), [AP authorization invariants](docs/ap-authorization-invariants.md), [AP methodology](docs/ap-agent-authorization-methodology.md), [multi-turn prior-auth](docs/multi-turn-authorization-drift-case-note.md), source-of-truth authorization, current-user authority, scope, timing, idempotency, and tool-layer enforcement examples. | The method can ask business authorization questions, not only prompt-injection questions. |
+| Client pilot path | [Sample report](docs/sample-pilot-report-v0.7.md), [evidence flow](docs/evidence-flow.md), [flexible trace schema](pilot/trace_schema.json), [strict normalized evidence schema](pilot/normalized_evidence_schema.json), [verdict protocol](pilot/verdict_protocol.md), [adapter handoff](pilot/client-handoff.md), and 5 to 10 workflow-specific scenarios. | The public method transfers to your staging tools, approval sources, user roles, and traces. |
 
 Read it this way: **the repo proves the method; the pilot applies it to your real workflow.** The public artifacts do not claim to be evidence about your system until your staging tools, authorization sources, and traces are used.
 
@@ -180,13 +182,13 @@ Yes, a reasonable NDA or MSA.
 <details>
 <summary><b>What do I receive?</b></summary>
 
-An OWASP/NIST-mapped report with trace evidence, severity, concrete application-layer fixes, and one retest. See the [sample report](docs/sample-pilot-report.md).
+An OWASP/NIST-mapped report with trace evidence, severity, concrete application-layer fixes, and one retest. See the [sample report](docs/sample-pilot-report-v0.7.md).
 </details>
 
 ---
 
-Independent audit by Jiahao Zhang, JZ Software Consulting. Staging-only, no production access.
+Prepared by ActionBoundary Review Team. Operated by JZ Software Consulting. Named reviewers and roles are included in client reports. Staging-only, no production access.
 
-**Start here:** [Service page](https://actionboundary.dev/) | [Sample report](docs/sample-pilot-report.md)
+**Start here:** [Service page](https://actionboundary.dev/) | [Sample report](docs/sample-pilot-report-v0.7.md)
 
 **Want the 3 scenarios I would test for your agent?** [Email me](mailto:jiahao@actionboundary.dev?subject=3%20scenarios%20for%20our%20agent) | [LinkedIn](https://www.linkedin.com/in/jiahao-zhang-12999b319)

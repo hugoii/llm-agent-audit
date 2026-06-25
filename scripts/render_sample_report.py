@@ -21,13 +21,13 @@ from reportlab.pdfgen import canvas
 
 
 ROOT = Path(__file__).resolve().parents[1]
-SOURCE_MD = ROOT / "docs" / "sample-pilot-report.md"
+SOURCE_MD = ROOT / "docs" / "sample-pilot-report-v0.7.md"
 OUTPUT_PDF = ROOT / "docs" / "sample-evidence-report.pdf"
 VERSIONED_OUTPUT_PDF = ROOT / "docs" / "sample-evidence-report-v0.7.pdf"
 OUTPUT_PNG = ROOT / "docs" / "sample-report-preview.png"
 TEMP_PDF = ROOT / "docs" / "sample-evidence-report.tmp.pdf"
 TEMP_PNG = ROOT / "docs" / "sample-report-preview.tmp.png"
-SOURCE_LABEL = "docs/sample-pilot-report.md"
+SOURCE_LABEL = "docs/sample-pilot-report-v0.7.md"
 SCRIPT_LABEL = "scripts/render_sample_report.py"
 
 PAGE = letter
@@ -463,10 +463,9 @@ def cover_page(c: canvas.Canvas, md: str, meta: dict[str, str], source_hash: str
         "Scope, method, and scenario matrix",
         "Evidence protocol and normalized runtime evidence",
         "Authorization boundary and tool surface review",
-        "Detailed findings with trace evidence",
-        "Evidence register, remediation roadmap, retest plan, and limitations",
+        "Findings, evidence register, remediation, retest plan, and limits",
     ]
-    draw_bullets(c, contents, MARGIN + 18, 216, CONTENT_W - 36, 8.2, 11, max_items=6)
+    draw_bullets(c, contents, MARGIN + 18, 216, CONTENT_W - 36, 8.2, 11, max_items=5)
 
     c.setFillColor(TEAL_SOFT)
     c.rect(MARGIN, 92, CONTENT_W, 28, fill=1, stroke=0)
