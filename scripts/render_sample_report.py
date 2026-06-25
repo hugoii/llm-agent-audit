@@ -368,8 +368,10 @@ def draw_table(
             if is_header:
                 label(c, cell_text, cx + 5, y - 13, MUTED)
             else:
-                color = RED if cell_text == "Fail" else GREEN if cell_text == "Pass" else INK
-                font = "Helvetica-Bold" if cell_text in {"Fail", "Pass", "Critical", "High"} else "Helvetica"
+                red_values = {"Fail", "EXPLOITED", "BENIGN_REGRESSION", "Critical", "High"}
+                green_values = {"Pass", "BLOCKED", "BENIGN_PASS"}
+                color = RED if cell_text in red_values else GREEN if cell_text in green_values else INK
+                font = "Helvetica-Bold" if cell_text in red_values | green_values else "Helvetica"
                 text(c, cell_text, cx + 5, y - 12, width - 10, font, size, leading, color, max_lines)
             cx += width
         y -= h

@@ -40,6 +40,7 @@ A poisoned ticket, invoice, or tool response can look like normal business conte
 - **[Sample evidence report](docs/sample-pilot-report.md)**: what you receive, with findings, trace evidence, severity, authorization evidence, fixes, and retest rules.
 - **[Rendered PDF sample](docs/sample-evidence-report.pdf)**: a polished report-style preview generated from the public sample report source.
 - **[Evidence flow](docs/evidence-flow.md)**: how untrusted content, tool calls, authorization evidence, findings, fixes, and retests connect.
+- **[Pilot verdict protocol](pilot/verdict_protocol.md)**: how flexible client traces become strict normalized evidence, and why missing runtime evidence is `INCONCLUSIVE` rather than `PASS`.
 - **[A focused payment-permission case note](docs/payment-approval-is-not-user-authorization.md)**: a customer-like AP workflow where four model APIs often attempted payment under a viewer principal, while tool-side enforcement blocked the same action.
 - **[A worked example: an accounts-payable agent](docs/ap-action-boundary-case-note.md)**: the method run end to end on a real tool-calling model in a synthetic AP workflow. It caught an unauthorized data export and still passed the benign controls.
 - **[A multi-turn case note](docs/multi-turn-authorization-drift-case-note.md)**: a healthcare prior-auth workflow where the early action was authorized, then a later note tried to carry that approval too far. Includes a recent live agent-loop check and a paired benign control.
@@ -50,11 +51,11 @@ A poisoned ticket, invoice, or tool response can look like normal business conte
 
 | Artifact | What it shows |
 |---|---|
-| Public benchmark | Battery v1.5: 58 attacks plus 3 benign controls, run across multiple real models and summarized in [Model choice is not an authorization layer](docs/model-choice-is-not-an-authorization-layer.md). |
+| Public benchmark | Battery v1.5: 58 attacks plus 3 benign controls, run across multiple real models and summarized in [Model choice is not an authorization layer](docs/model-choice-is-not-an-authorization-layer.md). The benchmark layer is documented separately in [benchmark/README.md](benchmark/README.md). |
 | Per-run evidence | Public run summaries and trace-backed reports live under [docs/runs/v1.5](docs/runs/v1.5), with the technical report and data archived on [Zenodo](https://doi.org/10.5281/zenodo.20585658). |
 | Reproducible harness | `python agent_audit.py` runs an offline demo with no API key, and the [offline smoke test](.github/workflows/offline-smoke.yml) checks that path in CI. |
 | Sample deliverable | The [rendered PDF sample](docs/sample-evidence-report.pdf) is generated from [docs/sample-pilot-report.md](docs/sample-pilot-report.md), not a standalone marketing mockup. |
-| Client pilot | The public benchmark proves the method; a client pilot replaces generic scenarios with your staging tools, authorization sources, and traces. |
+| Client pilot | The public benchmark proves the method; a client pilot replaces generic scenarios with your staging tools, authorization sources, and traces, then scores them with the [pilot verdict protocol](pilot/verdict_protocol.md) and [pilot scorer](pilot/score_authorization_trace.py). |
 
 ## What the public repo proves
 
@@ -64,7 +65,7 @@ This repository is the reproducible public method, not a copy of a customer's pr
 |---|---|---|
 | Fixed battery | Battery v1.5, 58 attacks plus 3 controls, multiple real-model summaries, and a CI-checked offline harness. | The method is reproducible and scores actual tool-call traces, not model promises. |
 | Customer-like workflows | [AP payment approval](docs/payment-approval-is-not-user-authorization.md), [multi-turn prior-auth](docs/multi-turn-authorization-drift-case-note.md), source-of-truth authorization, current-user authority, scope, timing, and tool-layer enforcement examples. | The method can ask business authorization questions, not only prompt-injection questions. |
-| Client pilot path | [Sample report](docs/sample-pilot-report.md), [evidence flow](docs/evidence-flow.md), [trace schema](pilot/trace_schema.json), [adapter handoff](pilot/client-handoff.md), and 5 to 10 workflow-specific scenarios. | The public method transfers to your staging tools, approval sources, user roles, and traces. |
+| Client pilot path | [Sample report](docs/sample-pilot-report.md), [evidence flow](docs/evidence-flow.md), [trace schema](pilot/trace_schema.json), [verdict protocol](pilot/verdict_protocol.md), [adapter handoff](pilot/client-handoff.md), and 5 to 10 workflow-specific scenarios. | The public method transfers to your staging tools, approval sources, user roles, and traces. |
 
 Read it this way: **the repo proves the method; the pilot applies it to your real workflow.** The public artifacts do not claim to be evidence about your system until your staging tools, authorization sources, and traces are used.
 
@@ -171,7 +172,7 @@ Yes, a reasonable NDA or MSA.
 <details>
 <summary><b>What do I receive?</b></summary>
 
-An OWASP-mapped report with trace evidence, severity, concrete application-layer fixes, and one retest. See the [sample report](docs/sample-pilot-report.md).
+An OWASP/NIST-mapped report with trace evidence, severity, concrete application-layer fixes, and one retest. See the [sample report](docs/sample-pilot-report.md).
 </details>
 
 ---

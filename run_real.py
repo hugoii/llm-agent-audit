@@ -27,6 +27,7 @@ import time
 import datetime
 from agent_audit import (ATTACKS, ADVANCED, judge, build_report,
                          observed_outcomes, BATTERY_VERSION,
+                         row_status, is_exploited, is_scorable_attack,
                          openai_agent, anthropic_agent, gemini_agent)
 
 API_PROVIDER = os.environ.get("PROVIDER", "openai").lower()
@@ -74,15 +75,20 @@ def run_once(run_idx):
         res, err = call_with_retry(a)
         if err is not None:
             errors += 1
-            rows.append({**a, "res": {"trace": [], "reply": f"[API ERROR: {err}]"}, "succeeded": False})
-            verdict = "api-error"
+            rows.append({
+                **a,
+                "res": {"trace": [], "reply": f"[API ERROR: {err}]"},
+                "succeeded": False,
+                "status": "INFRASTRUCTURE_ERROR",
+                "infrastructure_error": str(err),
+            })
+            verdict = "INFRASTRUCTURE_ERROR"
         else:
             ok = judge(a, res)
-            rows.append({**a, "res": res, "succeeded": ok})
-            if a["vector"] == "benign":
-                verdict = "PASS" if not ok else "UNEXPECTED"
-            else:
-                verdict = "EXPLOITED" if ok else "blocked"
+            row = {**a, "res": res, "succeeded": ok}
+            row["status"] = row_status(row)
+            rows.append(row)
+            verdict = row["status"]
         print(f"  run {run_idx}/{RUNS} [{i:>2}/{total}] {a['id']:8} {verdict}", flush=True)
         if DELAY:
             time.sleep(DELAY)
@@ -91,15 +97,21 @@ def run_once(run_idx):
 
 def raw_json(rows, errors):
     attacks = [r for r in rows if r["vector"] != "benign"]
+    scorable_attacks = [r for r in attacks if is_scorable_attack(r)]
     return {
         "battery_version": BATTERY_VERSION, "provider": PROVIDER_LABEL,
         "api_compat_provider": API_PROVIDER, "model": model, "date": today,
         "sampling": "provider default (no fixed temperature)",
         "scenarios": total, "attacks": len(attacks), "controls": len(rows) - len(attacks),
-        "exploited": sum(1 for r in attacks if r["succeeded"]), "api_errors": errors,
+        "scorable_attacks": len(scorable_attacks),
+        "exploited": sum(1 for r in scorable_attacks if is_exploited(r)),
+        "api_errors": errors,
+        "status_counts": {status: sum(1 for r in rows if row_status(r) == status)
+                          for status in sorted({row_status(r) for r in rows})},
         "results": [
             {"id": r["id"], "vector": r["vector"], "impact": r["impact"], "sev": r["sev"],
-             "owasp": r["owasp"], "forbidden": r.get("forbidden", []), "succeeded": r["succeeded"],
+             "owasp": r["owasp"], "forbidden": r.get("forbidden", []),
+             "status": row_status(r), "succeeded": r["succeeded"],
              "outcomes": sorted(observed_outcomes(r["res"])),
              "trace": [[n, a] for n, a in r["res"]["trace"]], "reply": r["res"]["reply"]}
             for r in rows
@@ -110,7 +122,7 @@ def raw_json(rows, errors):
 compat_note = "" if PROVIDER_LABEL == API_PROVIDER else f" (via {API_PROVIDER}-compatible API)"
 print(f"Provider: {PROVIDER_LABEL}{compat_note} | model: {model} | battery {BATTERY_VERSION} | {total} scenarios x {RUNS} run(s)\n", flush=True)
 
-exploited_per_run, errors_per_run = [], []
+exploited_per_run, errors_per_run, scorable_per_run = [], [], []
 hits = {i: 0 for i in attack_ids}
 last_rows = None
 for run_idx in range(1, RUNS + 1):
@@ -125,13 +137,16 @@ for run_idx in range(1, RUNS + 1):
     with open(os.path.join("runs", f"{safe}__run-{run_idx}.json"), "w", encoding="utf-8") as f:
         json.dump(raw_json(rows, errors), f, ensure_ascii=False, indent=2)
     attacks = [r for r in rows if r["vector"] != "benign"]
-    ex = sum(1 for r in attacks if r["succeeded"])
+    scorable_attacks = [r for r in attacks if is_scorable_attack(r)]
+    ex = sum(1 for r in scorable_attacks if is_exploited(r))
     exploited_per_run.append(ex)
     errors_per_run.append(errors)
+    scorable_per_run.append(len(scorable_attacks))
     for r in attacks:
-        if r["succeeded"]:
+        if is_exploited(r):
             hits[r["id"]] += 1
-    print(f"  -> run {run_idx}: {ex}/{n_attacks} exploited, {errors} api-error\n", flush=True)
+    print(f"  -> run {run_idx}: {ex}/{len(scorable_attacks)} scorable attacks exploited, "
+          f"{errors} infrastructure/API error\n", flush=True)
 
 with open("real_report.md", "w", encoding="utf-8") as f:
     f.write(build_report(last_rows, f"live model: {PROVIDER_LABEL}/{model}"))
@@ -145,6 +160,7 @@ summary = {
     "battery_version": BATTERY_VERSION, "provider": PROVIDER_LABEL,
     "api_compat_provider": API_PROVIDER, "model": model, "date": today,
     "runs": RUNS, "sampling": "provider default (no fixed temperature)", "attacks": n_attacks,
+    "scorable_attacks_per_run": scorable_per_run,
     "exploited_per_run": exploited_per_run, "exploited_min": mn, "exploited_max": mx, "exploited_avg": avg,
     "api_errors_per_run": errors_per_run,
     "hit_counts": {i: f"{hits[i]}/{RUNS}" for i in attack_ids if hits[i] > 0},
@@ -164,8 +180,9 @@ lines = [
     f"_Battery {BATTERY_VERSION}. {n_attacks} attacks + {total - n_attacks} controls. "
     f"{RUNS} runs at provider-default sampling._",
     "",
-    f"- Exploited per run: {exploited_per_run}  (min {mn}, max {mx}, avg {avg} of {n_attacks})",
-    f"- API errors per run: {errors_per_run}",
+    f"- Unsafe executions per run: {exploited_per_run}  (min {mn}, max {mx}, avg {avg})",
+    f"- Scorable attack scenarios per run: {scorable_per_run} of {n_attacks}",
+    f"- API or infrastructure errors per run: {errors_per_run}",
     "",
     f"**Stable failures (exploited in every run):** {fmt_ids(stable)}",
     "",
@@ -183,13 +200,16 @@ lines += [
     "## How to read this",
     "We report ranges, not one-off scores. A model's tool-call behavior varies run to run at default",
     "sampling, so a single number is not a stable claim. The failures observed in every run are the most consistent;",
-    "intermittent ones show the unsafe action is reachable but not guaranteed. This is an assessment of",
-    "behavior on a fixed battery, not a benchmark score or a ranking of vendors.",
+    "intermittent ones show the unsafe action is reachable but not guaranteed.",
+    "API or infrastructure errors are coverage exceptions, not blocked scenarios. Compare unsafe executions against",
+    "the scorable scenario count for that run, and report coverage separately. This is an assessment of behavior",
+    "on a fixed battery, not a benchmark score or a ranking of vendors.",
 ]
 with open(os.path.join("runs", f"{safe}__summary.md"), "w", encoding="utf-8") as f:
     f.write("\n".join(lines) + "\n")
 
-print(f"Exploited per run: {exploited_per_run}  (min {mn}, max {mx}, avg {avg})")
+print(f"Unsafe executions per run: {exploited_per_run}  (min {mn}, max {mx}, avg {avg})")
+print(f"Scorable attacks per run: {scorable_per_run} of {n_attacks}")
 print(f"Stable (every run): {stable or 'none'}")
 print(f"Intermittent:       {intermittent or 'none'}")
 print(f"\nWrote runs/{safe}__run-1..{RUNS}.(md|json) and runs/{safe}__summary.(md|json)")

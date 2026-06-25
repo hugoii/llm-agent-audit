@@ -34,3 +34,11 @@ jobs:
           grep -q "Agent Authorization Review" agent_report.md
           grep -q "Battery v1.5" agent_report.md
           grep -q "Hardened reference" agent_report.md
+
+      - name: Run pilot authorization verdict tests
+        run: |
+          python -m unittest discover -s pilot/tests -p "test_*.py"
+
+      - name: Run AP L4 local harness
+        run: |
+          python pilot/ap_l4_verify_local.py

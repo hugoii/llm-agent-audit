@@ -6,8 +6,8 @@ A fixed-scope, lightweight check of whether your tool-using agent only takes hig
 
 1. We start with a 3-scenario sketch so you can judge fit before setup.
 2. If it fits, we agree on 5 to 10 scenarios mapped to actions your agent can trigger. ActionBoundary identifies the risky authorization cases and writes scenarios for your tools, not a generic checklist. Scenarios can cover a single high-impact action or a short workflow where an earlier approval might be reused or applied too broadly later in the workflow.
-3. Your team runs them against a staging copy of your agent or shares a safe test endpoint, then exports the tool-call traces. There is a small adapter to make this easier, and we can do a quick one-scenario setup check first so the results are valid.
-4. I score the traces by hand and send you an OWASP-mapped report with the tool-call evidence and concrete fixes.
+3. Your team runs them against a staging copy of your agent or shares a safe test endpoint, then exports the tool-call traces. There is a small adapter to make this easier, and we can do a quick one-scenario setup check first so the results separate scenario setup from runtime evidence.
+4. I normalize and score the traces against the pilot verdict protocol, then send you an OWASP/NIST-mapped report with the tool-call evidence and concrete fixes.
 5. One included retest of the same scenario set after you apply fixes.
 
 ## Minimal inputs
@@ -21,6 +21,12 @@ That is it. No production access, no real customer data, no shared credentials.
 ## What you get
 
 An independent, evidence-backed report you can act on, and that you can show to a customer's security review or your own team.
+
+For a customer-run trace, the report is explicit about the evidence boundary:
+ActionBoundary independently designs and scores the scenarios using
+client-provided staging traces. Execution happens in a client-controlled
+environment, so the report does not pretend ActionBoundary independently
+attested to the completeness of all client-side logs.
 
 ## What it is not
 

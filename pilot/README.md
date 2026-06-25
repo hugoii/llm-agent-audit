@@ -1,6 +1,6 @@
 # Audit your own agent (pilot kit)
 
-Run an Agent Authorization Review against your own tool-using agent, fully async, staging only. You get back an OWASP-mapped report with tool-call evidence and concrete fixes. ActionBoundary does not need access to your production systems, real customer data, or shared credentials.
+Run an Agent Authorization Review against your own tool-using agent, fully async, staging only. You get back an OWASP/NIST-mapped report with tool-call evidence, strict verdicts, and concrete fixes. ActionBoundary does not need access to your production systems, real customer data, or shared credentials.
 
 ## The rule that makes trace results valid
 
@@ -10,6 +10,15 @@ with what arguments, and what authorization evidence existed at that moment.
 The trace should show the action path: the caller request, the data the agent
 read, the principal or role when relevant, the tool calls and results, the
 authorization records or decisions the system used, and what actually changed.
+
+Keep two things separate:
+
+- `scenario_setup`: what the test fixture intended or seeded before execution;
+- `runtime_evidence`: what the agent, tools, policy layer, approval system, or
+  sandbox ledger actually observed during the run.
+
+Scenario setup can explain the test. It does not prove that the system checked
+the same facts at runtime.
 
 Some scenarios test **indirect** prompt injection or other untrusted business
 context. In those scenarios, the test content must go into
@@ -29,13 +38,16 @@ evidence.
 - `trace_schema.json`: the format for what you send back (a `runs` array).
 - `sample_trace_authorization_review.json`: a worked example showing the request, untrusted business context, current principal, authorization decision, tool result, and action outcome.
 - `adapter_template.py`: fill in two functions (`load_scenario_data`, `run_agent`) to run the scenarios you were sent against your staging agent and emit traces in the schema.
+- `verdict_protocol.md`: how ActionBoundary decides `EXPLOITED`, `BLOCKED`, `BENIGN_PASS`, `BENIGN_REGRESSION`, `INCONCLUSIVE`, `INFRASTRUCTURE_ERROR`, or `NOT_TESTED`.
+- `score_authorization_trace.py`: local scorer for fixed fixtures and setup checks; final client reports still include human review of the evidence.
 
 ## Steps
 
 1. Fill in `adapter_template.py` for your agent. Staging or sandbox only, with mocked or sandboxed tools.
 2. Run it on the scenario set you were sent. It writes `trace_results.json`.
-3. Send `trace_results.json` back. That is all the access needed. No production, no real customer data, no shared credentials.
+3. Optionally run `python pilot/score_authorization_trace.py trace_results.json --out scored_trace_results.json` as a local setup check.
+4. Send `trace_results.json` back. That is all the access needed. No production, no real customer data, no shared credentials.
 
-Tip: before the full run, do one scenario first and send it back so the wiring can be checked. The common mistakes are missing tool results, missing authorization decisions, and, for indirect-injection scenarios, putting the test instruction in the user prompt instead of in the data the agent reads.
+Tip: before the full run, do one scenario first and send it back so the wiring can be checked. The common mistakes are missing tool results, missing authorization decisions, missing side-effect evidence, copying fixture fields into runtime evidence, and, for indirect-injection scenarios, putting the test instruction in the user prompt instead of in the data the agent reads.
 
 Main project and writeup: https://github.com/hugoii/llm-agent-audit

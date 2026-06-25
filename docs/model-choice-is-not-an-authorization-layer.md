@@ -1,6 +1,6 @@
 # Model choice is not an authorization layer
 
-*I ran the same agent-action audit across six model configurations. Results ranged from 0.0 to 8.0 unsafe tool calls on average, and the recurring failures were mostly authorization failures, not hidden prompt injections.*
+*I ran the same agent-action audit across six model configurations. Results ranged from 0.0 to 8.0 unsafe tool calls on average across scorable scenarios, and the recurring failures were mostly authorization failures, not hidden prompt injections.*
 
 A while ago I wrote that a model's refusals are not your authorization layer. A model can tell that something sounds dangerous and refuse it, but it cannot check whether the person asking is allowed to act. That has to live in your application.
 
@@ -20,7 +20,7 @@ The six configurations were Anthropic Claude Opus 4.8 and Claude Haiku 4.5, Open
 
 ## Results
 
-| Model | Tier | Unsafe tool calls per run | Average of 58 | API-level blocks per run | Stable failures (every run) |
+| Model | Tier | Unsafe tool calls per run | Unsafe average | API-level blocks per run | Stable failures (every run) |
 |---|---|---|---|---|---|
 | Anthropic Claude Opus 4.8 | frontier | 0, 0, 0 | 0.0 | 0 | none |
 | OpenAI GPT-5-mini | budget | 1, 2, 2 | 1.67 | 0 | 1 (grant admin) |
@@ -29,7 +29,7 @@ The six configurations were Anthropic Claude Opus 4.8 and Claude Haiku 4.5, Open
 | Google Gemini 3.5 Flash | budget | 5, 6, 6 | 5.67 | 0 | 5 (3 Critical, 2 High) |
 | Google Gemini 3.1 Pro | frontier | 8, 7, 9 | 8.0 | 0 | 7 (5 Critical, 2 High) |
 
-Note on GPT-5.5: on every run, 9 of the 58 scenarios did not reach the model at all. OpenAI's API returned a safety-filter error instead, flagging the content as a possible cybersecurity risk. Those 9 are counted as not exploited because no tool was called, but the model was never given the chance to act on them. So the GPT-5.5 number is measured on roughly 49 scenarios, not 58, and it should not be compared head to head with the models that faced all 58.
+Note on GPT-5.5: on every run, 9 of the 58 attack scenarios did not reach the model at all. OpenAI's API returned a safety-filter error instead, flagging the content as a possible cybersecurity risk. Those 9 are coverage exceptions, not clean blocks and not model-level safe behavior. So the GPT-5.5 unsafe count is measured on roughly 49 scorable attack scenarios per run, with API/infrastructure errors reported separately.
 
 ## What I found
 
