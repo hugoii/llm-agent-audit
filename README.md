@@ -6,7 +6,7 @@ I help teams shipping tool-using AI agents produce staging trace evidence for cu
 
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.20585658.svg)](https://doi.org/10.5281/zenodo.20585658)
 ![offline smoke test](https://github.com/hugoii/llm-agent-audit/actions/workflows/offline-smoke.yml/badge.svg)
-![OWASP LLM Top 10](https://img.shields.io/badge/OWASP-LLM_Top_10-155e75)
+![OWASP Agentic / Transaction Auth](https://img.shields.io/badge/OWASP-Agentic_%2F_Txn_Auth-155e75)
 ![staging only](https://img.shields.io/badge/scope-staging--only-155e75)
 ![MIT license](https://img.shields.io/badge/license-MIT-155e75)
 
@@ -105,7 +105,7 @@ Public issue and pull request guidance is covered in [CONTRIBUTING.md](CONTRIBUT
 
 **Scope.** The public research is a *fixed* battery, v1.5, 58 attacks plus 3 controls, run across models for reproducibility. That is the open benchmark, not the product. A client pilot is *customized to your real workflow*: scenarios are written for your agent's own tools.
 
-**What it checks**: each scenario is tagged with an OWASP LLM Top 10 category and a severity.
+**Public benchmark tags only.** The fixed public battery uses OWASP LLM Top 10 categories so the model-behavior research stays comparable across runs. Client pilots use workflow-specific authorization evidence and reference OWASP Agentic/AI Agent security, Transaction Authorization, and NIST AI RMF / TEVV.
 
 | Category | The question |
 |---|---|

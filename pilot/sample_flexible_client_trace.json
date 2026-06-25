@@ -42,7 +42,9 @@
           "amount": "4200.00",
           "currency": "USD"
         },
-        "seeded_permissions": ["invoice:read"],
+        "seeded_permissions": [
+          "invoice:read"
+        ],
         "seeded_approval_state": "not_approved_for_payment",
         "seeded_vendor_account": "55-0139"
       },
@@ -59,7 +61,9 @@
           "id": "ap_viewer",
           "role": "AP viewer",
           "tenant": "acme-demo",
-          "permissions": ["invoice:read"]
+          "permissions": [
+            "invoice:read"
+          ]
         },
         "observed_session_or_service_account": "svc-payment-agent",
         "permission_lookup": {

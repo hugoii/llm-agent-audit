@@ -42,7 +42,10 @@ model = os.environ.get(MODEL_ENV[API_PROVIDER], "")
 if not os.environ.get(KEY_ENV[API_PROVIDER]):
     raise SystemExit(f"Set {KEY_ENV[API_PROVIDER]} before running with PROVIDER={API_PROVIDER}.")
 if not model:
-    raise SystemExit(f"Set {MODEL_ENV[API_PROVIDER]} to a current model id before running with PROVIDER={API_PROVIDER} (list your models first).")
+    raise SystemExit(
+        f"Set {MODEL_ENV[API_PROVIDER]} to a current model id before running "
+        f"with PROVIDER={API_PROVIDER} (list your models first)."
+    )
 
 SCENARIOS = ATTACKS + ADVANCED
 RUNS = int(os.environ.get("RUNS", "1"))
@@ -120,7 +123,11 @@ def raw_json(rows, errors):
 
 
 compat_note = "" if PROVIDER_LABEL == API_PROVIDER else f" (via {API_PROVIDER}-compatible API)"
-print(f"Provider: {PROVIDER_LABEL}{compat_note} | model: {model} | battery {BATTERY_VERSION} | {total} scenarios x {RUNS} run(s)\n", flush=True)
+print(
+    f"Provider: {PROVIDER_LABEL}{compat_note} | model: {model} | "
+    f"battery {BATTERY_VERSION} | {total} scenarios x {RUNS} run(s)\n",
+    flush=True,
+)
 
 exploited_per_run, errors_per_run, scorable_per_run = [], [], []
 hits = {i: 0 for i in attack_ids}
@@ -129,8 +136,12 @@ for run_idx in range(1, RUNS + 1):
     rows, errors = run_once(run_idx)
     last_rows = rows
     if errors == total:
-        print(f"\nEvery call to {PROVIDER_LABEL} failed on run {run_idx}. Check {KEY_ENV[API_PROVIDER]} is valid, "
-              f"{MODEL_ENV[API_PROVIDER]} is a current model id, and the account has credit (429 usually means no credit).")
+        print(
+            f"\nEvery call to {PROVIDER_LABEL} failed on run {run_idx}. "
+            f"Check {KEY_ENV[API_PROVIDER]} is valid, "
+            f"{MODEL_ENV[API_PROVIDER]} is a current model id, and the account "
+            "has credit (429 usually means no credit)."
+        )
         raise SystemExit(1)
     with open(os.path.join("runs", f"{safe}__run-{run_idx}.md"), "w", encoding="utf-8") as f:
         f.write(build_report(rows, f"live model: {PROVIDER_LABEL}/{model} (run {run_idx}/{RUNS})"))
@@ -199,10 +210,12 @@ lines += [
     "",
     "## How to read this",
     "We report ranges, not one-off scores. A model's tool-call behavior varies run to run at default",
-    "sampling, so a single number is not a stable claim. The failures observed in every run are the most consistent;",
+    "sampling, so a single number is not a stable claim. The failures observed in every run",
+    "are the most consistent;",
     "intermittent ones show the unsafe action is reachable but not guaranteed.",
-    "API or infrastructure errors are coverage exceptions, not blocked scenarios. Compare unsafe executions against",
-    "the scorable scenario count for that run, and report coverage separately. This is an assessment of behavior",
+    "API or infrastructure errors are coverage exceptions, not blocked scenarios. Compare unsafe",
+    "executions against the scorable scenario count for that run, and report coverage separately.",
+    "This is an assessment of behavior",
     "on a fixed battery, not a benchmark score or a ranking of vendors.",
 ]
 with open(os.path.join("runs", f"{safe}__summary.md"), "w", encoding="utf-8") as f:

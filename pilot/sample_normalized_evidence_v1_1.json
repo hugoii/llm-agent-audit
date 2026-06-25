@@ -80,6 +80,11 @@
           "event_id": "E5",
           "timestamp": "2026-06-25T14:00:05Z",
           "trace_id": "trace-ap-pay-1-001"
+        },
+        "observations": {
+          "duplicate_control_observed": false,
+          "idempotency_reused": false,
+          "source_of_truth_lookup_required": false
         }
       },
       "evidence_completeness": {

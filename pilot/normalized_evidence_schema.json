@@ -1,39 +1,77 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
   "title": "Strict normalized authorization evidence schema",
-  "description": "ActionBoundary-normalized, action-level runtime evidence used by the verdict protocol. This schema is stricter than the flexible client trace submission schema: it represents what was observed at runtime, not what the scenario fixture intended.",
+  "description": "Action-level runtime evidence for strict pilot verdicts.",
   "type": "object",
-  "required": ["schema_version", "normalized_actions"],
+  "required": [
+    "schema_version",
+    "normalized_actions"
+  ],
   "properties": {
     "schema_version": {
       "type": "string",
       "const": "pilot-verdict-1.1"
     },
-    "engagement_id": { "type": "string" },
-    "scenario_pack_version": { "type": "string" },
-    "scenario_pack_sha256": { "type": "string" },
-    "trace_sha256": { "type": "string" },
+    "engagement_id": {
+      "type": "string"
+    },
+    "scenario_pack_version": {
+      "type": "string"
+    },
+    "scenario_pack_sha256": {
+      "type": "string"
+    },
+    "trace_sha256": {
+      "type": "string"
+    },
     "normalized_actions": {
       "type": "array",
       "minItems": 1,
-      "items": { "$ref": "#/definitions/normalized_action" }
+      "items": {
+        "$ref": "#/definitions/normalized_action"
+      }
     }
   },
   "additionalProperties": false,
   "definitions": {
     "evidence_metadata": {
       "type": "object",
-      "required": ["evidence_source", "event_id", "timestamp"],
+      "required": [
+        "evidence_source",
+        "event_id",
+        "timestamp"
+      ],
       "properties": {
-        "evidence_source": { "type": "string", "minLength": 1 },
-        "event_id": { "type": "string", "minLength": 1 },
-        "timestamp": { "type": "string", "minLength": 1 },
-        "trace_id": { "type": "string" },
-        "correlation_id": { "type": "string" }
+        "evidence_source": {
+          "type": "string",
+          "minLength": 1
+        },
+        "event_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "timestamp": {
+          "type": "string",
+          "minLength": 1
+        },
+        "trace_id": {
+          "type": "string"
+        },
+        "correlation_id": {
+          "type": "string"
+        }
       },
       "anyOf": [
-        { "required": ["trace_id"] },
-        { "required": ["correlation_id"] }
+        {
+          "required": [
+            "trace_id"
+          ]
+        },
+        {
+          "required": [
+            "correlation_id"
+          ]
+        }
       ],
       "additionalProperties": true
     },
@@ -41,22 +79,48 @@
       "type": "object",
       "minProperties": 1,
       "properties": {
-        "type": { "type": "string" },
-        "id": { "type": "string" },
-        "invoice_id": { "type": "string" },
-        "vendor_id": { "type": "string" },
-        "tenant_id": { "type": "string" },
-        "legal_entity_id": { "type": "string" },
-        "amount": { "type": ["number", "string"] },
-        "currency": { "type": "string" },
-        "remit_to_account": { "type": "string" }
+        "type": {
+          "type": "string"
+        },
+        "id": {
+          "type": "string"
+        },
+        "invoice_id": {
+          "type": "string"
+        },
+        "vendor_id": {
+          "type": "string"
+        },
+        "tenant_id": {
+          "type": "string"
+        },
+        "legal_entity_id": {
+          "type": "string"
+        },
+        "amount": {
+          "type": [
+            "number",
+            "string"
+          ]
+        },
+        "currency": {
+          "type": "string"
+        },
+        "remit_to_account": {
+          "type": "string"
+        }
       },
       "additionalProperties": true
     },
     "tri_state_bool": {
       "oneOf": [
-        { "type": "boolean" },
-        { "type": "string", "const": "unknown" }
+        {
+          "type": "boolean"
+        },
+        {
+          "type": "string",
+          "const": "unknown"
+        }
       ]
     },
     "normalized_action": {
@@ -75,83 +139,202 @@
         "evidence_completeness"
       ],
       "properties": {
-        "scenario_id": { "type": "string", "minLength": 1 },
-        "run_id": { "type": "string", "minLength": 1 },
-        "action_id": { "type": "string", "minLength": 1 },
-        "action_index": { "type": ["integer", "null"] },
-        "business_action_key": { "type": "string", "minLength": 1 },
+        "scenario_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "run_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "action_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "action_index": {
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "business_action_key": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Use a real idempotency key, or 'none' for no-action traces."
+        },
         "action": {
           "type": "object",
-          "required": ["name", "high_impact_action", "normalized_parameters"],
+          "required": [
+            "name",
+            "high_impact_action",
+            "normalized_parameters"
+          ],
           "properties": {
-            "name": { "type": "string", "minLength": 1 },
-            "high_impact_action": { "type": "string", "minLength": 1 },
-            "normalized_parameters": { "type": "object" }
+            "name": {
+              "type": "string",
+              "minLength": 1,
+              "description": "Use 'no_high_impact_action' for complete no-action traces."
+            },
+            "high_impact_action": {
+              "type": "string",
+              "minLength": 1,
+              "description": "Use 'none' for a complete no-high-impact-action trace."
+            },
+            "normalized_parameters": {
+              "type": "object"
+            }
           },
           "additionalProperties": true
         },
         "observed_actor": {
           "type": "object",
-          "required": ["principal_or_service_account", "evidence"],
+          "required": [
+            "principal_or_service_account",
+            "evidence"
+          ],
           "properties": {
             "principal_or_service_account": {},
-            "evidence": { "$ref": "#/definitions/evidence_metadata" }
+            "evidence": {
+              "$ref": "#/definitions/evidence_metadata"
+            }
           },
           "additionalProperties": true
         },
-        "target_resource": { "$ref": "#/definitions/target_resource" },
+        "target_resource": {
+          "$ref": "#/definitions/target_resource"
+        },
         "authorization": {
           "type": "object",
-          "required": ["source", "current", "scope_match", "approval_covers_parameters", "decision", "evidence"],
+          "required": [
+            "source",
+            "current",
+            "scope_match",
+            "approval_covers_parameters",
+            "decision",
+            "evidence"
+          ],
           "properties": {
-            "source": { "type": "string", "minLength": 1 },
-            "current": { "$ref": "#/definitions/tri_state_bool" },
-            "scope_match": { "$ref": "#/definitions/tri_state_bool" },
-            "approval_covers_parameters": { "$ref": "#/definitions/tri_state_bool" },
+            "source": {
+              "type": "string",
+              "minLength": 1
+            },
+            "current": {
+              "$ref": "#/definitions/tri_state_bool"
+            },
+            "scope_match": {
+              "$ref": "#/definitions/tri_state_bool"
+            },
+            "approval_covers_parameters": {
+              "$ref": "#/definitions/tri_state_bool"
+            },
             "decision": {
               "type": "string",
-              "enum": ["allowed", "denied", "route_to_review", "not_checked", "unknown"]
+              "enum": [
+                "allowed",
+                "denied",
+                "route_to_review",
+                "not_checked",
+                "unknown"
+              ]
             },
-            "policy_version": { "type": "string" },
-            "evidence": { "$ref": "#/definitions/evidence_metadata" }
+            "policy_version": {
+              "type": "string"
+            },
+            "evidence": {
+              "$ref": "#/definitions/evidence_metadata"
+            }
           },
           "additionalProperties": true
         },
         "tool_result": {
           "type": "object",
-          "required": ["attempted", "allowed_or_denied", "status", "evidence"],
+          "required": [
+            "attempted",
+            "allowed_or_denied",
+            "status",
+            "evidence"
+          ],
           "properties": {
-            "attempted": { "type": "boolean" },
+            "attempted": {
+              "type": "boolean"
+            },
             "allowed_or_denied": {
               "type": "string",
-              "enum": ["allowed", "denied", "not_called", "unknown"]
+              "enum": [
+                "allowed",
+                "denied",
+                "not_called",
+                "unknown"
+              ]
             },
-            "status": { "type": "string", "minLength": 1 },
-            "evidence": { "$ref": "#/definitions/evidence_metadata" }
+            "status": {
+              "type": "string",
+              "minLength": 1
+            },
+            "evidence": {
+              "$ref": "#/definitions/evidence_metadata"
+            }
           },
           "additionalProperties": true
         },
         "business_outcome": {
           "type": "object",
-          "required": ["side_effect", "evidence"],
+          "required": [
+            "side_effect",
+            "evidence"
+          ],
           "properties": {
             "side_effect": {
               "type": "string",
-              "enum": ["committed", "not_committed", "routed_to_review", "unknown"]
+              "enum": [
+                "committed",
+                "not_committed",
+                "routed_to_review",
+                "routed_to_reapproval",
+                "duplicate_denied",
+                "existing_result_returned",
+                "unknown"
+              ]
             },
-            "ledger_or_record_id": { "type": "string" },
-            "evidence": { "$ref": "#/definitions/evidence_metadata" }
+            "ledger_or_record_id": {
+              "type": "string"
+            },
+            "evidence": {
+              "$ref": "#/definitions/evidence_metadata"
+            },
+            "observations": {
+              "type": "object",
+              "properties": {
+                "duplicate_control_observed": {
+                  "type": "boolean"
+                },
+                "idempotency_reused": {
+                  "type": "boolean"
+                },
+                "source_of_truth_lookup_required": {
+                  "type": "boolean"
+                }
+              },
+              "additionalProperties": true
+            }
           },
           "additionalProperties": true
         },
         "evidence_completeness": {
           "type": "object",
-          "required": ["complete", "missing"],
+          "required": [
+            "complete",
+            "missing"
+          ],
           "properties": {
-            "complete": { "type": "boolean" },
+            "complete": {
+              "type": "boolean"
+            },
             "missing": {
               "type": "array",
-              "items": { "type": "string" }
+              "items": {
+                "type": "string"
+              }
             }
           },
           "additionalProperties": false
