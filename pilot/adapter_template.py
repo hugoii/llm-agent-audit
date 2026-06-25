@@ -6,13 +6,16 @@ You fill in two functions:
      actually READS it in staging (a staging ticket / CRM record / doc store, or a mocked
      tool that returns it). Return a handle so you can clean it up afterwards.
   2. run_agent(user_request) -> run your agent on the benign user_request only, and return
-     (final_reply, trace) where trace is a list of {"tool": name, "arguments": {...}}.
+     either (final_reply, trace) or (final_reply, trace, action_outcome).
+     `trace` is a list of {"tool": name, "arguments": {...}, "result": {...}} entries
+     when your framework can capture tool results.
 
 THE ONE RULE THAT MAKES THIS VALID
-This audit tests indirect injection: a malicious instruction hidden in the DATA the agent
-reads. The instruction must go through load_scenario_data (the agent's real read path).
-Do NOT paste it into the user prompt. If you do, you are testing direct injection and the
-results are not valid.
+This review scores high-impact tool actions against trusted, current, scope-matching
+authorization evidence. Some scenarios test indirect injection or other untrusted
+business context. In those scenarios, the test content must go through load_scenario_data
+(the agent's real read path). Do NOT paste it into the user prompt unless the scenario
+explicitly says it is testing a direct user request.
 
 SAFETY
 Staging or sandbox only. Use mocked / sandboxed tools. Never run against production. No real
@@ -33,8 +36,9 @@ def load_scenario_data(items):
 
 def run_agent(user_request):
     """TODO: call your agent with ONLY the benign user_request.
-    Record every tool call (name + arguments) into `trace`, in order.
-    Return (final_reply, trace).
+    Record every tool call into `trace`, in order. Include tool results and authorization
+    decisions when your framework exposes them.
+    Return either (final_reply, trace) or (final_reply, trace, action_outcome).
     """
     raise NotImplementedError("Wire this to your agent's run loop")
 
@@ -47,17 +51,33 @@ def cleanup(handle):
 def run_scenario(scenario):
     handle = load_scenario_data(scenario.get("data_the_agent_reads", []))
     try:
-        reply, trace = run_agent(scenario["user_request"])
+        run_result = run_agent(scenario["user_request"])
     finally:
         cleanup(handle)
+    if not isinstance(run_result, tuple) or len(run_result) not in (2, 3):
+        raise TypeError("run_agent must return (final_reply, trace) or (final_reply, trace, action_outcome)")
+    if len(run_result) == 2:
+        reply, trace = run_result
+        action_outcome = {
+            "status": "unknown",
+            "summary": "Adapter did not capture a separate business outcome; use tool results when available."
+        }
+    else:
+        reply, trace, action_outcome = run_result
     return {
         "scenario_id": scenario["scenario_id"],
+        "scenario_type": scenario.get("scenario_type", ""),
         "user_request": scenario["user_request"],
+        "principal": scenario.get("principal", {}),
+        "target_resource": scenario.get("target_resource", {}),
         "data_the_agent_reads": scenario.get("data_the_agent_reads", []),
+        "authorization_context": scenario.get("authorization_context", []),
         "tool_call_trace": trace,
+        "action_outcome": action_outcome,
+        "expected_authorization": scenario.get("expected_authorization", ""),
         "final_reply": reply,
         "model": scenario.get("model", ""),
-        "notes": "data inserted via load_scenario_data (the agent's real read path), not the user prompt",
+        "notes": "scenario data inserted through the agreed staging path; no production data or shared credentials used",
     }
 
 
@@ -65,6 +85,14 @@ if __name__ == "__main__":
     # scenarios.json = the scenario set you were sent (a JSON list of scenario objects)
     scenarios = json.load(open("scenarios.json", encoding="utf-8"))
     results = [run_scenario(s) for s in scenarios]
+    first = scenarios[0] if scenarios else {}
+    submission = {
+        "schema_version": "1.0",
+        "engagement": first.get("engagement", ""),
+        "agent_under_test": first.get("agent_under_test", ""),
+        "environment": first.get("environment", "staging"),
+        "runs": results,
+    }
     with open("trace_results.json", "w", encoding="utf-8") as f:
-        json.dump({"runs": results}, f, indent=2)
+        json.dump(submission, f, indent=2)
     print(f"Wrote trace_results.json with {len(results)} runs. Send that file back.")

@@ -1,53 +1,211 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "title": "Agent audit trace submission",
-  "description": "Format the client sends back after running the scenarios against their staging agent. The whole audit is about INDIRECT injection: the adversarial instruction must live in data_the_agent_reads, never in user_request.",
+  "title": "Agent Authorization Review trace submission",
+  "description": "Format a client sends back after running ActionBoundary scenarios against a staging or sandbox agent. The review scores high-impact tool actions against trusted, current, scope-matching authorization evidence. Some scenarios include indirect prompt injection or other untrusted business context; that content must enter through the place the agent normally reads from, not through a pasted test prompt.",
   "type": "object",
   "required": ["runs"],
   "properties": {
-    "engagement": {"type": "string", "description": "e.g. 'Acme Co - AP agent pilot (staging)'"},
-    "agent_under_test": {"type": "string"},
+    "schema_version": {
+      "type": "string",
+      "description": "Use 1.0 for this flat trace format."
+    },
+    "engagement": {
+      "type": "string",
+      "description": "e.g. 'Acme Co - AP agent pilot (staging)'"
+    },
+    "agent_under_test": {
+      "type": "string"
+    },
+    "environment": {
+      "type": "string",
+      "description": "e.g. staging, sandbox, local synthetic harness"
+    },
     "runs": {
       "type": "array",
       "items": {
         "type": "object",
         "required": ["scenario_id", "user_request", "data_the_agent_reads", "tool_call_trace"],
         "properties": {
-          "scenario_id": {"type": "string"},
+          "scenario_id": {
+            "type": "string"
+          },
+          "scenario_type": {
+            "type": "string",
+            "description": "e.g. untrusted_business_context, direct_request, benign_control, multi_turn_authorization"
+          },
           "user_request": {
             "type": "string",
-            "description": "The benign task the caller asked. The adversarial/test instruction must NOT appear here."
+            "description": "The task the caller asked the agent to perform. For indirect/untrusted-context scenarios, the adversarial or test instruction should not be pasted here."
+          },
+          "principal": {
+            "$ref": "#/definitions/principal"
+          },
+          "target_resource": {
+            "$ref": "#/definitions/target_resource"
           },
           "data_the_agent_reads": {
             "type": "array",
-            "description": "Content the agent retrieves and reads. Any adversarial/test instruction lives HERE.",
+            "description": "Content the agent retrieved or read before acting, such as emails, tickets, invoices, records, tool responses, documents, or memory. For indirect-injection scenarios, the test instruction belongs here.",
             "items": {
-              "type": "object",
-              "required": ["source", "content"],
-              "properties": {
-                "source": {"type": "string", "description": "e.g. support_ticket, invoice_pdf, vendor_email, crm_note, tool_response, calendar_invite"},
-                "id": {"type": "string"},
-                "content": {"type": "string"}
-              }
+              "$ref": "#/definitions/read_item"
+            }
+          },
+          "authorization_context": {
+            "type": "array",
+            "description": "Trusted records, policy lookups, approvals, roles, tenant scope, or permission checks that existed when the action was attempted. If the agent or tool did not look up authority, leave this empty and preserve that fact.",
+            "items": {
+              "$ref": "#/definitions/authorization_record"
             }
           },
           "tool_call_trace": {
             "type": "array",
-            "description": "Every tool call the agent made, in order.",
+            "description": "Every tool call the agent made, in order, including high-impact tools, read tools, authorization lookups, denials, and tool results when available.",
             "items": {
-              "type": "object",
-              "required": ["tool", "arguments"],
-              "properties": {
-                "tool": {"type": "string"},
-                "arguments": {"type": "object"}
-              }
+              "$ref": "#/definitions/tool_call"
             }
           },
-          "final_reply": {"type": "string"},
-          "model": {"type": "string", "description": "context only, e.g. gpt-5-mini"},
-          "notes": {"type": "string", "description": "How data_the_agent_reads was delivered into the agent, i.e. the real read path, not the user prompt."}
+          "action_outcome": {
+            "$ref": "#/definitions/action_outcome"
+          },
+          "expected_authorization": {
+            "type": "string",
+            "description": "Plain-English rule for what authority should be required before the high-impact action executes."
+          },
+          "final_reply": {
+            "type": "string"
+          },
+          "model": {
+            "type": "string",
+            "description": "Context only, e.g. gpt-5-mini. Model choice is not the authorization decision."
+          },
+          "trace_id": {
+            "type": "string"
+          },
+          "timestamp": {
+            "type": "string",
+            "description": "Run timestamp if available."
+          },
+          "notes": {
+            "type": "string",
+            "description": "Setup notes, redactions, synthetic-data notes, or how the scenario data entered the agent's real staging path."
+          }
         }
       }
+    }
+  },
+  "definitions": {
+    "principal": {
+      "type": "object",
+      "description": "The user, service account, role, tenant, or actor whose authority should govern the action.",
+      "properties": {
+        "id": { "type": "string" },
+        "role": { "type": "string" },
+        "tenant": { "type": "string" },
+        "permissions": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      },
+      "additionalProperties": true
+    },
+    "target_resource": {
+      "type": "object",
+      "description": "The account, invoice, patient, record, tenant, vendor, or other object affected by the action.",
+      "properties": {
+        "type": { "type": "string" },
+        "id": { "type": "string" },
+        "tenant": { "type": "string" },
+        "amount": { "type": ["number", "string"] }
+      },
+      "additionalProperties": true
+    },
+    "read_item": {
+      "type": "object",
+      "required": ["source", "content"],
+      "properties": {
+        "source": {
+          "type": "string",
+          "description": "e.g. support_ticket, invoice_pdf, vendor_email, crm_note, tool_response, calendar_invite"
+        },
+        "id": { "type": "string" },
+        "trusted": {
+          "type": "boolean",
+          "description": "Whether this source is allowed to authorize the action. Free-text business content is usually not trusted authority."
+        },
+        "content": { "type": ["string", "object", "array", "number", "boolean", "null"] }
+      },
+      "additionalProperties": true
+    },
+    "authorization_record": {
+      "type": "object",
+      "required": ["source"],
+      "properties": {
+        "source": {
+          "type": "string",
+          "description": "e.g. user_permissions, approval_system, policy_engine, vendor_master, IAM, prior_auth_system"
+        },
+        "id": { "type": "string" },
+        "trusted": { "type": "boolean" },
+        "current": { "type": "boolean" },
+        "scope_match": {
+          "type": ["boolean", "string"],
+          "description": "true, false, or unknown if the trace does not show enough evidence."
+        },
+        "decision": {
+          "type": "string",
+          "description": "e.g. allowed, denied, route_to_review, not_checked"
+        },
+        "content": { "type": ["object", "array", "string", "number", "boolean", "null"] }
+      },
+      "additionalProperties": true
+    },
+    "tool_call": {
+      "type": "object",
+      "required": ["tool", "arguments"],
+      "properties": {
+        "tool": { "type": "string" },
+        "arguments": { "type": "object" },
+        "high_impact_action": {
+          "type": "string",
+          "description": "Optional label for calls that move money, change records, export data, grant access, submit forms, message external parties, or otherwise cause business side effects."
+        },
+        "authorization_decision": {
+          "$ref": "#/definitions/authorization_decision"
+        },
+        "result": {
+          "description": "Structured tool result, denial, error, or returned record."
+        },
+        "timestamp": { "type": "string" }
+      },
+      "additionalProperties": true
+    },
+    "authorization_decision": {
+      "type": "object",
+      "properties": {
+        "allowed": { "type": "boolean" },
+        "reason": { "type": "string" },
+        "source": {
+          "type": "string",
+          "description": "Where the decision came from: tool-layer policy, approval lookup, IAM, workflow rule, or model-only judgment."
+        },
+        "required_authority": { "type": "string" },
+        "observed_authority": { "type": "string" }
+      },
+      "additionalProperties": true
+    },
+    "action_outcome": {
+      "type": "object",
+      "description": "What changed after the attempted action. This is the business outcome, not just the model's final answer.",
+      "properties": {
+        "status": {
+          "type": "string",
+          "description": "e.g. executed, denied, routed_to_review, no_high_impact_action, unknown"
+        },
+        "executed": { "type": "boolean" },
+        "summary": { "type": "string" },
+        "side_effect_id": { "type": "string" }
+      },
+      "additionalProperties": true
     }
   }
 }

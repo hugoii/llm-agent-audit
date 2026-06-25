@@ -8,13 +8,13 @@ Send three details. ActionBoundary can use them to draft the first scenario set 
 
    What your agent does, who buys it, and why this review matters now.
 
-2. **One action your agent can trigger**
+2. **One workflow or action surface**
 
-   Tell us what the agent can do: refund, payment, access grant, export, record change, scheduling step, or submission. We identify the risky authorization cases and turn them into scenarios.
+   Tell us where the agent can affect the business: refund, payment, access grant, export, record change, scheduling step, submission, or customer message. You do not need to choose the exact failure case. ActionBoundary identifies the risky authorization boundary and turns it into scenarios.
 
 3. **Safe test path**
 
-   Any safe way to observe it: staging traces, a sandbox endpoint, or another non-production run path.
+   Any safe way to observe the workflow: staging traces, a sandbox endpoint, exported tool-call logs, or another non-production run path.
 
 That is enough for a first reply. The first response is not a full engagement request; it is a scenario-fit check.
 

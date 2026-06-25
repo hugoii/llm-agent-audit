@@ -4721,8 +4721,8 @@
         <h3>What to include</h3>
         <ol class="intake-list">
           <li><span class="num">1</span><span><b>Product and buyer</b>What your agent does, who buys it, and why this review matters now.</span></li>
-          <li><span class="num">2</span><span><b>One action your agent can trigger</b>Tell us what the agent can do. We identify the risky authorization cases and turn them into scenarios.</span></li>
-          <li><span class="num">3</span><span><b>Safe test path</b>Any safe way to observe it: staging traces, a sandbox endpoint, or another non-production run path.</span></li>
+          <li><span class="num">2</span><span><b>One workflow or action surface</b>Tell us where the agent can affect the business. We identify the risky authorization boundary and turn it into scenarios.</span></li>
+          <li><span class="num">3</span><span><b>Safe test path</b>Any safe way to observe the workflow: staging traces, a sandbox endpoint, exported tool-call logs, or another non-production run path.</span></li>
         </ol>
       </div>
     </div>
@@ -4749,7 +4749,7 @@
       </details>
       <details class="faq-item">
         <summary>What do you need from us?</summary>
-        <p>Name one action your agent can trigger, where it can be observed safely, and the authority signal your product already uses, such as roles, approvals, policy, tenant scope, or system records. ActionBoundary turns that into the scenario set.</p>
+        <p>Name the product, one workflow or action surface where the agent affects the business, and a safe way to observe it. If you already know the authority signal, such as roles, approvals, policy, tenant scope, or system records, include it. You do not need to choose the exact failure case.</p>
       </details>
       <details class="faq-item">
         <summary>What if we do not have clean tool-call traces yet?</summary>
