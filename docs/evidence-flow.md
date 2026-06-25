@@ -46,11 +46,11 @@ Untrusted business content is still useful context. It can trigger review, prepa
 2. Map the high-impact actions and the trusted source of authority for each action.
 3. Write 5 to 10 workflow-specific scenarios, including attack scenarios and benign controls.
 4. Run the scenarios in staging or a sandbox path with synthetic data.
-5. Capture the agent's tool-call trace, arguments, tool results, and authorization decisions.
-6. Score the trace against the per-action rule.
+5. Capture the agent's tool-call trace, arguments, authorization decisions, tool results, and business outcome or ledger evidence.
+6. Normalize the runtime evidence and score it against the per-action rule.
 7. Report findings, evidence, concrete fixes, and one retest rule.
 
-The trace is the evidence. A fluent model answer does not pass the review by itself, and a scary prompt does not fail the review by itself. The question is whether a high-impact tool call executed with the right authorization evidence.
+The runtime evidence is the proof. A fluent model answer does not pass the review by itself, and a scary prompt does not fail the review by itself. The question is whether a high-impact tool call executed with the right actor, target, authorization source, tool result, and business outcome evidence.
 
 ## Example boundary
 

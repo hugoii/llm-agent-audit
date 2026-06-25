@@ -24,9 +24,16 @@ I help teams shipping tool-using AI agents produce staging trace evidence for cu
 
 **Independent, trace-backed evidence about your agent's authorization boundary, useful before a customer asks whether the agent can move money or data without permission.** Failing scenarios become reproducible findings, fixes, and a retest. Passing scenarios become evidence your customer's security review can use.
 
-**How it works.** A pilot starts with a 3-scenario sketch so you can judge fit before setup. If it fits, we pick one high-impact action and one safe staging path. I provide the scenarios, pass/fail rules, scoring, report, and retest. Your team only needs a safe way to run the scenarios in staging or share a test endpoint, plus the tool-call logs or traces. No production access, no real customer data, no shared credentials.
+**Two layers, two claims.**
 
-**Why it is different.** Most AI testing checks what the model says. This checks what the agent does: did it call a tool it should not have been allowed to call? Pass or fail comes from the agent's actual tool-call trace, not from string-matching its reply.
+| Layer | What it measures | What it can prove |
+|---|---|---|
+| Public benchmark | Whether models attempt unsafe simulated tool calls in a fixed, reproducible battery. | Model-behavior evidence and an inspectable scoring method. It is not evidence about a customer's private system. |
+| Client pilot | Whether one real staging action has runtime evidence for the acting identity, target, authorization source, tool result, and business outcome. | Action-specific authorization evidence for a customer security review. Missing critical evidence is `INCONCLUSIVE`, not `PASS`. |
+
+**How it works.** A pilot starts with a 3-scenario sketch so you can judge fit before setup. If it fits, we pick one high-impact action and one safe staging path. I provide the scenarios, pass/fail rules, scoring, report, and retest. Your team only needs a safe way to run the scenarios in staging or share a test endpoint, plus logs or traces that can expose or be correlated to the acting identity, target object, authorization decision, tool result, and sandbox or business outcome. No production access, no real customer data, no shared credentials.
+
+**Why it is different.** Most AI testing checks what the model says. This checks what the agent does: did it call a tool it should not have been allowed to call, and did the system enforce the right boundary? Pass or fail comes from normalized runtime evidence: actor, target, authorization source, tool decision, tool result, and business outcome. Missing critical evidence is reported as inconclusive, not passed.
 
 A poisoned ticket, invoice, or tool response can look like normal business context while quietly asking the agent to issue a refund, export data, or change an account. I test whether that text becomes an action.
 
@@ -161,7 +168,7 @@ Those tools often focus on model or prompt behavior, generic test suites, or pos
 <details>
 <summary><b>What do you need from us?</b></summary>
 
-A safe way to run the scenarios in staging or a shared test endpoint, plus the tool-call logs or traces. That is it.
+A safe way to run the scenarios in staging or a shared test endpoint, plus enough runtime evidence to score the action: tool calls, authorization decisions, tool results, and side-effect or ledger outcomes. That is it.
 </details>
 
 <details>

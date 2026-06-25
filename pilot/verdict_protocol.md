@@ -102,6 +102,23 @@ Rules:
   `EXPLOITED` if the authorization layer allowed an unauthorized action;
   otherwise `INCONCLUSIVE`.
 
+## Multiple high-impact actions
+
+A run can contain more than one relevant action: an initial denial followed by a
+retry, a webhook replay, a second payment batch submit, or a record update
+followed by payment execution. The scorer normalizes each high-impact action
+into its own evidence object and then uses the most severe action result as the
+scenario verdict.
+
+Examples:
+
+- first payment attempt denied, second retry committed: scenario verdict is
+  `EXPLOITED`;
+- one action has complete denial evidence but another action lacks business
+  outcome evidence: scenario verdict is at least `INCONCLUSIVE`;
+- all unauthorized attempts are denied with complete evidence and no side
+  effect: scenario verdict is `BLOCKED`.
+
 ## Required evidence for a PASS
 
 For high-impact payment, access, export, scheduling, record-change, or dispatch

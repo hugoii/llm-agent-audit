@@ -4381,7 +4381,7 @@
         <h2>A payment approval is not user authorization.</h2>
         <p class="lead">In a synthetic AP workflow, the invoice approval was valid, but the user only had view-only AP access and could not schedule payments. In advisory mode, 18 of 20 runs still called <code>schedule_payment</code>.</p>
         <blockquote class="finding-claim">The approval was real.<br>The user&rsquo;s authority was not.</blockquote>
-        <p class="finding-buyer">Enterprise buyers want evidence the product can tell those two apart. The review scores the tool-call trace and authorization decision, not the final answer.</p>
+        <p class="finding-buyer">Enterprise buyers want evidence the product can tell those two apart. The review scores runtime evidence for the actor, target, authorization decision, tool result, and business outcome, not the final answer. Missing critical evidence is reported as inconclusive, not passed.</p>
         <div class="finding-actions">
           <a class="button outline" href="https://github.com/hugoii/llm-agent-audit/blob/master/docs/payment-approval-is-not-user-authorization.md">Read public case note</a>
           <a class="button outline" href="#report">View sample report</a>
@@ -4639,7 +4639,7 @@
         <h3>What you get</h3>
         <ul class="offer-list get">
           <li>Custom attack scenarios and benign controls</li>
-          <li>Tool-call trace scoring against the runtime authority evidence your product already uses</li>
+          <li>Per-action scoring against normalized runtime authority evidence, including identity, approval scope, tool result, and business outcome</li>
           <li>OWASP/NIST-mapped evidence report for security review</li>
           <li>Concrete application-layer fixes</li>
           <li>One retest after fixes</li>
@@ -4650,7 +4650,7 @@
         <ul class="offer-list provide">
           <li>One action your agent can trigger</li>
           <li>A staging or sandbox path, no production</li>
-          <li>Tool-call traces or a safe test endpoint</li>
+          <li>Existing staging logs or a safe test endpoint that can expose or correlate identity, authorization decision, tool result, and sandbox outcome</li>
           <li>Where authority lives today: roles, approvals, policy, or system records</li>
         </ul>
       </div>
@@ -4722,7 +4722,7 @@
         <ol class="intake-list">
           <li><span class="num">1</span><span><b>Product and buyer</b>What your agent does, who buys it, and why this review matters now.</span></li>
           <li><span class="num">2</span><span><b>One workflow or action surface</b>Tell us where the agent can affect the business. We identify the risky authorization boundary and turn it into scenarios.</span></li>
-          <li><span class="num">3</span><span><b>Safe test path</b>Any safe way to observe the workflow: staging traces, a sandbox endpoint, exported tool-call logs, or another non-production run path.</span></li>
+          <li><span class="num">3</span><span><b>Safe test path</b>Any safe way to observe the workflow: staging traces, a sandbox endpoint, exported tool-call and authorization logs, or another non-production path that can be correlated to the acting identity and sandbox outcome.</span></li>
         </ol>
       </div>
     </div>
@@ -4741,7 +4741,7 @@
       </details>
       <details class="faq-item">
         <summary>How much work is this for our team, and can it be async?</summary>
-        <p>Async is the default. If staging exists and tool-call traces are easy to export, most teams spend about 1 to 3 hours. If trace format needs cleanup, expect 3 to 6 hours. If a small adapter is needed, it can be half a day to one day of engineering time. No live call is required when scope and traces are clear.</p>
+        <p>Async is the default. If staging exists and correlated logs already expose acting identity, authorization decisions, tool results, and business outcomes, most teams spend about 1 to 3 hours. If trace format needs cleanup, expect 3 to 6 hours. If a small adapter is needed, it can be half a day to one day of engineering time. No live call is required when scope and traces are clear.</p>
       </details>
       <details class="faq-item">
         <summary>How long does a pilot take?</summary>
@@ -4752,8 +4752,8 @@
         <p>Name the product, one workflow or action surface where the agent affects the business, and a safe way to observe it. If you already know the authority signal, such as roles, approvals, policy, tenant scope, or system records, include it. You do not need to choose the exact failure case.</p>
       </details>
       <details class="faq-item">
-        <summary>What if we do not have clean tool-call traces yet?</summary>
-        <p>Start with a one-scenario setup check or the adapter path. If the agent's high-impact tool calls cannot be observed, the review can help identify the trace gap, but it is not yet a trace-backed authorization review.</p>
+        <summary>What if we do not have clean runtime traces yet?</summary>
+        <p>Start with a one-scenario setup check or the adapter path. If the agent's high-impact tool calls, authorization decisions, and side effects cannot be observed, the review can help identify the evidence gap, but it is not yet a trace-backed authorization review.</p>
       </details>
       <details class="faq-item">
         <summary>What happens if you find a serious issue?</summary>
@@ -4765,7 +4765,7 @@
       </details>
       <details class="faq-item">
         <summary>How is this different from internal evals, Promptfoo, garak, or monitoring?</summary>
-        <p>Those tools are useful for broad LLM-app evals, red-team probes, and monitoring. ActionBoundary is narrower: it reviews actual staging tool-call traces for one high-impact workflow, checks each attempted action against the trusted authorization source, and packages the result as evidence for a customer security reviewer. It complements your eval suite; it does not replace it.</p>
+        <p>Those tools are useful for broad LLM-app evals, red-team probes, and monitoring. ActionBoundary is narrower: it reviews actual staging runtime evidence for one high-impact workflow, checks each attempted action against the trusted authorization source and observed business outcome, and packages the result as evidence for a customer security reviewer. It complements your eval suite; it does not replace it.</p>
       </details>
       <details class="faq-item">
         <summary>Will you sign an NDA or MSA?</summary>

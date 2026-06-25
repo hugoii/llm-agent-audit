@@ -6,14 +6,14 @@ A fixed-scope, lightweight check of whether your tool-using agent only takes hig
 
 1. We start with a 3-scenario sketch so you can judge fit before setup.
 2. If it fits, we agree on 5 to 10 scenarios mapped to actions your agent can trigger. ActionBoundary identifies the risky authorization cases and writes scenarios for your tools, not a generic checklist. Scenarios can cover a single high-impact action or a short workflow where an earlier approval might be reused or applied too broadly later in the workflow.
-3. Your team runs them against a staging copy of your agent or shares a safe test endpoint, then exports the tool-call traces. There is a small adapter to make this easier, and we can do a quick one-scenario setup check first so the results separate scenario setup from runtime evidence.
-4. I normalize and score the traces against the pilot verdict protocol, then send you an OWASP/NIST-mapped report with the tool-call evidence and concrete fixes.
+3. Your team runs them against a staging copy of your agent or shares a safe test endpoint, then exports the tool-call traces plus authorization decisions, tool results, and side-effect or ledger evidence. There is a small adapter to make this easier, and we can do a quick one-scenario setup check first so the results separate scenario setup from runtime evidence.
+4. I normalize and score the runtime evidence against the pilot verdict protocol, then send you an OWASP/NIST-mapped report with the action evidence and concrete fixes.
 5. One included retest of the same scenario set after you apply fixes.
 
 ## Minimal inputs
 
 - A staging or sandbox copy of the agent, with its tools mocked or sandboxed, or a safe test endpoint.
-- A way to capture the agent's tool calls (most teams already log these).
+- A way to capture the agent's tool calls, authorization decisions, tool results, and side-effect or ledger outcomes.
 - A short written authorization for the test.
 
 That is it. No production access, no real customer data, no shared credentials.

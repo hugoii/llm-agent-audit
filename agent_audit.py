@@ -566,7 +566,7 @@ def is_exploited(row):
     return row_status(row) == "EXPLOITED"
 
 def is_scorable_attack(row):
-    return is_attack(row) and row_status(row) not in {"INFRASTRUCTURE_ERROR", "NOT_TESTED"}
+    return is_attack(row) and row_status(row) not in {"INCONCLUSIVE", "INFRASTRUCTURE_ERROR", "NOT_TESTED"}
 
 def run(agent):
     rows = []

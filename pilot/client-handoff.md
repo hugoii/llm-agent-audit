@@ -2,7 +2,7 @@
 
 This is the engineering-level handoff for a team that is ready to scope a pilot or wants to know what engineering needs to prepare. For first contact, use [what-we-need.md](what-we-need.md).
 
-The goal is simple: run a small set of workflow-specific scenarios against a staging or sandbox agent, preserve the tool-call traces, and turn those traces into an authorization evidence report.
+The goal is simple: run a small set of workflow-specific scenarios against a staging or sandbox agent, preserve the runtime evidence, and turn that evidence into an authorization report.
 
 ## Short version
 
@@ -20,7 +20,7 @@ Before the full run, we do one scenario as a setup check. That confirms the agen
 
 The default path is client-run, trace-based testing.
 
-You receive a small scenario pack written for your agent. Your team runs it against a staging or sandbox copy of the agent, then sends back a trace file.
+You receive a small scenario pack written for your agent. Your team runs it against a staging or sandbox copy of the agent, then sends back a trace file with tool calls, authorization decisions, tool results, and side-effect or ledger outcomes.
 
 This is usually the safest and lowest-friction path because:
 
@@ -40,7 +40,7 @@ You do:
 
 - load the synthetic scenario data into the place your agent actually reads from;
 - run the benign user request from each scenario;
-- export the tool-call traces;
+- export the tool-call traces, authorization decisions, tool results, and side-effect or ledger outcomes;
 - send back `trace_results.json` or equivalent logs.
 
 ActionBoundary does:
@@ -64,7 +64,7 @@ You provide:
 - rate limits or test-window rules if needed;
 - written authorization naming the in-scope staging system.
 
-ActionBoundary runs the scenarios through that endpoint and scores the resulting traces. If the endpoint does not expose tool-call traces, we still need a way to export or retrieve them.
+ActionBoundary runs the scenarios through that endpoint and scores the resulting runtime evidence. If the endpoint does not expose tool calls, authorization decisions, and side-effect evidence, we still need a way to export or retrieve them.
 
 ### Path C: you wire the adapter
 
@@ -240,7 +240,7 @@ Helpful extra fields:
 
 For a final `PASS`, these are not just helpful. The normalized verdict needs
 runtime evidence for the observed actor, target resource, authorization source,
-tool decision, tool result, and business outcome. If those facts are missing,
+authorization freshness and scope, tool decision, tool result, and business outcome. If those facts are missing,
 the result may still be useful, but the strict verdict is `INCONCLUSIVE`.
 
 ## What not to send
@@ -270,7 +270,7 @@ For initial setup:
 - the workflow or action surface where a high-impact action may happen;
 - any known place where authority lives today, such as user role, permission, approval, tenant scope, policy, or system record;
 - the staging or sandbox path you want to use;
-- how tool-call traces can be exported;
+- how tool-call, authorization-decision, tool-result, and side-effect evidence can be exported;
 - written authorization for the staging test.
 
 For the full run:
@@ -301,7 +301,7 @@ Typical client effort:
 
 | Situation | Expected effort |
 |---|---:|
-| Staging exists and tool-call logs are easy to export | 1 to 3 hours |
+| Staging exists and runtime evidence is easy to export | 1 to 3 hours |
 | Staging exists but trace format needs cleanup | 3 to 6 hours |
 | No trace export exists but a small adapter is possible | Half day to one day |
 | No staging, no sandbox, or no observable tool calls | Not ready for the fixed-scope pilot |

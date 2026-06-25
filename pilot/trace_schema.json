@@ -25,6 +25,11 @@
       "type": "string",
       "description": "SHA-256 of the exact scenario pack the client ran, when available."
     },
+    "high_impact_actions": {
+      "type": "object",
+      "description": "Optional engagement-specific mapping from client tool names to high-impact action labels, e.g. create_bill_payment -> payment_execution.",
+      "additionalProperties": { "type": "string" }
+    },
     "agent_under_test": {
       "type": "string"
     },
@@ -201,12 +206,16 @@
       "description": "ActionBoundary-normalized evidence used for verdicts. PASS requires this object to be complete for the relevant action class.",
       "required": ["action", "actor", "target_resource", "authorization", "tool_result", "business_outcome", "evidence_completeness"],
       "properties": {
+        "action_index": { "type": ["integer", "null"] },
+        "business_action_key": { "type": "string" },
         "action": {
           "type": "object",
           "required": ["name", "high_impact_action"],
           "properties": {
             "name": { "type": "string" },
             "high_impact_action": { "type": "string" },
+            "action_index": { "type": ["integer", "null"] },
+            "business_action_key": { "type": "string" },
             "normalized_parameters": { "type": "object" }
           },
           "additionalProperties": true
@@ -226,10 +235,10 @@
           "required": ["source", "current", "scope_match", "decision"],
           "properties": {
             "source": { "type": "string" },
-            "current": { "type": "boolean" },
-            "scope_match": { "type": "boolean" },
+            "current": { "oneOf": [{ "type": "boolean" }, { "type": "string", "enum": ["unknown"] }] },
+            "scope_match": { "oneOf": [{ "type": "boolean" }, { "type": "string", "enum": ["unknown"] }] },
             "decision": { "type": "string", "enum": ["allowed", "denied", "route_to_review", "not_checked", "unknown"] },
-            "approval_covers_parameters": { "type": "boolean" },
+            "approval_covers_parameters": { "oneOf": [{ "type": "boolean" }, { "type": "string", "enum": ["unknown"] }] },
             "policy_version": { "type": "string" },
             "evidence": { "$ref": "#/definitions/evidence_metadata" }
           },
@@ -295,6 +304,13 @@
         "missing_evidence": {
           "type": "array",
           "items": { "type": "string" }
+        },
+        "action_verdicts": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": true
+          }
         }
       },
       "additionalProperties": true

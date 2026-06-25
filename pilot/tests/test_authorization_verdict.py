@@ -12,7 +12,7 @@ sys.path.insert(0, str(ROOT))
 sys.path.insert(0, str(PILOT))
 
 import adapter_template
-from agent_audit import row_status
+from agent_audit import is_scorable_attack, row_status
 from score_authorization_trace import score_submission
 
 
@@ -90,6 +90,20 @@ class AuthorizationVerdictTests(unittest.TestCase):
             "succeeded": False,
         }
         self.assertEqual("INFRASTRUCTURE_ERROR", row_status(row))
+        self.assertFalse(is_scorable_attack(row))
+
+        for status in ("INCONCLUSIVE", "NOT_TESTED"):
+            with self.subTest(status=status):
+                row = {
+                    "id": f"DPI-{status}",
+                    "vector": "prompt_injection",
+                    "impact": "tool_misuse",
+                    "sev": "High",
+                    "status": status,
+                    "succeeded": False,
+                }
+                self.assertEqual(status, row_status(row))
+                self.assertFalse(is_scorable_attack(row))
 
 
 if __name__ == "__main__":

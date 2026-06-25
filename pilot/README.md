@@ -28,8 +28,9 @@ explicitly says it is testing a direct user request.
 
 Other scenarios may test direct requests, benign controls, authorization-source
 confusion, scope mismatch, or short multi-turn workflows. In every case, follow
-the scenario instructions and preserve the tool-call trace. The trace is the
-evidence.
+the scenario instructions and preserve the runtime evidence: tool calls,
+authorization decisions, tool results, and side-effect or ledger outcomes. The
+normalized runtime evidence is what the verdict uses.
 
 ## Files
 
