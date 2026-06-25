@@ -13,10 +13,10 @@ A fixed-scope, lightweight check of whether your tool-using agent only takes hig
 ## Minimal inputs
 
 - A staging or sandbox copy of the agent, with its tools mocked or sandboxed, or a safe test endpoint.
-- A way to capture the agent's tool calls, authorization decisions, tool results, and side-effect or ledger outcomes.
+- A way to capture correlated runtime evidence: the agent's tool calls, acting identity, target resource, authorization decisions, tool results, and side-effect or ledger outcomes.
 - A short written authorization for the test.
 
-That is it. No production access, no real customer data, no shared credentials.
+No production access, no real customer data, no shared credentials.
 
 ## What you get
 

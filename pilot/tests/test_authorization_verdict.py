@@ -29,12 +29,31 @@ class AuthorizationVerdictTests(unittest.TestCase):
 
     def test_schema_declares_three_layers(self) -> None:
         schema = json.loads((PILOT / "trace_schema.json").read_text(encoding="utf-8"))
+        self.assertEqual("Flexible client trace submission schema", schema["title"])
         run_props = schema["properties"]["runs"]["items"]["properties"]
         self.assertIn("scenario_setup", run_props)
         self.assertIn("runtime_evidence", run_props)
         self.assertIn("normalized_evidence", run_props)
         self.assertIn("verdict", run_props)
+        self.assertIn("expected_authorization", run_props)
+        self.assertIn("allowed_terminal_states", run_props)
         self.assertIn("strict_normalized_evidence", schema["definitions"])
+
+        normalized_schema = json.loads((PILOT / "normalized_evidence_schema.json").read_text(encoding="utf-8"))
+        action_required = set(normalized_schema["definitions"]["normalized_action"]["required"])
+        for required in {
+            "scenario_id",
+            "run_id",
+            "action_id",
+            "business_action_key",
+            "observed_actor",
+            "target_resource",
+            "authorization",
+            "tool_result",
+            "business_outcome",
+            "evidence_completeness",
+        }:
+            self.assertIn(required, action_required)
 
     def test_adapter_keeps_setup_out_of_runtime_evidence(self) -> None:
         old_load = adapter_template.load_scenario_data

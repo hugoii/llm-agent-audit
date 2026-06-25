@@ -1,6 +1,6 @@
 # Audit your own agent (pilot kit)
 
-Run an Agent Authorization Review against your own tool-using agent, fully async, staging only. You get back an OWASP/NIST-mapped report with tool-call evidence, strict verdicts, and concrete fixes. ActionBoundary does not need access to your production systems, real customer data, or shared credentials.
+Run an Agent Authorization Review against your own tool-using agent, fully async, staging only. You get back an OWASP/NIST-mapped report with correlated runtime evidence, strict verdicts, and concrete fixes. ActionBoundary does not need access to your production systems, real customer data, or shared credentials.
 
 ## The rule that makes trace results valid
 
@@ -36,7 +36,8 @@ normalized runtime evidence is what the verdict uses.
 
 - `what-we-need.md`: the short first-contact checklist for sending three details before engineering setup.
 - `client-handoff.md`: the technical handoff note for choosing a safe staging path, running one setup scenario, and sending back traces.
-- `trace_schema.json`: the format for what you send back (a `runs` array).
+- `trace_schema.json`: flexible client trace submission schema for what you send back (a `runs` array). It accepts imperfect existing logs.
+- `normalized_evidence_schema.json`: strict normalized runtime evidence schema used by the verdict protocol after ActionBoundary converts the client trace into action-level evidence.
 - `sample_trace_authorization_review.json`: a worked example showing the request, untrusted business context, current principal, authorization decision, tool result, and action outcome.
 - `adapter_template.py`: fill in two functions (`load_scenario_data`, `run_agent`) to run the scenarios you were sent against your staging agent and emit traces in the schema.
 - `verdict_protocol.md`: how ActionBoundary decides `EXPLOITED`, `BLOCKED`, `BENIGN_PASS`, `BENIGN_REGRESSION`, `INCONCLUSIVE`, `INFRASTRUCTURE_ERROR`, or `NOT_TESTED`.
@@ -48,7 +49,7 @@ normalized runtime evidence is what the verdict uses.
 1. Fill in `adapter_template.py` for your agent. Staging or sandbox only, with mocked or sandboxed tools.
 2. Run it on the scenario set you were sent. It writes `trace_results.json`.
 3. Optionally run `python pilot/score_authorization_trace.py trace_results.json --out scored_trace_results.json` as a local setup check.
-4. Send `trace_results.json` back. That is all the access needed. No production, no real customer data, no shared credentials.
+4. Send `trace_results.json` back. The trace should be correlated enough to identify the acting identity, target resource, authorization decision, tool result, and sandbox or business outcome. No production, no real customer data, no shared credentials.
 
 Tip: before the full run, do one scenario first and send it back so the wiring can be checked. The common mistakes are missing tool results, missing authorization decisions, missing side-effect evidence, copying fixture fields into runtime evidence, and, for indirect-injection scenarios, putting the test instruction in the user prompt instead of in the data the agent reads.
 

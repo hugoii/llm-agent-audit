@@ -70,7 +70,7 @@ ActionBoundary runs the scenarios through that endpoint and scores the resulting
 
 Best when the agent exists but trace export is not yet clean.
 
-You receive `adapter_template.py` and `trace_schema.json`. Your team fills in two small functions:
+You receive `adapter_template.py`, the flexible `trace_schema.json`, and the strict `normalized_evidence_schema.json` used after normalization. Your team fills in two small functions:
 
 - `load_scenario_data`, which places the synthetic test data where the agent reads from in staging;
 - `run_agent`, which calls the agent and records each tool call as `{ "tool": "...", "arguments": {...} }`.

@@ -23,6 +23,7 @@ from reportlab.pdfgen import canvas
 ROOT = Path(__file__).resolve().parents[1]
 SOURCE_MD = ROOT / "docs" / "sample-pilot-report.md"
 OUTPUT_PDF = ROOT / "docs" / "sample-evidence-report.pdf"
+VERSIONED_OUTPUT_PDF = ROOT / "docs" / "sample-evidence-report-v0.7.pdf"
 OUTPUT_PNG = ROOT / "docs" / "sample-report-preview.png"
 TEMP_PDF = ROOT / "docs" / "sample-evidence-report.tmp.pdf"
 TEMP_PNG = ROOT / "docs" / "sample-report-preview.tmp.png"
@@ -530,7 +531,7 @@ def scope_page(c: canvas.Canvas, md: str, meta: dict[str, str], source_hash: str
     y = PAGE_H - 292
     rect(c, MARGIN, y - 116, 242, 116, WHITE, LINE)
     label(c, "What was tested", MARGIN + 14, y - 20, TEAL_DARK)
-    draw_bullets(c, bullets_after_heading(md, "### What was tested"), MARGIN + 16, y - 40, 214, 7.6, 10.2)
+    draw_bullets(c, bullets_after_heading(md, "### What was tested"), MARGIN + 16, y - 40, 214, 7.2, 9.4, max_items=3)
 
     rect(c, MARGIN + 262, y - 116, 242, 116, WHITE, LINE)
     label(c, "What was not tested", MARGIN + 276, y - 20, TEAL_DARK)
@@ -540,7 +541,7 @@ def scope_page(c: canvas.Canvas, md: str, meta: dict[str, str], source_hash: str
     c.setFillColor(INK)
     c.drawString(MARGIN, 350, "Scenario matrix")
     scenarios = table_after_heading(md, "## Scenario Matrix")
-    draw_table(c, scenarios, MARGIN, 332, [28, 132, 38, 184, 43, 47], 6.25, 7.7, max_lines=3)
+    draw_table(c, scenarios, MARGIN, 332, [30, 135, 40, 177, 76, 46], 6.25, 7.7, max_lines=3)
     c.showPage()
 
 
@@ -738,27 +739,47 @@ def finding_page(
     c.showPage()
 
 
-def remediation_page(c: canvas.Canvas, md: str, meta: dict[str, str], source_hash: str) -> None:
-    page_header(c, 8, meta, source_hash, "Evidence Register, Remediation, and Limits")
+def evidence_register_page(c: canvas.Canvas, md: str, meta: dict[str, str], source_hash: str) -> None:
+    page_header(c, 8, meta, source_hash, "Evidence Register")
     evidence = table_after_heading(md, "## Evidence Register")
     c.setFont("Helvetica-Bold", 12)
     c.setFillColor(INK)
     c.drawString(MARGIN, PAGE_H - 116, "Evidence register")
-    draw_table(c, evidence, MARGIN, PAGE_H - 134, [46, 82, 96, 110, 126, 44], 5.95, 7.4, max_lines=3)
+    draw_table(c, evidence, MARGIN, PAGE_H - 134, [48, 44, 110, 118, 140, 44], 6.1, 7.6, max_lines=3)
+
+    rect(c, MARGIN, 86, CONTENT_W, 46, TEAL_SOFT, LINE)
+    label(c, "Evidence rule", MARGIN + 14, 114, TEAL_DARK)
+    text(
+        c,
+        "Every evidence row points back to runtime facts: actor, target, authorization source, tool result, and business outcome. Missing critical evidence produces INCONCLUSIVE, not PASS.",
+        MARGIN + 14,
+        99,
+        CONTENT_W - 28,
+        "Helvetica-Bold",
+        7.6,
+        9.4,
+        INK,
+        max_lines=2,
+    )
+    c.showPage()
+
+
+def remediation_page(c: canvas.Canvas, md: str, meta: dict[str, str], source_hash: str) -> None:
+    page_header(c, 9, meta, source_hash, "Remediation and Limits")
 
     c.setFont("Helvetica-Bold", 12)
     c.setFillColor(INK)
-    c.drawString(MARGIN, 392, "Remediation roadmap")
+    c.drawString(MARGIN, PAGE_H - 116, "Remediation roadmap")
     roadmap = table_after_heading(md, "## Remediation Roadmap")
-    draw_table(c, roadmap, MARGIN, 374, [38, 92, 178, 54, 142], 5.8, 7.1, max_lines=3)
+    roadmap_bottom = draw_table(c, roadmap, MARGIN, PAGE_H - 134, [38, 92, 178, 54, 142], 5.9, 7.2, max_lines=3)
 
-    y = 184
+    y = roadmap_bottom - 36
     rect(c, MARGIN, y - 64, CONTENT_W, 64, TEAL_SOFT, LINE)
     label(c, "Retest plan", MARGIN + 14, y - 22, TEAL_DARK)
     retest = retest_summary(md)
     text(c, retest, MARGIN + 14, y - 40, CONTENT_W - 28, "Helvetica-Bold", 7.4, 9.2, INK, max_lines=3)
 
-    y = 98
+    y = 130
     role = clean(section_after_heading(md, "## Role Separation and Independence Boundary"))
     limits = clean(section_after_heading(md, "## Limitations").split("---")[0])
     text(c, "Role separation. " + role, MARGIN, y, CONTENT_W, "Helvetica", 7.3, 9.3, MUTED, max_lines=3)
@@ -783,6 +804,7 @@ def render_pdf(target_pdf: Path) -> None:
     f2 = finding_block(md, "### F-2 Approval bypassed by a pre-approved note", "## Evidence Register")
     finding_page(c, 6, meta, source_hash, "F-1 Payment redirected by a vendor email", f1)
     finding_page(c, 7, meta, source_hash, "F-2 Approval bypassed by a pre-approved note", f2)
+    evidence_register_page(c, md, meta, source_hash)
     remediation_page(c, md, meta, source_hash)
     c.save()
 
@@ -851,6 +873,7 @@ def main() -> None:
     try:
         TEMP_PDF.replace(OUTPUT_PDF)
         TEMP_PNG.replace(OUTPUT_PNG)
+        shutil.copyfile(OUTPUT_PDF, VERSIONED_OUTPUT_PDF)
     except PermissionError as exc:
         print(
             "Rendered temporary files, but could not replace the final PDF/PNG. "
@@ -861,6 +884,7 @@ def main() -> None:
         print(f"temporary PNG: {TEMP_PNG.relative_to(ROOT)}", file=sys.stderr)
         raise SystemExit(1) from exc
     print(f"wrote {OUTPUT_PDF.relative_to(ROOT)}")
+    print(f"wrote {VERSIONED_OUTPUT_PDF.relative_to(ROOT)}")
     print(f"wrote {OUTPUT_PNG.relative_to(ROOT)}")
 
 

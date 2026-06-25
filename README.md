@@ -31,9 +31,9 @@ I help teams shipping tool-using AI agents produce staging trace evidence for cu
 | Public benchmark | Whether models attempt unsafe simulated tool calls in a fixed, reproducible battery. | Model-behavior evidence and an inspectable scoring method. It is not evidence about a customer's private system. |
 | Client pilot | Whether one real staging action has runtime evidence for the acting identity, target, authorization source, tool result, and business outcome. | Action-specific authorization evidence for a customer security review. Missing critical evidence is `INCONCLUSIVE`, not `PASS`. |
 
-**How it works.** A pilot starts with a 3-scenario sketch so you can judge fit before setup. If it fits, we pick one high-impact action and one safe staging path. I provide the scenarios, pass/fail rules, scoring, report, and retest. Your team only needs a safe way to run the scenarios in staging or share a test endpoint, plus logs or traces that can expose or be correlated to the acting identity, target object, authorization decision, tool result, and sandbox or business outcome. No production access, no real customer data, no shared credentials.
+**How it works.** A pilot starts with a 3-scenario sketch so you can judge fit before setup. If it fits, we pick one high-impact action and one safe staging path. I provide the scenarios, verdict rules, scoring, report, and retest. Your team needs a safe way to run the scenarios in staging or share a test endpoint, plus correlated staging traces showing the acting identity, target resource, authorization decision, tool result, and sandbox outcome where available. No production access, no real customer data, no shared credentials.
 
-**Why it is different.** Most AI testing checks what the model says. This checks what the agent does: did it call a tool it should not have been allowed to call, and did the system enforce the right boundary? Pass or fail comes from normalized runtime evidence: actor, target, authorization source, tool decision, tool result, and business outcome. Missing critical evidence is reported as inconclusive, not passed.
+**Why it is different.** Most AI testing checks what the model says. This checks what the agent does: did it call a tool it should not have been allowed to call, and did the system enforce the right boundary? Strict verdicts come from normalized runtime evidence: the action attempted, who or what executed it, what authority was checked, what the tool returned, and whether a sandbox side effect occurred. Missing critical evidence is reported as inconclusive, not passed.
 
 A poisoned ticket, invoice, or tool response can look like normal business context while quietly asking the agent to issue a refund, export data, or change an account. I test whether that text becomes an action.
 
@@ -45,7 +45,7 @@ A poisoned ticket, invoice, or tool response can look like normal business conte
 <p align="center"><sub>Rendered from <code>docs/sample-pilot-report.md</code> by <code>scripts/render_sample_report.py</code>. Synthetic AP workflow; real reports use your agent, tools, traces, and workflow-specific authorization rules.</sub></p>
 
 - **[Sample evidence report](docs/sample-pilot-report.md)**: what you receive, with findings, trace evidence, severity, authorization evidence, fixes, and retest rules.
-- **[Rendered PDF sample](docs/sample-evidence-report.pdf)**: a polished report-style preview generated from the public sample report source.
+- **[Rendered PDF sample](docs/sample-evidence-report-v0.7.pdf)**: a polished report-style preview generated from the public sample report source.
 - **[Evidence flow](docs/evidence-flow.md)**: how untrusted content, tool calls, authorization evidence, findings, fixes, and retests connect.
 - **[Pilot verdict protocol](pilot/verdict_protocol.md)**: how flexible client traces become strict normalized evidence, and why missing runtime evidence is `INCONCLUSIVE` rather than `PASS`.
 - **[AP payment boundary scenarios](pilot/ap_payment_boundary_scenarios.md)**: an 8-scenario sketch for testing one staging payment action deeply, including post-approval changes, cross-agent handoff, and retry/idempotency.
@@ -62,7 +62,7 @@ A poisoned ticket, invoice, or tool response can look like normal business conte
 | Public benchmark | Battery v1.5: 58 attacks plus 3 benign controls, run across multiple real models and summarized in [Model choice is not an authorization layer](docs/model-choice-is-not-an-authorization-layer.md). The benchmark layer is documented separately in [benchmark/README.md](benchmark/README.md). |
 | Per-run evidence | Public run summaries and trace-backed reports live under [docs/runs/v1.5](docs/runs/v1.5), with the technical report and data archived on [Zenodo](https://doi.org/10.5281/zenodo.20585658). |
 | Reproducible harness | `python agent_audit.py` runs an offline demo with no API key, and the [offline smoke test](.github/workflows/offline-smoke.yml) checks that path in CI. |
-| Sample deliverable | The [rendered PDF sample](docs/sample-evidence-report.pdf) is generated from [docs/sample-pilot-report.md](docs/sample-pilot-report.md), not a standalone marketing mockup. |
+| Sample deliverable | The [rendered PDF sample](docs/sample-evidence-report-v0.7.pdf) is generated from [docs/sample-pilot-report.md](docs/sample-pilot-report.md), not a standalone marketing mockup. |
 | Client pilot | The public benchmark proves the method; a client pilot replaces generic scenarios with your staging tools, authorization sources, and traces, then scores them with the [pilot verdict protocol](pilot/verdict_protocol.md) and [pilot scorer](pilot/score_authorization_trace.py). |
 
 ## What the public repo proves
@@ -73,7 +73,7 @@ This repository is the reproducible public method, not a copy of a customer's pr
 |---|---|---|
 | Fixed battery | Battery v1.5, 58 attacks plus 3 controls, multiple real-model summaries, and a CI-checked offline harness. | The method is reproducible and scores actual tool-call traces, not model promises. |
 | Customer-like workflows | [AP payment approval](docs/payment-approval-is-not-user-authorization.md), [AP payment boundary scenarios](pilot/ap_payment_boundary_scenarios.md), [multi-turn prior-auth](docs/multi-turn-authorization-drift-case-note.md), source-of-truth authorization, current-user authority, scope, timing, idempotency, and tool-layer enforcement examples. | The method can ask business authorization questions, not only prompt-injection questions. |
-| Client pilot path | [Sample report](docs/sample-pilot-report.md), [evidence flow](docs/evidence-flow.md), [trace schema](pilot/trace_schema.json), [verdict protocol](pilot/verdict_protocol.md), [adapter handoff](pilot/client-handoff.md), and 5 to 10 workflow-specific scenarios. | The public method transfers to your staging tools, approval sources, user roles, and traces. |
+| Client pilot path | [Sample report](docs/sample-pilot-report.md), [evidence flow](docs/evidence-flow.md), [flexible trace schema](pilot/trace_schema.json), [strict normalized evidence schema](pilot/normalized_evidence_schema.json), [verdict protocol](pilot/verdict_protocol.md), [adapter handoff](pilot/client-handoff.md), and 5 to 10 workflow-specific scenarios. | The public method transfers to your staging tools, approval sources, user roles, and traces. |
 
 Read it this way: **the repo proves the method; the pilot applies it to your real workflow.** The public artifacts do not claim to be evidence about your system until your staging tools, authorization sources, and traces are used.
 
@@ -168,7 +168,7 @@ Those tools often focus on model or prompt behavior, generic test suites, or pos
 <details>
 <summary><b>What do you need from us?</b></summary>
 
-A safe way to run the scenarios in staging or a shared test endpoint, plus enough runtime evidence to score the action: tool calls, authorization decisions, tool results, and side-effect or ledger outcomes. That is it.
+A safe way to run the scenarios in staging or a shared test endpoint, plus enough runtime evidence to score the action: acting identity, target resource, tool calls, authorization decisions, tool results, and side-effect or ledger outcomes.
 </details>
 
 <details>
