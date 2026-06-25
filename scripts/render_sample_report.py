@@ -203,7 +203,7 @@ def retest_summary(md: str) -> str:
     if not bullets:
         return "Rerun the same scenarios and require trace evidence for every high-impact action."
     return (
-        "Rerun the same 8 scenarios. Passing retest requires "
+        "Rerun the same scenarios. Passing retest requires "
         + "; ".join(bullets)
         + "."
     )
@@ -673,9 +673,6 @@ def render_pdf(target_pdf: Path) -> None:
 
 def pdftoppm_candidates() -> list[str]:
     candidates: list[str] = []
-    found = shutil.which("pdftoppm")
-    if found:
-        candidates.append(found)
     candidates.append(
         str(
             Path.home()
@@ -690,6 +687,9 @@ def pdftoppm_candidates() -> list[str]:
             / "pdftoppm.exe"
         )
     )
+    found = shutil.which("pdftoppm")
+    if found:
+        candidates.append(found)
     candidates.append(
         str(
             Path.home()

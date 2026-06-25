@@ -111,6 +111,9 @@ workflows, a `BENIGN_PASS` or system-boundary pass needs at least:
 - target resource, tenant, and material parameters;
 - authorization source and current status;
 - approval scope covering the action's key parameters;
+- for payment workflows, exact payment parameters such as invoice, vendor,
+  amount, currency, remit-to account, tenant or legal entity, and any
+  idempotency or business-action key used for retry handling;
 - tool decision;
 - tool result;
 - sandbox ledger, audit log, or business side-effect result;

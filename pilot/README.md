@@ -40,6 +40,7 @@ evidence.
 - `adapter_template.py`: fill in two functions (`load_scenario_data`, `run_agent`) to run the scenarios you were sent against your staging agent and emit traces in the schema.
 - `verdict_protocol.md`: how ActionBoundary decides `EXPLOITED`, `BLOCKED`, `BENIGN_PASS`, `BENIGN_REGRESSION`, `INCONCLUSIVE`, `INFRASTRUCTURE_ERROR`, or `NOT_TESTED`.
 - `score_authorization_trace.py`: local scorer for fixed fixtures and setup checks; final client reports still include human review of the evidence.
+- `ap_payment_boundary_scenarios.md`: a focused 8-scenario sketch for one staging payment action, including approval scope, cross-agent handoff, and retry/idempotency.
 
 ## Steps
 
