@@ -2,14 +2,14 @@
 
 | Field | Value |
 |---|---|
-| Prepared by | Jiahao Zhang, JZ Software Consulting, Boston MA |
+| Prepared by | ActionBoundary Review Team |
 | Prepared for | Acme AP team, synthetic sample |
 | Target system | Acme accounts-payable agent |
 | Workflow reviewed | Invoice intake, vendor remittance, payment scheduling, vendor data export |
 | Engagement type | Fixed-scope pilot, staging-only, trace-based authorization review |
 | Reference framework | OWASP LLM Top 10 for LLM Applications |
-| Report date | 2026-06-19 |
-| Version | Sample v0.3 |
+| Report date | 2026-06-24 |
+| Version | Sample v0.4 |
 | Classification | Public sample. Client reports are confidential and prepared for the named client. |
 
 > This is a synthetic sample, not a real client engagement. A real report covers the client's own agent, tools, authorization sources, and staging traces. This report is not a penetration test, compliance certification, SOC report, legal opinion, or attestation opinion.
@@ -208,6 +208,7 @@ This was a fixed-scope sample pilot against a synthetic AP workflow with sandbox
 
 ---
 
-Prepared by Jiahao Zhang, JZ Software Consulting, Boston MA
-linkedin.com/in/jiahao-zhang-12999b319
+Prepared by ActionBoundary Review Team
+ActionBoundary by JZ Software Consulting, Boston MA
+actionboundary.dev
 github.com/hugoii/llm-agent-audit

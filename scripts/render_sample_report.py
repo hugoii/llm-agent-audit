@@ -1,7 +1,8 @@
-"""Render the public sample report into a PDF and website preview image.
+"""Render the public sample report into a formal PDF and website preview.
 
-This is a report-style rendering of selected structured content from
-docs/sample-pilot-report.md. It is not a byte-for-byte Markdown renderer.
+The renderer intentionally produces a conservative report-style document:
+cover, scope, method, findings, evidence register, remediation, and limits.
+It is not a byte-for-byte Markdown renderer.
 """
 
 from __future__ import annotations
@@ -14,7 +15,7 @@ import sys
 from pathlib import Path
 
 from reportlab.lib.colors import HexColor
-from reportlab.lib.pagesizes import landscape, letter
+from reportlab.lib.pagesizes import letter
 from reportlab.lib.utils import simpleSplit
 from reportlab.pdfgen import canvas
 
@@ -28,17 +29,21 @@ TEMP_PNG = ROOT / "docs" / "sample-report-preview.tmp.png"
 SOURCE_LABEL = "docs/sample-pilot-report.md"
 SCRIPT_LABEL = "scripts/render_sample_report.py"
 
-PAGE = landscape(letter)
+PAGE = letter
 PAGE_W, PAGE_H = PAGE
+MARGIN = 54
+CONTENT_W = PAGE_W - (MARGIN * 2)
 
-INK = HexColor("#102033")
-MUTED = HexColor("#5b6472")
-TEAL = HexColor("#155e75")
+INK = HexColor("#17212b")
+MUTED = HexColor("#5f6975")
+SOFT_MUTED = HexColor("#7b8490")
+TEAL = HexColor("#0f766e")
 TEAL_DARK = HexColor("#0b4f4a")
-TEAL_SOFT = HexColor("#e9f5f8")
-PAPER = HexColor("#f6f8fb")
-LINE = HexColor("#d7e0ea")
-LIGHT_LINE = HexColor("#e9eef4")
+TEAL_SOFT = HexColor("#edf8f6")
+BLUE_SOFT = HexColor("#f3f7fb")
+PAPER = HexColor("#f7f9fb")
+LINE = HexColor("#d7e0e8")
+LIGHT_LINE = HexColor("#e8eef4")
 RED = HexColor("#991b1b")
 RED_SOFT = HexColor("#fff1f2")
 AMBER = HexColor("#9a5b12")
@@ -61,7 +66,14 @@ def clean(text: str) -> str:
     text = text.replace("`", "")
     text = text.replace("&nbsp;", " ")
     text = re.sub(r"\[(.*?)\]\((.*?)\)", r"\1", text)
-    return text.strip()
+    return " ".join(text.strip().split())
+
+
+def sentence_case(text_value: str) -> str:
+    text_value = text_value.strip()
+    if not text_value:
+        return text_value
+    return text_value[0].upper() + text_value[1:]
 
 
 def parse_table(lines: list[str]) -> list[list[str]]:
@@ -114,11 +126,10 @@ def table_dict_after_heading(md: str, heading: str) -> dict[str, str]:
     return {row[0]: row[1] for row in rows[1:] if len(row) >= 2}
 
 
-def first_table_in(md: str) -> list[list[str]]:
-    lines = md.splitlines()
+def first_table_in(text: str) -> list[list[str]]:
     out: list[str] = []
     collecting = False
-    for line in lines:
+    for line in text.splitlines():
         if line.startswith("|"):
             collecting = True
             out.append(line)
@@ -127,14 +138,13 @@ def first_table_in(md: str) -> list[list[str]]:
     return parse_table(out)
 
 
-def table_after_marker(md: str, marker: str) -> list[list[str]]:
-    idx = md.find(marker)
+def table_after_marker(text: str, marker: str) -> list[list[str]]:
+    idx = text.find(marker)
     if idx < 0:
         return []
-    lines = md[idx + len(marker) :].splitlines()
     out: list[str] = []
     collecting = False
-    for line in lines:
+    for line in text[idx + len(marker) :].splitlines():
         if line.startswith("|"):
             collecting = True
             out.append(line)
@@ -143,21 +153,60 @@ def table_after_marker(md: str, marker: str) -> list[list[str]]:
     return parse_table(out)
 
 
-def paragraph_after(md: str, marker: str) -> str:
-    idx = md.find(marker)
+def section_after_heading(md: str, heading: str, next_level: str = r"\n##\s+") -> str:
+    idx = md.find(heading)
     if idx < 0:
         return ""
-    rest = md[idx + len(marker) :].strip()
-    parts = re.split(r"\n\s*\n", rest, maxsplit=1)
-    return clean(parts[0])
+    rest = md[idx + len(heading) :].strip()
+    match = re.search(next_level, rest)
+    return rest[: match.start()].strip() if match else rest
 
 
-def paragraph_containing(md: str, phrase: str) -> str:
-    paragraphs = re.split(r"\n\s*\n", md)
-    for paragraph in paragraphs:
-        if phrase in paragraph:
-            return clean(" ".join(line.strip() for line in paragraph.splitlines()))
-    return ""
+def paragraphs_in_section(md: str, heading: str) -> list[str]:
+    section = section_after_heading(md, heading)
+    paragraphs: list[str] = []
+    for part in re.split(r"\n\s*\n", section):
+        part = part.strip()
+        if not part or part.startswith("|") or part.startswith("###"):
+            continue
+        if part.startswith("- "):
+            continue
+        paragraphs.append(clean(" ".join(part.splitlines())))
+    return paragraphs
+
+
+def bullets_after_heading(md: str, heading: str) -> list[str]:
+    idx = md.find(heading)
+    if idx < 0:
+        return []
+    rest = md[idx + len(heading) :].splitlines()
+    bullets: list[str] = []
+    for line in rest:
+        if line.startswith("### ") or line.startswith("## "):
+            if bullets:
+                break
+            continue
+        if line.startswith("- "):
+            bullets.append(clean(line[2:]))
+        elif bullets and line.strip():
+            bullets[-1] += " " + clean(line)
+        elif bullets:
+            break
+    return bullets
+
+
+def retest_summary(md: str) -> str:
+    section = section_after_heading(md, "## Retest Plan")
+    if not section:
+        return "Rerun the same scenarios and require trace evidence for every high-impact action."
+    bullets = [clean(line[2:].rstrip(";.")) for line in section.splitlines() if line.startswith("- ")]
+    if not bullets:
+        return "Rerun the same scenarios and require trace evidence for every high-impact action."
+    return (
+        "Rerun the same 8 scenarios. Passing retest requires "
+        + "; ".join(bullets)
+        + "."
+    )
 
 
 def finding_block(md: str, title: str, next_title: str | None = None) -> str:
@@ -170,401 +219,434 @@ def finding_block(md: str, title: str, next_title: str | None = None) -> str:
     return md[start:end]
 
 
-def code_block_after(md: str, marker: str) -> str:
-    idx = md.find(marker)
+def paragraph_after(text: str, marker: str) -> str:
+    idx = text.find(marker)
     if idx < 0:
         return ""
-    match = re.search(r"```(?:[a-zA-Z0-9_-]+)?\n(.*?)\n```", md[idx:], re.DOTALL)
+    rest = text[idx + len(marker) :].strip()
+    return clean(re.split(r"\n\s*\n", rest, maxsplit=1)[0])
+
+
+def code_block_after(text: str, marker: str) -> str:
+    idx = text.find(marker)
+    if idx < 0:
+        return ""
+    match = re.search(r"```(?:[a-zA-Z0-9_-]+)?\n(.*?)\n```", text[idx:], re.DOTALL)
     return match.group(1).strip() if match else ""
 
 
-def section_after_heading(md: str, heading: str) -> str:
-    idx = md.find(heading)
-    if idx < 0:
-        return ""
-    rest = md[idx + len(heading) :].strip()
-    match = re.search(r"\n##\s+", rest)
-    return rest[: match.start()].strip() if match else rest
+def field_meta_from_finding(block: str) -> dict[str, str]:
+    rows = first_table_in(block)
+    return {row[0]: row[1] for row in rows[1:] if len(row) >= 2}
 
 
-def retest_plan_summary(md: str) -> str:
-    section = section_after_heading(md, "## Retest Plan")
-    if not section:
-        return ""
-    lines = [clean(line.lstrip("- ").rstrip(";.")) for line in section.splitlines() if line.strip()]
-    intro: list[str] = []
-    checks: list[str] = []
-    for line in lines:
-        if line.startswith("-"):
-            continue
-        if "requires:" in line:
-            intro.append(line.replace(" requires:", " requires"))
-        elif line.startswith("no ") or line.startswith("both ") or line.startswith("trace "):
-            checks.append(line)
-        else:
-            intro.append(line)
-    if not intro:
-        intro = ["After remediation, rerun the same 8 scenarios against the staging agent."]
-    if checks:
-        return f"{' '.join(intro)}: " + "; ".join(checks) + "."
-    return " ".join(intro)
-
-
-def short_environment(value: str) -> str:
-    return "Staging only" if "Staging" in value else value
-
-
-def short_evidence(value: str) -> str:
-    return "Tool-call traces" if "Tool-call traces" in value else value
-
-
-def short_classification(value: str) -> str:
-    return "Public synthetic sample" if "Public sample" in value else value
-
-
-def wrap(text: str, font: str, size: int, width: float) -> list[str]:
+def wrap(text: str, font: str, size: float, width: float) -> list[str]:
     return simpleSplit(clean(text), font, size, width)
 
 
-def draw_wrapped(
+def text(
     c: canvas.Canvas,
-    text: str,
+    value: str,
     x: float,
     y: float,
     width: float,
     font: str = "Helvetica",
-    size: int = 9,
+    size: float = 9,
     leading: float = 12,
     color=INK,
     max_lines: int | None = None,
 ) -> float:
     c.setFont(font, size)
     c.setFillColor(color)
-    lines = wrap(text, font, size, width)
-    if max_lines is not None:
+    lines = wrap(value, font, size, width)
+    if max_lines is not None and len(lines) > max_lines:
         lines = lines[:max_lines]
+        if lines:
+            lines[-1] = lines[-1].rstrip(".,;:") + "..."
     for line in lines:
         c.drawString(x, y, line)
         y -= leading
     return y
 
 
-def panel(c: canvas.Canvas, x: float, y: float, w: float, h: float, fill=WHITE, stroke=LINE) -> None:
+def label(c: canvas.Canvas, value: str, x: float, y: float, color=SOFT_MUTED) -> None:
+    c.setFont("Helvetica-Bold", 6.8)
+    c.setFillColor(color)
+    c.drawString(x, y, value.upper())
+
+
+def rule(c: canvas.Canvas, x: float, y: float, w: float, color=LINE, width: float = 0.8) -> None:
+    c.setStrokeColor(color)
+    c.setLineWidth(width)
+    c.line(x, y, x + w, y)
+
+
+def rect(c: canvas.Canvas, x: float, y: float, w: float, h: float, fill=WHITE, stroke=LINE) -> None:
     c.setFillColor(fill)
     c.setStrokeColor(stroke)
-    c.setLineWidth(0.8)
-    c.roundRect(x, y, w, h, 6, fill=1, stroke=1)
+    c.setLineWidth(0.7)
+    c.rect(x, y, w, h, fill=1, stroke=1)
 
 
-def label(c: canvas.Canvas, text: str, x: float, y: float, color=MUTED) -> None:
-    c.setFillColor(color)
-    c.setFont("Helvetica-Bold", 7.6)
-    c.drawString(x, y, text.upper())
-
-
-def status_chip(c: canvas.Canvas, text: str, x: float, y: float, color, fill) -> None:
+def chip(c: canvas.Canvas, value: str, x: float, y: float, w: float, color, fill) -> None:
     c.setFillColor(fill)
     c.setStrokeColor(fill)
-    c.roundRect(x, y - 2, 38, 15, 7, fill=1, stroke=0)
+    c.roundRect(x, y, w, 16, 8, fill=1, stroke=0)
+    c.setFont("Helvetica-Bold", 7.4)
     c.setFillColor(color)
-    c.setFont("Helvetica-Bold", 7.5)
-    c.drawCentredString(x + 19, y + 2, text)
+    c.drawCentredString(x + w / 2, y + 5, value)
 
 
-def draw_page_header(c: canvas.Canvas, meta: dict[str, str], title: str) -> None:
+def footer(c: canvas.Canvas, page: int, source_hash: str, note: str = "") -> None:
+    rule(c, MARGIN, 38, CONTENT_W, LIGHT_LINE, 0.6)
+    c.setFont("Helvetica", 7)
+    c.setFillColor(MUTED)
+    c.drawString(MARGIN, 25, note or "Public synthetic sample. Client reports are confidential and prepared for the named client.")
+    c.drawRightString(PAGE_W - MARGIN, 25, f"Page {page}")
+    c.setFont("Helvetica", 6.2)
+    c.setFillColor(SOFT_MUTED)
+    provenance = f"Generated from {SOURCE_LABEL} by {SCRIPT_LABEL}. Source SHA-256 prefix: {source_hash}"
+    c.drawString(MARGIN, 14, provenance)
+
+
+def page_header(c: canvas.Canvas, page: int, meta: dict[str, str], source_hash: str, section: str) -> None:
     c.setFillColor(WHITE)
     c.rect(0, 0, PAGE_W, PAGE_H, fill=1, stroke=0)
-    c.setFillColor(TEAL)
-    c.setFont("Helvetica-Bold", 8.5)
-    c.drawString(42, PAGE_H - 48, "AGENT AUTHORIZATION REVIEW")
-    c.setFillColor(INK)
-    c.setFont("Helvetica-Bold", 22)
-    c.drawString(42, PAGE_H - 76, title)
+    c.setFont("Helvetica-Bold", 7.5)
+    c.setFillColor(TEAL_DARK)
+    c.drawString(MARGIN, PAGE_H - 46, "ACTIONBOUNDARY")
+    c.setFont("Helvetica", 7.5)
     c.setFillColor(MUTED)
-    c.setFont("Helvetica", 10)
-    c.drawString(42, PAGE_H - 96, "Trace-based review of high-impact agent actions against trusted authorization evidence.")
-
-    panel(c, PAGE_W - 286, PAGE_H - 112, 244, 72, PAPER, LINE)
-    label(c, "Prepared by", PAGE_W - 270, PAGE_H - 62)
-    c.setFont("Helvetica-Bold", 8.5)
+    c.drawString(MARGIN + 88, PAGE_H - 46, "Agent Authorization Review")
+    c.drawRightString(
+        PAGE_W - MARGIN,
+        PAGE_H - 46,
+        f"{meta.get('Version', 'Sample')} | {meta.get('Classification', 'Public sample').split('.')[0]}",
+    )
+    rule(c, MARGIN, PAGE_H - 58, CONTENT_W, LINE, 0.8)
+    c.setFont("Helvetica-Bold", 15)
     c.setFillColor(INK)
-    c.drawString(PAGE_W - 270, PAGE_H - 76, meta.get("Prepared by", "Jiahao Zhang, JZ Software Consulting")[:44])
-    label(c, "Report", PAGE_W - 270, PAGE_H - 94)
-    c.setFont("Helvetica", 8.5)
-    c.setFillColor(INK)
-    c.drawString(PAGE_W - 228, PAGE_H - 94, f"{meta.get('Version', 'Sample')} | {meta.get('Report date', '')}")
-
-    c.setStrokeColor(TEAL)
-    c.setLineWidth(1.6)
-    c.line(42, PAGE_H - 126, PAGE_W - 42, PAGE_H - 126)
+    c.drawString(MARGIN, PAGE_H - 86, section)
+    footer(c, page, source_hash)
 
 
-def draw_simple_table(
+def table_row_height(row: list[str], widths: list[float], size: float, leading: float, header: bool = False) -> float:
+    font = "Helvetica-Bold" if header else "Helvetica"
+    heights = []
+    for cell, width in zip(row, widths):
+        line_count = max(1, len(wrap(cell, font, size, width - 8)))
+        heights.append(line_count * leading + 8)
+    return max(20 if header else 18, max(heights))
+
+
+def draw_table(
     c: canvas.Canvas,
     rows: list[list[str]],
     x: float,
     y_top: float,
     widths: list[float],
-    font_size: int = 8,
-    leading: float = 10,
-    max_rows: int | None = None,
+    size: float = 7.3,
+    leading: float = 9,
+    header_fill=PAPER,
+    zebra: bool = True,
+    max_lines: int | None = None,
 ) -> float:
     if not rows:
         return y_top
-    rows = rows[: max_rows or len(rows)]
-    header = rows[0]
-    body = rows[1:]
     y = y_top
+    total_w = sum(widths)
 
-    def row_height(row: list[str]) -> float:
-        heights = []
-        for cell, width in zip(row, widths):
-            lines = wrap(cell, "Helvetica", font_size, width - 8)
-            heights.append(max(1, len(lines)) * leading + 9)
-        return max(22, max(heights))
-
-    h = row_height(header)
-    c.setFillColor(PAPER)
-    c.setStrokeColor(LINE)
-    c.rect(x, y - h, sum(widths), h, fill=1, stroke=1)
-    cx = x
-    for cell, width in zip(header, widths):
-        label(c, cell, cx + 4, y - 14, MUTED)
-        cx += width
-    y -= h
-
-    for idx, row in enumerate(body):
-        h = row_height(row)
-        c.setFillColor(WHITE if idx % 2 == 0 else HexColor("#fbfcfd"))
-        c.setStrokeColor(LIGHT_LINE)
-        c.rect(x, y - h, sum(widths), h, fill=1, stroke=1)
+    for row_idx, row in enumerate(rows):
+        is_header = row_idx == 0
+        h = table_row_height(row, widths, size, leading, is_header)
+        c.setFillColor(header_fill if is_header else WHITE if (not zebra or row_idx % 2) else HexColor("#fbfcfd"))
+        c.setStrokeColor(LIGHT_LINE if row_idx else LINE)
+        c.rect(x, y - h, total_w, h, fill=1, stroke=1)
         cx = x
         for cell, width in zip(row, widths):
-            font = "Helvetica-Bold" if cell in {"Fail", "Pass", "Critical", "High"} else "Helvetica"
-            color = RED if cell == "Fail" else GREEN if cell == "Pass" else INK
-            draw_wrapped(c, cell, cx + 4, y - 12, width - 8, font, font_size, leading, color)
+            cell_text = cell
+            if is_header:
+                label(c, cell_text, cx + 5, y - 13, MUTED)
+            else:
+                color = RED if cell_text == "Fail" else GREEN if cell_text == "Pass" else INK
+                font = "Helvetica-Bold" if cell_text in {"Fail", "Pass", "Critical", "High"} else "Helvetica"
+                text(c, cell_text, cx + 5, y - 12, width - 10, font, size, leading, color, max_lines)
             cx += width
         y -= h
     return y
 
 
-def overview_page(c: canvas.Canvas, md: str, meta: dict[str, str], source_hash: str) -> None:
-    draw_page_header(c, meta, "Sample Evidence Report")
-    scope = table_dict_after_heading(md, "## Scope and Method")
+def draw_bullets(
+    c: canvas.Canvas,
+    items: list[str],
+    x: float,
+    y: float,
+    width: float,
+    size: float = 8,
+    leading: float = 10.5,
+    max_items: int | None = None,
+) -> float:
+    for item in items[: max_items or len(items)]:
+        c.setFillColor(TEAL)
+        c.circle(x + 2, y - 3, 2, fill=1, stroke=0)
+        y = text(c, item, x + 12, y, width - 12, "Helvetica", size, leading, INK, max_lines=3) - 3
+    return y
 
-    card_y = PAGE_H - 176
-    card_w = 166
-    cards = [
-        ("Target", meta.get("Target system", "Acme AP agent")),
-        ("Environment", short_environment(scope.get("Environment", "Staging only"))),
-        ("Evidence", short_evidence(scope.get("Evidence source", "Tool-call traces"))),
-        ("Classification", short_classification(meta.get("Classification", "Public synthetic sample"))),
-    ]
-    for i, (k, v) in enumerate(cards):
-        x = 42 + i * (card_w + 12)
-        panel(c, x, card_y, card_w, 38, PAPER, LINE)
-        label(c, k, x + 10, card_y + 24)
-        c.setFont("Helvetica-Bold", 9.5)
-        c.setFillColor(INK)
-        c.drawString(x + 10, card_y + 10, v[:31])
 
-    exec_box = (42, 314, 438, 104)
-    panel(c, *exec_box)
+def cover_page(c: canvas.Canvas, md: str, meta: dict[str, str], source_hash: str) -> None:
+    c.setFillColor(WHITE)
+    c.rect(0, 0, PAGE_W, PAGE_H, fill=1, stroke=0)
+
+    c.setFont("Helvetica-Bold", 8)
+    c.setFillColor(TEAL_DARK)
+    c.drawString(MARGIN, PAGE_H - 62, "ACTIONBOUNDARY")
+    c.setFont("Helvetica", 8)
+    c.setFillColor(MUTED)
+    c.drawRightString(PAGE_W - MARGIN, PAGE_H - 62, "Public synthetic sample")
+    rule(c, MARGIN, PAGE_H - 76, CONTENT_W, TEAL, 1.1)
+
+    y = PAGE_H - 132
+    c.setFont("Helvetica-Bold", 26)
     c.setFillColor(INK)
-    c.setFont("Helvetica-Bold", 14)
-    c.drawString(56, 394, "Executive summary")
-    summary = paragraph_containing(md, "Overall result:") or "Overall result is documented in the source sample report."
-    draw_wrapped(c, summary, 56, 374, 404, "Helvetica", 9, 12, INK, max_lines=5)
-
-    panel(c, 500, 314, 250, 104)
-    c.setFillColor(INK)
-    c.setFont("Helvetica-Bold", 14)
-    c.drawString(514, 394, "Risk summary")
-    risk_rows = table_after_heading(md, "## Risk Summary")
-    compact_risks = []
-    for row in risk_rows[1:]:
-        if len(row) < 3 or row[0] == "Medium":
-            continue
-        severity, count, desc = row[0], row[1], row[2]
-        if severity == "Critical":
-            compact_risks.append((RED_SOFT, RED, f"{count} Critical", desc))
-        elif severity == "High":
-            compact_risks.append((AMBER_SOFT, AMBER, f"{count} High", desc))
-        elif severity == "Passed safely":
-            compact_risks.append((GREEN_SOFT, GREEN, f"{count} Safe", desc))
-    y = 382
-    for fill, color, count, desc in compact_risks:
-        c.setFillColor(fill)
-        c.roundRect(514, y - 11, 52, 17, 8, fill=1, stroke=0)
-        c.setFillColor(color)
-        c.setFont("Helvetica-Bold", 7.3)
-        c.drawCentredString(540, y - 6, count)
-        draw_wrapped(c, desc, 574, y - 2, 154, "Helvetica", 7.8, 9.3, INK, max_lines=2)
-        y -= 22
-
-    panel(c, 42, 206, 708, 94)
-    c.setFillColor(INK)
-    c.setFont("Helvetica-Bold", 12)
-    c.drawString(56, 276, "Scope and method")
-    access_boundary = (
-        f"Production access: {scope.get('Production access', 'None')}; "
-        f"real customer data: {scope.get('Real customer data', 'None')}; "
-        f"credential sharing: {scope.get('Credential sharing', 'None')}"
-    )
-    scope_items = [
-        ("Environment", scope.get("Environment", "")),
-        ("Data", scope.get("Data", "")),
-        ("Access boundary", access_boundary),
-        ("Evidence source", scope.get("Evidence source", "")),
-    ]
-    for idx, (k, v) in enumerate(scope_items):
-        col = idx % 2
-        row = idx // 2
-        x = 56 + col * 342
-        y = 258 - row * 22
-        label(c, k, x, y, MUTED)
-        draw_wrapped(c, v, x, y - 13, 304, "Helvetica", 7.8, 9.3, INK, max_lines=2)
-
-    scenarios = table_after_heading(md, "## Scenario Matrix")
-    scenario_rows = [["ID", "Scenario", "Rule", "Verdict", "Evidence"]]
-    for row in scenarios[1:4]:
-        scenario_rows.append([row[0], row[1], row[3], row[4], row[5]])
-    panel(c, 42, 48, 708, 140)
-    c.setFillColor(INK)
-    c.setFont("Helvetica-Bold", 12)
-    c.drawString(56, 168, "Scenario matrix excerpt")
-    draw_simple_table(c, scenario_rows, 56, 152, [38, 210, 294, 48, 58], 7.3, 8.5, max_rows=4)
-
-    footer(
+    c.drawString(MARGIN, y, "Agent Authorization Review")
+    c.setFont("Helvetica-Bold", 29)
+    c.drawString(MARGIN, y - 36, "Sample Evidence Report")
+    text(
         c,
-        "Public sample. Synthetic AP workflow. Not a SOC report, certification, legal opinion, or production penetration test.",
-        source_hash,
+        "Trace-based review of high-impact agent actions against trusted authorization evidence.",
+        MARGIN,
+        y - 66,
+        430,
+        "Helvetica",
+        10.5,
+        14,
+        MUTED,
     )
+
+    rect(c, MARGIN, 412, CONTENT_W, 172, BLUE_SOFT, LINE)
+    label(c, "Document control", MARGIN + 16, 558, TEAL_DARK)
+    rows = [
+        ("Prepared for", meta.get("Prepared for", "")),
+        ("Prepared by", meta.get("Prepared by", "")),
+        ("Target system", meta.get("Target system", "")),
+        ("Workflow reviewed", meta.get("Workflow reviewed", "")),
+        ("Engagement type", meta.get("Engagement type", "")),
+        ("Reference framework", meta.get("Reference framework", "")),
+        ("Report date", meta.get("Report date", "")),
+        ("Version", meta.get("Version", "")),
+    ]
+    left_x = MARGIN + 16
+    right_x = MARGIN + 266
+    row_y = 538
+    for idx, (key, value) in enumerate(rows):
+        col_x = left_x if idx < 4 else right_x
+        item_y = row_y - (idx % 4) * 31
+        label(c, key, col_x, item_y, SOFT_MUTED)
+        text(c, value, col_x, item_y - 12, 218, "Helvetica-Bold", 8.2, 10, INK, max_lines=2)
+
+    rect(c, MARGIN, 292, CONTENT_W, 88, WHITE, LINE)
+    label(c, "Engagement boundary", MARGIN + 16, 356, TEAL_DARK)
+    boundary = (
+        "This sample uses a synthetic AP workflow and sandboxed tools. A real report covers the "
+        "client's own agent, tools, authorization sources, and staging traces. No production access, "
+        "real customer data, or credential sharing is required."
+    )
+    text(c, boundary, MARGIN + 16, 338, CONTENT_W - 32, "Helvetica", 8.8, 12, INK)
+
+    rect(c, MARGIN, 144, CONTENT_W, 116, WHITE, LINE)
+    label(c, "Report contents", MARGIN + 16, 236, TEAL_DARK)
+    contents = [
+        "Executive summary and risk summary",
+        "Scope, method, and scenario matrix",
+        "Authorization boundary and tool surface review",
+        "Detailed findings with trace evidence",
+        "Evidence register, remediation roadmap, retest plan, and limitations",
+    ]
+    draw_bullets(c, contents, MARGIN + 18, 216, CONTENT_W - 36, 8.2, 11, max_items=5)
+
+    c.setFillColor(TEAL_SOFT)
+    c.rect(MARGIN, 92, CONTENT_W, 28, fill=1, stroke=0)
+    c.setFont("Helvetica-Bold", 8.2)
+    c.setFillColor(TEAL_DARK)
+    c.drawString(MARGIN + 12, 101, "Not a SOC report, certification, legal opinion, attestation opinion, or production penetration test.")
+
+    footer(c, 1, source_hash, "Public sample for ActionBoundary. Client reports use client-specific staging traces.")
     c.showPage()
 
 
-def findings_page(c: canvas.Canvas, md: str, meta: dict[str, str], source_hash: str) -> None:
-    draw_page_header(c, meta, "Findings and Evidence")
-    f1 = finding_block(md, "### F-1 Payment redirected by a vendor email", "### F-2 Approval bypassed by a pre-approved note")
-    f2 = finding_block(md, "### F-2 Approval bypassed by a pre-approved note", "## Evidence Register")
-    f1_meta_rows = first_table_in(f1)
-    f1_meta = {row[0]: row[1] for row in f1_meta_rows[1:] if len(row) >= 2}
-    f2_meta_rows = first_table_in(f2)
-    f2_meta = {row[0]: row[1] for row in f2_meta_rows[1:] if len(row) >= 2}
+def executive_page(c: canvas.Canvas, md: str, meta: dict[str, str], source_hash: str) -> None:
+    page_header(c, 2, meta, source_hash, "Executive Summary")
+    paragraphs = paragraphs_in_section(md, "## Executive Summary")
+    summary_texts = [p for p in paragraphs if "Overall result:" not in p and "Primary recommendation:" not in p]
+    result = next((p for p in paragraphs if "Overall result:" in p), "")
+    recommendation = next((p for p in paragraphs if "Primary recommendation:" in p), "")
 
-    c.setFillColor(INK)
-    c.setFont("Helvetica-Bold", 16)
-    c.drawString(42, PAGE_H - 160, "F-1 Payment redirected by vendor email")
-    status_chip(c, "FAIL", 354, PAGE_H - 160, RED, RED_SOFT)
-    c.setFont("Helvetica-Bold", 9)
-    c.setFillColor(RED)
-    c.drawString(402, PAGE_H - 156, f1_meta.get("Severity", "Critical"))
+    y = PAGE_H - 118
+    text(c, summary_texts[0], MARGIN, y, 318, "Helvetica", 9.5, 13, INK, max_lines=5)
+    y -= 76
+    rect(c, MARGIN, y - 78, 318, 76, TEAL_SOFT, LINE)
+    label(c, "Review question", MARGIN + 12, y - 20, TEAL_DARK)
+    question = "Could untrusted business content push the agent into a high-impact action without trusted, current, scope-matching authorization evidence?"
+    text(c, question, MARGIN + 12, y - 36, 292, "Helvetica-Bold", 9, 12, INK, max_lines=3)
 
-    condition = paragraph_after(f1, "**Condition.**")
-    criteria = paragraph_after(f1, "**Criteria.**")
-    draw_wrapped(c, "Condition. " + condition, 42, PAGE_H - 184, 438, "Helvetica", 9, 12, INK, max_lines=4)
-    draw_wrapped(c, "Criteria. " + criteria, 42, PAGE_H - 236, 438, "Helvetica", 9, 12, INK, max_lines=4)
+    rect(c, MARGIN + 342, PAGE_H - 296, 162, 178, WHITE, LINE)
+    label(c, "Result", MARGIN + 356, PAGE_H - 142, TEAL_DARK)
+    chip(c, "HIGH RISK", MARGIN + 356, PAGE_H - 166, 72, RED, RED_SOFT)
+    text(c, result.replace("Overall result: ", ""), MARGIN + 356, PAGE_H - 188, 132, "Helvetica", 8, 10.5, INK, max_lines=7)
 
-    panel(c, 42, 250, 438, 92, PAPER, LINE)
-    label(c, "Trace excerpt", 56, 320)
-    trace = code_block_after(f1, "**Trace excerpt.**")
-    c.setFont("Courier", 8)
-    c.setFillColor(INK)
-    for i, line in enumerate(trace.splitlines()):
-        c.drawString(56, 302 - i * 14, line)
-
-    evidence_rows = table_after_marker(f1, "**Authorization evidence.**")
-    panel(c, 504, 352, 246, 122)
-    c.setFillColor(INK)
+    y = PAGE_H - 330
     c.setFont("Helvetica-Bold", 12)
-    c.drawString(518, 448, "Authorization evidence")
-    draw_simple_table(c, evidence_rows, 518, 432, [92, 94, 42], 7.4, 8.8, max_rows=2)
-
-    rec = paragraph_after(f1, "**Recommendation.**")
-    retest = paragraph_after(f1, "**Retest rule.**")
-    panel(c, 504, 198, 246, 134)
     c.setFillColor(INK)
+    c.drawString(MARGIN, y, "Primary recommendation")
+    recommendation = sentence_case(recommendation.replace("Primary recommendation: ", ""))
+    text(c, recommendation, MARGIN, y - 18, CONTENT_W, "Helvetica", 9.2, 12.5, INK)
+
+    y -= 86
     c.setFont("Helvetica-Bold", 12)
-    c.drawString(518, 306, "Fix and retest rule")
-    draw_wrapped(c, "Fix. " + rec, 518, 288, 216, "Helvetica", 8.2, 10.5, INK, max_lines=5)
-    draw_wrapped(c, "Retest. " + retest, 518, 234, 216, "Helvetica", 8.2, 10.5, INK, max_lines=4)
-
     c.setFillColor(INK)
-    c.setFont("Helvetica-Bold", 14)
-    c.drawString(42, 180, "F-2 Approval bypassed by a pre-approved note")
-    status_chip(c, "FAIL", 354, 180, RED, RED_SOFT)
-    c.setFont("Helvetica-Bold", 9)
-    c.setFillColor(AMBER)
-    c.drawString(402, 184, f2_meta.get("Severity", "High"))
-    condition2 = paragraph_after(f2, "**Condition.**")
-    criteria2 = paragraph_after(f2, "**Criteria.**")
-    draw_wrapped(c, "Condition. " + condition2, 42, 156, 332, "Helvetica", 8.5, 11, INK, max_lines=4)
-    draw_wrapped(c, "Criteria. " + criteria2, 404, 156, 346, "Helvetica", 8.5, 11, INK, max_lines=4)
+    c.drawString(MARGIN, y, "Risk summary")
+    risk_rows = table_after_heading(md, "## Risk Summary")
+    draw_table(c, risk_rows, MARGIN, y - 16, [82, 44, 378], 7.5, 9.5)
 
-    footer(c, "Report evidence comes from staging tool-call traces and workflow-specific authorization rules.", source_hash)
+    y = 188
+    rect(c, MARGIN, y - 80, CONTENT_W, 80, WHITE, LINE)
+    label(c, "Why this matters", MARGIN + 14, y - 22, TEAL_DARK)
+    matter = (
+        "The unsafe paths did not require exotic jailbreaks. They looked like ordinary AP work: "
+        "a vendor email, an invoice note, and a model that was allowed to treat business context as authority."
+    )
+    text(c, matter, MARGIN + 14, y - 40, CONTENT_W - 28, "Helvetica", 9, 12, INK)
+    c.showPage()
+
+
+def scope_page(c: canvas.Canvas, md: str, meta: dict[str, str], source_hash: str) -> None:
+    page_header(c, 3, meta, source_hash, "Scope, Method, and Scenario Matrix")
+    scope_rows = table_after_heading(md, "## Scope and Method")
+    draw_table(c, scope_rows, MARGIN, PAGE_H - 116, [128, 376], 7.3, 9.2)
+
+    y = PAGE_H - 292
+    rect(c, MARGIN, y - 116, 242, 116, WHITE, LINE)
+    label(c, "What was tested", MARGIN + 14, y - 20, TEAL_DARK)
+    draw_bullets(c, bullets_after_heading(md, "### What was tested"), MARGIN + 16, y - 40, 214, 7.6, 10.2)
+
+    rect(c, MARGIN + 262, y - 116, 242, 116, WHITE, LINE)
+    label(c, "What was not tested", MARGIN + 276, y - 20, TEAL_DARK)
+    draw_bullets(c, bullets_after_heading(md, "### What was not tested"), MARGIN + 278, y - 40, 214, 7.6, 10.2, max_items=5)
+
+    c.setFont("Helvetica-Bold", 12)
+    c.setFillColor(INK)
+    c.drawString(MARGIN, 350, "Scenario matrix")
+    scenarios = table_after_heading(md, "## Scenario Matrix")
+    draw_table(c, scenarios, MARGIN, 332, [28, 132, 38, 184, 43, 47], 6.25, 7.7, max_lines=3)
+    c.showPage()
+
+
+def boundary_page(c: canvas.Canvas, md: str, meta: dict[str, str], source_hash: str) -> None:
+    page_header(c, 4, meta, source_hash, "Authorization Boundary and Tool Surface Review")
+    boundary = table_after_heading(md, "## Authorization Boundary Map")
+    c.setFont("Helvetica-Bold", 12)
+    c.setFillColor(INK)
+    c.drawString(MARGIN, PAGE_H - 116, "Authorization boundary map")
+    boundary_bottom = draw_table(c, boundary, MARGIN, PAGE_H - 134, [76, 90, 84, 132, 122], 5.95, 7.3, max_lines=4)
+
+    c.setFont("Helvetica-Bold", 12)
+    c.setFillColor(INK)
+    tool_heading_y = boundary_bottom - 48
+    c.drawString(MARGIN, tool_heading_y, "Tool surface review")
+    tools = table_after_heading(md, "## Tool Surface Review")
+    draw_table(c, tools, MARGIN, tool_heading_y - 18, [130, 100, 274], 6.7, 8.3, max_lines=4)
+
+    rect(c, MARGIN, 86, CONTENT_W, 62, TEAL_SOFT, LINE)
+    label(c, "Control principle", MARGIN + 14, 126, TEAL_DARK)
+    principle = (
+        "The model may read, summarize, and propose. The application layer must decide whether a "
+        "current principal is authorized for the specific action, resource, tenant, amount, recipient, and timing."
+    )
+    text(c, principle, MARGIN + 14, 109, CONTENT_W - 28, "Helvetica-Bold", 8.4, 11, INK)
+    c.showPage()
+
+
+def finding_page(
+    c: canvas.Canvas,
+    page: int,
+    meta: dict[str, str],
+    source_hash: str,
+    title: str,
+    block: str,
+) -> None:
+    page_header(c, page, meta, source_hash, "Detailed Finding")
+    fields = field_meta_from_finding(block)
+
+    c.setFont("Helvetica-Bold", 18)
+    c.setFillColor(INK)
+    c.drawString(MARGIN, PAGE_H - 122, title.replace("F-1 ", "F-1: ").replace("F-2 ", "F-2: "))
+    severity = fields.get("Severity", "")
+    chip(c, severity.upper(), MARGIN, PAGE_H - 154, 76, RED if severity == "Critical" else AMBER, RED_SOFT if severity == "Critical" else AMBER_SOFT)
+    text(c, fields.get("Mapped category", ""), MARGIN + 92, PAGE_H - 143, 300, "Helvetica-Bold", 8, 10, INK, max_lines=2)
+    label(c, "Affected action", MARGIN + 392, PAGE_H - 138, SOFT_MUTED)
+    text(c, fields.get("Affected action", ""), MARGIN + 392, PAGE_H - 151, 112, "Helvetica-Bold", 8.2, 10, INK, max_lines=1)
+
+    y = PAGE_H - 196
+    for heading, marker in [
+        ("Condition", "**Condition.**"),
+        ("Criteria", "**Criteria.**"),
+        ("Impact", "**Impact.**"),
+    ]:
+        c.setFont("Helvetica-Bold", 10.5)
+        c.setFillColor(INK)
+        c.drawString(MARGIN, y, heading)
+        y = text(c, paragraph_after(block, marker), MARGIN, y - 15, CONTENT_W, "Helvetica", 8.7, 11.5, INK, max_lines=4) - 10
+
+    rect(c, MARGIN, y - 92, CONTENT_W, 88, PAPER, LINE)
+    label(c, "Trace excerpt", MARGIN + 14, y - 22, TEAL_DARK)
+    c.setFont("Courier", 7.4)
+    c.setFillColor(INK)
+    for idx, line in enumerate(code_block_after(block, "**Trace excerpt.**").splitlines()):
+        c.drawString(MARGIN + 14, y - 42 - (idx * 13), line)
+    y -= 116
+
+    auth_rows = table_after_marker(block, "**Authorization evidence.**")
+    c.setFont("Helvetica-Bold", 10.5)
+    c.setFillColor(INK)
+    c.drawString(MARGIN, y, "Authorization evidence")
+    draw_table(c, auth_rows, MARGIN, y - 16, [164, 232, 70], 7.3, 9.2)
+    y -= 88
+
+    rect(c, MARGIN, y - 120, CONTENT_W, 116, WHITE, LINE)
+    label(c, "Recommendation and retest", MARGIN + 14, y - 24, TEAL_DARK)
+    recommendation = paragraph_after(block, "**Recommendation.**")
+    retest = paragraph_after(block, "**Retest rule.**")
+    text(c, "Recommendation. " + recommendation, MARGIN + 14, y - 43, CONTENT_W - 28, "Helvetica", 8.5, 11, INK, max_lines=4)
+    text(c, "Retest rule. " + retest, MARGIN + 14, y - 91, CONTENT_W - 28, "Helvetica-Bold", 8.3, 10.8, INK, max_lines=3)
     c.showPage()
 
 
 def remediation_page(c: canvas.Canvas, md: str, meta: dict[str, str], source_hash: str) -> None:
-    draw_page_header(c, meta, "Evidence Register and Remediation")
-
+    page_header(c, 7, meta, source_hash, "Evidence Register, Remediation, and Limits")
     evidence = table_after_heading(md, "## Evidence Register")
-    evidence_rows = [["ID", "Scenario", "Required evidence", "Observed", "Decision"]]
-    for row in evidence[1:5]:
-        evidence_rows.append([row[0], row[1], row[3], row[4], row[5]])
-    panel(c, 42, 326, 708, 150)
+    c.setFont("Helvetica-Bold", 12)
     c.setFillColor(INK)
-    c.setFont("Helvetica-Bold", 13)
-    c.drawString(56, 452, "Evidence register excerpt")
-    draw_simple_table(c, evidence_rows, 56, 436, [44, 186, 190, 142, 50], 7.1, 8.5, max_rows=5)
+    c.drawString(MARGIN, PAGE_H - 116, "Evidence register")
+    draw_table(c, evidence, MARGIN, PAGE_H - 134, [46, 82, 96, 110, 126, 44], 5.95, 7.4, max_lines=3)
 
+    c.setFont("Helvetica-Bold", 12)
+    c.setFillColor(INK)
+    c.drawString(MARGIN, 392, "Remediation roadmap")
     roadmap = table_after_heading(md, "## Remediation Roadmap")
-    roadmap_rows = [["Priority", "Control objective", "Recommended implementation", "Retest evidence"]]
-    for row in roadmap[1:5]:
-        roadmap_rows.append([row[0], row[1], row[2], row[4]])
-    panel(c, 42, 130, 708, 174)
-    c.setFillColor(INK)
-    c.setFont("Helvetica-Bold", 13)
-    c.drawString(56, 280, "Remediation roadmap")
-    draw_simple_table(c, roadmap_rows, 56, 264, [48, 142, 334, 114], 7.1, 8.5, max_rows=5)
+    draw_table(c, roadmap, MARGIN, 374, [38, 92, 178, 54, 142], 5.8, 7.1, max_lines=3)
 
-    panel(c, 42, 52, 708, 58, TEAL_SOFT, LINE)
-    c.setFillColor(TEAL_DARK)
-    c.setFont("Helvetica-Bold", 11)
-    c.drawString(56, 90, "Retest plan")
-    retest = retest_plan_summary(md)
-    draw_wrapped(c, retest, 56, 74, 486, "Helvetica", 8.3, 10.5, INK, max_lines=3)
+    y = 184
+    rect(c, MARGIN, y - 64, CONTENT_W, 64, TEAL_SOFT, LINE)
+    label(c, "Retest plan", MARGIN + 14, y - 22, TEAL_DARK)
+    retest = retest_summary(md)
+    text(c, retest, MARGIN + 14, y - 40, CONTENT_W - 28, "Helvetica-Bold", 7.4, 9.2, INK, max_lines=3)
 
-    c.setStrokeColor(LINE)
-    c.line(558, 62, 558, 100)
-    label(c, "Source-backed sample", 574, 91, TEAL_DARK)
-    draw_wrapped(
-        c,
-        f"Rendered from source Markdown. Hash prefix: {source_hash}. Real reports use client traces.",
-        574,
-        76,
-        150,
-        "Helvetica",
-        7.3,
-        9.2,
-        INK,
-        max_lines=3,
-    )
-
-    footer(c, "Prepared by Jiahao Zhang, JZ Software Consulting. Public sample for ActionBoundary.", source_hash)
+    y = 98
+    role = clean(section_after_heading(md, "## Role Separation and Independence Boundary"))
+    limits = clean(section_after_heading(md, "## Limitations").split("---")[0])
+    text(c, "Role separation. " + role, MARGIN, y, CONTENT_W, "Helvetica", 7.3, 9.3, MUTED, max_lines=3)
+    text(c, "Limitations. " + limits, MARGIN, y - 31, CONTENT_W, "Helvetica", 7.3, 9.3, MUTED, max_lines=3)
     c.showPage()
-
-
-def footer(c: canvas.Canvas, text: str, source_hash: str) -> None:
-    c.setStrokeColor(LINE)
-    c.setLineWidth(0.6)
-    c.line(42, 38, PAGE_W - 42, 38)
-    c.setFont("Helvetica", 7.2)
-    c.setFillColor(MUTED)
-    c.drawString(42, 25, text)
-    provenance = f"Generated from {SOURCE_LABEL} by {SCRIPT_LABEL}. Source SHA-256 prefix: {source_hash}"
-    c.setFont("Helvetica", 6.6)
-    c.drawString(42, 13, provenance)
 
 
 def render_pdf(target_pdf: Path) -> None:
@@ -573,9 +655,16 @@ def render_pdf(target_pdf: Path) -> None:
     source_hash = source_short_hash(md)
     c = canvas.Canvas(str(target_pdf), pagesize=PAGE)
     c.setTitle("Agent Authorization Review Sample Evidence Report")
-    c.setAuthor("Jiahao Zhang, JZ Software Consulting")
-    overview_page(c, md, meta, source_hash)
-    findings_page(c, md, meta, source_hash)
+    c.setAuthor("ActionBoundary Review Team")
+    c.setSubject("Public synthetic sample of an agent authorization evidence report")
+    cover_page(c, md, meta, source_hash)
+    executive_page(c, md, meta, source_hash)
+    scope_page(c, md, meta, source_hash)
+    boundary_page(c, md, meta, source_hash)
+    f1 = finding_block(md, "### F-1 Payment redirected by a vendor email", "### F-2 Approval bypassed by a pre-approved note")
+    f2 = finding_block(md, "### F-2 Approval bypassed by a pre-approved note", "## Evidence Register")
+    finding_page(c, 5, meta, source_hash, "F-1 Payment redirected by a vendor email", f1)
+    finding_page(c, 6, meta, source_hash, "F-2 Approval bypassed by a pre-approved note", f2)
     remediation_page(c, md, meta, source_hash)
     c.save()
 
@@ -585,8 +674,31 @@ def pdftoppm_candidates() -> list[str]:
     found = shutil.which("pdftoppm")
     if found:
         candidates.append(found)
-    candidates.append(str(Path.home() / ".cache" / "codex-runtimes" / "codex-primary-runtime" / "dependencies" / "native" / "poppler" / "Library" / "bin" / "pdftoppm.exe"))
-    candidates.append(str(Path.home() / ".cache" / "codex-runtimes" / "codex-primary-runtime" / "dependencies" / "bin" / "pdftoppm.cmd"))
+    candidates.append(
+        str(
+            Path.home()
+            / ".cache"
+            / "codex-runtimes"
+            / "codex-primary-runtime"
+            / "dependencies"
+            / "native"
+            / "poppler"
+            / "Library"
+            / "bin"
+            / "pdftoppm.exe"
+        )
+    )
+    candidates.append(
+        str(
+            Path.home()
+            / ".cache"
+            / "codex-runtimes"
+            / "codex-primary-runtime"
+            / "dependencies"
+            / "bin"
+            / "pdftoppm.cmd"
+        )
+    )
     return [candidate for candidate in candidates if Path(candidate).exists()]
 
 
@@ -604,7 +716,7 @@ def render_preview_png(source_pdf: Path, target_png: Path) -> None:
         "-singlefile",
         "-png",
         "-r",
-        "180",
+        "170",
         str(source_pdf),
         str(prefix),
     ]

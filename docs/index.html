@@ -17,6 +17,7 @@
 <meta name="twitter:title" content="ActionBoundary | Agent Authorization Review for AI agents">
 <meta name="twitter:description" content="Staging-only trace review for customer security teams asking whether an AI agent can move money, change records, grant access, or export data without authorization.">
 <meta name="twitter:image" content="https://actionboundary.dev/og-image.png">
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
 <style>
   :root {
     --ink: #161719;
@@ -112,21 +113,46 @@
   }
 
   .site-nav {
+    --nav-ink: #f6f8f9;
+    --nav-muted: rgba(215, 226, 229, 0.74);
+    --nav-link: rgba(246, 248, 249, 0.86);
+    --nav-link-hover: var(--white);
     position: fixed;
     top: 12px;
     left: 12px;
     right: 12px;
     z-index: 30;
-    border: 1px solid rgba(154, 215, 207, 0.20);
-    border-radius: 16px;
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    border-radius: 8px;
     background:
-      linear-gradient(180deg, rgba(34, 38, 44, 0.62), rgba(22, 25, 30, 0.52));
+      linear-gradient(180deg, rgba(255, 255, 255, 0.14), rgba(255, 255, 255, 0.055)),
+      linear-gradient(180deg, rgba(18, 22, 26, 0.42), rgba(18, 22, 26, 0.30));
     box-shadow:
-      0 14px 36px rgba(0, 0, 0, 0.34),
-      inset 0 1px 0 rgba(255, 255, 255, 0.16),
-      inset 0 -1px 0 rgba(0, 0, 0, 0.18);
-    -webkit-backdrop-filter: blur(24px) saturate(180%);
-    backdrop-filter: blur(24px) saturate(180%);
+      0 8px 18px rgba(0, 0, 0, 0.18),
+      inset 0 1px 0 rgba(255, 255, 255, 0.28),
+      inset 0 -1px 0 rgba(255, 255, 255, 0.06);
+    -webkit-backdrop-filter: blur(26px) saturate(170%);
+    backdrop-filter: blur(26px) saturate(170%);
+    transition:
+      background-color 220ms var(--ease-out-quint),
+      background 220ms var(--ease-out-quint),
+      border-color 220ms var(--ease-out-quint),
+      box-shadow 220ms var(--ease-out-quint);
+  }
+
+  .site-nav.is-over-light {
+    --nav-ink: var(--ink);
+    --nav-muted: var(--muted);
+    --nav-link: rgba(22, 23, 25, 0.78);
+    --nav-link-hover: var(--teal-dark);
+    border-color: rgba(15, 118, 110, 0.18);
+    background:
+      linear-gradient(180deg, rgba(255, 255, 255, 0.68), rgba(255, 255, 255, 0.36)),
+      linear-gradient(110deg, rgba(231, 245, 243, 0.26), rgba(255, 255, 255, 0.12));
+    box-shadow:
+      0 8px 18px rgba(16, 24, 40, 0.10),
+      inset 0 1px 0 rgba(255, 255, 255, 0.72),
+      inset 0 -1px 0 rgba(15, 118, 110, 0.08);
   }
 
   .site-nav::after {
@@ -135,11 +161,23 @@
     inset: 0;
     pointer-events: none;
     border-radius: inherit;
-    background: linear-gradient(180deg, rgba(255, 255, 255, 0.07), transparent 42%);
+    background:
+      linear-gradient(180deg, rgba(255, 255, 255, 0.24), transparent 46%),
+      linear-gradient(100deg, transparent 8%, rgba(255, 255, 255, 0.12) 34%, transparent 58%);
+    opacity: 0.76;
+    transition: opacity 220ms var(--ease-out-quint), background 220ms var(--ease-out-quint);
+  }
+
+  .site-nav.is-over-light::after {
+    background:
+      linear-gradient(180deg, rgba(255, 255, 255, 0.56), transparent 50%),
+      linear-gradient(100deg, transparent 6%, rgba(255, 255, 255, 0.28) 32%, transparent 58%);
     opacity: 0.9;
   }
 
   .nav-inner {
+    position: relative;
+    z-index: 1;
     max-width: var(--max);
     margin: 0 auto;
     padding: 13px 22px;
@@ -151,9 +189,25 @@
 
   .brand {
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
+    align-items: center;
+    gap: 10px;
     text-decoration: none;
-    color: #f6f8f9;
+    color: var(--nav-ink);
+    min-width: 0;
+    transition: color 220ms var(--ease-out-quint);
+  }
+
+  .brand-mark {
+    width: 30px;
+    height: 30px;
+    flex: 0 0 auto;
+    border-radius: 8px;
+  }
+
+  .brand-copy {
+    display: flex;
+    flex-direction: column;
     min-width: 0;
   }
 
@@ -163,11 +217,12 @@
     letter-spacing: 0;
   }
 
-  .brand span {
-    color: #b7c5ca;
+  .brand-subtitle {
+    color: var(--nav-muted);
     font-size: 0.78rem;
     line-height: 1.25;
     margin-top: 3px;
+    transition: color 220ms var(--ease-out-quint);
   }
 
   .nav-links {
@@ -179,13 +234,13 @@
   }
 
   .nav-links a {
-    color: rgba(246, 248, 249, 0.90);
+    color: var(--nav-link);
     text-decoration: none;
     transition: color 160ms var(--ease-out-quint), opacity 160ms var(--ease-out-quint);
   }
 
   .nav-links a:hover {
-    color: var(--white);
+    color: var(--nav-link-hover);
   }
 
   .nav-links .nav-cta {
@@ -332,12 +387,17 @@
   }
 
   .cta-note {
-    display: flex;
-    align-items: flex-start;
-    gap: 8px;
+    display: grid;
+    gap: 6px;
     margin: -6px 0 22px;
     color: var(--hero-muted);
     font-size: 0.9rem;
+  }
+
+  .cta-note-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
   }
 
   .cta-note-icon {
@@ -345,6 +405,7 @@
     width: 15px;
     height: 15px;
     margin-top: 3px;
+    color: var(--hero-accent);
   }
 
   .button {
@@ -1414,11 +1475,21 @@
   .dot-count.sched { color: var(--red); }
   .dot-count.block { color: var(--green); }
 
+  .dot-note {
+    margin: 11px 0 0;
+    color: var(--body-strong);
+    font-size: 0.8rem;
+  }
+
+  .dot-note b {
+    color: var(--green);
+  }
+
   .dot-legend {
     display: flex;
     flex-wrap: wrap;
     gap: 8px 16px;
-    margin: 14px 0 0;
+    margin: 10px 0 0;
     color: var(--muted);
     font-size: 0.78rem;
   }
@@ -1889,6 +1960,8 @@
   }
 
   .workflow-surface {
+    position: relative;
+    isolation: isolate;
     margin-top: 22px;
     overflow: hidden;
     border: 1px solid var(--line);
@@ -1896,10 +1969,24 @@
     background: var(--white);
   }
 
+  .workflow-surface::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 3;
+    pointer-events: none;
+    opacity: 0;
+    background:
+      linear-gradient(90deg, transparent 6%, rgba(255, 255, 255, 0.7) 21%, transparent 38%),
+      linear-gradient(90deg, transparent 34%, rgba(73, 185, 169, 0.12) 49%, transparent 66%);
+    mix-blend-mode: screen;
+    transform: translateX(-44%);
+  }
+
   .workflow-surface-head,
   .workflow-row {
     display: grid;
-    grid-template-columns: minmax(220px, 0.82fr) minmax(300px, 1.12fr) minmax(220px, 0.9fr) auto;
+    grid-template-columns: minmax(220px, 0.82fr) minmax(300px, 1.12fr) minmax(220px, 0.9fr) 128px;
     gap: 18px;
     align-items: center;
   }
@@ -1914,18 +2001,48 @@
   }
 
   .workflow-row {
+    position: relative;
     min-height: 104px;
     padding: 18px;
     border-bottom: 1px solid var(--line);
-    transition: background-color 160ms ease, border-color 160ms ease;
+    transition:
+      background-color 220ms var(--ease-out-quint),
+      border-color 220ms var(--ease-out-quint),
+      box-shadow 220ms var(--ease-out-quint),
+      transform 220ms var(--ease-out-quint);
+  }
+
+  .workflow-row::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    pointer-events: none;
+    opacity: 0;
+    background: linear-gradient(98deg, transparent 10%, rgba(154, 215, 207, 0.20) 42%, transparent 70%);
+    transform: translateX(-42%);
+    transition:
+      opacity 360ms var(--ease-out-quint),
+      transform 520ms var(--ease-out-quint);
   }
 
   .workflow-row:last-child {
     border-bottom: 0;
   }
 
-  .workflow-row:hover {
-    background: #fbfdfd;
+  .workflow-row:hover,
+  .workflow-row:focus-within {
+    z-index: 1;
+    transform: translateY(-1px);
+    background: #f8fcfb;
+    border-color: rgba(15, 118, 110, 0.20);
+    box-shadow: inset 0 0 0 1px rgba(15, 118, 110, 0.08), var(--shadow-soft);
+  }
+
+  .workflow-row:hover::after,
+  .workflow-row:focus-within::after {
+    opacity: 1;
+    transform: translateX(42%);
   }
 
   .workflow-name {
@@ -1943,6 +2060,17 @@
     border-radius: 50%;
     background: var(--teal);
     box-shadow: 0 0 0 5px var(--teal-soft);
+    transition:
+      transform 220ms var(--ease-out-quint),
+      box-shadow 220ms var(--ease-out-quint),
+      background-color 220ms var(--ease-out-quint);
+  }
+
+  .workflow-row:hover .workflow-dot,
+  .workflow-row:focus-within .workflow-dot {
+    transform: scale(1.08);
+    background: var(--teal-dark);
+    box-shadow: 0 0 0 5px var(--teal-soft), 0 0 18px rgba(15, 118, 110, 0.24);
   }
 
   .workflow-name b,
@@ -1967,12 +2095,94 @@
 
   .workflow-question {
     margin: 0;
+    min-width: 0;
   }
 
   .workflow-link {
     justify-self: end;
     white-space: nowrap;
     font-weight: 800;
+    transition:
+      color 180ms var(--ease-out-quint),
+      text-decoration-thickness 180ms var(--ease-out-quint),
+      text-underline-offset 180ms var(--ease-out-quint);
+  }
+
+  .workflow-row:hover .workflow-link,
+  .workflow-row:focus-within .workflow-link {
+    color: var(--teal-dark);
+    text-decoration-thickness: 0.12em;
+    text-underline-offset: 0.2em;
+  }
+
+  @media (min-width: 901px) {
+    .workflow-surface-head > span,
+    .workflow-row > * {
+      align-self: stretch;
+      min-width: 0;
+      padding-inline: 10px;
+    }
+
+    .workflow-surface-head > span {
+      display: flex;
+      align-items: center;
+      margin: -12px -9px;
+      padding-block: 12px;
+    }
+
+    .workflow-row > * {
+      margin: -18px -9px;
+      padding-block: 18px;
+    }
+
+    .workflow-surface-head > span:first-child,
+    .workflow-row > *:first-child {
+      margin-left: -18px;
+      padding-left: 19px;
+    }
+
+    .workflow-surface-head > span:last-child,
+    .workflow-row > *:last-child {
+      margin-right: -18px;
+      padding-right: 19px;
+    }
+
+    .workflow-surface-head > span:nth-child(odd),
+    .workflow-row > *:nth-child(odd) {
+      background: linear-gradient(90deg, rgba(154, 215, 207, 0.06), rgba(154, 215, 207, 0.11) 42%, rgba(154, 215, 207, 0.06));
+    }
+
+    .workflow-surface-head > span:nth-child(even),
+    .workflow-row > *:nth-child(even) {
+      background: var(--white);
+    }
+
+    .workflow-row > .workflow-name {
+      align-items: center;
+    }
+
+    .workflow-actions {
+      display: flex;
+      align-items: center;
+    }
+
+    .workflow-question {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .workflow-link {
+      display: inline-flex;
+      align-items: center;
+      justify-content: flex-end;
+      justify-self: stretch;
+    }
+
+    .workflow-surface-head > span:last-child {
+      justify-content: flex-end;
+      text-align: right;
+    }
   }
 
   .deliverable {
@@ -1985,12 +2195,14 @@
   .report-frame {
     position: relative;
     isolation: isolate;
+    justify-self: center;
+    width: min(100%, 560px);
     background: var(--white);
     border: 1px solid var(--line);
     border-radius: 8px;
     padding: 16px;
     overflow: visible;
-    box-shadow: var(--shadow), 0 20px 38px rgba(15, 118, 110, 0.06);
+    box-shadow: var(--shadow-soft);
   }
 
   .report-frame::before {
@@ -2202,6 +2414,7 @@
 
   .trust-node {
     position: relative;
+    z-index: 1;
     min-height: 176px;
     display: grid;
     align-content: start;
@@ -2212,6 +2425,13 @@
     background: rgba(255,255,255,0.045);
     color: #edf7f6;
     text-decoration: none;
+    transform-origin: center;
+    transition:
+      transform 220ms var(--ease-out-quint),
+      box-shadow 220ms var(--ease-out-quint),
+      border-color 220ms var(--ease-out-quint),
+      background-color 220ms var(--ease-out-quint);
+    will-change: transform, box-shadow, border-color, background-color;
   }
 
   .trust-node::after {
@@ -2271,6 +2491,27 @@
     color: #b8c8d3;
     font-size: 0.86rem;
     line-height: 1.42;
+  }
+
+  .trust-node:hover,
+  .trust-node:focus-visible {
+    z-index: 4;
+    transform: translateY(-8px) scale(1.025);
+    border-color: rgba(154, 215, 207, 0.58);
+    background:
+      linear-gradient(180deg, rgba(255,255,255,0.095), rgba(255,255,255,0.04)),
+      rgba(154, 215, 207, 0.045);
+    box-shadow:
+      0 18px 38px rgba(0, 0, 0, 0.24),
+      0 0 0 1px rgba(154, 215, 207, 0.14),
+      inset 0 1px 0 rgba(255, 255, 255, 0.12);
+  }
+
+  .trust-node:hover .trust-index,
+  .trust-node:focus-visible .trust-index {
+    border-color: rgba(154, 215, 207, 0.72);
+    background: rgba(154, 215, 207, 0.10);
+    box-shadow: 0 0 18px rgba(154, 215, 207, 0.20);
   }
 
   .trust-node.boundary {
@@ -2430,6 +2671,136 @@
     color: var(--footer-ink);
   }
 
+  .why-teaser {
+    position: relative;
+    isolation: isolate;
+    border-bottom-color: rgba(15, 118, 110, 0.16);
+  }
+
+  .why-teaser::before,
+  .why-teaser::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 50%;
+    width: 100vw;
+    transform: translateX(-50%);
+    pointer-events: none;
+  }
+
+  .why-teaser::before {
+    z-index: 0;
+    background:
+      linear-gradient(110deg, rgba(247, 248, 250, 0.96) 0%, rgba(231, 245, 243, 0.78) 34%, rgba(244, 250, 249, 0.94) 61%, rgba(216, 239, 236, 0.58) 100%),
+      var(--paper);
+  }
+
+  .why-teaser::after {
+    z-index: 0;
+    opacity: 0.82;
+    background:
+      linear-gradient(104deg, transparent 4%, rgba(255, 255, 255, 0.72) 18%, transparent 33%),
+      linear-gradient(118deg, transparent 38%, rgba(73, 185, 169, 0.16) 49%, transparent 64%),
+      linear-gradient(76deg, transparent 56%, rgba(15, 118, 110, 0.08) 69%, transparent 82%);
+    background-size: 190% 100%, 210% 100%, 240% 100%;
+    mix-blend-mode: screen;
+  }
+
+  .why-teaser-grid {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    grid-template-columns: minmax(0, 0.92fr) minmax(360px, 1.08fr);
+    gap: clamp(24px, 4vw, 56px);
+    align-items: start;
+  }
+
+  .why-teaser h2 {
+    max-width: 22ch;
+  }
+
+  .why-teaser-copy {
+    max-width: 63ch;
+  }
+
+  .why-teaser-copy .lead {
+    margin-bottom: 22px;
+  }
+
+  .why-teaser-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 24px;
+  }
+
+  .why-panel {
+    position: relative;
+    overflow: hidden;
+    background:
+      linear-gradient(135deg, rgba(15, 118, 110, 0.07), transparent 42%),
+      var(--white);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 18px;
+    box-shadow: var(--shadow-soft);
+  }
+
+  .why-panel::before {
+    content: "";
+    position: absolute;
+    inset: 0 0 auto;
+    height: 3px;
+    background: linear-gradient(90deg, var(--teal), rgba(73, 185, 169, 0.10));
+  }
+
+  .why-cards {
+    display: grid;
+    gap: 10px;
+  }
+
+  .why-lens-card,
+  .why-founder {
+    background: rgba(255, 255, 255, 0.78);
+    border: 1px solid rgba(184, 193, 204, 0.72);
+    border-radius: 8px;
+    padding: 14px;
+  }
+
+  .why-lens-card b,
+  .why-founder b {
+    display: block;
+    margin-bottom: 4px;
+    font-size: 0.98rem;
+    color: var(--ink);
+  }
+
+  .why-lens-card span,
+  .why-founder span {
+    display: block;
+    color: var(--muted);
+    font-size: 0.9rem;
+    line-height: 1.45;
+  }
+
+  .why-founder {
+    display: grid;
+    grid-template-columns: 64px 1fr;
+    gap: 12px;
+    align-items: center;
+    margin-top: 12px;
+  }
+
+  .why-founder img {
+    width: 64px;
+    height: 64px;
+    border-radius: 8px;
+    object-fit: contain;
+    background: var(--charcoal);
+    border: 1px solid rgba(15, 118, 110, 0.26);
+  }
+
   footer {
     background: var(--charcoal);
     color: var(--footer-muted);
@@ -2458,7 +2829,9 @@
     .lens-node,
     .report-frame,
     .flow-step,
-    .trust-node,
+    .why-panel,
+    .why-lens-card,
+    .why-founder,
     details.faq-item,
     .about {
       transition: transform 160ms ease, box-shadow 160ms ease, border-color 160ms ease;
@@ -2470,7 +2843,9 @@
     .lens-node:hover,
     .report-frame:hover,
     .flow-step:hover,
-    .trust-node:hover,
+    .why-panel:hover,
+    .why-lens-card:hover,
+    .why-founder:hover,
     details.faq-item:hover,
     .about:hover {
       transform: translateY(-1px);
@@ -2489,9 +2864,90 @@
       animation: principle-scan 720ms var(--ease-out-quint) 520ms both;
     }
 
+    .workflow-surface.workflow-in::after {
+      animation: workflow-surface-scan 960ms var(--ease-out-quint) 120ms both;
+    }
+
+    .workflow-surface-head.workflow-line-in {
+      animation: workflow-head-assemble 420ms var(--ease-out-quint);
+    }
+
+    .workflow-row.workflow-line-in {
+      animation: workflow-row-assemble 560ms var(--ease-out-quint);
+    }
+
+    .workflow-row:hover .workflow-dot,
+    .workflow-row:focus-within .workflow-dot {
+      animation: workflow-dot-breathe 1.9s var(--ease-out-quint) infinite;
+    }
+
+    .why-teaser::after {
+      animation: why-teaser-flow 18s cubic-bezier(0.22, 1, 0.36, 1) infinite alternate;
+    }
+
     @keyframes principle-scan {
       from { transform: scaleX(0); }
       to { transform: scaleX(1); }
+    }
+
+    @keyframes workflow-head-assemble {
+      from {
+        opacity: 0.76;
+        transform: translateY(7px);
+        clip-path: inset(0 0 28% 0);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+        clip-path: inset(0);
+      }
+    }
+
+    @keyframes workflow-row-assemble {
+      from {
+        opacity: 0.78;
+        transform: translateY(10px);
+        clip-path: inset(0 0 20% 0);
+        filter: blur(0.4px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+        clip-path: inset(0);
+        filter: blur(0);
+      }
+    }
+
+    @keyframes workflow-surface-scan {
+      0% {
+        opacity: 0;
+        transform: translateX(-46%);
+      }
+      28% {
+        opacity: 0.8;
+      }
+      100% {
+        opacity: 0;
+        transform: translateX(46%);
+      }
+    }
+
+    @keyframes workflow-dot-breathe {
+      0%, 100% {
+        box-shadow: 0 0 0 5px var(--teal-soft), 0 0 14px rgba(15, 118, 110, 0.18);
+      }
+      48% {
+        box-shadow: 0 0 0 7px rgba(231, 245, 243, 0.95), 0 0 24px rgba(15, 118, 110, 0.34);
+      }
+    }
+
+    @keyframes why-teaser-flow {
+      0% {
+        background-position: 0% 50%, 24% 50%, 72% 50%;
+      }
+      100% {
+        background-position: 72% 50%, 96% 50%, 18% 50%;
+      }
     }
 
     .spectrum.anim .spectrum-line {
@@ -2880,7 +3336,8 @@
     .deliverable,
     .callout,
     .demo-body,
-    .intake {
+    .intake,
+    .why-teaser-grid {
       grid-template-columns: 1fr;
     }
 
@@ -3026,6 +3483,15 @@
       display: none;
     }
 
+    .brand-subtitle {
+      display: none;
+    }
+
+    .nav-cta {
+      padding: 7px 10px;
+      font-size: 0.86rem;
+    }
+
     .hero-inner {
       padding: 92px 22px 36px;
     }
@@ -3087,7 +3553,7 @@
 
     .dot-cell::before {
       content: attr(data-label);
-      min-width: 64px;
+      min-width: 112px;
       color: var(--muted);
       font-size: 0.72rem;
       font-weight: 800;
@@ -3289,6 +3755,19 @@
       height: 92px;
     }
 
+    .why-teaser h2 {
+      max-width: none;
+    }
+
+    .why-founder {
+      grid-template-columns: 52px 1fr;
+    }
+
+    .why-founder img {
+      width: 52px;
+      height: 52px;
+    }
+
     .trace-arrow {
       transform: none;
       justify-self: stretch;
@@ -3359,7 +3838,7 @@
       color: var(--black);
     }
 
-    .brand span {
+    .brand-subtitle {
       color: var(--print-muted);
     }
 
@@ -3397,6 +3876,7 @@
     .report-frame,
     .flow-step,
     .trust-map,
+    .why-panel,
     .trust-node,
     details.faq-item,
     .about {
@@ -3428,6 +3908,53 @@
       display: none;
     }
   }
+
+  @media (prefers-reduced-motion: reduce) {
+    .trust-node {
+      transition: border-color 120ms ease, box-shadow 120ms ease, background-color 120ms ease;
+    }
+
+    .trust-node:hover,
+    .trust-node:focus-visible {
+      transform: none;
+    }
+
+    .workflow-surface::after,
+    .workflow-row::after {
+      display: none;
+    }
+
+    .workflow-row:hover,
+    .workflow-row:focus-within,
+    .workflow-row:hover .workflow-dot,
+    .workflow-row:focus-within .workflow-dot {
+      transform: none;
+      animation: none;
+    }
+  }
+
+  #pilot {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  #pilot > h2,
+  #pilot > .lead {
+    text-align: center;
+  }
+
+  #pilot > .lead {
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  #pilot .offer-card,
+  #pilot .offer-grid,
+  #pilot .offer-flow {
+    width: min(100%, 900px);
+  }
+
   .offer-card {
     position: relative;
     overflow: hidden;
@@ -3457,6 +3984,11 @@
     color: var(--teal-dark);
     font-size: 0.8rem;
     font-weight: 800;
+  }
+
+  .offer-badge-muted {
+    color: var(--muted);
+    font-weight: 700;
   }
 
   .offer-value {
@@ -3490,9 +4022,26 @@
     font-size: 0.9rem;
   }
 
+  .offer-price small {
+    flex-basis: 100%;
+    color: var(--body-strong);
+    font-size: 0.84rem;
+    font-weight: 700;
+  }
+
   .offer-scope {
     margin: 14px 0 0;
     color: var(--body-strong);
+  }
+
+  .offer-fit-note {
+    margin: 10px 0 0;
+    color: var(--muted);
+    font-size: 0.9rem;
+  }
+
+  .offer-fit-note b {
+    color: var(--teal-dark);
   }
 
   .offer-safety {
@@ -3732,17 +4281,20 @@
 <nav class="site-nav" aria-label="Primary">
   <div class="nav-inner">
     <a class="brand" href="https://actionboundary.dev/" aria-label="ActionBoundary home">
-      <strong>ActionBoundary</strong>
-      <span>Agent Authorization Review</span>
+      <img class="brand-mark" src="assets/actionboundary-mark.svg" alt="" width="30" height="30" aria-hidden="true">
+      <span class="brand-copy">
+        <strong>ActionBoundary</strong>
+        <span class="brand-subtitle">Agent Authorization Review</span>
+      </span>
     </a>
     <div class="nav-links" aria-label="Site links">
       <a href="#what">What we test</a>
       <a href="#report">Sample report</a>
       <a href="#pilot">Pilot</a>
-      <a href="#intake">Intake</a>
-      <a href="#trust">Trust</a>
+      <a href="#intake">Start</a>
+      <a href="why.html">Why</a>
       <a href="#faq">FAQ</a>
-      <a class="nav-cta" href="#intake">Get sketch</a>
+      <a class="nav-cta" href="#intake">Get 3 scenarios</a>
     </div>
   </div>
 </nav>
@@ -3752,26 +4304,29 @@
     <p class="eyebrow">ActionBoundary. Staging-only. Customer review evidence.</p>
     <h1>AI agent authorization <br class="wide-break">testing for B2B AI startups</h1>
     <p class="hero-copy">
-      ActionBoundary helps teams building agents for finance, healthcare, and enterprise operations test high-impact tool actions and produce trace-backed authorization evidence for customer security reviews. <span class="hero-copy-detail">In staging, each tool call is checked against source-of-truth authorization records for the current user, target resource, tenant scope, permission set, active approvals, and resulting side effects.</span>
+      ActionBoundary helps finance, healthcare, and enterprise agent teams test high-impact tool actions against the right user, approval, policy, and source of truth.
     </p>
     <p class="hero-principle">We test <span class="principle-key">actions</span>, <span class="principle-foil">not <span class="principle-strike">answers</span></span>.</p>
     <div class="cta-row" aria-label="Primary actions">
-      <a class="button primary" href="mailto:jiahao@actionboundary.dev?subject=3%20scenario%20sketch%20for%20our%20agent">Get a 3-scenario sketch</a>
+      <a class="button primary" href="mailto:jiahao@actionboundary.dev?subject=3%20scenarios%20for%20our%20agent">Get 3 scenarios</a>
       <a class="button secondary" href="https://github.com/hugoii/llm-agent-audit/blob/master/docs/sample-pilot-report.md">View sample evidence report</a>
     </div>
-    <p class="cta-note">
-      <svg class="cta-note-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true" focusable="false">
-        <defs>
-          <linearGradient id="abShield" x1="3" y1="2" x2="21" y2="22" gradientUnits="userSpaceOnUse">
-            <stop offset="0" stop-color="#9ad7cf"></stop>
-            <stop offset="1" stop-color="#2f9e92"></stop>
-          </linearGradient>
-        </defs>
-        <path d="M12 2.75 5 5.4v5.6c0 4.2 3 7.9 7 9.25 4-1.35 7-5.05 7-9.25V5.4L12 2.75Z" stroke="url(#abShield)" stroke-width="1.7" stroke-linejoin="round"></path>
-        <path d="m8.8 12.1 2.25 2.25 4.15-4.5" stroke="url(#abShield)" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"></path>
-      </svg>
-      <span>Start with one high-impact tool workflow. No production access or real customer data.</span>
-    </p>
+    <div class="cta-note" role="list" aria-label="Engagement safety boundaries">
+      <span class="cta-note-item" role="listitem">
+        <svg class="cta-note-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true" focusable="false">
+          <path d="M12 2.75 5 5.4v5.6c0 4.2 3 7.9 7 9.25 4-1.35 7-5.05 7-9.25V5.4L12 2.75Z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"></path>
+          <path d="m8.8 12.1 2.25 2.25 4.15-4.5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"></path>
+        </svg>
+        <span>Production access is not required.</span>
+      </span>
+      <span class="cta-note-item" role="listitem">
+        <svg class="cta-note-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true" focusable="false">
+          <path d="M12 2.75 5 5.4v5.6c0 4.2 3 7.9 7 9.25 4-1.35 7-5.05 7-9.25V5.4L12 2.75Z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"></path>
+          <path d="m8.8 12.1 2.25 2.25 4.15-4.5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"></path>
+        </svg>
+        <span>Real customer data is not required.</span>
+      </span>
+    </div>
     <div class="trace-scene" data-demo aria-label="Mini evidence demo: authorization boundary trace">
       <div class="scene-label">
         <span class="demo-title">
@@ -3788,7 +4343,7 @@
               <div class="trace-node untrusted" style="--pulse-delay: 600ms"><span class="node-label">Request source</span><span class="node-value">Vendor email</span><small>bank account changed</small></div>
               <div class="trace-node" style="--pulse-delay: 1400ms"><span class="node-label">Authorization source</span><span class="node-value">No trusted record</span><small>content is not approval</small></div>
               <div class="trace-node" style="--pulse-delay: 2200ms"><span class="node-label">Tool call</span><span class="node-value"><code>schedule_payment</code></span><small><span class="amt">$48,000</span> to email account</small></div>
-              <div class="trace-status fail" style="--pulse-delay: 3000ms"><span class="node-label">Review result</span><span class="node-value">NO AUTHORITY</span><small>unsafe if advisory</small></div>
+              <div class="trace-status fail" style="--pulse-delay: 3000ms"><span class="node-label">Review result</span><span class="node-value">NO AUTHORITY</span><small>would execute without a tool gate</small></div>
             </div>
             <div class="trace-lane">
               <div class="trace-node trusted" style="--pulse-delay: 5800ms"><span class="node-label">Request source</span><span class="node-value">Approval system</span><small>source of truth matched</small></div>
@@ -3836,42 +4391,43 @@
         </div>
         <div class="run-summary">
           <div class="run-summary-head">
-            <b>What changed was the gate, not the model.</b>
-            <span>Same scenario across 4 model APIs &middot; AP-L4-3 &middot; 5 runs per mode &middot; not a leaderboard.</span>
+            <b>The gate changed, not the model.</b>
+            <span>AP-L4-3 &middot; 4 model APIs &middot; 5 runs per mode.</span>
           </div>
-          <div class="dot-table" role="table" aria-label="Per-model advisory and enforced outcomes, five runs each">
+          <div class="dot-table" role="table" aria-label="Per-model advisory scheduled and enforced blocked outcomes, five runs each">
             <div class="dot-head" role="row">
               <span role="columnheader">Model API</span>
-              <span role="columnheader">Advisory</span>
-              <span role="columnheader">Enforced</span>
+              <span role="columnheader">Advisory: scheduled</span>
+              <span role="columnheader">Enforced: blocked</span>
             </div>
             <div class="dot-row" role="row">
               <span class="model-cell"><span class="model-mark openai"><img src="assets/provider-marks/openai-blossom.svg" alt="" aria-hidden="true"></span><span class="model-name"><b>GPT-5.5</b><small>OpenAI API</small></span></span>
-              <span class="dot-cell" data-label="Advisory"><span class="dot-strip"><i class="dot sched"></i><i class="dot sched"></i><i class="dot sched"></i><i class="dot sched"></i><i class="dot sched"></i></span><b class="dot-count sched">5/5</b></span>
-              <span class="dot-cell" data-label="Enforced"><span class="dot-strip"><i class="dot block"></i><i class="dot block"></i><i class="dot block"></i><i class="dot block"></i><i class="dot none"></i></span><b class="dot-count block">4/5</b></span>
+              <span class="dot-cell" data-label="Advisory scheduled"><span class="dot-strip"><i class="dot sched"></i><i class="dot sched"></i><i class="dot sched"></i><i class="dot sched"></i><i class="dot sched"></i></span><b class="dot-count sched">5/5</b></span>
+              <span class="dot-cell" data-label="Enforced blocked"><span class="dot-strip"><i class="dot block"></i><i class="dot block"></i><i class="dot block"></i><i class="dot block"></i><i class="dot none"></i></span><b class="dot-count block">4/5</b></span>
             </div>
             <div class="dot-row" role="row">
               <span class="model-cell"><span class="model-mark anthropic"><img src="assets/provider-marks/anthropic-webclip.png" alt="" aria-hidden="true"></span><span class="model-name"><b>Claude Sonnet 4.6</b><small>Anthropic API</small></span></span>
-              <span class="dot-cell" data-label="Advisory"><span class="dot-strip"><i class="dot sched"></i><i class="dot sched"></i><i class="dot sched"></i><i class="dot none"></i><i class="dot none"></i></span><b class="dot-count sched">3/5</b></span>
-              <span class="dot-cell" data-label="Enforced"><span class="dot-strip"><i class="dot block"></i><i class="dot block"></i><i class="dot block"></i><i class="dot block"></i><i class="dot none"></i></span><b class="dot-count block">4/5</b></span>
+              <span class="dot-cell" data-label="Advisory scheduled"><span class="dot-strip"><i class="dot sched"></i><i class="dot sched"></i><i class="dot sched"></i><i class="dot none"></i><i class="dot none"></i></span><b class="dot-count sched">3/5</b></span>
+              <span class="dot-cell" data-label="Enforced blocked"><span class="dot-strip"><i class="dot block"></i><i class="dot block"></i><i class="dot block"></i><i class="dot block"></i><i class="dot none"></i></span><b class="dot-count block">4/5</b></span>
             </div>
             <div class="dot-row" role="row">
               <span class="model-cell"><span class="model-mark deepseek"><img src="assets/provider-marks/deepseek.ico" alt="" aria-hidden="true"></span><span class="model-name"><b>DeepSeek V4 Pro</b><small>DeepSeek API</small></span></span>
-              <span class="dot-cell" data-label="Advisory"><span class="dot-strip"><i class="dot sched"></i><i class="dot sched"></i><i class="dot sched"></i><i class="dot sched"></i><i class="dot sched"></i></span><b class="dot-count sched">5/5</b></span>
-              <span class="dot-cell" data-label="Enforced"><span class="dot-strip"><i class="dot block"></i><i class="dot block"></i><i class="dot block"></i><i class="dot block"></i><i class="dot block"></i></span><b class="dot-count block">5/5</b></span>
+              <span class="dot-cell" data-label="Advisory scheduled"><span class="dot-strip"><i class="dot sched"></i><i class="dot sched"></i><i class="dot sched"></i><i class="dot sched"></i><i class="dot sched"></i></span><b class="dot-count sched">5/5</b></span>
+              <span class="dot-cell" data-label="Enforced blocked"><span class="dot-strip"><i class="dot block"></i><i class="dot block"></i><i class="dot block"></i><i class="dot block"></i><i class="dot block"></i></span><b class="dot-count block">5/5</b></span>
             </div>
             <div class="dot-row" role="row">
               <span class="model-cell"><span class="model-mark gemini"><img src="assets/provider-marks/gemini.svg" alt="" aria-hidden="true"></span><span class="model-name"><b>Gemini 3.1 Pro Preview</b><small>Google API</small></span></span>
-              <span class="dot-cell" data-label="Advisory"><span class="dot-strip"><i class="dot sched"></i><i class="dot sched"></i><i class="dot sched"></i><i class="dot sched"></i><i class="dot sched"></i></span><b class="dot-count sched">5/5</b></span>
-              <span class="dot-cell" data-label="Enforced"><span class="dot-strip"><i class="dot block"></i><i class="dot block"></i><i class="dot block"></i><i class="dot block"></i><i class="dot block"></i></span><b class="dot-count block">5/5</b></span>
+              <span class="dot-cell" data-label="Advisory scheduled"><span class="dot-strip"><i class="dot sched"></i><i class="dot sched"></i><i class="dot sched"></i><i class="dot sched"></i><i class="dot sched"></i></span><b class="dot-count sched">5/5</b></span>
+              <span class="dot-cell" data-label="Enforced blocked"><span class="dot-strip"><i class="dot block"></i><i class="dot block"></i><i class="dot block"></i><i class="dot block"></i><i class="dot block"></i></span><b class="dot-count block">5/5</b></span>
             </div>
           </div>
+          <p class="dot-note"><b>Enforced mode: 0 unauthorized payments executed.</b> Gray dots mean no payment attempt.</p>
           <div class="dot-legend">
             <span><i class="dot sched"></i>scheduled (unauthorized)</span>
             <span><i class="dot block"></i>blocked at tool layer</span>
             <span><i class="dot none"></i>no high-impact action</span>
           </div>
-          <p class="case-caveat">Public synthetic AP scenario, not a customer incident or model leaderboard. A scheduled outcome means <code>schedule_payment</code> ran after a not-allowed authorization decision. Provider marks identify APIs tested; trademarks belong to their owners and do not imply endorsement or partnership.</p>
+          <p class="case-caveat">Synthetic AP workflow. The point is the control: advisory tools allowed execution; enforced tools did not.</p>
         </div>
       </article>
     </div>
@@ -3882,8 +4438,8 @@
       <div class="model-evidence-intro">
         <div class="model-evidence-copy">
           <p class="case-label">Common buyer question</p>
-          <h2 id="model-spread-title">Why not just use a stronger model?</h2>
-          <p class="lead">Model choice changed the rate of unsafe tool calls. It did not prove the user was authorized.</p>
+          <h2 id="model-spread-title">Do stronger models remove the need for authorization?</h2>
+          <p class="lead">Better models reduced some unsafe calls. They still did not prove the user was authorized.</p>
         </div>
       </div>
       <article class="model-spread-panel" aria-label="Cross-model public scenario set result">
@@ -3914,9 +4470,9 @@
             <button class="sp-mark frontier below edge-right" style="--x: 97%; transition-delay: 680ms" type="button" data-runs="Runs: 8, 7, 9" aria-label="Gemini 3.1 Pro frontier model, 8.0 average unsafe tool calls, runs 8 7 9"><span class="sp-pt"></span><span class="sp-label"><b>Gemini 3.1 Pro</b><small>8.0 avg</small></span></button>
           </div>
         </div>
-        <p class="model-takeaway"><b>Takeaway:</b> Use better models. Still enforce authorization at the tool layer.</p>
+        <p class="model-takeaway"><b>Takeaway:</b> Use the strongest model you can. Still enforce authorization at the tool layer.</p>
         <div class="model-receipt-row">
-          <span>Public synthetic scenarios · 58 attack scenarios + 3 controls · simulated tools · 3 runs per model · not a vendor ranking</span>
+          <span>Public synthetic battery · 58 attack scenarios + 3 controls · simulated tools · 3 runs per model · snapshot evidence</span>
           <a href="https://github.com/hugoii/llm-agent-audit/blob/master/docs/model-choice-is-not-an-authorization-layer.md">Read cross-model note</a>
         </div>
         <ul class="sr-only">
@@ -3933,8 +4489,8 @@
 
   <section id="what" class="section">
     <h2>What ActionBoundary tests</h2>
-    <p class="lead">ActionBoundary scores the action path: what the agent read, what it called, what authority existed, and what changed.</p>
-    <div class="trace-lens" aria-label="Action path scoring lens">
+    <p class="lead">ActionBoundary checks the action path against authorization evidence: what the agent read, what it called, who had authority, and what changed.</p>
+    <div class="trace-lens" aria-label="Action path authorization evidence lens">
       <div class="lens-path" role="list">
         <div class="lens-node" style="--i: 0" role="listitem">
           <span class="lens-icon" aria-hidden="true">
@@ -3974,7 +4530,7 @@
               <path d="M10 8h4M10 12h4M10 16h2" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"></path>
             </svg>
           </span>
-          <b>Side effect</b>
+          <b>Action outcome</b>
           <small>What executed, changed, or was denied.</small>
         </div>
       </div>
@@ -3983,7 +4539,7 @@
 
   <section class="section workflow-section">
     <h2>Pick the workflow that can block a deal.</h2>
-    <p class="lead">Start with the action a customer security reviewer would worry about first.</p>
+    <p class="lead">Start with the action your buyer will ask you to prove is controlled.</p>
     <div class="workflow-surface" aria-label="High-impact workflow risk surface">
       <div class="workflow-surface-head" aria-hidden="true">
         <span>Workflow</span>
@@ -4015,8 +4571,8 @@
           <span><b>Enterprise ops</b><small>Internal systems, support, dispatch, data access</small></span>
         </div>
         <span class="workflow-actions">Access grants · exports · dispatch · submissions</span>
-        <p class="workflow-question"><b>Did untrusted context become an action?</b><small>Tickets, transcripts, and documents should not authorize side effects.</small></p>
-        <a class="workflow-link" href="#intake">Sketch this</a>
+        <p class="workflow-question"><b>Did untrusted context become an action?</b><small>Tickets, transcripts, and documents should not authorize actions.</small></p>
+        <a class="workflow-link" href="#intake">Get scenarios</a>
       </article>
     </div>
   </section>
@@ -4024,19 +4580,19 @@
   <section id="report" class="section">
     <div class="deliverable">
       <div>
-        <h2>You receive trace&nbsp;evidence,<br>not a slogan.</h2>
+        <h2>A buyer-ready evidence report,<br>built from your staging traces.</h2>
         <p class="lead">A real report uses your agent, your tools, your staging traces, and workflow-specific authorization rules. The public sample shows the shape of the evidence package.</p>
         <div class="checklist" aria-label="Report contents">
           <div class="check"><span class="mark">&#10003;</span><span>Executive summary for founders and security reviewers</span></div>
           <div class="check"><span class="mark">&#10003;</span><span>Scenario matrix with benign controls and pass/fail rules</span></div>
-          <div class="check"><span class="mark">&#10003;</span><span>Trace evidence, tool calls, observed authorization source, and required source</span></div>
+          <div class="check"><span class="mark">&#10003;</span><span>Trace evidence, tool calls, and observed vs. required authorization source</span></div>
           <div class="check"><span class="mark">&#10003;</span><span>Severity, OWASP mapping, and concrete application-layer fixes</span></div>
         </div>
       </div>
       <figure class="report-frame">
-        <img src="sample-report-preview.png" alt="Rendered preview of the sample evidence report PDF showing executive summary, risk summary, scope, and scenario matrix excerpt">
+        <img src="sample-report-preview.png" alt="Rendered preview of the sample evidence report PDF cover page showing document control, scope, and engagement boundary">
         <figcaption class="report-actions">
-          <a class="button outline" href="sample-evidence-report.pdf">Open rendered PDF</a>
+          <a class="button outline" href="sample-evidence-report.pdf">View sample report</a>
         </figcaption>
       </figure>
     </div>
@@ -4046,11 +4602,12 @@
     <h2>Get evidence for one high-impact workflow</h2>
     <p class="lead">A fixed-scope first engagement: one staging workflow, 5 to 10 scenarios, and one included retest.</p>
     <article class="offer-card">
-      <span class="offer-badge">Founding pilot</span>
-      <p class="offer-value">One high-impact workflow. Trace evidence your team can use in a customer security review.</p>
+      <span class="offer-badge">Founding pilot <span class="offer-badge-muted">&middot; fixed scope</span></span>
+      <p class="offer-value">Trace evidence your team can use in a customer security review.</p>
       <div class="offer-price">
         <b>$1,500</b>
-        <span>fixed scope &middot; one staging workflow &middot; one included retest</span>
+        <span>one-time &middot; one staging workflow &middot; report + retest</span>
+        <small>For the scoped report and included retest.</small>
       </div>
       <p class="offer-scope">5 to 10 custom scenarios including benign controls, trace-based findings, and concrete application-layer fixes.</p>
       <p class="offer-safety">
@@ -4060,33 +4617,33 @@
         </svg>
         No production access. No real customer data. No shared credentials.
       </p>
-      <a class="button primary" href="mailto:jiahao@actionboundary.dev?subject=3%20scenario%20sketch%20for%20our%20agent">Start with a free 3-scenario sketch</a>
+      <a class="button primary" href="mailto:jiahao@actionboundary.dev?subject=3%20scenarios%20for%20our%20agent">Get 3 scenarios first</a>
     </article>
     <div class="offer-grid">
       <div class="offer-col">
         <h3>What you get</h3>
         <ul class="offer-list get">
           <li>Custom attack scenarios and benign controls</li>
-          <li>Tool-call trace scoring against your authorization rule</li>
+          <li>Tool-call trace scoring against the authority evidence your product already uses</li>
           <li>OWASP-mapped evidence report for security review</li>
           <li>Concrete application-layer fixes</li>
           <li>One retest after fixes</li>
         </ul>
       </div>
       <div class="offer-col">
-        <h3>What you provide</h3>
+        <h3>Minimal inputs</h3>
         <ul class="offer-list provide">
-          <li>One high-impact action your agent can take</li>
+          <li>One action your agent can trigger</li>
           <li>A staging or sandbox path, no production</li>
           <li>Tool-call traces or a safe test endpoint</li>
-          <li>The source of truth for authorization</li>
+          <li>Where authority lives today: roles, approvals, policy, or system records</li>
         </ul>
       </div>
     </div>
     <div class="offer-flow">
       <p class="offer-flow-label">How it works</p>
       <ol class="flow-line">
-        <li class="flow-node"><span class="flow-dot">1</span><span class="flow-text"><b>Fit sketch</b><span>ActionBoundary sends a 3-scenario sketch before any setup.</span></span></li>
+        <li class="flow-node"><span class="flow-dot">1</span><span class="flow-text"><b>Scenario fit</b><span>ActionBoundary sends 3 first scenarios before any setup.</span></span></li>
         <li class="flow-node"><span class="flow-dot">2</span><span class="flow-text"><b>Staging run</b><span>You run the scenarios or provide a safe staging path.</span></span></li>
         <li class="flow-node"><span class="flow-dot">3</span><span class="flow-text"><b>Report and retest</b><span>You receive the evidence report, fixes, and one retest.</span></span></li>
       </ol>
@@ -4094,13 +4651,13 @@
   </section>
 
   <section id="trust" class="section">
-    <h2>Why you can trust it</h2>
-    <p class="lead">This review is narrow on purpose. It does not claim your whole system is secure. It answers one security-review question with trace evidence.</p>
+    <h2>Open method. Verifiable evidence.</h2>
+    <p class="lead">Public artifacts show how the review works. A pilot applies the same method to your staging workflow, tools, authorization sources, and traces.</p>
     <article class="trust-map" aria-label="ActionBoundary public trust stack">
       <div class="trust-map-head">
         <span class="trust-map-title">
           <b>Public method to customer evidence</b>
-          <span>Open artifacts show how the review works. A pilot applies the same pattern to your staging workflow, tools, authorization sources, and traces.</span>
+          <span>Open artifacts make the method inspectable before a pilot starts.</span>
         </span>
         <a class="trust-map-link" href="https://github.com/hugoii/llm-agent-audit">View harness</a>
       </div>
@@ -4122,35 +4679,35 @@
         </a>
         <a class="trust-node" style="--i: 3" href="https://doi.org/10.5281/zenodo.20585658" role="listitem">
           <span class="trust-index" aria-hidden="true"></span>
-          <b>Zenodo DOI</b>
-          <small>The cross-vendor technical report is archived for citation.</small>
+          <b>Archived DOI</b>
+          <small>Cross-vendor technical report preserved for citation and review.</small>
         </a>
         <a class="trust-node boundary" style="--i: 4" href="#faq" role="listitem">
           <span class="trust-index" aria-hidden="true"></span>
-          <b>Narrow scope</b>
-          <small>Focused on one trace-backed authorization question, not full security certification.</small>
+          <b>Focused scope</b>
+          <small>One authorization question, trace-backed and review-ready.</small>
         </a>
       </div>
-      <p class="trust-caption"><b>Buyer-safe claim:</b> the public repo proves the method; the pilot produces evidence about your own staging workflow.</p>
+      <p class="trust-caption">Public repo proves the method. A pilot produces evidence for your workflow.</p>
     </article>
   </section>
 
   <section id="intake" class="section">
     <div class="intake">
       <div>
-        <h2>Start with a short pilot intake.</h2>
-        <p class="lead">No long questionnaire is needed to start. Send three details and ActionBoundary will reply with a realistic first scenario sketch.</p>
+        <h2>Send 3 details. Get 3 scenarios.</h2>
+        <p class="lead">No long questionnaire. Send three details and ActionBoundary will reply with a realistic first scenario set.</p>
         <div class="cta-row">
-          <a class="button primary" href="mailto:jiahao@actionboundary.dev?subject=3%20scenario%20sketch%20for%20our%20agent">Email the intake</a>
-          <a class="button outline" href="https://github.com/hugoii/llm-agent-audit/blob/master/pilot/client-handoff.md">View technical handoff</a>
+          <a class="button primary" href="mailto:jiahao@actionboundary.dev?subject=3%20scenarios%20for%20our%20agent">Send the 3 details</a>
+          <a class="button outline" href="https://github.com/hugoii/llm-agent-audit/blob/master/pilot/what-we-need.md">See what we need</a>
         </div>
       </div>
       <div class="intake-panel">
         <h3>What to include</h3>
         <ol class="intake-list">
           <li><span class="num">1</span><span><b>Product and buyer</b>What your agent does, who buys it, and why this review matters now.</span></li>
-          <li><span class="num">2</span><span><b>One risky action</b>The refund, payment, access grant, export, record change, or submission you want tested.</span></li>
-          <li><span class="num">3</span><span><b>Safe test path</b>Whether you have staging traces, a sandbox endpoint, or another no-production way to run it.</span></li>
+          <li><span class="num">2</span><span><b>One action your agent can trigger</b>Tell us what the agent can do. We identify the risky authorization cases and turn them into scenarios.</span></li>
+          <li><span class="num">3</span><span><b>Safe test path</b>Any safe way to observe it: staging traces, a sandbox endpoint, or another non-production run path.</span></li>
         </ol>
       </div>
     </div>
@@ -4164,16 +4721,28 @@
         <p>No. The review is staging-only. Test data is synthetic or a harmless canary. No production access, no real customer data, no shared credentials.</p>
       </details>
       <details class="faq-item">
+        <summary>Can we share the report with a customer or investor?</summary>
+        <p>Yes, if your team approves sharing it. The report is written to be useful in customer security review, procurement, or investor diligence: scope, method, scenario matrix, trace-backed findings, limits, fixes, and retest results are separated clearly. It does not claim your whole system is secure.</p>
+      </details>
+      <details class="faq-item">
         <summary>How much work is this for our team, and can it be async?</summary>
         <p>Async is the default. If staging exists and tool-call traces are easy to export, most teams spend about 1 to 3 hours. If trace format needs cleanup, expect 3 to 6 hours. If a small adapter is needed, it can be half a day to one day of engineering time. No live call is required when scope and traces are clear.</p>
       </details>
       <details class="faq-item">
         <summary>How long does a pilot take?</summary>
-        <p>The fixed-scope pilot is designed for about one week after the staging path and traces are available. If the scope is clear, the first 3-scenario sketch can happen before setup, and one same-workflow retest is included after fixes.</p>
+        <p>The fixed-scope pilot is designed for about one week after the staging path and traces are available. If the scope is clear, the first 3 scenarios can be drafted before setup, and one same-workflow retest is included after fixes.</p>
       </details>
       <details class="faq-item">
         <summary>What do you need from us?</summary>
-        <p>One high-impact action your agent can take, a staging or sandbox path, tool-call traces or a safe test endpoint, and the source of truth for authorization. If those are not available yet, the fixed-scope pilot is probably not ready.</p>
+        <p>Name one action your agent can trigger, where it can be observed safely, and the authority signal your product already uses, such as roles, approvals, policy, tenant scope, or system records. ActionBoundary turns that into the scenario set.</p>
+      </details>
+      <details class="faq-item">
+        <summary>What if we do not have clean tool-call traces yet?</summary>
+        <p>Start with a one-scenario setup check or the adapter path. If the agent's high-impact tool calls cannot be observed, the review can help identify the trace gap, but it is not yet a trace-backed authorization review.</p>
+      </details>
+      <details class="faq-item">
+        <summary>What happens if you find a serious issue?</summary>
+        <p>Findings stay private to the engagement unless your team decides to share them. The report separates evidence, impact, recommended application-layer fixes, and retest rules so your team can close the issue and produce an updated result.</p>
       </details>
       <details class="faq-item">
         <summary>Is this a penetration test or compliance certification?</summary>
@@ -4181,7 +4750,7 @@
       </details>
       <details class="faq-item">
         <summary>How is this different from internal evals, Promptfoo, garak, or monitoring?</summary>
-        <p>Those tools are useful and complementary. This review grades your agent's actual staging tool calls against per-action authorization rules, then packages the evidence for customer security review.</p>
+        <p>Those tools are useful for broad LLM-app evals, red-team probes, and monitoring. ActionBoundary is narrower: it reviews actual staging tool-call traces for one high-impact workflow, checks each attempted action against the trusted authorization source, and packages the result as evidence for a customer security reviewer. It complements your eval suite; it does not replace it.</p>
       </details>
       <details class="faq-item">
         <summary>Will you sign an NDA or MSA?</summary>
@@ -4190,15 +4759,37 @@
     </div>
   </section>
 
-  <section class="section">
-    <h2>Who runs this</h2>
-    <div class="about">
-      <img src="headshot.jpg" alt="Jiahao Zhang" width="108" height="108">
-      <p>
-        ActionBoundary is operated by JZ Software Consulting. Reviews are run by Jiahao Zhang, who built and maintains the <a href="https://github.com/hugoii/llm-agent-audit">open-source harness</a> behind this review and the cross-vendor study archived on <a href="https://doi.org/10.5281/zenodo.20585658">Zenodo</a>.
-        The outside-review boundary is deliberate: a customer's security review often needs evidence from someone other than the vendor grading its own agent.
-        Contact ActionBoundary on <a href="https://www.linkedin.com/in/jiahao-zhang-12999b319">LinkedIn</a> or at <a href="mailto:jiahao@actionboundary.dev">jiahao@actionboundary.dev</a>.
-      </p>
+  <section id="why" class="section why-teaser" aria-labelledby="why-title">
+    <div class="why-teaser-grid">
+      <div class="why-teaser-copy">
+        <h2 id="why-title">Built for the moment<br>agents take action.</h2>
+        <p class="lead">ActionBoundary exists because AI agents are moving from language into business action. We review the crossing point: what the agent read, what it called, what authority existed, and what changed.</p>
+        <p>The method connects software traces, authorization evidence, and buyer-ready reporting for one high-impact workflow.</p>
+        <div class="why-teaser-actions">
+          <a class="button primary" href="why.html">Read why ActionBoundary exists</a>
+          <a class="button outline" href="mailto:jiahao@actionboundary.dev?subject=3%20scenarios%20for%20our%20agent">Get 3 scenarios</a>
+        </div>
+      </div>
+      <article class="why-panel" aria-label="ActionBoundary review lens">
+        <div class="why-cards">
+          <div class="why-lens-card">
+            <b>Trace review</b>
+            <span>Tool calls, arguments, source records, and observed outcomes.</span>
+          </div>
+          <div class="why-lens-card">
+            <b>Authorization judgment</b>
+            <span>Whether the user, scope, approval, tenant, and policy matched the action.</span>
+          </div>
+          <div class="why-lens-card">
+            <b>Buyer-ready evidence</b>
+            <span>A report built for security review, not a generic model score.</span>
+          </div>
+        </div>
+        <div class="why-founder">
+          <img src="assets/actionboundary-mark.svg" alt="ActionBoundary review mark" width="64" height="64">
+          <span><b>Operated by JZ Software Consulting.</b> Repeatable scenario design, trace scoring, authorization analysis, reporting, and retest.</span>
+        </div>
+      </article>
     </div>
   </section>
 </main>
@@ -4206,10 +4797,33 @@
 <footer>
   <div class="footer-inner">
     <span>ActionBoundary by JZ Software Consulting. Agent Authorization Review.</span>
-    <span><a href="https://github.com/hugoii/llm-agent-audit">GitHub</a> | <a href="https://doi.org/10.5281/zenodo.20585658">Zenodo DOI</a> | <a href="mailto:jiahao@actionboundary.dev">jiahao@actionboundary.dev</a></span>
+    <span><a href="why.html">Why</a> | <a href="https://github.com/hugoii/llm-agent-audit">GitHub</a> | <a href="https://doi.org/10.5281/zenodo.20585658">Zenodo DOI</a> | <a href="mailto:jiahao@actionboundary.dev">jiahao@actionboundary.dev</a></span>
   </div>
 </footer>
 <script>
+  (function () {
+    var nav = document.querySelector('.site-nav');
+    var hero = document.querySelector('.hero');
+    if (!nav || !hero) {
+      return;
+    }
+    var ticking = false;
+    var updateNavGlass = function () {
+      var navBottom = nav.getBoundingClientRect().bottom;
+      var heroBottom = hero.getBoundingClientRect().bottom;
+      nav.classList.toggle('is-over-light', heroBottom <= navBottom + 10);
+      ticking = false;
+    };
+    updateNavGlass();
+    window.addEventListener('scroll', function () {
+      if (!ticking) {
+        ticking = true;
+        window.requestAnimationFrame(updateNavGlass);
+      }
+    }, { passive: true });
+    window.addEventListener('resize', updateNavGlass);
+  })();
+
   (function () {
     var scenes = document.querySelectorAll('.spectrum');
     if (!scenes.length) {
@@ -4229,6 +4843,53 @@
       });
     }, { threshold: 0.35 });
     scenes.forEach(function (s) { io.observe(s); });
+  })();
+
+  (function () {
+    var workflowSurfaces = document.querySelectorAll('.workflow-surface');
+    if (!workflowSurfaces.length) {
+      return;
+    }
+    if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      return;
+    }
+    var assembleWorkflow = function (surface) {
+      if (surface.classList.contains('workflow-in')) {
+        return;
+      }
+      surface.classList.add('workflow-in');
+      var pieces = [];
+      var head = surface.querySelector('.workflow-surface-head');
+      if (head) {
+        pieces.push(head);
+      }
+      surface.querySelectorAll('.workflow-row').forEach(function (row) {
+        pieces.push(row);
+      });
+      pieces.forEach(function (piece, index) {
+        window.setTimeout(function () {
+          piece.classList.add('workflow-line-in');
+        }, index * 92);
+      });
+    };
+
+    if (!('IntersectionObserver' in window)) {
+      workflowSurfaces.forEach(assembleWorkflow);
+      return;
+    }
+
+    var workflowObserver = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (entry.isIntersecting) {
+          assembleWorkflow(entry.target);
+          workflowObserver.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.42, rootMargin: '-6% 0px -10% 0px' });
+
+    workflowSurfaces.forEach(function (surface) {
+      workflowObserver.observe(surface);
+    });
   })();
 
   (function () {

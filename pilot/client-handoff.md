@@ -1,17 +1,17 @@
-# Client handoff for an Agent Authorization Review
+# Technical handoff for an Agent Authorization Review
 
-This is the technical handoff note to send after a prospect agrees to a pilot or asks what their engineering team needs to do.
+This is the engineering-level handoff for a team that is ready to scope a pilot or wants to know what engineering needs to prepare. For first contact, use [what-we-need.md](what-we-need.md).
 
 The goal is simple: run a small set of workflow-specific scenarios against a staging or sandbox agent, preserve the tool-call traces, and turn those traces into an authorization evidence report.
 
 ## Short version
 
-You do not need to give me production access, real customer data, shared credentials, or source code.
+ActionBoundary does not need production access, real customer data, shared credentials, or source code.
 
 We choose one safe way to run the scenarios:
 
 1. Your team runs the scenarios in staging and sends back traces.
-2. You provide a narrow staging test endpoint with synthetic data, and I run the scenarios.
+2. You provide a narrow staging test endpoint with synthetic data, and ActionBoundary runs the scenarios.
 3. If traces are not already easy to export, your team wires a small adapter first.
 
 Before the full run, we do one scenario as a setup check. That confirms the agent is reading the test data through the real staging path and that the trace contains enough evidence to score.
@@ -28,7 +28,7 @@ This is usually the safest and lowest-friction path because:
 - no real customer data is needed;
 - no shared credentials change hands;
 - your team keeps control of the environment;
-- I can still score the behavior from the trace evidence.
+- ActionBoundary can still score the behavior from trace evidence.
 
 ## Other acceptable paths
 
@@ -43,7 +43,7 @@ You do:
 - export the tool-call traces;
 - send back `trace_results.json` or equivalent logs.
 
-I do:
+ActionBoundary does:
 
 - write the scenarios and pass/fail rules;
 - check the first trace before the full run;
@@ -63,7 +63,7 @@ You provide:
 - rate limits or test-window rules if needed;
 - written authorization naming the in-scope staging system.
 
-I run the scenarios through that endpoint and score the resulting traces. If the endpoint does not expose tool-call traces, we still need a way to export or retrieve them.
+ActionBoundary runs the scenarios through that endpoint and scores the resulting traces. If the endpoint does not expose tool-call traces, we still need a way to export or retrieve them.
 
 ### Path C: you wire the adapter
 
@@ -88,7 +88,7 @@ Do not start the fixed-scope pilot if the only available option is:
 - no written authorization;
 - only a verbal product description with no runnable agent.
 
-If trace capture is missing, we can first do a small setup step or a lighter tool-surface review, but that is not the same as a trace-backed authorization review.
+If trace capture is missing, ActionBoundary can first do a small setup step or a lighter tool-surface review, but that is not the same as a trace-backed authorization review.
 
 ## One-scenario setup check
 
@@ -107,6 +107,8 @@ If the first trace is not valid, we fix the setup before running the full set.
 ## Minimum trace fields
 
 The trace can be JSON, exported logs, or a structured table. JSON is easiest.
+
+The content the agent reads can be synthetic, redacted, or represented by a test-fixture pointer if agreed in advance. The important requirement is that the trace shows what the agent read before it acted.
 
 Minimum fields:
 
@@ -169,9 +171,11 @@ Use synthetic data, de-identified data, or a harmless canary value.
 
 If real PHI or PII could appear in a trace, pause before sending. We either de-identify the trace or put the required agreement in place first.
 
-## What I need from you
+## What ActionBoundary needs after scenario fit
 
-For the initial setup:
+For first contact, only the three details in [what-we-need.md](what-we-need.md) are needed. After there is a plausible workflow fit, ActionBoundary asks for the setup details needed to run and score the agreed scenarios.
+
+For initial setup:
 
 - a short description of what the agent does;
 - the list of tools the agent can call;
@@ -187,9 +191,9 @@ For the full run:
 - notes on any run that failed for infrastructure reasons;
 - confirmation that the traces contain no real customer data or secrets.
 
-## What I do
+## What ActionBoundary does
 
-I handle the evidence work:
+The review team handles the evidence work:
 
 - identify the riskiest action boundary;
 - write 5 to 10 workflow-specific scenarios;

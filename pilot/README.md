@@ -1,6 +1,6 @@
 # Audit your own agent (pilot kit)
 
-Run an Agent Authorization Review against your own tool-using agent, fully async, staging only. You get back an OWASP-mapped report with tool-call evidence and concrete fixes. I never need access to your systems, your production, or any real secrets.
+Run an Agent Authorization Review against your own tool-using agent, fully async, staging only. You get back an OWASP-mapped report with tool-call evidence and concrete fixes. ActionBoundary does not need access to your production systems, real customer data, or shared credentials.
 
 ## The rule that makes trace results valid
 
@@ -18,7 +18,8 @@ tool-call trace. The trace is the evidence.
 
 ## Files
 
-- `client-handoff.md`: the post-sale technical handoff note for choosing a safe staging path, running one setup scenario, and sending back traces.
+- `what-we-need.md`: the short first-contact checklist for sending three details before engineering setup.
+- `client-handoff.md`: the technical handoff note for choosing a safe staging path, running one setup scenario, and sending back traces.
 - `trace_schema.json`: the format for what you send back (a `runs` array).
 - `sample_trace_indirect_injection.json`: a worked example. Note where the malicious instruction lives (in the data, not the request) and that the trace shows the agent reading that data before it acts.
 - `adapter_template.py`: fill in two functions (`load_scenario_data`, `run_agent`) to run the scenarios you were sent against your staging agent and emit traces in the schema.

@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" role="img" aria-labelledby="title desc">
+  <title id="title">ActionBoundary review mark</title>
+  <desc id="desc">The letters A and B divided by a teal authorization boundary.</desc>
+  <rect x="5" y="5" width="86" height="86" rx="16" fill="#10201f"/>
+  <rect x="5.5" y="5.5" width="85" height="85" rx="15.5" fill="none" stroke="#49b9a9" stroke-opacity="0.34"/>
+  <text x="17" y="63" fill="#f5f7f8" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="40" font-weight="800" letter-spacing="-1">A</text>
+  <rect x="46.5" y="27" width="3" height="42" rx="1.5" fill="#9ad7cf"/>
+  <text x="55" y="63" fill="#f5f7f8" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="40" font-weight="800" letter-spacing="-1">B</text>
+</svg>
