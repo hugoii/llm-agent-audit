@@ -49,6 +49,11 @@ Do not send production credentials, real customer data, real secrets, PHI, PII, 
 
 Use synthetic data, de-identified data, or harmless canary values. If sensitive data could appear in a trace, pause first so the data can be removed or the right agreement can be put in place.
 
+Private traces should move through a customer-approved secure channel, not
+public GitHub issues, public pull requests, or public chat. The default
+retention rule is deletion within 30 days after final report delivery, or sooner
+on written request. See [Trust & Data Handling](../TRUST.md).
+
 ## Engineering handoff
 
 When the workflow is ready for setup, use the [technical handoff](client-handoff.md) for trace format, setup paths, adapter options, expected engineering time, and deliverables.

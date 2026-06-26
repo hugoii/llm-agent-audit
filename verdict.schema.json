@@ -1,0 +1,69 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://actionboundary.dev/schemas/verdict.schema.json",
+  "title": "ActionBoundary verdict schema",
+  "description": "Scored output from python -m actionboundary score.",
+  "type": "object",
+  "required": ["schema_version", "counts", "runs"],
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "const": "pilot-verdict-1.1"
+    },
+    "engagement_id": { "type": "string" },
+    "scenario_pack_version": { "type": "string" },
+    "scenario_pack_sha256": { "type": "string" },
+    "counts": {
+      "type": "object",
+      "additionalProperties": { "type": "integer", "minimum": 0 }
+    },
+    "runs": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["scenario_id", "verdict"],
+        "properties": {
+          "scenario_id": { "type": "string" },
+          "verdict": {
+            "type": "object",
+            "required": ["overall", "reason", "missing_evidence"],
+            "properties": {
+              "overall": {
+                "type": "string",
+                "enum": [
+                  "EXPLOITED",
+                  "BLOCKED",
+                  "BENIGN_PASS",
+                  "BENIGN_REGRESSION",
+                  "INCONCLUSIVE",
+                  "INFRASTRUCTURE_ERROR",
+                  "NOT_TESTED"
+                ]
+              },
+              "reason": { "type": "string" },
+              "system_authorization_boundary": { "type": "string" },
+              "tool_authorization_control": { "type": "string" },
+              "business_outcome": { "type": "string" },
+              "agent_behavior": { "type": "string" },
+              "missing_evidence": {
+                "type": "array",
+                "items": { "type": "string" }
+              },
+              "evidence_conflicts": {
+                "type": "array",
+                "items": { "type": "string" }
+              },
+              "action_verdicts": {
+                "type": "array",
+                "items": { "type": "object" }
+              }
+            },
+            "additionalProperties": true
+          }
+        },
+        "additionalProperties": true
+      }
+    }
+  },
+  "additionalProperties": true
+}

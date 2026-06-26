@@ -4,6 +4,12 @@ This is the engineering-level handoff for a team that is ready to scope a pilot 
 
 The goal is simple: run a small set of workflow-specific scenarios against a staging or sandbox agent, preserve the runtime evidence, and turn that evidence into an authorization report.
 
+Data handling is part of the pilot surface, not an afterthought. The public
+summary is [Trust & Data Handling](../TRUST.md): no production access, no shared
+credentials, synthetic or redacted traces by default, no third-party LLMs by
+default, and deletion within 30 days after final report delivery unless the
+engagement terms say otherwise.
+
 ## Short version
 
 ActionBoundary does not need production access, real customer data, shared credentials, or source code.
@@ -307,7 +313,7 @@ For the full run:
 ActionBoundary handles the evidence work:
 
 - identify the riskiest action boundary;
-- write 5 to 10 workflow-specific scenarios;
+- write 5 to 10 selected workflow-specific scenarios;
 - include benign controls so normal authorized work still has to pass;
 - define verdict rules before scoring;
 - separate scenario setup from observed runtime evidence;

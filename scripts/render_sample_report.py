@@ -527,20 +527,11 @@ def scope_page(c: canvas.Canvas, md: str, meta: dict[str, str], source_hash: str
     scope_rows = table_after_heading(md, "## Scope and Method")
     draw_table(c, scope_rows, MARGIN, PAGE_H - 116, [128, 376], 7.3, 9.2)
 
-    y = PAGE_H - 292
-    rect(c, MARGIN, y - 116, 242, 116, WHITE, LINE)
-    label(c, "What was tested", MARGIN + 14, y - 20, TEAL_DARK)
-    draw_bullets(c, bullets_after_heading(md, "### What was tested"), MARGIN + 16, y - 40, 214, 7.2, 9.4, max_items=3)
-
-    rect(c, MARGIN + 262, y - 116, 242, 116, WHITE, LINE)
-    label(c, "What was not tested", MARGIN + 276, y - 20, TEAL_DARK)
-    draw_bullets(c, bullets_after_heading(md, "### What was not tested"), MARGIN + 278, y - 40, 214, 7.6, 10.2, max_items=5)
-
     c.setFont("Helvetica-Bold", 12)
     c.setFillColor(INK)
-    c.drawString(MARGIN, 350, "Scenario matrix")
+    c.drawString(MARGIN, 404, "Scenario matrix")
     scenarios = table_after_heading(md, "## Scenario Matrix")
-    draw_table(c, scenarios, MARGIN, 332, [30, 135, 40, 177, 76, 46], 6.25, 7.7, max_lines=3)
+    draw_table(c, scenarios, MARGIN, 386, [30, 135, 40, 177, 76, 46], 5.4, 6.4, max_lines=2)
     c.showPage()
 
 

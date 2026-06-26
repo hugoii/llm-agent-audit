@@ -1,0 +1,943 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Trust & Data Handling | ActionBoundary</title>
+<meta name="description" content="How ActionBoundary handles redacted traces, staging-only pilots, retention, deletion, third-party LLMs, and subprocessors for Agent Authorization Reviews.">
+<link rel="canonical" href="https://actionboundary.dev/trust.html">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Trust & Data Handling | ActionBoundary">
+<meta property="og:description" content="Staging-only, trace-based Agent Authorization Reviews with no production credentials, no customer data by default, and 30-day trace deletion.">
+<meta property="og:url" content="https://actionboundary.dev/trust.html">
+<meta property="og:image" content="https://actionboundary.dev/og-image.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Trust & Data Handling | ActionBoundary">
+<meta name="twitter:description" content="How ActionBoundary handles redacted traces for staging-only Agent Authorization Reviews.">
+<meta name="twitter:image" content="https://actionboundary.dev/og-image.png">
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<style>
+  :root {
+    --ink: #161719;
+    --muted: #5f6873;
+    --paper: #f7f8fa;
+    --white: #ffffff;
+    --line: #dbe1e8;
+    --line-strong: #b8c1cc;
+    --teal: #0f766e;
+    --teal-dark: #0b4f4a;
+    --teal-soft: #e7f5f3;
+    --amber: #b45309;
+    --amber-soft: #fff7ed;
+    --red: #991b1b;
+    --red-soft: #fef2f2;
+    --green: #166534;
+    --green-soft: #ecfdf5;
+    --charcoal: #151619;
+    --charcoal-2: #202227;
+    --black: #000000;
+    --print-muted: #333333;
+    --hero-border: #0f1114;
+    --hero-accent: #9ad7cf;
+    --hero-button-bg: #f3f8f7;
+    --hero-button-hover: #d8efec;
+    --hero-button-ink: #10201f;
+    --hero-muted: #b9c2cd;
+    --hero-subtle: #8995a1;
+    --max: 1280px;
+    --readable: 820px;
+    --shadow-soft: 0 2px 8px rgba(16, 24, 40, 0.08);
+    --ease-out-quint: cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    margin: 0;
+    color: var(--ink);
+    background: var(--paper);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    line-height: 1.6;
+    overflow-wrap: anywhere;
+  }
+
+  a {
+    color: var(--teal-dark);
+    text-decoration-thickness: 1px;
+    text-underline-offset: 3px;
+  }
+
+  a:hover {
+    color: var(--teal);
+  }
+
+  a:focus-visible {
+    outline: 2px solid rgba(15, 118, 110, 0.42);
+    outline-offset: 4px;
+    border-radius: 4px;
+  }
+
+  .site-nav {
+    --nav-ink: #f6f8f9;
+    --nav-muted: rgba(215, 226, 229, 0.74);
+    --nav-link: rgba(246, 248, 249, 0.86);
+    --nav-link-hover: var(--white);
+    position: fixed;
+    top: 12px;
+    left: 12px;
+    right: 12px;
+    z-index: 30;
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    border-radius: 8px;
+    background:
+      linear-gradient(180deg, rgba(255, 255, 255, 0.14), rgba(255, 255, 255, 0.055)),
+      linear-gradient(180deg, rgba(18, 22, 26, 0.42), rgba(18, 22, 26, 0.30));
+    box-shadow:
+      0 8px 18px rgba(0, 0, 0, 0.18),
+      inset 0 1px 0 rgba(255, 255, 255, 0.28),
+      inset 0 -1px 0 rgba(255, 255, 255, 0.06);
+    -webkit-backdrop-filter: blur(26px) saturate(170%);
+    backdrop-filter: blur(26px) saturate(170%);
+    transition:
+      background-color 220ms var(--ease-out-quint),
+      background 220ms var(--ease-out-quint),
+      border-color 220ms var(--ease-out-quint),
+      box-shadow 220ms var(--ease-out-quint);
+  }
+
+  .site-nav.is-over-light {
+    --nav-ink: var(--ink);
+    --nav-muted: var(--muted);
+    --nav-link: rgba(22, 23, 25, 0.78);
+    --nav-link-hover: var(--teal-dark);
+    border-color: rgba(15, 118, 110, 0.18);
+    background:
+      linear-gradient(180deg, rgba(255, 255, 255, 0.68), rgba(255, 255, 255, 0.36)),
+      linear-gradient(110deg, rgba(231, 245, 243, 0.26), rgba(255, 255, 255, 0.12));
+    box-shadow:
+      0 8px 18px rgba(16, 24, 40, 0.10),
+      inset 0 1px 0 rgba(255, 255, 255, 0.72),
+      inset 0 -1px 0 rgba(15, 118, 110, 0.08);
+  }
+
+  .site-nav::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    border-radius: inherit;
+    background:
+      linear-gradient(180deg, rgba(255, 255, 255, 0.24), transparent 46%),
+      linear-gradient(100deg, transparent 8%, rgba(255, 255, 255, 0.12) 34%, transparent 58%);
+    opacity: 0.76;
+    transition: opacity 220ms var(--ease-out-quint), background 220ms var(--ease-out-quint);
+  }
+
+  .site-nav.is-over-light::after {
+    background:
+      linear-gradient(180deg, rgba(255, 255, 255, 0.56), transparent 50%),
+      linear-gradient(100deg, transparent 6%, rgba(255, 255, 255, 0.28) 32%, transparent 58%);
+    opacity: 0.9;
+  }
+
+  .nav-inner {
+    position: relative;
+    z-index: 1;
+    max-width: var(--max);
+    margin: 0 auto;
+    padding: 13px 22px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 18px;
+  }
+
+  .brand {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 10px;
+    text-decoration: none;
+    color: var(--nav-ink);
+    min-width: 0;
+    transition: color 220ms var(--ease-out-quint);
+  }
+
+  .brand-mark {
+    width: 30px;
+    height: 30px;
+    flex: 0 0 auto;
+    border-radius: 8px;
+  }
+
+  .brand-copy {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+  }
+
+  .brand strong {
+    font-size: 1.02rem;
+    line-height: 1.1;
+    letter-spacing: 0;
+  }
+
+  .brand-subtitle {
+    color: var(--nav-muted);
+    font-size: 0.78rem;
+    line-height: 1.25;
+    margin-top: 3px;
+    transition: color 220ms var(--ease-out-quint);
+  }
+
+  .nav-links {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    font-size: 0.92rem;
+    white-space: nowrap;
+  }
+
+  .nav-links a {
+    color: var(--nav-link);
+    text-decoration: none;
+    transition: color 160ms var(--ease-out-quint), opacity 160ms var(--ease-out-quint);
+  }
+
+  .nav-links a:hover {
+    color: var(--nav-link-hover);
+  }
+
+  .nav-links .nav-cta {
+    border: 1px solid rgba(154, 215, 207, 0.36);
+    background: rgba(11, 79, 74, 0.88);
+    color: var(--white);
+    padding: 8px 12px;
+    border-radius: 8px;
+  }
+
+  .nav-links .nav-cta:hover {
+    background: rgba(15, 118, 110, 0.96);
+    border-color: rgba(154, 215, 207, 0.54);
+    color: var(--white);
+  }
+
+  .trust-hero {
+    background:
+      radial-gradient(circle at 14% 14%, rgba(73, 185, 169, 0.22), transparent 30%),
+      radial-gradient(circle at 86% 22%, rgba(180, 83, 9, 0.08), transparent 28%),
+      linear-gradient(135deg, #111317, #1d2429 62%, #151619);
+    color: var(--white);
+    padding: 136px 18px 68px;
+  }
+
+  .trust-hero-inner,
+  .section-inner {
+    width: min(100%, var(--max));
+    margin: 0 auto;
+  }
+
+  .trust-hero-inner {
+    max-width: var(--max);
+  }
+
+  .trust-hero-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 0.95fr) minmax(340px, 0.7fr);
+    gap: clamp(34px, 6vw, 78px);
+    align-items: center;
+  }
+
+  .trust-hero-grid > * {
+    min-width: 0;
+  }
+
+  .page-label {
+    margin: 0 0 16px;
+    color: var(--hero-accent);
+    font-size: 0.86rem;
+    font-weight: 800;
+    letter-spacing: 0;
+  }
+
+  h1,
+  h2,
+  h3,
+  p {
+    margin-top: 0;
+  }
+
+  h1 {
+    max-width: 820px;
+    margin-bottom: 22px;
+    font-size: clamp(2.7rem, 5vw, 4.35rem);
+    line-height: 1;
+    letter-spacing: 0;
+    text-wrap: balance;
+  }
+
+  .trust-lead {
+    max-width: 760px;
+    margin-bottom: 0;
+    color: rgba(241, 246, 247, 0.82);
+    font-size: 1.18rem;
+    line-height: 1.72;
+    text-wrap: pretty;
+  }
+
+  .trust-claim-strip {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 28px;
+  }
+
+  .trust-claim-strip span {
+    display: inline-flex;
+    align-items: center;
+    min-height: 34px;
+    padding: 6px 11px;
+    border: 1px solid rgba(154, 215, 207, 0.28);
+    border-radius: 999px;
+    background: rgba(154, 215, 207, 0.10);
+    color: var(--hero-button-hover);
+    font-size: 0.86rem;
+    font-weight: 750;
+  }
+
+  .trust-brief {
+    border: 1px solid rgba(154, 215, 207, 0.24);
+    border-radius: 8px;
+    background:
+      linear-gradient(145deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.02)),
+      rgba(10, 12, 15, 0.36);
+    padding: 20px;
+    box-shadow: 0 16px 36px rgba(0, 0, 0, 0.28);
+  }
+
+  .trust-brief-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    margin-bottom: 14px;
+  }
+
+  .trust-brief-head b {
+    color: var(--white);
+    font-size: 1rem;
+  }
+
+  .trust-brief-head span {
+    color: var(--hero-muted);
+    font-size: 0.88rem;
+    font-weight: 600;
+    text-align: right;
+  }
+
+  .brief-row {
+    display: grid;
+    grid-template-columns: 108px 1fr;
+    gap: 12px;
+    padding: 12px 0;
+    border-top: 1px solid rgba(154, 215, 207, 0.16);
+  }
+
+  .brief-row b {
+    color: #9ad7cf;
+    font-size: 0.78rem;
+    font-weight: 800;
+  }
+
+  .brief-row span {
+    display: block;
+    color: var(--hero-muted);
+    font-size: 0.92rem;
+    line-height: 1.42;
+  }
+
+  main {
+    display: block;
+  }
+
+  .section {
+    padding: clamp(48px, 8vw, 92px) 24px;
+  }
+
+  .section.alt {
+    background: var(--white);
+    border-block: 1px solid var(--line);
+  }
+
+  .section-head {
+    max-width: var(--readable);
+    margin-bottom: 28px;
+  }
+
+  .section h2 {
+    margin-bottom: 12px;
+    font-size: clamp(2rem, 4vw, 3.2rem);
+    line-height: 1.04;
+    letter-spacing: 0;
+    text-wrap: balance;
+  }
+
+  .section h3 {
+    margin-bottom: 8px;
+    font-size: 1.15rem;
+    line-height: 1.25;
+  }
+
+  .lead {
+    color: #3e454d;
+    font-size: 1.05rem;
+    line-height: 1.75;
+    text-wrap: pretty;
+  }
+
+  .fact-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 12px;
+  }
+
+  .fact {
+    min-height: 150px;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    background: var(--white);
+    padding: 18px;
+  }
+
+  .fact b {
+    display: block;
+    margin-bottom: 6px;
+    font-size: 1rem;
+  }
+
+  .fact p {
+    margin-bottom: 0;
+    color: var(--muted);
+    line-height: 1.55;
+  }
+
+  .fact.secure {
+    background: var(--teal-soft);
+    border-color: rgba(15, 118, 110, 0.24);
+  }
+
+  .fact.delete {
+    background: var(--green-soft);
+    border-color: rgba(22, 101, 52, 0.22);
+  }
+
+  .fact.limit {
+    background: var(--amber-soft);
+    border-color: rgba(180, 83, 9, 0.24);
+  }
+
+  .ledger {
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    overflow: hidden;
+    background: var(--white);
+  }
+
+  .ledger-row {
+    display: grid;
+    grid-template-columns: minmax(180px, 0.42fr) 1fr;
+    gap: 0;
+    border-top: 1px solid var(--line);
+  }
+
+  .ledger-row:first-child {
+    border-top: 0;
+  }
+
+  .ledger-term,
+  .ledger-detail {
+    padding: 18px 20px;
+  }
+
+  .ledger-term {
+    background: #f1f4f7;
+    color: #313840;
+    font-weight: 800;
+  }
+
+  .ledger-detail p {
+    margin-bottom: 8px;
+  }
+
+  .ledger-detail p:last-child {
+    margin-bottom: 0;
+  }
+
+  .warning-band {
+    display: grid;
+    grid-template-columns: minmax(0, 0.85fr) minmax(280px, 0.55fr);
+    gap: 24px;
+    align-items: start;
+    border: 1px solid rgba(153, 27, 27, 0.18);
+    border-radius: 8px;
+    background: var(--red-soft);
+    padding: clamp(22px, 4vw, 34px);
+  }
+
+  .do-not-send {
+    margin: 0;
+    padding-left: 20px;
+    color: #4f1f1f;
+  }
+
+  .do-not-send li + li {
+    margin-top: 8px;
+  }
+
+  .contract-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 14px;
+  }
+
+  .contract-item {
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    background: var(--white);
+    padding: 20px;
+  }
+
+  .contract-item p {
+    margin-bottom: 0;
+    color: var(--muted);
+  }
+
+  .cta-panel {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 18px;
+    border: 1px solid rgba(15, 118, 110, 0.26);
+    border-radius: 8px;
+    background: var(--teal-soft);
+    padding: 24px;
+  }
+
+  .cta-panel p {
+    max-width: 720px;
+    margin-bottom: 0;
+    color: #234643;
+  }
+
+  .button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 44px;
+    padding: 11px 15px;
+    border-radius: 8px;
+    font-weight: 750;
+    white-space: nowrap;
+    text-decoration: none;
+    border: 1px solid transparent;
+  }
+
+  .button.primary {
+    background: var(--charcoal);
+    color: var(--white);
+    border-color: var(--charcoal);
+  }
+
+  .button.primary:hover {
+    background: var(--teal-dark);
+    color: var(--white);
+    border-color: var(--teal-dark);
+  }
+
+  .trust-hero .button.primary {
+    background: var(--hero-button-bg);
+    color: var(--hero-button-ink);
+    border-color: var(--hero-button-bg);
+  }
+
+  .trust-hero .button.primary:hover {
+    background: var(--hero-button-hover);
+    color: var(--hero-button-ink);
+    border-color: var(--hero-button-hover);
+  }
+
+  .button.secondary {
+    color: var(--white);
+    border-color: rgba(255, 255, 255, 0.32);
+    background: rgba(255, 255, 255, 0.08);
+  }
+
+  .button.secondary:hover {
+    background: rgba(255, 255, 255, 0.14);
+    color: var(--white);
+  }
+
+  .button.outline {
+    color: var(--charcoal);
+    border-color: var(--line-strong);
+    background: var(--white);
+  }
+
+  .button.outline:hover {
+    color: var(--teal-dark);
+    border-color: rgba(15, 118, 110, 0.45);
+    background: var(--teal-soft);
+  }
+
+  footer {
+    padding: 24px;
+    color: #343b43;
+    border-top: 1px solid var(--line);
+    background: var(--white);
+  }
+
+  .footer-inner {
+    width: min(100%, var(--max));
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    gap: 18px;
+    flex-wrap: wrap;
+    font-size: 0.94rem;
+  }
+
+  @media (max-width: 840px) {
+    .trust-hero-grid,
+    .warning-band {
+      grid-template-columns: 1fr;
+    }
+
+    .trust-hero {
+      padding-top: 112px;
+      padding-bottom: 54px;
+    }
+
+    .ledger-row {
+      grid-template-columns: 1fr;
+    }
+
+    .ledger-term {
+      border-bottom: 1px solid var(--line);
+    }
+  }
+
+  @media (max-width: 640px) {
+    .nav-inner {
+      padding: 11px 18px;
+    }
+
+    .nav-links {
+      gap: 0;
+      margin-left: auto;
+    }
+
+    .nav-links a:not(.nav-cta) {
+      display: none;
+    }
+
+    .brand-subtitle {
+      display: none;
+    }
+
+    .nav-links .nav-cta {
+      padding: 7px 10px;
+      font-size: 0.86rem;
+    }
+
+    .trust-hero {
+      padding-top: 112px;
+      padding-bottom: 44px;
+    }
+
+    h1 {
+      font-size: 2.22rem;
+      line-height: 1.03;
+    }
+
+    .trust-lead {
+      font-size: 1rem;
+      line-height: 1.65;
+    }
+
+    .trust-claim-strip {
+      gap: 6px;
+    }
+
+    .trust-claim-strip span {
+      min-height: 30px;
+      padding: 5px 9px;
+      font-size: 0.78rem;
+    }
+
+    .trust-brief {
+      padding: 14px;
+    }
+
+    .brief-row {
+      grid-template-columns: 82px minmax(0, 1fr);
+      gap: 8px;
+    }
+
+    .brief-row span {
+      font-size: 0.84rem;
+    }
+
+    .section {
+      padding: 44px 22px;
+    }
+
+    .button {
+      width: 100%;
+    }
+  }
+</style>
+</head>
+<body>
+<nav class="site-nav" aria-label="Primary">
+  <div class="nav-inner">
+    <a class="brand" href="index.html" aria-label="ActionBoundary home">
+      <img class="brand-mark" src="assets/actionboundary-mark.svg" alt="" width="30" height="30" aria-hidden="true">
+      <span class="brand-copy">
+        <strong>ActionBoundary</strong>
+        <span class="brand-subtitle">Agent Authorization Review</span>
+      </span>
+    </a>
+    <div class="nav-links" aria-label="Site links">
+      <a href="index.html#what">What we test</a>
+      <a href="index.html#report">Sample report</a>
+      <a href="index.html#pilot">Pilot</a>
+      <a href="trust.html">Trust</a>
+      <a href="index.html#intake">Start</a>
+      <a href="why.html">Why</a>
+      <a href="index.html#faq">FAQ</a>
+      <a class="nav-cta" href="mailto:jiahao@actionboundary.dev?subject=3%20scenarios%20for%20our%20agent">Get 3 scenarios</a>
+    </div>
+  </div>
+</nav>
+
+<header class="trust-hero">
+  <div class="trust-hero-inner">
+    <div class="trust-hero-grid">
+      <div>
+        <p class="page-label">Trust & Data Handling</p>
+        <h1>How ActionBoundary handles redacted traces.</h1>
+        <p class="trust-lead">The review is designed so a buyer can ask hard security questions without requiring production access, real customer data, shared credentials, or third-party model processing by default.</p>
+        <div class="trust-claim-strip" aria-label="Data handling defaults">
+          <span>Staging or sandbox only</span>
+          <span>No production credentials</span>
+          <span>No third-party LLMs by default</span>
+          <span>30-day deletion default</span>
+        </div>
+      </div>
+      <aside class="trust-brief" aria-label="Trace handling defaults">
+        <div class="trust-brief-head">
+          <b>Trace handling defaults</b>
+          <span>before the first file moves</span>
+        </div>
+        <div class="brief-row">
+          <b>TRANSFER</b>
+          <span>Customer-approved secure channel, such as a portal, encrypted file share, private repo, or agreed secure link.</span>
+        </div>
+        <div class="brief-row">
+          <b>STORAGE</b>
+          <span>Encrypted, access-controlled storage with access limited to the named reviewer unless otherwise agreed.</span>
+        </div>
+        <div class="brief-row">
+          <b>PROCESSING</b>
+          <span>No third-party LLMs, model providers, or shared analysis tools by default.</span>
+        </div>
+        <div class="brief-row">
+          <b>DELETION</b>
+          <span>Deleted within 30 days after final report delivery, or sooner on written request.</span>
+        </div>
+      </aside>
+    </div>
+  </div>
+</header>
+
+<main>
+  <section class="section" aria-labelledby="quick-facts-title">
+    <div class="section-inner">
+      <div class="section-head">
+        <h2 id="quick-facts-title">Short version for security review.</h2>
+        <p class="lead">The engagement is intentionally narrow: one staging workflow, trace-backed authorization evidence, and a report that separates public model-behavior research from customer-specific runtime evidence.</p>
+      </div>
+      <div class="fact-grid">
+        <article class="fact secure">
+          <b>No production access</b>
+          <p>Reviews use staging, sandbox, exported logs, or redacted traces. Production systems are out of scope by default.</p>
+        </article>
+        <article class="fact">
+          <b>No shared credentials</b>
+          <p>Do not send passwords, API keys, session tokens, private keys, or unrestricted admin accounts.</p>
+        </article>
+        <article class="fact limit">
+          <b>No customer data by default</b>
+          <p>Use synthetic, de-identified, or redacted data. Harmless canaries replace real secrets.</p>
+        </article>
+        <article class="fact delete">
+          <b>30-day deletion default</b>
+          <p>Client traces are deleted within 30 days after final report delivery, or sooner on written request.</p>
+        </article>
+        <article class="fact">
+          <b>No third-party LLMs by default</b>
+          <p>Client traces are not sent to model providers or shared analysis tools unless approved in writing.</p>
+        </article>
+        <article class="fact">
+          <b>Default subprocessors: none</b>
+          <p>Trace analysis is local by default. Any third-party processing path requires written approval first.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="section alt" aria-labelledby="handling-title">
+    <div class="section-inner">
+      <div class="section-head">
+        <h2 id="handling-title">Data handling ledger.</h2>
+        <p class="lead">These are the default controls. Contract terms can replace or tighten them for a specific engagement.</p>
+      </div>
+      <div class="ledger">
+        <div class="ledger-row">
+          <div class="ledger-term">Data requested</div>
+          <div class="ledger-detail">
+            <p>One redacted trace or exported log for the first scoreability diagnostic; later, staging traces for selected scenarios if the workflow is ready.</p>
+          </div>
+        </div>
+        <div class="ledger-row">
+          <div class="ledger-term">Transfer</div>
+          <div class="ledger-detail">
+            <p>Use a customer-approved secure channel, such as a client portal, encrypted file share, private repository, or agreed secure link.</p>
+          </div>
+        </div>
+        <div class="ledger-row">
+          <div class="ledger-term">Storage</div>
+          <div class="ledger-detail">
+            <p>Traces are kept on encrypted, access-controlled local storage after receipt. Access is limited to the named reviewer unless otherwise agreed in writing.</p>
+          </div>
+        </div>
+        <div class="ledger-row">
+          <div class="ledger-term">Use limits</div>
+          <div class="ledger-detail">
+            <p>Client traces are not used for model training, public examples, benchmark data, marketing claims, or third-party disclosure without explicit written permission.</p>
+          </div>
+        </div>
+        <div class="ledger-row">
+          <div class="ledger-term">Retention</div>
+          <div class="ledger-detail">
+            <p>Default retention is deletion within 30 days after final report delivery, or sooner on written request. Deletion confirmation is available on request.</p>
+          </div>
+        </div>
+        <div class="ledger-row">
+          <div class="ledger-term">Third-party LLMs</div>
+          <div class="ledger-detail">
+            <p>Client traces are not sent to third-party LLMs or model providers by default. If your team requests or approves LLM-assisted analysis or another third-party processing path, it requires written approval and minimized, redacted inputs.</p>
+          </div>
+        </div>
+        <div class="ledger-row">
+          <div class="ledger-term">Contracts</div>
+          <div class="ledger-detail">
+            <p>Reasonable NDA, MSA, DPA, or BAA terms can be reviewed when the engagement requires them.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="do-not-send-title">
+    <div class="section-inner">
+      <div class="warning-band">
+        <div>
+          <h2 id="do-not-send-title">What not to send.</h2>
+          <p class="lead">Private trace review works best when sensitive data never enters the package in the first place.</p>
+        </div>
+        <ul class="do-not-send">
+          <li>Production credentials, API keys, tokens, private keys, or session cookies.</li>
+          <li>Real customer data, PHI, PII, payment card data, or regulated financial account data.</li>
+          <li>Raw database dumps, production ledger IDs, production bank details, or unrestricted admin accounts.</li>
+          <li>Private traces through public GitHub issues, public pull requests, or public discussions.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="section alt" aria-labelledby="scope-title">
+    <div class="section-inner">
+      <div class="section-head">
+        <h2 id="scope-title">Clear scope, clear limits.</h2>
+        <p class="lead">This is a focused authorization-boundary review, not a broad certification claim.</p>
+      </div>
+      <div class="contract-grid">
+        <article class="contract-item">
+          <h3>What the review covers</h3>
+          <p>Whether a tool-using agent can take a high-impact action without trusted, current, scope-matching authorization evidence.</p>
+        </article>
+        <article class="contract-item">
+          <h3>What the review does not claim</h3>
+          <p>It is not a SOC 2 audit, HIPAA assessment, PCI assessment, full penetration test, SAST, secret scan, or full IAM/MCP configuration audit.</p>
+        </article>
+        <article class="contract-item">
+          <h3>When sensitive traces may be possible</h3>
+          <p>If sensitive data could appear, we pause first and handle redaction, de-identification, NDA, DPA, or BAA requirements before transfer.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="contact-title">
+    <div class="section-inner">
+      <div class="cta-panel">
+        <div>
+          <h2 id="contact-title">Questions before sharing a trace?</h2>
+          <p>Send the data-handling question first. The safest pilot is the one where the transfer path, redaction boundary, and retention rule are clear before the first file moves.</p>
+        </div>
+        <a class="button primary" href="mailto:jiahao@actionboundary.dev?subject=Trace%20handling%20question">Email ActionBoundary</a>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="footer-inner">
+    <span>ActionBoundary by JZ Software Consulting. Agent Authorization Review.</span>
+    <span><a href="index.html">Home</a> | <a href="why.html">Why</a> | <a href="https://github.com/hugoii/llm-agent-audit">GitHub</a> | <a href="mailto:jiahao@actionboundary.dev">jiahao@actionboundary.dev</a></span>
+  </div>
+</footer>
+<script>
+  (function () {
+    var nav = document.querySelector('.site-nav');
+    var hero = document.querySelector('.trust-hero');
+    if (!nav || !hero) {
+      return;
+    }
+    var ticking = false;
+    var updateNavGlass = function () {
+      var navBottom = nav.getBoundingClientRect().bottom;
+      var heroBottom = hero.getBoundingClientRect().bottom;
+      nav.classList.toggle('is-over-light', heroBottom <= navBottom + 10);
+      ticking = false;
+    };
+    updateNavGlass();
+    window.addEventListener('scroll', function () {
+      if (!ticking) {
+        ticking = true;
+        window.requestAnimationFrame(updateNavGlass);
+      }
+    }, { passive: true });
+    window.addEventListener('resize', updateNavGlass);
+  })();
+</script>
+</body>
+</html>

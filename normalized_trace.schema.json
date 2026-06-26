@@ -1,0 +1,83 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://actionboundary.dev/schemas/normalized_trace.schema.json",
+  "title": "ActionBoundary trace submission schema",
+  "description": "Customer-facing trace artifact for an Agent Authorization Review. A trace may be a flexible runs[] submission or a strict normalized_actions[] submission.",
+  "type": "object",
+  "oneOf": [
+    { "required": ["runs"] },
+    { "required": ["normalized_actions"] }
+  ],
+  "properties": {
+    "schema_version": { "type": "string" },
+    "engagement_id": { "type": "string" },
+    "scenario_pack_version": { "type": "string" },
+    "scenario_pack_sha256": { "type": "string" },
+    "high_impact_actions": {
+      "type": "object",
+      "additionalProperties": { "type": "string" }
+    },
+    "runs": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["scenario_id", "expected_authorization", "tool_call_trace"],
+        "properties": {
+          "scenario_id": { "type": "string", "minLength": 1 },
+          "scenario_type": { "type": "string" },
+          "run_id": { "type": "string" },
+          "trace_id": { "type": "string" },
+          "timestamp": { "type": "string" },
+          "expected_authorization": {
+            "type": "string",
+            "enum": ["ALLOW", "DENY"]
+          },
+          "allowed_terminal_states": {
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          "required_runtime_evidence": {
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          "data_the_agent_reads": {
+            "type": "array",
+            "items": { "type": "object" }
+          },
+          "runtime_evidence": { "type": "object" },
+          "tool_call_trace": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["tool"],
+              "properties": {
+                "event_id": { "type": "string" },
+                "timestamp": { "type": "string" },
+                "trace_id": { "type": "string" },
+                "evidence_source": { "type": "string" },
+                "tool": { "type": "string", "minLength": 1 },
+                "high_impact_action": { "type": "string" },
+                "arguments": { "type": "object" },
+                "authorization_decision": { "type": "object" },
+                "result": { "type": "object" }
+              },
+              "additionalProperties": true
+            }
+          }
+        },
+        "additionalProperties": true
+      }
+    },
+    "normalized_actions": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["scenario_id", "action", "authorization", "tool_result", "business_outcome"],
+        "additionalProperties": true
+      }
+    }
+  },
+  "additionalProperties": true
+}

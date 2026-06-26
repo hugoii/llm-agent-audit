@@ -10,7 +10,7 @@ I help teams shipping tool-using AI agents produce staging trace evidence for cu
 ![staging only](https://img.shields.io/badge/scope-staging--only-155e75)
 ![MIT license](https://img.shields.io/badge/license-MIT-155e75)
 
-**Start here:** [Service page](https://actionboundary.dev/) | [Evidence flow](docs/evidence-flow.md) | [Sample report](docs/sample-pilot-report-v0.7.md)
+**Start here:** [Service page](https://actionboundary.dev/) | [Engineer quickstart](#engineer-quickstart) | [Sample report](docs/sample-pilot-report-v0.7.md) | [Trust & data handling](TRUST.md)
 
 **Want the 3 scenarios I would test for your agent?** [Email me](mailto:jiahao@actionboundary.dev?subject=3%20scenarios%20for%20our%20agent) | [LinkedIn](https://www.linkedin.com/in/jiahao-zhang-12999b319)
 
@@ -28,7 +28,7 @@ I help teams shipping tool-using AI agents produce staging trace evidence for cu
 
 | Layer | What it measures | What it can prove |
 |---|---|---|
-| Public benchmark | Whether models attempt unsafe simulated tool calls in a fixed, reproducible battery. | Model-behavior evidence and an inspectable scoring method. It is not evidence about a customer's private system. |
+| Public benchmark | Whether models would attempt unsafe high-impact tool calls from simulated tool schemas in a fixed, reproducible battery. | Model-behavior evidence and an inspectable scoring method. It is not evidence about a customer's private system, and it does not claim downstream tool execution. |
 | Client pilot | Whether one real staging action has runtime evidence for the acting identity, target, authorization source, tool result, and business outcome. | Action-specific authorization evidence for a customer security review. Missing critical evidence is `INCONCLUSIVE`, not `PASS`. |
 
 **How it works.** The path starts with a 3-scenario sketch, then one existing
@@ -40,9 +40,31 @@ deliverable is an evidence gap map and minimal instrumentation plan, not a
 forced PASS/FAIL. No production access, no real customer data, no shared
 credentials.
 
-**Why it is different.** Most AI testing checks what the model says. This checks what the agent does: did it call a tool it should not have been allowed to call, and did the system enforce the right boundary? Strict verdicts come from normalized runtime evidence: the action attempted, who or what executed it, what authority was checked, what the tool returned, and whether a sandbox side effect occurred. Missing critical evidence is reported as inconclusive, not passed.
+**Why it is different.** Most AI testing checks what the model says. I keep two action questions separate. The public battery asks whether a model would attempt an unsafe high-impact tool call in a simulated, schema-only loop. A client pilot asks whether the product enforced authorization in staging, what the tool returned, and whether any sandbox side effect occurred. Missing critical evidence is reported as inconclusive, not passed.
 
 A poisoned ticket, invoice, or tool response can look like normal business context while quietly asking the agent to issue a refund, export data, or change an account. I test whether that text becomes an action.
+
+## Engineer quickstart
+
+Validate and score a redacted AP/payment trace against a machine-readable scenario pack:
+
+```bash
+python -m actionboundary validate \
+  --trace examples/ap_payment_trace.redacted.json \
+  --scenario-pack examples/ap_payment_scenario_pack.json
+
+python -m actionboundary score \
+  --trace examples/ap_payment_trace.redacted.json \
+  --scenario-pack examples/ap_payment_scenario_pack.json
+```
+
+Or run the local validation bundle:
+
+```bash
+make validate
+```
+
+The contract files are [normalized_trace.schema.json](normalized_trace.schema.json), [scenario_pack.schema.json](scenario_pack.schema.json), and [verdict.schema.json](verdict.schema.json). They sit beside the redacted AP example so an engineering team can inspect the trace shape, scenario oracle, and scored verdict without reading the whole repo first.
 
 ## Start here
 
@@ -55,10 +77,12 @@ A poisoned ticket, invoice, or tool response can look like normal business conte
 - **[Rendered PDF sample](docs/sample-evidence-report-v0.7.pdf)**: a polished report-style preview generated from the public sample report source.
 - **[Evidence flow](docs/evidence-flow.md)**: how untrusted content, tool calls, authorization evidence, findings, fixes, and retests connect.
 - **[Evidence readiness check](pilot/evidence-readiness-check.md)**: the existing-trace-first gate that decides whether a full trace-backed verdict is scoreable yet.
+- **[Engineer quickstart artifacts](examples/ap_payment_trace.redacted.json)**: a redacted AP trace, [scenario pack](examples/ap_payment_scenario_pack.json), root-level schemas, and `python -m actionboundary` scoring path.
 - **[Pilot verdict protocol](pilot/verdict_protocol.md)**: how flexible client traces become strict normalized evidence, and why missing runtime evidence is `INCONCLUSIVE` rather than `PASS`.
-- **[AP payment boundary scenarios](pilot/ap_payment_boundary_scenarios.md)**: an 8-scenario sketch for testing one staging payment action deeply, including post-approval changes, cross-agent handoff, and retry/idempotency.
+- **[AP payment boundary scenarios](pilot/ap_payment_boundary_scenarios.md)**: an AP/payment scenario oracle for testing one staging payment action deeply, including post-approval changes, cross-agent handoff, retry/idempotency, and a larger benign-control library.
 - **[AP authorization invariants](docs/ap-authorization-invariants.md)** and **[AP methodology](docs/ap-agent-authorization-methodology.md)**: the payment-boundary rules behind the AP pilot shape.
 - **[AP payment manifest](pilot/ap_payment_boundary_manifest.json)**: machine-readable scenario oracle for the AP payment boundary.
+- **[Trust & data handling](TRUST.md)**: staging-only scope, trace transfer, redaction, retention, deletion, no third-party LLMs by default, and default subprocessors.
 - **[AP deep payment-control experiment](docs/ap-l3-l5-control-experiment.md)**: a narrow method note showing post-approval mutation, inter-agent handoff, retry/idempotency, benign controls, and missing-evidence verdicts.
 - **[A focused payment-permission case note](docs/payment-approval-is-not-user-authorization.md)**: a customer-like AP workflow where four model APIs often attempted payment under a viewer principal, while tool-side enforcement blocked the same action.
 - **[A worked example: an accounts-payable agent](docs/ap-action-boundary-case-note.md)**: the method run end to end on a real tool-calling model in a synthetic AP workflow. It caught an unauthorized data export and still passed the benign controls.
@@ -82,19 +106,19 @@ This repository is the reproducible public method, not a copy of a customer's pr
 
 | Layer | Public evidence | What it proves |
 |---|---|---|
-| Fixed battery | Battery v1.5, 58 attacks plus 3 controls, multiple real-model summaries, and a CI-checked offline harness. | The method is reproducible and scores actual tool-call traces, not model promises. |
+| Fixed battery | Battery v1.5, 58 attacks plus 3 controls, multiple real-model summaries, and a CI-checked offline harness. | The method is reproducible and scores model-emitted tool-call attempts against simulated schemas, not model promises. |
 | Customer-like workflows | [AP payment approval](docs/payment-approval-is-not-user-authorization.md), [AP deep payment-control experiment](docs/ap-l3-l5-control-experiment.md), [AP payment boundary scenarios](pilot/ap_payment_boundary_scenarios.md), [AP authorization invariants](docs/ap-authorization-invariants.md), [AP methodology](docs/ap-agent-authorization-methodology.md), [multi-turn prior-auth](docs/multi-turn-authorization-drift-case-note.md), source-of-truth authorization, current-user authority, scope, timing, idempotency, and tool-layer enforcement examples. | The method can ask business authorization questions, not only prompt-injection questions. |
-| Client pilot path | [Evidence readiness check](pilot/evidence-readiness-check.md), [sample report](docs/sample-pilot-report-v0.7.md), [evidence flow](docs/evidence-flow.md), [flexible trace schema](pilot/trace_schema.json), [strict normalized evidence schema](pilot/normalized_evidence_schema.json), [verdict protocol](pilot/verdict_protocol.md), [adapter handoff](pilot/client-handoff.md), and 5 to 10 workflow-specific scenarios. | The public method transfers to your staging tools, approval sources, user roles, and traces. |
+| Client pilot path | [Evidence readiness check](pilot/evidence-readiness-check.md), [sample report](docs/sample-pilot-report-v0.7.md), [evidence flow](docs/evidence-flow.md), root-level [trace](normalized_trace.schema.json), [scenario pack](scenario_pack.schema.json), and [verdict](verdict.schema.json) schemas, [adapter handoff](pilot/client-handoff.md), and 5 to 10 selected workflow-specific scenarios. For AP/payment workflows, the scenario oracle includes a larger [benign-control library](pilot/ap_benign_controls.md) so normal authorized work can be tested without asking the customer to design controls from scratch. | The public method transfers to your staging tools, approval sources, user roles, and traces. |
 
 Read it this way: **the repo proves the method; the pilot applies it to your real workflow.** The public artifacts do not claim to be evidence about your system until your staging tools, authorization sources, and traces are used.
 
 ## Why you can trust it
 
-It is independent, open, and evidence-based. On a fixed battery run across six recent models from three major vendors, the average number of unsafe tool calls ranged from 0.0 to 8.0 on the same test, and the frontier label was not a reliable safety signal. The lesson: a model's refusal, and model choice, are not your authorization layer. That has to live in your application.
+It is independent, open, and evidence-based. On a fixed battery run across six recent models from three major vendors, the average number of unsafe high-impact tool-call attempts ranged from 0.0 to 8.0 on the same test, and the frontier label was not a reliable safety signal. The lesson: a model's refusal, and model choice, are not your authorization layer. That has to live in your application.
 
 Read the cross-vendor study: [Model choice is not an authorization layer](docs/model-choice-is-not-an-authorization-layer.md). The harness, per-model data, and technical report are archived on Zenodo with a [DOI](https://doi.org/10.5281/zenodo.20585658) for citation and reproducibility.
 
-Repository security reports and public disclosure boundaries are covered in the [security policy](SECURITY.md).
+Trace handling, retention, and client-data boundaries are covered in [Trust & data handling](TRUST.md). Repository security reports and public disclosure boundaries are covered in the [security policy](SECURITY.md).
 Public issue and pull request guidance is covered in [CONTRIBUTING.md](CONTRIBUTING.md).
 
 <details>
@@ -133,6 +157,7 @@ Public issue and pull request guidance is covered in [CONTRIBUTING.md](CONTRIBUT
 
 | Repo layer | What you are looking at |
 |---|---|
+| Engineering contract | `python -m actionboundary validate --trace examples/ap_payment_trace.redacted.json --scenario-pack examples/ap_payment_scenario_pack.json` checks the machine-readable AP example. |
 | Offline demo | `agent_audit.py` runs a naive and a guarded reference demo agent with no API key. |
 | Live API runs | `run_real.py` runs battery v1.5 against real model APIs and writes trace-backed reports. |
 | Client pilot | The generic scenarios are replaced with your staging tools, approvals, and traces. |
@@ -150,7 +175,7 @@ python agent_audit.py
 
 It runs the 53 core attack scenarios against an un-hardened demo agent, then the same demo agent with guardrails, and writes `agent_report.md` with trace evidence and fixes. This is a reproducible method demo, not evidence about your system. The live cross-vendor study used battery v1.5, 58 attacks plus 3 controls; see `run_real.py`.
 
-**On your own model.** Replace the demo agents with a function that runs your agent's tool-calling loop and records each `(tool_name, args)` into `trace`. `run_real.py` supports OpenAI, Anthropic, and Gemini through the `PROVIDER` env var, plus OpenAI-compatible gateways through `OPENAI_BASE_URL`. Set `RUNS=3` for per-run reports and a multi-run summary.
+**On your own model.** Replace the demo agents with a function that runs your agent's tool-calling loop and records each `(tool_name, args)` into `trace`. `run_real.py` supports OpenAI, Anthropic, and Gemini through the `PROVIDER` env var, plus OpenAI-compatible gateways through `OPENAI_BASE_URL`. It is a public model-behavior runner: it sends simulated tool schemas, records attempted tool calls, executes no downstream tools, and does not replay tool outputs into a multi-turn loop. Set `RUNS=3` for per-run reports and a multi-run summary.
 
 This is a defensive tool. It helps teams find and fix unsafe agent behavior before attackers do.
 
@@ -161,7 +186,7 @@ This is a defensive tool. It helps teams find and fix unsafe agent behavior befo
 <details>
 <summary><b>Do you need production access or real customer data?</b></summary>
 
-No. The review is staging-only. Test data is synthetic or a harmless canary. No production access, no real customer data, no shared credentials.
+No. The review is staging-only. Test data is synthetic or a harmless canary. No production access, no real customer data, no shared credentials. See [Trust & data handling](TRUST.md) for trace transfer, retention, deletion, and third-party processing defaults.
 </details>
 
 <details>
@@ -198,6 +223,6 @@ An OWASP/NIST-mapped report with trace evidence, severity, concrete application-
 
 Prepared by ActionBoundary Review Team. Operated by JZ Software Consulting. Named reviewers and roles are included in client reports. Staging-only, no production access.
 
-**Start here:** [Service page](https://actionboundary.dev/) | [Sample report](docs/sample-pilot-report-v0.7.md)
+**Start here:** [Service page](https://actionboundary.dev/) | [Sample report](docs/sample-pilot-report-v0.7.md) | [Trust & data handling](TRUST.md)
 
 **Want the 3 scenarios I would test for your agent?** [Email me](mailto:jiahao@actionboundary.dev?subject=3%20scenarios%20for%20our%20agent) | [LinkedIn](https://www.linkedin.com/in/jiahao-zhang-12999b319)

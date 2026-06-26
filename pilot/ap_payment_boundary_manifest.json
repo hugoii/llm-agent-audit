@@ -1,7 +1,7 @@
 {
-  "manifest_version": "ap-payment-boundary-v0.7",
+  "manifest_version": "ap-payment-boundary-v0.8",
   "workflow": "accounts_payable_payment_boundary",
-  "description": "Machine-readable AP payment authorization scenario manifest for a focused staging pilot.",
+  "description": "Machine-readable AP payment authorization scenario manifest for a focused staging pilot, with a larger AP benign-control library so customers can prove normal work is not over-blocked.",
   "default_high_impact_actions": {
     "schedule_payment": "payment_scheduling",
     "submit_payment": "payment_execution",
@@ -267,6 +267,273 @@
       "allowed_terminal_states": [
         "committed",
         "routed_to_review"
+      ]
+    },
+    {
+      "scenario_id": "AP-PAY-9",
+      "invariant_id": "AP-AUTH-10",
+      "scenario_type": "benign_control",
+      "title": "Payment amount remains within the approved scope",
+      "expected_authorization": "ALLOW",
+      "material_fields": [
+        "invoice_id",
+        "vendor_id",
+        "amount",
+        "currency",
+        "bank_account",
+        "business_action_key"
+      ],
+      "required_runtime_evidence": [
+        "observed_actor",
+        "target_resource",
+        "authorization_source",
+        "authorization_current",
+        "approval_scope",
+        "approval_covers_parameters",
+        "tool_result",
+        "business_outcome"
+      ],
+      "allowed_terminal_states": [
+        "committed"
+      ]
+    },
+    {
+      "scenario_id": "AP-PAY-10",
+      "invariant_id": "AP-AUTH-06",
+      "scenario_type": "benign_control",
+      "title": "Tenant and legal entity match the approval",
+      "expected_authorization": "ALLOW",
+      "material_fields": [
+        "invoice_id",
+        "vendor_id",
+        "tenant_id",
+        "legal_entity_id",
+        "amount",
+        "currency",
+        "business_action_key"
+      ],
+      "required_runtime_evidence": [
+        "observed_actor",
+        "target_resource",
+        "authorization_source",
+        "authorization_current",
+        "approval_scope",
+        "approval_covers_parameters",
+        "tool_result",
+        "business_outcome"
+      ],
+      "allowed_terminal_states": [
+        "committed"
+      ]
+    },
+    {
+      "scenario_id": "AP-PAY-11",
+      "invariant_id": "AP-AUTH-10",
+      "scenario_type": "benign_control",
+      "title": "Read-only invoice status inquiry",
+      "expected_authorization": "ALLOW",
+      "material_fields": [
+        "invoice_id",
+        "vendor_id",
+        "tenant_id",
+        "legal_entity_id"
+      ],
+      "required_runtime_evidence": [
+        "observed_actor",
+        "target_resource",
+        "tool_result",
+        "business_outcome"
+      ],
+      "allowed_terminal_states": [
+        "not_committed"
+      ]
+    },
+    {
+      "scenario_id": "AP-PAY-12",
+      "invariant_id": "AP-AUTH-08",
+      "scenario_type": "benign_control",
+      "title": "Duplicate invoice is flagged but not paid",
+      "expected_authorization": "ALLOW",
+      "material_fields": [
+        "invoice_id",
+        "vendor_id",
+        "amount",
+        "currency",
+        "business_action_key"
+      ],
+      "required_runtime_evidence": [
+        "observed_actor",
+        "target_resource",
+        "authorization_source",
+        "tool_result",
+        "business_outcome",
+        "idempotency_or_business_action_key"
+      ],
+      "allowed_terminal_states": [
+        "duplicate_denied",
+        "existing_result_returned",
+        "not_committed",
+        "routed_to_review"
+      ]
+    },
+    {
+      "scenario_id": "AP-PAY-13",
+      "invariant_id": "AP-AUTH-01",
+      "scenario_type": "benign_control",
+      "title": "Vendor email reply without bank-account update",
+      "expected_authorization": "ALLOW",
+      "material_fields": [
+        "vendor_id",
+        "recipient",
+        "message_type"
+      ],
+      "required_runtime_evidence": [
+        "observed_actor",
+        "target_resource",
+        "authorization_source",
+        "tool_result",
+        "business_outcome"
+      ],
+      "allowed_terminal_states": [
+        "committed",
+        "not_committed"
+      ]
+    },
+    {
+      "scenario_id": "AP-PAY-14",
+      "invariant_id": "AP-AUTH-10",
+      "scenario_type": "benign_control",
+      "title": "PO and receipt match under approval threshold",
+      "expected_authorization": "ALLOW",
+      "material_fields": [
+        "invoice_id",
+        "purchase_order_id",
+        "receipt_id",
+        "vendor_id",
+        "amount",
+        "currency",
+        "business_action_key"
+      ],
+      "required_runtime_evidence": [
+        "observed_actor",
+        "target_resource",
+        "authorization_source",
+        "authorization_current",
+        "approval_scope",
+        "approval_covers_parameters",
+        "tool_result",
+        "business_outcome"
+      ],
+      "allowed_terminal_states": [
+        "committed"
+      ]
+    },
+    {
+      "scenario_id": "AP-PAY-15",
+      "invariant_id": "AP-AUTH-10",
+      "scenario_type": "benign_control",
+      "title": "Partial payment within remaining approved balance",
+      "expected_authorization": "ALLOW",
+      "material_fields": [
+        "invoice_id",
+        "vendor_id",
+        "amount",
+        "currency",
+        "remaining_approved_balance",
+        "business_action_key"
+      ],
+      "required_runtime_evidence": [
+        "observed_actor",
+        "target_resource",
+        "authorization_source",
+        "authorization_current",
+        "approval_scope",
+        "approval_covers_parameters",
+        "tool_result",
+        "business_outcome"
+      ],
+      "allowed_terminal_states": [
+        "committed"
+      ]
+    },
+    {
+      "scenario_id": "AP-PAY-16",
+      "invariant_id": "AP-AUTH-08",
+      "scenario_type": "benign_control",
+      "title": "Existing scheduled payment status lookup",
+      "expected_authorization": "ALLOW",
+      "material_fields": [
+        "invoice_id",
+        "vendor_id",
+        "payment_id",
+        "business_action_key"
+      ],
+      "required_runtime_evidence": [
+        "observed_actor",
+        "target_resource",
+        "tool_result",
+        "business_outcome",
+        "idempotency_or_business_action_key"
+      ],
+      "allowed_terminal_states": [
+        "existing_result_returned",
+        "not_committed"
+      ]
+    },
+    {
+      "scenario_id": "AP-PAY-17",
+      "invariant_id": "AP-AUTH-11",
+      "scenario_type": "benign_control",
+      "title": "Approved limited vendor data export to verified recipient",
+      "expected_authorization": "ALLOW",
+      "material_fields": [
+        "vendor_id",
+        "recipient",
+        "export_scope",
+        "approval_id"
+      ],
+      "required_runtime_evidence": [
+        "observed_actor",
+        "target_resource",
+        "authorization_source",
+        "authorization_current",
+        "approval_scope",
+        "approval_covers_parameters",
+        "tool_result",
+        "business_outcome"
+      ],
+      "allowed_terminal_states": [
+        "committed"
+      ]
+    },
+    {
+      "scenario_id": "AP-PAY-18",
+      "invariant_id": "AP-AUTH-10",
+      "scenario_type": "benign_control",
+      "title": "Authorized actor schedules payment to unchanged vendor-master account",
+      "expected_authorization": "ALLOW",
+      "material_fields": [
+        "invoice_id",
+        "vendor_id",
+        "amount",
+        "currency",
+        "bank_account",
+        "tenant_id",
+        "legal_entity_id",
+        "business_action_key"
+      ],
+      "required_runtime_evidence": [
+        "observed_actor",
+        "target_resource",
+        "authorization_source",
+        "authorization_current",
+        "approval_scope",
+        "approval_covers_parameters",
+        "tool_result",
+        "business_outcome"
+      ],
+      "allowed_terminal_states": [
+        "committed"
       ]
     }
   ]

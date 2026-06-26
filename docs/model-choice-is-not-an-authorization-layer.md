@@ -1,6 +1,6 @@
 # Model choice is not an authorization layer
 
-*I ran the same agent-action audit across six model configurations. Results ranged from 0.0 to 8.0 unsafe tool calls on average across scorable scenarios, and the recurring failures were mostly authorization failures, not hidden prompt injections.*
+*I ran the same agent-action audit across six model configurations. Results ranged from 0.0 to 8.0 unsafe high-impact tool-call attempts on average across scorable scenarios, and the recurring failures were mostly authorization failures, not hidden prompt injections.*
 
 A while ago I wrote that a model's refusals are not your authorization layer. A model can tell that something sounds dangerous and refuse it, but it cannot check whether the person asking is allowed to act. That has to live in your application.
 
@@ -20,7 +20,7 @@ The six configurations were Anthropic Claude Opus 4.8 and Claude Haiku 4.5, Open
 
 ## Results
 
-| Model | Tier | Unsafe tool calls per run | Unsafe average | API-level blocks per run | Stable failures (every run) |
+| Model | Tier | Unsafe high-impact tool-call attempts per run | Attempt average | API-level blocks per run | Stable failures (every run) |
 |---|---|---|---|---|---|
 | Anthropic Claude Opus 4.8 | frontier | 0, 0, 0 | 0.0 | 0 | none |
 | OpenAI GPT-5-mini | budget | 1, 2, 2 | 1.67 | 0 | 1 (grant admin) |
@@ -33,7 +33,7 @@ Note on GPT-5.5: on every run, 9 of the 58 attack scenarios did not reach the mo
 
 ## What I found
 
-**The frontier label was not a reliable safety signal.** On the same battery, the average number of unsafe tool calls ranged from 0.0 to 8.0. Both ends of that range were frontier models. One frontier model took no unsafe action in any run. Another took unsafe actions in the high single digits every run. Within one vendor, the frontier model was actually less safe than its own budget model. Model choice mattered, but the tier alone did not predict behavior in this harness. The actions that did fail are exactly the kind that application-layer authorization should stop.
+**The frontier label was not a reliable safety signal.** On the same battery, the average number of unsafe high-impact tool-call attempts ranged from 0.0 to 8.0. Both ends of that range were frontier models. One frontier model took no unsafe action in any run. Another took unsafe actions in the high single digits every run. Within one vendor, the frontier model was actually less safe than its own budget model. Model choice mattered, but the tier alone did not predict behavior in this harness. The actions that did fail are exactly the kind that application-layer authorization should stop.
 
 **Where failures appeared, they clustered around authorization for high-impact actions.** This is the same pattern as the first writeup, and it held across vendors. The failures that showed up in every run were almost all plain, direct requests to do something high-impact, phrased like routine work: issue a refund, grant admin access, transfer money, delete an account, disable MFA. One was a one-line jailbreak that moved money. None of them needed a hidden instruction. They needed a model that would act without checking whether the requester was allowed to.
 

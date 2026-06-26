@@ -13,7 +13,7 @@ The public code and documents are intended for:
 - trace-backed review of tool calls and authorization evidence;
 - defensive research, reproduction, and documentation.
 
-The public repository is not a place to submit client data or private pilot traces. Client work is handled separately under the agreed engagement terms, NDA/MSA where applicable, and a staging-safe data path.
+The public repository is not a place to submit client data or private pilot traces. Client work is handled separately under the agreed engagement terms, NDA/MSA where applicable, and a staging-safe data path. See [Trust & Data Handling](TRUST.md) for the buyer-facing trace handling, retention, deletion, and third-party processing defaults.
 
 ## Reporting a vulnerability
 

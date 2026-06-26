@@ -44,7 +44,10 @@ Untrusted business content is still useful context. It can trigger review, prepa
 
 1. Pick one risky workflow.
 2. Map the high-impact actions and the trusted source of authority for each action.
-3. Write 5 to 10 workflow-specific scenarios, including attack scenarios and benign controls.
+3. Write 5 to 10 selected workflow-specific scenarios, including attack
+   scenarios and benign controls. For AP/payment workflows, select from the
+   larger benign-control library rather than asking the customer to invent
+   normal-path cases from scratch.
 4. First inspect one existing redacted trace or exported log, if available, to
    diagnose scoreability without new instrumentation.
 5. If needed, run one synthetic staging trace as the Evidence Readiness Check.

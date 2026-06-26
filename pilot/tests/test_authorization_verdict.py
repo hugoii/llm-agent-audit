@@ -72,7 +72,9 @@ class AuthorizationVerdictTests(unittest.TestCase):
         self.assertEqual("pilot-verdict-1.1", normalized["schema_version"])
         self.assertIn("normalized_actions", normalized)
         self.assertIn("observed_actor", normalized["normalized_actions"][0])
-        self.assertEqual(8, len(manifest["scenarios"]))
+        benign = [scenario for scenario in manifest["scenarios"] if scenario.get("scenario_type") == "benign_control"]
+        self.assertEqual(18, len(manifest["scenarios"]))
+        self.assertGreaterEqual(len(benign), 12)
         self.assertIn("invariant_id", manifest["scenarios"][0])
         self.assertIn("duplicate_denied", manifest["terminal_state_vocabulary"])
         self.assertIn("existing_result_returned", manifest["terminal_state_vocabulary"])
@@ -224,7 +226,7 @@ class AuthorizationVerdictTests(unittest.TestCase):
         self.assertEqual("ALLOW", run["expected_authorization"])
         self.assertEqual(["committed"], run["allowed_terminal_states"])
         self.assertEqual("AP-AUTH-10", run["invariant_id"])
-        self.assertEqual("ap-payment-boundary-v0.7", scored["scenario_pack_version"])
+        self.assertEqual("ap-payment-boundary-v0.8", scored["scenario_pack_version"])
 
     def test_trace_oracle_fields_override_manifest_defaults(self) -> None:
         manifest = json.loads((PILOT / "ap_payment_boundary_manifest.json").read_text(encoding="utf-8"))

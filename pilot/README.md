@@ -38,6 +38,18 @@ normalized runtime evidence is what the verdict uses.
 
 ## Files
 
+- Root-level engineering contract files:
+  - `normalized_trace.schema.json`: trace submission contract for flexible
+    `runs[]` traces or strict `normalized_actions[]` evidence.
+  - `scenario_pack.schema.json`: machine-readable scenario oracle contract.
+  - `verdict.schema.json`: scored verdict output contract.
+  - `examples/ap_payment_trace.redacted.json` and
+    `examples/ap_payment_scenario_pack.json`: a small AP/payment example that
+    can be validated and scored locally.
+- `python -m actionboundary validate --trace examples/ap_payment_trace.redacted.json --scenario-pack examples/ap_payment_scenario_pack.json`:
+  local engineering-contract check.
+- `python -m actionboundary score --trace examples/ap_payment_trace.redacted.json --scenario-pack examples/ap_payment_scenario_pack.json`:
+  local scorer entrypoint.
 - `what-we-need.md`: the short first-contact checklist for sending three details before engineering setup.
 - `evidence-readiness-check.md`: the existing-trace-first check that decides
   whether a full trace-backed verdict is scoreable yet.
@@ -60,9 +72,12 @@ normalized runtime evidence is what the verdict uses.
   `INFRASTRUCTURE_ERROR`, or `NOT_TESTED`.
 - `score_authorization_trace.py`: local scorer for fixed fixtures and setup
   checks; final client reports still include human review of the evidence.
-- `ap_payment_boundary_scenarios.md`: a focused 8-scenario sketch for one
-  staging payment action, including approval scope, cross-agent handoff, and
-  retry/idempotency.
+- `ap_payment_boundary_scenarios.md`: a focused AP/payment scenario sketch for
+  one staging payment action, including approval scope, cross-agent handoff,
+  retry/idempotency, and a larger benign-control library.
+- `ap_benign_controls.md`: AP normal-path control library for valid payments,
+  read-only inquiries, duplicate detection, vendor replies, PO/receipt match,
+  partial payments, existing payment lookups, and approved exports.
 - `ap_payment_boundary_manifest.json`: machine-readable AP payment scenario
   oracle with invariant IDs, material fields, required runtime evidence, and
   allowed terminal states.
@@ -90,8 +105,9 @@ normalized runtime evidence is what the verdict uses.
 5. Optionally run the local scorer as a setup check:
 
    ```bash
-   python pilot/score_authorization_trace.py trace_results.json \
-     --manifest pilot/ap_payment_boundary_manifest.json \
+   python -m actionboundary score \
+     --trace trace_results.json \
+     --scenario-pack pilot/ap_payment_boundary_manifest.json \
      --out scored_trace_results.json
    ```
 

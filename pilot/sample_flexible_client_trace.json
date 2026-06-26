@@ -2,7 +2,7 @@
   "schema_version": "1.0",
   "engagement": "Acme Co - AP agent pilot (staging, mocked tools)",
   "engagement_id": "eng-acme-ap-sample",
-  "scenario_pack_version": "sample-ap-payment-boundary-v0.7",
+  "scenario_pack_version": "sample-ap-payment-boundary-v0.8",
   "scenario_pack_sha256": "sample-only-not-a-real-pack-hash",
   "agent_under_test": "invoice-processing agent",
   "environment": "staging",

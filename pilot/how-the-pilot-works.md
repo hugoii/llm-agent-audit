@@ -10,9 +10,11 @@ A fixed-scope, lightweight check of whether your tool-using agent only takes hig
    staging run is required for this scoreability diagnostic.
 3. If no useful trace exists, or the trace is not representative, we run one
    synthetic staging trace as the Evidence Readiness Check.
-4. If the trace is ready, we agree on 5 to 10 scenarios mapped to actions your
-   agent can trigger. ActionBoundary identifies the risky authorization cases
-   and writes scenarios for your tools, not a generic checklist.
+4. If the trace is ready, we agree on 5 to 10 selected scenarios mapped to
+   actions your agent can trigger. ActionBoundary identifies the risky
+   authorization cases and chooses benign controls from a workflow-specific
+   library when one applies, instead of asking your team to design normal-path
+   test cases from scratch.
 5. Your team runs them against a staging copy of your agent or shares a safe
    test endpoint, then exports the tool-call traces plus authorization
    decisions, tool results, and side-effect or ledger evidence.

@@ -13,8 +13,13 @@ For an OpenAI-compatible endpoint, keep PROVIDER="openai", set OPENAI_BASE_URL,
 and optionally set PROVIDER_LABEL="deepseek" or "qwen" so reports are labeled
 with the actual model provider.
 
+This is a first-step public model-behavior battery. It supplies simulated tool
+schemas to the model, records requested tool/function calls, executes no
+downstream tools, commits no side effects, and does not feed tool results back
+into a multi-turn agent loop.
+
 Each run writes runs/{provider}__{model}__run-N.(md|json) with full, untruncated
-evidence (the JSON keeps every reply and tool call). It also writes a
+evidence (the JSON keeps every reply and attempted tool call). It also writes a
 runs/{provider}__{model}__summary.(md|json) reporting per-run counts, min/max/avg,
 and which scenarios are stable vs intermittent. We report ranges, not one-off scores.
 Optional REQUEST_DELAY adds seconds between calls for rate-limited free tiers.
@@ -25,10 +30,17 @@ import json
 import re
 import time
 import datetime
-from agent_audit import (ATTACKS, ADVANCED, judge, build_report,
-                         observed_outcomes, BATTERY_VERSION,
-                         row_status, is_exploited, is_scorable_attack,
-                         openai_agent, anthropic_agent, gemini_agent)
+
+from providers import anthropic_agent, gemini_agent, openai_agent
+from report import build_report
+from scenarios import ADVANCED, ATTACKS, BATTERY_VERSION
+from scoring import (
+    is_exploited,
+    is_scorable_attack,
+    judge,
+    observed_outcomes,
+    row_status,
+)
 
 API_PROVIDER = os.environ.get("PROVIDER", "openai").lower()
 PROVIDER_LABEL = os.environ.get("PROVIDER_LABEL", API_PROVIDER).lower()
@@ -172,7 +184,14 @@ summary = {
     "api_compat_provider": API_PROVIDER, "model": model, "date": today,
     "runs": RUNS, "sampling": "provider default (no fixed temperature)", "attacks": n_attacks,
     "scorable_attacks_per_run": scorable_per_run,
-    "exploited_per_run": exploited_per_run, "exploited_min": mn, "exploited_max": mx, "exploited_avg": avg,
+    "forbidden_observed_outcomes_per_run": exploited_per_run,
+    "forbidden_observed_outcomes_min": mn,
+    "forbidden_observed_outcomes_max": mx,
+    "forbidden_observed_outcomes_avg": avg,
+    "exploited_per_run": exploited_per_run,
+    "exploited_min": mn,
+    "exploited_max": mx,
+    "exploited_avg": avg,
     "api_errors_per_run": errors_per_run,
     "hit_counts": {i: f"{hits[i]}/{RUNS}" for i in attack_ids if hits[i] > 0},
     "stable_every_run": stable, "intermittent": intermittent,
@@ -191,7 +210,7 @@ lines = [
     f"_Battery {BATTERY_VERSION}. {n_attacks} attacks + {total - n_attacks} controls. "
     f"{RUNS} runs at provider-default sampling._",
     "",
-    f"- Unsafe executions per run: {exploited_per_run}  (min {mn}, max {mx}, avg {avg})",
+    f"- Forbidden observed outcomes per run: {exploited_per_run}  (min {mn}, max {mx}, avg {avg})",
     f"- Scorable attack scenarios per run: {scorable_per_run} of {n_attacks}",
     f"- API or infrastructure errors per run: {errors_per_run}",
     "",
@@ -213,15 +232,18 @@ lines += [
     "sampling, so a single number is not a stable claim. The failures observed in every run",
     "are the most consistent;",
     "intermittent ones show the unsafe action is reachable but not guaranteed.",
-    "API or infrastructure errors are coverage exceptions, not blocked scenarios. Compare unsafe",
-    "executions against the scorable scenario count for that run, and report coverage separately.",
+    "This public battery records whether the model would attempt an unsafe high-impact tool call",
+    "from simulated tool schemas. It executes no downstream tools, commits no side effects, and",
+    "does not feed tool results back into a multi-turn agent loop.",
+    "API or infrastructure errors are coverage exceptions, not blocked scenarios. Compare forbidden",
+    "observed outcomes against the scorable scenario count for that run, and report coverage separately.",
     "This is an assessment of behavior",
     "on a fixed battery, not a benchmark score or a ranking of vendors.",
 ]
 with open(os.path.join("runs", f"{safe}__summary.md"), "w", encoding="utf-8") as f:
     f.write("\n".join(lines) + "\n")
 
-print(f"Unsafe executions per run: {exploited_per_run}  (min {mn}, max {mx}, avg {avg})")
+print(f"Forbidden observed outcomes per run: {exploited_per_run}  (min {mn}, max {mx}, avg {avg})")
 print(f"Scorable attacks per run: {scorable_per_run} of {n_attacks}")
 print(f"Stable (every run): {stable or 'none'}")
 print(f"Intermittent:       {intermittent or 'none'}")

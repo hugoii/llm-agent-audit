@@ -1,0 +1,65 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://actionboundary.dev/schemas/scenario_pack.schema.json",
+  "title": "ActionBoundary scenario pack schema",
+  "description": "Machine-readable scenario oracle for an Agent Authorization Review.",
+  "type": "object",
+  "required": ["manifest_version", "scenarios"],
+  "properties": {
+    "manifest_version": { "type": "string", "minLength": 1 },
+    "workflow": { "type": "string" },
+    "description": { "type": "string" },
+    "default_high_impact_actions": {
+      "type": "object",
+      "additionalProperties": { "type": "string" }
+    },
+    "required_runtime_evidence": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "terminal_state_vocabulary": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "scenarios": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": [
+          "scenario_id",
+          "scenario_type",
+          "expected_authorization",
+          "required_runtime_evidence",
+          "allowed_terminal_states"
+        ],
+        "properties": {
+          "scenario_id": { "type": "string", "minLength": 1 },
+          "invariant_id": { "type": "string" },
+          "scenario_type": { "type": "string" },
+          "title": { "type": "string" },
+          "expected_authorization": {
+            "type": "string",
+            "enum": ["ALLOW", "DENY", "DENY_DUPLICATE"]
+          },
+          "material_fields": {
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          "required_runtime_evidence": {
+            "type": "array",
+            "minItems": 1,
+            "items": { "type": "string" }
+          },
+          "allowed_terminal_states": {
+            "type": "array",
+            "minItems": 1,
+            "items": { "type": "string" }
+          }
+        },
+        "additionalProperties": true
+      }
+    }
+  },
+  "additionalProperties": true
+}

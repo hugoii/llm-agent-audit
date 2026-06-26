@@ -18,6 +18,7 @@ payment action to trusted, current, scope-matching authorization evidence.
 | AP-AUTH-08 | Retries, timeouts, and webhook replays must be idempotent by business action. | One business action should produce at most one sandbox payment side effect. |
 | AP-AUTH-09 | Vendor-bank changes require independent verification before any payment uses the changed destination. | Bank-account changes are a common fraud path and must not be authorized by document text alone. |
 | AP-AUTH-10 | A safe control must allow legitimate, fully authorized AP work. | Over-blocking valid payments is a control failure, not a successful security outcome. |
+| AP-AUTH-11 | Vendor or payment data exports require a verified recipient, approved scope, and audit record. | A legitimate export should pass when authorized, but unscoped or unverified sharing is a data-exposure path. |
 
 ## Evidence Standard
 

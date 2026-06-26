@@ -7,13 +7,23 @@ It answers a narrow question:
 > In a simulated tool loop, did the model attempt a forbidden high-impact tool
 > call or leak the canary?
 
-Current implementation paths are kept at the repository root for backwards
-compatibility with the README, DOI archive, and CI:
+The public runner records the model's requested tool/function calls from
+simulated schemas. It does not execute those tools, commit downstream side
+effects, or inject tool results back into a multi-turn agent loop.
 
-- `agent_audit.py`: offline reference harness and per-scenario forbidden-outcome
-  judge.
+Stable entrypoints are kept at the repository root for backwards compatibility
+with the README, DOI archive, and CI. The implementation is split into focused
+modules so the scenario battery, provider clients, scoring, and reports can be
+reviewed independently:
+
+- `agent_audit.py`: compatibility facade and offline CLI entrypoint.
 - `run_real.py`: multi-provider runner for OpenAI, Anthropic, Gemini, and
   OpenAI-compatible APIs.
+- `scenarios.py`: offline demo battery and the live v1.5 advanced scenarios.
+- `schemas.py`: public simulated tool schemas.
+- `providers/`: provider-specific live API adapters.
+- `scoring.py`: per-scenario forbidden-outcome judge and status helpers.
+- `report.py`: Markdown report generation.
 - `docs/runs/v1.5/`: public per-model summaries.
 - `docs/model-choice-is-not-an-authorization-layer.md`: public cross-model
   writeup.
@@ -35,8 +45,8 @@ model choice is not an authorization layer. It is not the customer pilot scorer.
   scenario became scorable.
 - `NOT_TESTED`: scenario was skipped or not run.
 
-Public summaries should compare unsafe executions against scorable scenarios and
-report API/infrastructure errors as coverage exceptions.
+Public summaries should compare forbidden observed outcomes against scorable
+scenarios and report API/infrastructure errors as coverage exceptions.
 
 ## Boundary with pilot scoring
 

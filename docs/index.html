@@ -4999,6 +4999,7 @@
       <a href="#what">What we test</a>
       <a href="#report">Sample report</a>
       <a href="#pilot">Pilot</a>
+      <a href="trust.html">Trust</a>
       <a href="#intake">Start</a>
       <a href="why.html">Why</a>
       <a href="#faq">FAQ</a>
@@ -5180,8 +5181,8 @@
           <article class="ap-entry">
             <div class="ap-entry-index"><span>03</span><i aria-hidden="true"></i></div>
             <div class="ap-entry-copy">
-              <h3>8-scenario payment manifest</h3>
-              <p>Scenario IDs, material fields, evidence requirements, and safe outcomes.</p>
+              <h3>AP scenario manifest</h3>
+              <p>Attack cases, benign controls, material fields, evidence requirements, and safe outcomes.</p>
             </div>
             <a href="https://github.com/hugoii/llm-agent-audit/blob/master/pilot/ap_payment_boundary_manifest.json">Open manifest &rarr;</a>
           </article>
@@ -5211,13 +5212,13 @@
         <div class="model-panel-head">
           <span class="model-panel-title">
             <b>Same scenarios, different outcomes</b>
-            <span>Average unsafe high-impact tool calls per run.</span>
+            <span>Average unsafe high-impact tool-call attempts per run.</span>
           </span>
           <span class="model-panel-meta">6 configs<br>3 runs each</span>
         </div>
-        <div class="spectrum" aria-label="Average unsafe high-impact tool-call outcomes per run across six model APIs, 0.0 to 8.0 of 58">
+        <div class="spectrum" aria-label="Average unsafe high-impact tool-call attempts per run across six model APIs, 0.0 to 8.0 of 58">
           <div class="spectrum-top">
-            <span class="spectrum-axislabel">Unsafe high-impact tool calls per run</span>
+            <span class="spectrum-axislabel">Unsafe high-impact tool-call attempts per run</span>
             <span class="spectrum-legend"><span class="lg frontier"></span>frontier<span class="lg budget"></span>budget</span>
           </div>
           <div class="spectrum-ticks" aria-hidden="true">
@@ -5227,26 +5228,26 @@
           </div>
           <div class="spectrum-track">
             <span class="spectrum-line" aria-hidden="true"></span>
-            <button class="sp-mark frontier above edge-left" style="--x: 3%; transition-delay: 200ms" type="button" data-runs="Runs: 0, 0, 0" aria-label="Claude Opus 4.8 frontier model, 0.0 average unsafe tool calls, runs 0 0 0"><span class="sp-pt"></span><span class="sp-label"><b>Claude Opus 4.8</b><small>0.0 avg</small></span></button>
-            <button class="sp-mark budget below" style="--x: 23%; transition-delay: 320ms" type="button" data-runs="Runs: 1, 2, 2" aria-label="GPT-5-mini budget model, 1.7 average unsafe tool calls, runs 1 2 2"><span class="sp-pt"></span><span class="sp-label"><b>GPT-5-mini</b><small>1.7 avg</small></span></button>
-            <button class="sp-mark frontier above" style="--x: 26.5%; transition-delay: 340ms" type="button" data-runs="Runs: 3, 1, 2; API-level block note applies" aria-label="GPT-5.5 frontier model, 2.0 average unsafe tool calls, runs 3 1 2, API-level block note applies"><span class="sp-pt"></span><span class="sp-label"><b>GPT-5.5</b><small>2.0 avg</small></span></button>
-            <button class="sp-mark budget below" style="--x: 53.5%; transition-delay: 470ms" type="button" data-runs="Runs: 5, 4, 4" aria-label="Claude Haiku 4.5 budget model, 4.3 average unsafe tool calls, runs 5 4 4"><span class="sp-pt"></span><span class="sp-label"><b>Claude Haiku 4.5</b><small>4.3 avg</small></span></button>
-            <button class="sp-mark budget above" style="--x: 70%; transition-delay: 550ms" type="button" data-runs="Runs: 5, 6, 6" aria-label="Gemini 3.5 Flash budget model, 5.7 average unsafe tool calls, runs 5 6 6"><span class="sp-pt"></span><span class="sp-label"><b>Gemini 3.5 Flash</b><small>5.7 avg</small></span></button>
-            <button class="sp-mark frontier below edge-right" style="--x: 97%; transition-delay: 680ms" type="button" data-runs="Runs: 8, 7, 9" aria-label="Gemini 3.1 Pro frontier model, 8.0 average unsafe tool calls, runs 8 7 9"><span class="sp-pt"></span><span class="sp-label"><b>Gemini 3.1 Pro</b><small>8.0 avg</small></span></button>
+            <button class="sp-mark frontier above edge-left" style="--x: 3%; transition-delay: 200ms" type="button" data-runs="Runs: 0, 0, 0" aria-label="Claude Opus 4.8 frontier model, 0.0 average unsafe tool-call attempts, runs 0 0 0"><span class="sp-pt"></span><span class="sp-label"><b>Claude Opus 4.8</b><small>0.0 avg</small></span></button>
+            <button class="sp-mark budget below" style="--x: 23%; transition-delay: 320ms" type="button" data-runs="Runs: 1, 2, 2" aria-label="GPT-5-mini budget model, 1.7 average unsafe tool-call attempts, runs 1 2 2"><span class="sp-pt"></span><span class="sp-label"><b>GPT-5-mini</b><small>1.7 avg</small></span></button>
+            <button class="sp-mark frontier above" style="--x: 26.5%; transition-delay: 340ms" type="button" data-runs="Runs: 3, 1, 2; API-level block note applies" aria-label="GPT-5.5 frontier model, 2.0 average unsafe tool-call attempts, runs 3 1 2, API-level block note applies"><span class="sp-pt"></span><span class="sp-label"><b>GPT-5.5</b><small>2.0 avg</small></span></button>
+            <button class="sp-mark budget below" style="--x: 53.5%; transition-delay: 470ms" type="button" data-runs="Runs: 5, 4, 4" aria-label="Claude Haiku 4.5 budget model, 4.3 average unsafe tool-call attempts, runs 5 4 4"><span class="sp-pt"></span><span class="sp-label"><b>Claude Haiku 4.5</b><small>4.3 avg</small></span></button>
+            <button class="sp-mark budget above" style="--x: 70%; transition-delay: 550ms" type="button" data-runs="Runs: 5, 6, 6" aria-label="Gemini 3.5 Flash budget model, 5.7 average unsafe tool-call attempts, runs 5 6 6"><span class="sp-pt"></span><span class="sp-label"><b>Gemini 3.5 Flash</b><small>5.7 avg</small></span></button>
+            <button class="sp-mark frontier below edge-right" style="--x: 97%; transition-delay: 680ms" type="button" data-runs="Runs: 8, 7, 9" aria-label="Gemini 3.1 Pro frontier model, 8.0 average unsafe tool-call attempts, runs 8 7 9"><span class="sp-pt"></span><span class="sp-label"><b>Gemini 3.1 Pro</b><small>8.0 avg</small></span></button>
           </div>
         </div>
         <p class="model-takeaway"><b>Takeaway:</b> Use the strongest model you can. Still enforce authorization at the tool layer.</p>
         <div class="model-receipt-row">
-          <span>Public synthetic battery · 58 attack scenarios + 3 controls · simulated tools · 3 runs per model · snapshot evidence</span>
+          <span>Public synthetic battery · 58 attack scenarios + 3 controls · simulated schemas, no tool execution · 3 runs per model · snapshot evidence</span>
           <a href="https://github.com/hugoii/llm-agent-audit/blob/master/docs/model-choice-is-not-an-authorization-layer.md">Read cross-model note</a>
         </div>
         <ul class="sr-only">
-          <li>Claude Opus 4.8, frontier, unsafe tool calls per run: 0, 0, 0, average 0.0.</li>
-          <li>GPT-5-mini, budget, unsafe tool calls per run: 1, 2, 2, average 1.7.</li>
-          <li>GPT-5.5, frontier, unsafe tool calls per run: 3, 1, 2, average 2.0; 9 scenarios were API-level blocks before the model acted.</li>
-          <li>Claude Haiku 4.5, budget, unsafe tool calls per run: 5, 4, 4, average 4.3.</li>
-          <li>Gemini 3.5 Flash, budget, unsafe tool calls per run: 5, 6, 6, average 5.7.</li>
-          <li>Gemini 3.1 Pro, frontier, unsafe tool calls per run: 8, 7, 9, average 8.0.</li>
+          <li>Claude Opus 4.8, frontier, unsafe tool-call attempts per run: 0, 0, 0, average 0.0.</li>
+          <li>GPT-5-mini, budget, unsafe tool-call attempts per run: 1, 2, 2, average 1.7.</li>
+          <li>GPT-5.5, frontier, unsafe tool-call attempts per run: 3, 1, 2, average 2.0; 9 scenarios were API-level blocks before the model acted.</li>
+          <li>Claude Haiku 4.5, budget, unsafe tool-call attempts per run: 5, 4, 4, average 4.3.</li>
+          <li>Gemini 3.5 Flash, budget, unsafe tool-call attempts per run: 5, 6, 6, average 5.7.</li>
+          <li>Gemini 3.1 Pro, frontier, unsafe tool-call attempts per run: 8, 7, 9, average 8.0.</li>
         </ul>
       </article>
     </div>
@@ -5398,7 +5399,7 @@
           <div class="offer-path-copy">
             <span class="offer-path-label">Then, if scoreable</span>
             <h3>Founding pilot</h3>
-            <p>One staging workflow, 5 to 10 scenarios, strict verdicts, fixes, and one included retest.</p>
+            <p>One staging workflow, 5 to 10 selected scenarios, strict verdicts, fixes, and one included retest.</p>
           </div>
         </div>
       </div>
@@ -5408,7 +5409,7 @@
           <path d="M12 2.75 5 5.4v5.6c0 4.2 3 7.9 7 9.25 4-1.35 7-5.05 7-9.25V5.4L12 2.75Z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"></path>
           <path d="m8.8 12.1 2.25 2.25 4.15-4.5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"></path>
         </svg>
-        No production access. No real customer data. No shared credentials.
+        No production access. No real customer data. No shared credentials. <a href="trust.html">Trust &amp; data handling</a>.
       </p>
       <a class="button primary" href="mailto:jiahao@actionboundary.dev?subject=Existing%20trace%20diagnostic">Check one trace first</a>
     </article>
@@ -5416,7 +5417,7 @@
       <div class="offer-col">
         <h3>Full pilot includes</h3>
         <ul class="offer-list get">
-          <li>Custom attack scenarios and benign controls</li>
+          <li>Custom attack scenarios and selected benign controls from a workflow-specific library</li>
           <li>Per-action scoring against normalized runtime authority evidence, including identity, approval scope, tool result, and business outcome</li>
           <li>OWASP/NIST-mapped evidence report for security review</li>
           <li>Concrete application-layer fixes</li>
@@ -5518,10 +5519,10 @@
           <b>Archived DOI</b>
           <small>Cross-vendor technical report preserved for citation and review.</small>
         </a>
-        <a class="trust-node boundary" style="--i: 4" href="#faq" role="listitem">
+        <a class="trust-node boundary" style="--i: 4" href="trust.html" role="listitem">
           <span class="trust-index" aria-hidden="true"></span>
-          <b>Focused scope</b>
-          <small>One authorization question, trace-backed and review-ready.</small>
+          <b>Data handling</b>
+          <small>Staging-only, redacted traces, no third-party LLMs by default.</small>
         </a>
       </div>
       <p class="trust-caption">Public repo proves the method. A pilot produces evidence for your workflow.</p>
@@ -5554,7 +5555,11 @@
     <div class="faq">
       <details class="faq-item">
         <summary>Do you need production access or real customer data?</summary>
-        <p>No. The review is staging-only. Test data is synthetic or a harmless canary. No production access, no real customer data, no shared credentials.</p>
+        <p>No. The review is staging-only. Test data is synthetic or a harmless canary. No production access, no real customer data, no shared credentials. See <a href="trust.html">Trust &amp; Data Handling</a> for trace transfer, retention, deletion, and third-party processing defaults.</p>
+      </details>
+      <details class="faq-item">
+        <summary>How do you handle traces and data?</summary>
+        <p>Private traces use a customer-approved secure channel, are stored on encrypted access-controlled local storage, are not sent to third-party LLMs by default, and are deleted within 30 days after final report delivery or sooner on written request.</p>
       </details>
       <details class="faq-item">
         <summary>Can we share the report with a customer or investor?</summary>
@@ -5633,7 +5638,7 @@
 <footer>
   <div class="footer-inner">
     <span>ActionBoundary by JZ Software Consulting. Agent Authorization Review.</span>
-    <span><a href="why.html">Why</a> | <a href="https://github.com/hugoii/llm-agent-audit">GitHub</a> | <a href="https://doi.org/10.5281/zenodo.20585658">Zenodo DOI</a> | <a href="mailto:jiahao@actionboundary.dev">jiahao@actionboundary.dev</a></span>
+    <span><a href="why.html">Why</a> | <a href="trust.html">Trust</a> | <a href="https://github.com/hugoii/llm-agent-audit">GitHub</a> | <a href="https://doi.org/10.5281/zenodo.20585658">Zenodo DOI</a> | <a href="mailto:jiahao@actionboundary.dev">jiahao@actionboundary.dev</a></span>
   </div>
 </footer>
 <script>

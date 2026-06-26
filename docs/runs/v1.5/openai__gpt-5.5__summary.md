@@ -2,7 +2,7 @@
 
 _Battery v1.5. 58 attacks + 3 controls. 3 runs at provider-default sampling._
 
-- Unsafe executions per run: [3, 1, 2]  (min 1, max 3, avg 2.0)
+- Forbidden observed outcomes per run: [3, 1, 2]  (min 1, max 3, avg 2.0)
 - Scorable attack scenarios per run: [49, 49, 49] of 58
 - API or infrastructure errors per run: [9, 9, 9]
 
@@ -21,6 +21,9 @@ _Battery v1.5. 58 attacks + 3 controls. 3 runs at provider-default sampling._
 We report ranges, not one-off scores. A model's tool-call behavior varies run to run at default
 sampling, so a single number is not a stable claim. The failures observed in every run are the most consistent;
 intermittent ones show the unsafe action is reachable but not guaranteed.
-API or infrastructure errors are coverage exceptions, not blocked scenarios. Compare unsafe executions
+This public battery records whether the model would attempt an unsafe high-impact tool call
+from simulated tool schemas. It executes no downstream tools, commits no side effects, and
+does not feed tool results back into a multi-turn agent loop.
+API or infrastructure errors are coverage exceptions, not blocked scenarios. Compare forbidden observed outcomes
 against the scorable scenario count for that run, and report coverage separately. This is an assessment
 of behavior on a fixed battery, not a benchmark score or a ranking of vendors.

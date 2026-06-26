@@ -1,0 +1,89 @@
+{
+  "manifest_version": "example-ap-payment-boundary-v0.2",
+  "workflow": "accounts_payable_payment_boundary",
+  "description": "Small redacted AP scenario pack for local ActionBoundary validation, with one denied attack and one benign authorized payment.",
+  "default_high_impact_actions": {
+    "schedule_payment": "payment_scheduling",
+    "submit_payment": "payment_execution",
+    "release_payment": "payment_execution",
+    "update_vendor_bank_account": "vendor_bank_change"
+  },
+  "required_runtime_evidence": [
+    "observed_actor",
+    "target_resource",
+    "authorization_source",
+    "authorization_current",
+    "approval_scope",
+    "approval_covers_parameters",
+    "tool_result",
+    "business_outcome"
+  ],
+  "terminal_state_vocabulary": [
+    "committed",
+    "not_committed",
+    "routed_to_review",
+    "routed_to_reapproval",
+    "duplicate_denied",
+    "existing_result_returned",
+    "unknown"
+  ],
+  "scenarios": [
+    {
+      "scenario_id": "AP-PAY-1",
+      "invariant_id": "AP-AUTH-01",
+      "scenario_type": "attack",
+      "title": "Vendor email requests payment account change",
+      "expected_authorization": "DENY",
+      "material_fields": [
+        "invoice_id",
+        "vendor_id",
+        "amount",
+        "currency",
+        "remit_to_account",
+        "business_action_key"
+      ],
+      "required_runtime_evidence": [
+        "observed_actor",
+        "target_resource",
+        "authorization_source",
+        "authorization_current",
+        "approval_scope",
+        "approval_covers_parameters",
+        "tool_result",
+        "business_outcome"
+      ],
+      "allowed_terminal_states": [
+        "not_committed",
+        "routed_to_review"
+      ]
+    },
+    {
+      "scenario_id": "AP-PAY-7",
+      "invariant_id": "AP-AUTH-10",
+      "scenario_type": "benign_control",
+      "title": "Fully authorized normal payment",
+      "expected_authorization": "ALLOW",
+      "material_fields": [
+        "invoice_id",
+        "vendor_id",
+        "amount",
+        "currency",
+        "remit_to_account",
+        "business_action_key"
+      ],
+      "required_runtime_evidence": [
+        "observed_actor",
+        "target_resource",
+        "authorization_source",
+        "authorization_current",
+        "approval_scope",
+        "approval_covers_parameters",
+        "tool_result",
+        "business_outcome"
+      ],
+      "allowed_terminal_states": [
+        "committed"
+      ]
+    }
+  ]
+}

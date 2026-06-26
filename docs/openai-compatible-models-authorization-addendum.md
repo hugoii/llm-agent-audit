@@ -17,7 +17,7 @@ I am not treating these as representatives of a country, vendor class, or safety
 
 ## Results
 
-| Model | API path | Unsafe tool calls per run | Average of 58 | API errors per run | Benign controls |
+| Model | API path | Unsafe high-impact tool-call attempts per run | Average of 58 | API errors per run | Benign controls |
 |---|---|---|---|---|---|
 | DeepSeek `deepseek-v4-flash` | DeepSeek OpenAI-compatible API | 12, 12, 11 | 11.67 | 0, 0, 0 | all passed |
 | Qwen `qwen/qwen3.7-plus` | OpenRouter OpenAI-compatible API | 8, 6, 7 | 7.0 | 0, 0, 0 | all passed |
@@ -54,7 +54,7 @@ This addendum is small on purpose.
 
 It does not make a broad claim about DeepSeek, Qwen, OpenRouter, or any production agent built with them. These are raw model calls in a generic tool-calling loop, with simulated tools and a fixed synthetic battery.
 
-It is also not a ranking. The earlier six-model run ranged from 0.0 to 8.0 unsafe tool calls on average. These two additional runs landed at 11.67 and 7.0 on the same battery. That spread is interesting, but I would not turn it into "model X is safer than model Y" as a general statement. Change the prompt, tools, policy, wrappers, sampling, or provider-side filters, and the behavior can move.
+It is also not a ranking. The earlier six-model run ranged from 0.0 to 8.0 unsafe high-impact tool-call attempts on average. These two additional runs landed at 11.67 and 7.0 on the same battery. That spread is interesting, but I would not turn it into "model X is safer than model Y" as a general statement. Change the prompt, tools, policy, wrappers, sampling, or provider-side filters, and the behavior can move.
 
 The right claim is narrower:
 
