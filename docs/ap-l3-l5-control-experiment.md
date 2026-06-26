@@ -154,9 +154,9 @@ payment side effect, so the scenario is `BLOCKED`.
 ## Reproduce Locally
 
 ```bash
-python pilot/score_authorization_trace.py \
+python -m actionboundary score \
   pilot/ap_l3_l5_control_experiment_traces.json \
-  --manifest pilot/ap_l3_l5_control_experiment_manifest.json
+  --scenario-pack pilot/ap_l3_l5_control_experiment_manifest.json
 ```
 
 The normalized evidence samples are in:

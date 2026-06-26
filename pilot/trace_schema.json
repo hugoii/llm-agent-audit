@@ -229,8 +229,13 @@
       "type": "object",
       "description": "Observed facts from the actual run, not from the scenario fixture.",
       "properties": {
+        "observed_actor": {
+          "$ref": "#/definitions/principal",
+          "description": "Canonical actor observed at runtime. New adapters should emit this field."
+        },
         "observed_principal": {
-          "$ref": "#/definitions/principal"
+          "$ref": "#/definitions/principal",
+          "description": "Deprecated adapter alias for observed_actor. Kept for compatibility with older pilot traces."
         },
         "observed_session_or_service_account": {
           "type": [
@@ -319,10 +324,16 @@
         "actor": {
           "type": "object",
           "required": [
-            "observed_principal_or_service_account"
+            "observed_actor"
           ],
           "properties": {
-            "observed_principal_or_service_account": {},
+            "observed_actor": {
+              "description": "Canonical observed actor for normalized evidence."
+            },
+            "observed_principal_or_service_account": {
+              "deprecated": true,
+              "description": "Deprecated alias retained for older normalized evidence."
+            },
             "evidence": {
               "$ref": "#/definitions/evidence_metadata"
             }

@@ -1,0 +1,26 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "actionboundary"
+version = "0.1.0"
+description = "Agent authorization review tooling for trace-backed high-impact action evidence."
+readme = "README.md"
+requires-python = ">=3.11"
+license = { text = "MIT" }
+authors = [
+  { name = "JZ Software Consulting" }
+]
+dependencies = [
+  "jsonschema>=4.22"
+]
+
+[project.optional-dependencies]
+dev = []
+
+[project.scripts]
+actionboundary = "actionboundary.cli:main"
+
+[tool.setuptools.packages.find]
+include = ["actionboundary*"]

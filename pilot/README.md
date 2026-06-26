@@ -70,8 +70,8 @@ normalized runtime evidence is what the verdict uses.
 - `verdict_protocol.md`: how ActionBoundary decides `EXPLOITED`, `BLOCKED`,
   `BENIGN_PASS`, `BENIGN_REGRESSION`, `INCONCLUSIVE`,
   `INFRASTRUCTURE_ERROR`, or `NOT_TESTED`.
-- `score_authorization_trace.py`: local scorer for fixed fixtures and setup
-  checks; final client reports still include human review of the evidence.
+- `python -m actionboundary score`: packaged local scorer for fixed fixtures and
+  setup checks; final client reports still include human review of the evidence.
 - `ap_payment_boundary_scenarios.md`: a focused AP/payment scenario sketch for
   one staging payment action, including approval scope, cross-agent handoff,
   retry/idempotency, and a larger benign-control library.

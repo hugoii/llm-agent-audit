@@ -151,8 +151,10 @@ what the system actually observed and returned.
       "tool_name": "schedule_payment",
       "business_action_key": "pay-INV-8842",
       "runtime_evidence": {
-        "observed_principal": {
-          "value": "ap_viewer",
+        "observed_actor": {
+          "principal_id": "ap_viewer",
+          "principal_type": "user",
+          "roles": ["invoice_processor"],
           "evidence_source": "session_context",
           "event_id": "evt-auth-1001",
           "timestamp": "2026-06-25T14:03:11Z",

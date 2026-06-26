@@ -49,6 +49,11 @@ A poisoned ticket, invoice, or tool response can look like normal business conte
 Validate and score a redacted AP/payment trace against a machine-readable scenario pack:
 
 ```bash
+python -m venv .venv
+# macOS/Linux: source .venv/bin/activate
+# Windows PowerShell: .venv\Scripts\Activate.ps1
+python -m pip install -e ".[dev]"
+
 python -m actionboundary validate \
   --trace examples/ap_payment_trace.redacted.json \
   --scenario-pack examples/ap_payment_scenario_pack.json
@@ -58,13 +63,15 @@ python -m actionboundary score \
   --scenario-pack examples/ap_payment_scenario_pack.json
 ```
 
-Or run the local validation bundle:
+Or, on systems with `make`, run the local validation bundle:
 
 ```bash
 make validate
 ```
 
-The contract files are [normalized_trace.schema.json](normalized_trace.schema.json), [scenario_pack.schema.json](scenario_pack.schema.json), and [verdict.schema.json](verdict.schema.json). They sit beside the redacted AP example so an engineering team can inspect the trace shape, scenario oracle, and scored verdict without reading the whole repo first.
+If `make` is unavailable, run the four commands shown in the `validate` target in [Makefile](Makefile).
+
+The contract files are [normalized_trace.schema.json](normalized_trace.schema.json), [scenario_pack.schema.json](scenario_pack.schema.json), and [verdict.schema.json](verdict.schema.json). The CLI runs Draft 2020-12 JSON Schema validation first, then ActionBoundary-specific scoreability checks. New trace adapters should emit canonical `observed_actor`; legacy `observed_principal` inputs are normalized as an adapter alias.
 
 ## Start here
 
@@ -98,7 +105,7 @@ The contract files are [normalized_trace.schema.json](normalized_trace.schema.js
 | Per-run evidence | Public run summaries and trace-backed reports live under [docs/runs/v1.5](docs/runs/v1.5), with the technical report and data archived on [Zenodo](https://doi.org/10.5281/zenodo.20585658). |
 | Reproducible harness | `python agent_audit.py` runs an offline demo with no API key, and the [offline smoke test](.github/workflows/offline-smoke.yml) checks that path in CI. |
 | Sample deliverable | The [rendered PDF sample](docs/sample-evidence-report-v0.7.pdf) is generated from [docs/sample-pilot-report-v0.7.md](docs/sample-pilot-report-v0.7.md), not a standalone marketing mockup. |
-| Client pilot | The public benchmark proves the method; a client pilot replaces generic scenarios with your staging tools, authorization sources, and traces, then scores them with the [pilot verdict protocol](pilot/verdict_protocol.md) and [pilot scorer](pilot/score_authorization_trace.py). |
+| Client pilot | The public benchmark proves the method; a client pilot replaces generic scenarios with your staging tools, authorization sources, and traces, then scores them with the [pilot verdict protocol](pilot/verdict_protocol.md) and packaged [authorization scorer](actionboundary/authorization_score.py). |
 
 ## What the public repo proves
 

@@ -190,10 +190,11 @@ Minimum fields:
         }
       ],
       "runtime_evidence": {
-        "observed_principal": {
-          "id": "ap_viewer",
-          "role": "AP viewer",
-          "tenant": "acme-demo",
+        "observed_actor": {
+          "principal_id": "ap_viewer",
+          "principal_type": "user",
+          "roles": ["AP viewer"],
+          "tenant_id": "acme-demo",
           "permissions": ["invoice:read"]
         },
         "observed_session_or_service_account": "svc-payment-agent",

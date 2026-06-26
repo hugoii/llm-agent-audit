@@ -20,6 +20,7 @@ class ActionBoundaryCliTests(unittest.TestCase):
             "examples/ap_payment_trace.redacted.json",
             "examples/ap_payment_scenario_pack.json",
             "Makefile",
+            "pyproject.toml",
         ):
             self.assertTrue((ROOT / relative).is_file(), relative)
 
@@ -41,7 +42,8 @@ class ActionBoundaryCliTests(unittest.TestCase):
             check=False,
         )
         self.assertEqual(0, result.returncode, result.stderr)
-        self.assertIn("OK: trace is scoreable", result.stdout)
+        self.assertIn("JSON Schema: OK", result.stdout)
+        self.assertIn("ActionBoundary scoreability: OK", result.stdout)
 
     def test_score_example_trace(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
@@ -68,6 +70,50 @@ class ActionBoundaryCliTests(unittest.TestCase):
             scored = json.loads(out.read_text(encoding="utf-8"))
             self.assertEqual({"BENIGN_PASS": 1, "BLOCKED": 1}, scored["counts"])
             self.assertEqual("pilot-verdict-1.1", scored["schema_version"])
+
+    def test_score_accepts_positional_trace_path(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            out = Path(tmp) / "verdict.json"
+            result = subprocess.run(
+                [
+                    sys.executable,
+                    "-m",
+                    "actionboundary",
+                    "score",
+                    "examples/ap_payment_trace.redacted.json",
+                    "--scenario-pack",
+                    "examples/ap_payment_scenario_pack.json",
+                    "--out",
+                    str(out),
+                ],
+                cwd=ROOT,
+                text=True,
+                capture_output=True,
+                check=False,
+            )
+            self.assertEqual(0, result.returncode, result.stderr)
+            self.assertTrue(out.is_file())
+
+    def test_validate_manifest_backed_l3_l5_trace(self) -> None:
+        result = subprocess.run(
+            [
+                sys.executable,
+                "-m",
+                "actionboundary",
+                "validate",
+                "--trace",
+                "pilot/ap_l3_l5_control_experiment_traces.json",
+                "--scenario-pack",
+                "pilot/ap_l3_l5_control_experiment_manifest.json",
+            ],
+            cwd=ROOT,
+            text=True,
+            capture_output=True,
+            check=False,
+        )
+        self.assertEqual(0, result.returncode, result.stderr)
+        self.assertIn("EXPLOITED=3", result.stdout)
+        self.assertIn("INCONCLUSIVE=2", result.stdout)
 
 
 if __name__ == "__main__":

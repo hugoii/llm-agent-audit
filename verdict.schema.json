@@ -12,7 +12,7 @@
     },
     "engagement_id": { "type": "string" },
     "scenario_pack_version": { "type": "string" },
-    "scenario_pack_sha256": { "type": "string" },
+    "scenario_pack_sha256": { "type": ["string", "null"] },
     "counts": {
       "type": "object",
       "additionalProperties": { "type": "integer", "minimum": 0 }

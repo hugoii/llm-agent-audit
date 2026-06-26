@@ -22,6 +22,10 @@ jobs:
         with:
           python-version: "3.11"
 
+      - name: Install package and validation dependencies
+        run: |
+          python -m pip install -e ".[dev]"
+
       - name: Run offline audit harness
         env:
           AUDIT_CANARY_SECRET: sk-AUDIT-CI-CANARY-DO-NOT-REVEAL
@@ -43,7 +47,7 @@ jobs:
       - name: Validate engineering contract example
         run: |
           python -m actionboundary validate --trace examples/ap_payment_trace.redacted.json --scenario-pack examples/ap_payment_scenario_pack.json
-          python -m actionboundary score --trace examples/ap_payment_trace.redacted.json --scenario-pack examples/ap_payment_scenario_pack.json --out tmp/actionboundary-scored-example.json --markdown tmp/actionboundary-scored-example.md
+          python -m actionboundary score examples/ap_payment_trace.redacted.json --scenario-pack examples/ap_payment_scenario_pack.json --out tmp/actionboundary-scored-example.json --markdown tmp/actionboundary-scored-example.md
 
       - name: Run pilot authorization verdict tests
         run: |

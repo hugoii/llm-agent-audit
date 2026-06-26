@@ -8,7 +8,10 @@ from pathlib import Path
 import sys
 from typing import Any
 
-from pilot.score_authorization_trace import markdown_summary, score_submission
+from jsonschema import Draft202012Validator
+from jsonschema.exceptions import SchemaError
+
+from .authorization_score import apply_manifest_defaults, has_trace, manifest_scenarios, markdown_summary, score_submission
 
 
 FINAL_STATUSES = {
@@ -19,6 +22,12 @@ FINAL_STATUSES = {
     "INCONCLUSIVE",
     "INFRASTRUCTURE_ERROR",
     "NOT_TESTED",
+}
+
+SCHEMA_FILES = {
+    "trace": "normalized_trace.schema.json",
+    "scenario-pack": "scenario_pack.schema.json",
+    "verdict": "verdict.schema.json",
 }
 
 
@@ -35,7 +44,37 @@ def load_json(path: str | Path) -> dict[str, Any]:
     return value
 
 
-def validate_trace_submission(trace: dict[str, Any]) -> list[str]:
+def repo_root() -> Path:
+    return Path(__file__).resolve().parents[1]
+
+
+def schema_path(name: str) -> Path:
+    return repo_root() / SCHEMA_FILES[name]
+
+
+def json_path(parts: tuple[Any, ...]) -> str:
+    if not parts:
+        return "$"
+    out = "$"
+    for part in parts:
+        out += f"[{part}]" if isinstance(part, int) else f".{part}"
+    return out
+
+
+def json_schema_errors(value: dict[str, Any], name: str) -> list[str]:
+    schema = load_json(schema_path(name))
+    try:
+        Draft202012Validator.check_schema(schema)
+    except SchemaError as exc:
+        return [f"{name} schema is invalid: {exc.message}"]
+    validator = Draft202012Validator(schema)
+    return [
+        f"{name} {json_path(tuple(error.absolute_path))}: {error.message}"
+        for error in sorted(validator.iter_errors(value), key=lambda item: tuple(item.absolute_path))
+    ]
+
+
+def validate_trace_submission(trace: dict[str, Any], manifest: dict[str, Any] | None = None) -> list[str]:
     errors: list[str] = []
     runs = trace.get("runs")
     normalized_actions = trace.get("normalized_actions")
@@ -46,17 +85,22 @@ def validate_trace_submission(trace: dict[str, Any]) -> list[str]:
     if isinstance(runs, list):
         if not runs:
             errors.append("runs must contain at least one run")
+        scenario_manifest = manifest_scenarios(manifest)
         for index, run in enumerate(runs, start=1):
             if not isinstance(run, dict):
                 errors.append(f"runs[{index}] must be an object")
                 continue
             if not run.get("scenario_id"):
                 errors.append(f"runs[{index}].scenario_id is required")
-            if not run.get("expected_authorization"):
+            run_with_defaults = apply_manifest_defaults(
+                run,
+                scenario_manifest.get(str(run.get("scenario_id") or "")),
+            )
+            if not run_with_defaults.get("expected_authorization"):
                 errors.append(f"runs[{index}].expected_authorization is required")
-            if "tool_call_trace" not in run:
+            if not has_trace(run_with_defaults):
                 errors.append(f"runs[{index}].tool_call_trace is required")
-            elif not isinstance(run.get("tool_call_trace"), list):
+            elif "tool_call_trace" in run_with_defaults and not isinstance(run_with_defaults.get("tool_call_trace"), list):
                 errors.append(f"runs[{index}].tool_call_trace must be an array")
             if "runtime_evidence" in run and not isinstance(run.get("runtime_evidence"), dict):
                 errors.append(f"runs[{index}].runtime_evidence must be an object when present")
@@ -153,15 +197,19 @@ def cmd_validate(args: argparse.Namespace) -> int:
     if trace is None and manifest is None and verdict is None:
         errors.append("provide --trace, --scenario-pack, or --verdict")
     if trace is not None:
-        errors.extend(f"trace: {error}" for error in validate_trace_submission(trace))
+        errors.extend(f"JSON Schema: {error}" for error in json_schema_errors(trace, "trace"))
+        errors.extend(f"trace: {error}" for error in validate_trace_submission(trace, manifest))
     if manifest is not None:
+        errors.extend(f"JSON Schema: {error}" for error in json_schema_errors(manifest, "scenario-pack"))
         errors.extend(f"scenario-pack: {error}" for error in validate_scenario_pack(manifest))
     if verdict is not None:
+        errors.extend(f"JSON Schema: {error}" for error in json_schema_errors(verdict, "verdict"))
         errors.extend(f"verdict: {error}" for error in validate_verdict(verdict))
 
     scored = None
     if not errors and trace is not None:
         scored = score_submission(trace, manifest)
+        errors.extend(f"scored verdict JSON Schema: {error}" for error in json_schema_errors(scored, "verdict"))
         errors.extend(f"scored verdict: {error}" for error in validate_verdict(scored))
 
     if errors:
@@ -169,23 +217,29 @@ def cmd_validate(args: argparse.Namespace) -> int:
         print(format_errors(errors), file=sys.stderr)
         return 1
 
+    print("JSON Schema: OK")
     if scored is not None:
         counts = ", ".join(f"{key}={value}" for key, value in sorted(scored.get("counts", {}).items()))
-        print(f"OK: trace is scoreable ({counts or 'no runs'})")
+        print(f"ActionBoundary scoreability: OK ({counts or 'no runs'})")
     elif manifest is not None and verdict is None:
-        print("OK: scenario pack shape is valid")
+        print("ActionBoundary scenario-pack checks: OK")
     elif verdict is not None:
-        print("OK: verdict shape is valid")
+        print("ActionBoundary verdict checks: OK")
     else:
-        print("OK")
+        print("ActionBoundary checks: OK")
     return 0
 
 
 def cmd_score(args: argparse.Namespace) -> int:
-    trace = load_json(args.trace)
+    trace_path = args.trace or args.trace_path
+    if not trace_path:
+        raise ValueError("score requires --trace or TRACE")
+    trace = load_json(trace_path)
     manifest = load_manifest(args.scenario_pack)
-    errors = [f"trace: {error}" for error in validate_trace_submission(trace)]
+    errors = [f"JSON Schema: {error}" for error in json_schema_errors(trace, "trace")]
+    errors.extend(f"trace: {error}" for error in validate_trace_submission(trace, manifest))
     if manifest is not None:
+        errors.extend(f"JSON Schema: {error}" for error in json_schema_errors(manifest, "scenario-pack"))
         errors.extend(f"scenario-pack: {error}" for error in validate_scenario_pack(manifest))
     if errors:
         print("Validation failed:", file=sys.stderr)
@@ -193,7 +247,8 @@ def cmd_score(args: argparse.Namespace) -> int:
         return 1
 
     scored = score_submission(trace, manifest)
-    verdict_errors = validate_verdict(scored)
+    verdict_errors = json_schema_errors(scored, "verdict")
+    verdict_errors.extend(validate_verdict(scored))
     if verdict_errors:
         print("Scoring produced an invalid verdict:", file=sys.stderr)
         print(format_errors(verdict_errors), file=sys.stderr)
@@ -219,7 +274,8 @@ def build_parser() -> argparse.ArgumentParser:
     validate.set_defaults(func=cmd_validate)
 
     score = subcommands.add_parser("score", help="Score a trace against an optional scenario pack")
-    score.add_argument("--trace", required=True, help="Trace submission JSON")
+    score.add_argument("trace_path", nargs="?", help="Trace submission JSON")
+    score.add_argument("--trace", help="Trace submission JSON")
     score.add_argument("--scenario-pack", help="Scenario pack manifest JSON")
     score.add_argument("--out", help="Write scored verdict JSON to this path")
     score.add_argument("--markdown", help="Write Markdown summary to this path")

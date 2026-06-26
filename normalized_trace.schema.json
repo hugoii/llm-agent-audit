@@ -4,6 +4,50 @@
   "title": "ActionBoundary trace submission schema",
   "description": "Customer-facing trace artifact for an Agent Authorization Review. A trace may be a flexible runs[] submission or a strict normalized_actions[] submission.",
   "type": "object",
+  "$defs": {
+    "observedActor": {
+      "type": "object",
+      "description": "Canonical actor observed at runtime. Legacy adapters may submit observed_principal; the scorer normalizes that alias to observed_actor.",
+      "required": ["principal_id"],
+      "properties": {
+        "principal_id": { "type": "string", "minLength": 1 },
+        "principal_type": { "type": "string" },
+        "roles": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "tenant_id": { "type": "string" },
+        "permissions": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "evidence": { "type": "object" }
+      },
+      "additionalProperties": true
+    },
+    "observedPrincipalAlias": {
+      "type": "object",
+      "description": "Deprecated adapter alias for observed_actor. Prefer observed_actor in new traces.",
+      "deprecated": true,
+      "additionalProperties": true
+    },
+    "toolCall": {
+      "type": "object",
+      "required": ["tool"],
+      "properties": {
+        "event_id": { "type": "string" },
+        "timestamp": { "type": "string" },
+        "trace_id": { "type": "string" },
+        "evidence_source": { "type": "string" },
+        "tool": { "type": "string", "minLength": 1 },
+        "high_impact_action": { "type": "string" },
+        "arguments": { "type": "object" },
+        "authorization_decision": { "type": "object" },
+        "result": { "type": "object" }
+      },
+      "additionalProperties": true
+    }
+  },
   "oneOf": [
     { "required": ["runs"] },
     { "required": ["normalized_actions"] }
@@ -22,7 +66,7 @@
       "minItems": 1,
       "items": {
         "type": "object",
-        "required": ["scenario_id", "expected_authorization", "tool_call_trace"],
+        "required": ["scenario_id"],
         "properties": {
           "scenario_id": { "type": "string", "minLength": 1 },
           "scenario_type": { "type": "string" },
@@ -45,25 +89,24 @@
             "type": "array",
             "items": { "type": "object" }
           },
-          "runtime_evidence": { "type": "object" },
+          "runtime_evidence": {
+            "type": "object",
+            "properties": {
+              "observed_actor": { "$ref": "#/$defs/observedActor" },
+              "observed_principal": { "$ref": "#/$defs/observedPrincipalAlias" },
+              "observed_session_or_service_account": {
+                "type": ["object", "string"]
+              },
+              "tool_call_trace": {
+                "type": "array",
+                "items": { "$ref": "#/$defs/toolCall" }
+              }
+            },
+            "additionalProperties": true
+          },
           "tool_call_trace": {
             "type": "array",
-            "items": {
-              "type": "object",
-              "required": ["tool"],
-              "properties": {
-                "event_id": { "type": "string" },
-                "timestamp": { "type": "string" },
-                "trace_id": { "type": "string" },
-                "evidence_source": { "type": "string" },
-                "tool": { "type": "string", "minLength": 1 },
-                "high_impact_action": { "type": "string" },
-                "arguments": { "type": "object" },
-                "authorization_decision": { "type": "object" },
-                "result": { "type": "object" }
-              },
-              "additionalProperties": true
-            }
+            "items": { "$ref": "#/$defs/toolCall" }
           }
         },
         "additionalProperties": true
@@ -74,7 +117,15 @@
       "minItems": 1,
       "items": {
         "type": "object",
-        "required": ["scenario_id", "action", "authorization", "tool_result", "business_outcome"],
+        "required": ["scenario_id", "observed_actor", "action", "authorization", "tool_result", "business_outcome"],
+        "properties": {
+          "scenario_id": { "type": "string", "minLength": 1 },
+          "observed_actor": { "$ref": "#/$defs/observedActor" },
+          "action": { "type": "object" },
+          "authorization": { "type": "object" },
+          "tool_result": { "type": "object" },
+          "business_outcome": { "type": "object" }
+        },
         "additionalProperties": true
       }
     }

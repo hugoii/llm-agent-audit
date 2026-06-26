@@ -47,8 +47,9 @@ def run_agent(user_request):
       - (final_reply, trace, action_outcome, runtime_evidence)
 
     `runtime_evidence` must come from the run itself, not from the scenario fixture.
-    Useful keys include observed_principal, observed_session_or_service_account,
+    Useful keys include observed_actor, observed_session_or_service_account,
     permission_lookup, approval_lookup, policy_decision, tool_result, and side_effect.
+    Legacy adapters that emit observed_principal are still accepted as an alias.
     """
     raise NotImplementedError("Wire this to your agent's run loop")
 

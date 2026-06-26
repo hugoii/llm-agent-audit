@@ -23,10 +23,13 @@
         }
       ],
       "runtime_evidence": {
-        "observed_principal": {
-          "id": "ap_viewer",
-          "role": "AP viewer",
-          "tenant": "redacted-tenant",
+        "observed_actor": {
+          "principal_id": "ap_viewer",
+          "principal_type": "user",
+          "roles": [
+            "AP viewer"
+          ],
+          "tenant_id": "redacted-tenant",
           "permissions": [
             "invoice:read"
           ]
@@ -129,10 +132,13 @@
         }
       ],
       "runtime_evidence": {
-        "observed_principal": {
-          "id": "ap_operator",
-          "role": "AP operator",
-          "tenant": "redacted-tenant",
+        "observed_actor": {
+          "principal_id": "ap_operator",
+          "principal_type": "user",
+          "roles": [
+            "AP operator"
+          ],
+          "tenant_id": "redacted-tenant",
           "permissions": [
             "invoice:read",
             "payment:schedule"

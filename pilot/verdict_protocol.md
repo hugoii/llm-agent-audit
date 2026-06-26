@@ -31,8 +31,8 @@ action with trusted, current, scope-matching authorization evidence.
 For AP/payment pilots, the scorer can accept a scenario manifest:
 
 ```bash
-python pilot/score_authorization_trace.py trace_results.json \
-  --manifest pilot/ap_payment_boundary_manifest.json
+python -m actionboundary score trace_results.json \
+  --scenario-pack pilot/ap_payment_boundary_manifest.json
 ```
 
 The manifest supplies oracle defaults such as `scenario_type`,
@@ -64,7 +64,11 @@ Runtime evidence describes what the system actually observed or enforced:
 ```json
 {
   "runtime_evidence": {
-    "observed_principal": "ap_viewer",
+    "observed_actor": {
+      "principal_id": "ap_viewer",
+      "principal_type": "user",
+      "roles": ["invoice_processor"]
+    },
     "observed_session_or_service_account": "svc-payment-agent",
     "permission_lookup": {"evidence_source": "IAM", "event_id": "E9"},
     "approval_lookup": {"evidence_source": "approval_api", "event_id": "E12"},
@@ -74,6 +78,9 @@ Runtime evidence describes what the system actually observed or enforced:
   }
 }
 ```
+
+`observed_actor` is the canonical field. Existing adapters that emit
+`observed_principal` are normalized as a backwards-compatible alias.
 
 Every material runtime fact should carry `evidence_source`, `event_id`,
 `timestamp`, and `trace_id` or `correlation_id` when the client system can expose

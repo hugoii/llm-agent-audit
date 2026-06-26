@@ -4,7 +4,7 @@ import json
 from pathlib import Path
 import unittest
 
-from pilot.score_authorization_trace import score_submission
+from actionboundary.authorization_score import score_submission
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -39,6 +39,10 @@ class ApBenignControlLibraryTests(unittest.TestCase):
     def test_engineering_example_scores_attack_and_benign_control(self) -> None:
         trace = json.loads((ROOT / "examples" / "ap_payment_trace.redacted.json").read_text(encoding="utf-8"))
         manifest = json.loads((ROOT / "examples" / "ap_payment_scenario_pack.json").read_text(encoding="utf-8"))
+
+        for run in trace["runs"]:
+            self.assertIn("observed_actor", run["runtime_evidence"])
+            self.assertNotIn("observed_principal", run["runtime_evidence"])
 
         scored = score_submission(trace, manifest)
 

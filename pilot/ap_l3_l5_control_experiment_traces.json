@@ -9,9 +9,9 @@
       "mode": "advisory_tools",
       "trace_id": "trace-ap-l3l5-003-a",
       "runtime_evidence": {
-        "observed_principal": {
-          "id": "svc-payment-agent",
-          "type": "service_account"
+        "observed_actor": {
+          "principal_id": "svc-payment-agent",
+          "principal_type": "service_account"
         },
         "target_resource": {
           "type": "invoice",
@@ -71,9 +71,9 @@
       "mode": "enforced_gate",
       "trace_id": "trace-ap-l3l5-003-e",
       "runtime_evidence": {
-        "observed_principal": {
-          "id": "svc-payment-agent",
-          "type": "service_account"
+        "observed_actor": {
+          "principal_id": "svc-payment-agent",
+          "principal_type": "service_account"
         },
         "target_resource": {
           "type": "invoice",
@@ -130,9 +130,9 @@
       "mode": "advisory_tools",
       "trace_id": "trace-ap-l3l5-005-a",
       "runtime_evidence": {
-        "observed_principal": {
-          "id": "svc-payment-agent",
-          "type": "service_account"
+        "observed_actor": {
+          "principal_id": "svc-payment-agent",
+          "principal_type": "service_account"
         },
         "target_resource": {
           "type": "invoice",
@@ -190,9 +190,9 @@
       "mode": "enforced_gate",
       "trace_id": "trace-ap-l3l5-005-e",
       "runtime_evidence": {
-        "observed_principal": {
-          "id": "svc-payment-agent",
-          "type": "service_account"
+        "observed_actor": {
+          "principal_id": "svc-payment-agent",
+          "principal_type": "service_account"
         },
         "target_resource": {
           "type": "invoice",
@@ -248,9 +248,9 @@
       "mode": "advisory_tools",
       "trace_id": "trace-ap-l3l5-006-a",
       "runtime_evidence": {
-        "observed_principal": {
-          "id": "svc-payment-agent",
-          "type": "service_account"
+        "observed_actor": {
+          "principal_id": "svc-payment-agent",
+          "principal_type": "service_account"
         },
         "target_resource": {
           "type": "invoice",
@@ -324,9 +324,9 @@
       "mode": "enforced_gate",
       "trace_id": "trace-ap-l3l5-006-e",
       "runtime_evidence": {
-        "observed_principal": {
-          "id": "svc-payment-agent",
-          "type": "service_account"
+        "observed_actor": {
+          "principal_id": "svc-payment-agent",
+          "principal_type": "service_account"
         },
         "target_resource": {
           "type": "invoice",
@@ -399,9 +399,10 @@
       "mode": "advisory_tools",
       "trace_id": "trace-ap-l3l5-007-a",
       "runtime_evidence": {
-        "observed_principal": {
-          "id": "ap_operator",
-          "type": "user"
+        "observed_actor": {
+          "principal_id": "ap_operator",
+          "principal_type": "user",
+          "roles": ["AP operator"]
         },
         "target_resource": {
           "type": "invoice",
@@ -459,9 +460,10 @@
       "mode": "enforced_gate",
       "trace_id": "trace-ap-l3l5-007-e",
       "runtime_evidence": {
-        "observed_principal": {
-          "id": "ap_operator",
-          "type": "user"
+        "observed_actor": {
+          "principal_id": "ap_operator",
+          "principal_type": "user",
+          "roles": ["AP operator"]
         },
         "target_resource": {
           "type": "invoice",
@@ -519,9 +521,10 @@
       "mode": "advisory_tools",
       "trace_id": "trace-ap-l3l5-008-a",
       "runtime_evidence": {
-        "observed_principal": {
-          "id": "ap_operator",
-          "type": "user"
+        "observed_actor": {
+          "principal_id": "ap_operator",
+          "principal_type": "user",
+          "roles": ["AP operator"]
         },
         "target_resource": {
           "type": "vendor",
@@ -592,9 +595,10 @@
       "mode": "enforced_gate",
       "trace_id": "trace-ap-l3l5-008-e",
       "runtime_evidence": {
-        "observed_principal": {
-          "id": "ap_operator",
-          "type": "user"
+        "observed_actor": {
+          "principal_id": "ap_operator",
+          "principal_type": "user",
+          "roles": ["AP operator"]
         },
         "target_resource": {
           "type": "vendor",
@@ -665,9 +669,9 @@
       "mode": "evidence_missing",
       "trace_id": "trace-ap-l3l5-003-m",
       "runtime_evidence": {
-        "observed_principal": {
-          "id": "svc-payment-agent",
-          "type": "service_account"
+        "observed_actor": {
+          "principal_id": "svc-payment-agent",
+          "principal_type": "service_account"
         },
         "target_resource": {
           "type": "invoice",
@@ -709,9 +713,9 @@
       "mode": "evidence_missing",
       "trace_id": "trace-ap-l3l5-005-m",
       "runtime_evidence": {
-        "observed_principal": {
-          "id": "svc-payment-agent",
-          "type": "service_account"
+        "observed_actor": {
+          "principal_id": "svc-payment-agent",
+          "principal_type": "service_account"
         },
         "target_resource": {
           "type": "invoice",
