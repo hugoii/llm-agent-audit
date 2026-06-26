@@ -13,7 +13,11 @@ sys.path.insert(0, str(PILOT))
 
 import adapter_template
 from agent_audit import is_scorable_attack, row_status
-from score_authorization_trace import normalized_evidence_items, score_submission
+from score_authorization_trace import (
+    CANONICAL_TERMINAL_STATES,
+    normalized_evidence_items,
+    score_submission,
+)
 
 
 FIXTURE = PILOT / "tests" / "fixtures" / "authorization_verdict_cases.json"
@@ -72,6 +76,29 @@ class AuthorizationVerdictTests(unittest.TestCase):
         self.assertIn("invariant_id", manifest["scenarios"][0])
         self.assertIn("duplicate_denied", manifest["terminal_state_vocabulary"])
         self.assertIn("existing_result_returned", manifest["terminal_state_vocabulary"])
+
+    def test_terminal_state_vocabulary_is_consistent(self) -> None:
+        trace_schema = json.loads((PILOT / "trace_schema.json").read_text(encoding="utf-8"))
+        normalized_schema = json.loads(
+            (PILOT / "normalized_evidence_schema.json").read_text(encoding="utf-8")
+        )
+        manifest = json.loads((PILOT / "ap_payment_boundary_manifest.json").read_text(encoding="utf-8"))
+
+        trace_side_effects = set(
+            trace_schema["definitions"]["strict_normalized_evidence"]["properties"][
+                "business_outcome"
+            ]["properties"]["side_effect"]["enum"]
+        )
+        normalized_side_effects = set(
+            normalized_schema["definitions"]["normalized_action"]["properties"][
+                "business_outcome"
+            ]["properties"]["side_effect"]["enum"]
+        )
+        manifest_side_effects = set(manifest["terminal_state_vocabulary"])
+
+        self.assertEqual(CANONICAL_TERMINAL_STATES, trace_side_effects)
+        self.assertEqual(CANONICAL_TERMINAL_STATES, normalized_side_effects)
+        self.assertEqual(CANONICAL_TERMINAL_STATES, manifest_side_effects)
 
     def test_strict_normalized_sample_can_be_scored_directly(self) -> None:
         normalized = json.loads(

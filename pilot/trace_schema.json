@@ -1,10 +1,12 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
   "title": "Flexible client trace submission schema",
-  "description": "Flexible ingestion format a client sends back after running ActionBoundary scenarios against a staging or sandbox agent. This schema accepts imperfect client traces and preserves existing logs. It is not the PASS schema. Strict verdicts are based on normalized runtime evidence; see pilot/normalized_evidence_schema.json and the verdict protocol.",
-  "$comment": "Layer 1 is flexible ingestion in this file. Layer 2 is strict normalized evidence in pilot/normalized_evidence_schema.json, created from observed traces. Layer 3 is the verdict protocol that decides EXPLOITED, BLOCKED, BENIGN_PASS, BENIGN_REGRESSION, INCONCLUSIVE, INFRASTRUCTURE_ERROR, or NOT_TESTED.",
+  "description": "Flexible staging trace intake. Strict verdicts use normalized runtime evidence.",
+  "$comment": "Layer 1: flexible ingestion. Layer 2: normalized evidence. Layer 3: verdict protocol.",
   "type": "object",
-  "required": ["runs"],
+  "required": [
+    "runs"
+  ],
   "properties": {
     "schema_version": {
       "type": "string",
@@ -27,8 +29,10 @@
     },
     "high_impact_actions": {
       "type": "object",
-      "description": "Optional engagement-specific mapping from client tool names to high-impact action labels, e.g. create_bill_payment -> payment_execution.",
-      "additionalProperties": { "type": "string" }
+      "description": "Optional mapping from client tool names to high-impact action labels.",
+      "additionalProperties": {
+        "type": "string"
+      }
     },
     "agent_under_test": {
       "type": "string"
@@ -41,14 +45,19 @@
       "type": "array",
       "items": {
         "type": "object",
-        "required": ["scenario_id", "user_request", "data_the_agent_reads", "tool_call_trace"],
+        "required": [
+          "scenario_id",
+          "user_request",
+          "data_the_agent_reads",
+          "tool_call_trace"
+        ],
         "properties": {
           "scenario_id": {
             "type": "string"
           },
           "scenario_type": {
             "type": "string",
-            "description": "e.g. untrusted_business_context, direct_request, benign_control, multi_turn_authorization"
+            "description": "Example: untrusted_business_context, direct_request, or benign_control."
           },
           "run_id": {
             "type": "string"
@@ -67,36 +76,39 @@
             "type": "string"
           },
           "model_configuration": {
-            "type": ["object", "string"]
+            "type": [
+              "object",
+              "string"
+            ]
           },
           "policy_version": {
             "type": "string"
           },
           "user_request": {
             "type": "string",
-            "description": "The task the caller asked the agent to perform. For indirect/untrusted-context scenarios, the adversarial or test instruction should not be pasted here."
+            "description": "Caller request. For indirect scenarios, do not paste the hidden test instruction here."
           },
           "scenario_setup": {
             "$ref": "#/definitions/scenario_setup"
           },
           "principal": {
             "$ref": "#/definitions/principal",
-            "description": "Legacy field. Treat as scenario setup unless it is independently observed in runtime_evidence."
+            "description": "Legacy field. Treat as setup unless runtime_evidence observes it."
           },
           "target_resource": {
             "$ref": "#/definitions/target_resource",
-            "description": "Legacy field. Treat as intended or seeded target resource unless runtime_evidence independently observes it."
+            "description": "Legacy field. Treat as seeded target unless runtime_evidence observes it."
           },
           "data_the_agent_reads": {
             "type": "array",
-            "description": "Content the agent retrieved or read before acting, such as emails, tickets, invoices, records, tool responses, documents, or memory. For indirect-injection scenarios, the test instruction belongs here.",
+            "description": "Content the agent read before acting. Indirect test instructions belong here.",
             "items": {
               "$ref": "#/definitions/read_item"
             }
           },
           "authorization_context": {
             "type": "array",
-            "description": "Legacy setup-compatible field. It may describe seeded records or observed runtime records. For verdicts, ActionBoundary normalizes only records tied to runtime evidence_source/event_id/timestamp/trace_id.",
+            "description": "Legacy-compatible field. Verdicts use only records tied to runtime evidence metadata.",
             "items": {
               "$ref": "#/definitions/authorization_record"
             }
@@ -112,7 +124,7 @@
           },
           "tool_call_trace": {
             "type": "array",
-            "description": "Every tool call the agent made, in order, including high-impact tools, read tools, authorization lookups, denials, and tool results when available.",
+            "description": "Ordered tool calls, including reads, authorization lookups, denials, and results.",
             "items": {
               "$ref": "#/definitions/tool_call"
             }
@@ -122,17 +134,21 @@
           },
           "expected_authorization": {
             "type": "string",
-            "description": "Explicit oracle for the scenario. For benign controls use ALLOW; attack scenarios usually use DENY or REVIEW. Do not infer this from prose."
+            "description": "Explicit scenario oracle. Do not infer expected authorization from prose."
           },
           "allowed_terminal_states": {
             "type": "array",
-            "description": "For benign controls, the terminal business outcomes that count as success, e.g. committed.",
-            "items": { "type": "string" }
+            "description": "Terminal business outcomes that count as success.",
+            "items": {
+              "type": "string"
+            }
           },
           "required_runtime_evidence": {
             "type": "array",
-            "description": "Optional scenario-level checklist of runtime evidence required before a PASS or BENIGN_PASS can be declared.",
-            "items": { "type": "string" }
+            "description": "Optional checklist required before PASS or BENIGN_PASS.",
+            "items": {
+              "type": "string"
+            }
           },
           "final_reply": {
             "type": "string"
@@ -150,7 +166,7 @@
           },
           "notes": {
             "type": "string",
-            "description": "Setup notes, redactions, synthetic-data notes, or how the scenario data entered the agent's real staging path."
+            "description": "Setup notes, redactions, synthetic-data notes, or staging entry path."
           }
         }
       }
@@ -162,127 +178,300 @@
       "properties": {
         "evidence_source": {
           "type": "string",
-          "description": "Where this fact came from, e.g. tool log, policy engine, approval API, sandbox ledger, adapter-observed trace."
+          "description": "Where this fact came from, such as a tool log, policy engine, or ledger."
         },
-        "event_id": { "type": "string" },
-        "timestamp": { "type": "string" },
-        "trace_id": { "type": "string" },
-        "correlation_id": { "type": "string" }
+        "event_id": {
+          "type": "string"
+        },
+        "timestamp": {
+          "type": "string"
+        },
+        "trace_id": {
+          "type": "string"
+        },
+        "correlation_id": {
+          "type": "string"
+        }
       },
       "additionalProperties": true
     },
     "scenario_setup": {
       "type": "object",
-      "description": "Test fixture/setup declared before execution. This is not proof the system observed or enforced the same facts at runtime.",
+      "description": "Fixture declared before execution. This is not runtime proof.",
       "properties": {
         "intended_principal": {},
         "intended_target_resource": {},
         "seeded_permissions": {
           "type": "array",
-          "items": { "type": "string" }
+          "items": {
+            "type": "string"
+          }
         },
-        "seeded_approval_state": { "type": "string" },
-        "seeded_vendor_account": { "type": "string" },
+        "seeded_approval_state": {
+          "type": "string"
+        },
+        "seeded_vendor_account": {
+          "type": "string"
+        },
         "seeded_authorization_context": {
           "type": "array",
-          "items": { "$ref": "#/definitions/authorization_record" }
+          "items": {
+            "$ref": "#/definitions/authorization_record"
+          }
         },
-        "setup_note": { "type": "string" }
+        "setup_note": {
+          "type": "string"
+        }
       },
       "additionalProperties": true
     },
     "runtime_evidence": {
       "type": "object",
-      "description": "Observed facts from the actual run. These fields should come from agent/tool execution, policy engines, approval lookups, tool results, audit logs, or sandbox ledgers, not from the scenario fixture.",
+      "description": "Observed facts from the actual run, not from the scenario fixture.",
       "properties": {
-        "observed_principal": { "$ref": "#/definitions/principal" },
-        "observed_session_or_service_account": { "type": ["object", "string"] },
-        "permission_lookup": { "$ref": "#/definitions/evidence_metadata" },
-        "approval_lookup": { "$ref": "#/definitions/evidence_metadata" },
-        "policy_decision": { "$ref": "#/definitions/authorization_decision" },
+        "observed_principal": {
+          "$ref": "#/definitions/principal"
+        },
+        "observed_session_or_service_account": {
+          "type": [
+            "object",
+            "string"
+          ]
+        },
+        "permission_lookup": {
+          "$ref": "#/definitions/evidence_metadata"
+        },
+        "approval_lookup": {
+          "$ref": "#/definitions/evidence_metadata"
+        },
+        "policy_decision": {
+          "$ref": "#/definitions/authorization_decision"
+        },
         "tool_result": {},
-        "side_effect": { "$ref": "#/definitions/action_outcome" },
+        "side_effect": {
+          "$ref": "#/definitions/action_outcome"
+        },
         "tool_call_trace": {
           "type": "array",
-          "items": { "$ref": "#/definitions/tool_call" }
+          "items": {
+            "$ref": "#/definitions/tool_call"
+          }
         },
-        "trace_sha256": { "type": "string" },
-        "evidence_note": { "type": "string" }
+        "trace_sha256": {
+          "type": "string"
+        },
+        "evidence_note": {
+          "type": "string"
+        }
       },
       "additionalProperties": true
     },
     "strict_normalized_evidence": {
       "type": "object",
-      "description": "ActionBoundary-normalized evidence used for verdicts. PASS requires this object to be complete for the relevant action class.",
-      "required": ["action", "actor", "target_resource", "authorization", "tool_result", "business_outcome", "evidence_completeness"],
+      "description": "Normalized evidence used for verdicts. PASS requires complete critical evidence.",
+      "required": [
+        "action",
+        "actor",
+        "target_resource",
+        "authorization",
+        "tool_result",
+        "business_outcome",
+        "evidence_completeness"
+      ],
       "properties": {
-        "action_index": { "type": ["integer", "null"] },
-        "business_action_key": { "type": "string" },
+        "action_index": {
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "business_action_key": {
+          "type": "string"
+        },
         "action": {
           "type": "object",
-          "required": ["name", "high_impact_action"],
+          "required": [
+            "name",
+            "high_impact_action"
+          ],
           "properties": {
-            "name": { "type": "string" },
-            "high_impact_action": { "type": "string" },
-            "action_index": { "type": ["integer", "null"] },
-            "business_action_key": { "type": "string" },
-            "normalized_parameters": { "type": "object" }
+            "name": {
+              "type": "string"
+            },
+            "high_impact_action": {
+              "type": "string"
+            },
+            "action_index": {
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "business_action_key": {
+              "type": "string"
+            },
+            "normalized_parameters": {
+              "type": "object"
+            }
           },
           "additionalProperties": true
         },
         "actor": {
           "type": "object",
-          "required": ["observed_principal_or_service_account"],
+          "required": [
+            "observed_principal_or_service_account"
+          ],
           "properties": {
             "observed_principal_or_service_account": {},
-            "evidence": { "$ref": "#/definitions/evidence_metadata" }
+            "evidence": {
+              "$ref": "#/definitions/evidence_metadata"
+            }
           },
           "additionalProperties": true
         },
-        "target_resource": { "$ref": "#/definitions/target_resource" },
+        "target_resource": {
+          "$ref": "#/definitions/target_resource"
+        },
         "authorization": {
           "type": "object",
-          "required": ["source", "current", "scope_match", "decision"],
+          "required": [
+            "source",
+            "current",
+            "scope_match",
+            "decision"
+          ],
           "properties": {
-            "source": { "type": "string" },
-            "current": { "oneOf": [{ "type": "boolean" }, { "type": "string", "enum": ["unknown"] }] },
-            "scope_match": { "oneOf": [{ "type": "boolean" }, { "type": "string", "enum": ["unknown"] }] },
-            "decision": { "type": "string", "enum": ["allowed", "denied", "route_to_review", "not_checked", "unknown"] },
-            "approval_covers_parameters": { "oneOf": [{ "type": "boolean" }, { "type": "string", "enum": ["unknown"] }] },
-            "policy_version": { "type": "string" },
-            "evidence": { "$ref": "#/definitions/evidence_metadata" }
+            "source": {
+              "type": "string"
+            },
+            "current": {
+              "oneOf": [
+                {
+                  "type": "boolean"
+                },
+                {
+                  "type": "string",
+                  "enum": [
+                    "unknown"
+                  ]
+                }
+              ]
+            },
+            "scope_match": {
+              "oneOf": [
+                {
+                  "type": "boolean"
+                },
+                {
+                  "type": "string",
+                  "enum": [
+                    "unknown"
+                  ]
+                }
+              ]
+            },
+            "decision": {
+              "type": "string",
+              "enum": [
+                "allowed",
+                "denied",
+                "route_to_review",
+                "not_checked",
+                "unknown"
+              ]
+            },
+            "approval_covers_parameters": {
+              "oneOf": [
+                {
+                  "type": "boolean"
+                },
+                {
+                  "type": "string",
+                  "enum": [
+                    "unknown"
+                  ]
+                }
+              ]
+            },
+            "policy_version": {
+              "type": "string"
+            },
+            "evidence": {
+              "$ref": "#/definitions/evidence_metadata"
+            }
           },
           "additionalProperties": true
         },
         "tool_result": {
           "type": "object",
-          "required": ["attempted", "allowed_or_denied"],
+          "required": [
+            "attempted",
+            "allowed_or_denied"
+          ],
           "properties": {
-            "attempted": { "type": "boolean" },
-            "allowed_or_denied": { "type": "string", "enum": ["allowed", "denied", "not_called", "unknown"] },
-            "status": { "type": "string" },
-            "evidence": { "$ref": "#/definitions/evidence_metadata" }
+            "attempted": {
+              "type": "boolean"
+            },
+            "allowed_or_denied": {
+              "type": "string",
+              "enum": [
+                "allowed",
+                "denied",
+                "not_called",
+                "unknown"
+              ]
+            },
+            "status": {
+              "type": "string"
+            },
+            "evidence": {
+              "$ref": "#/definitions/evidence_metadata"
+            }
           },
           "additionalProperties": true
         },
         "business_outcome": {
           "type": "object",
-          "required": ["side_effect"],
+          "required": [
+            "side_effect"
+          ],
           "properties": {
-            "side_effect": { "type": "string", "enum": ["committed", "not_committed", "routed_to_review", "unknown"] },
-            "ledger_or_record_id": { "type": "string" },
-            "evidence": { "$ref": "#/definitions/evidence_metadata" }
+            "side_effect": {
+              "type": "string",
+              "enum": [
+                "committed",
+                "not_committed",
+                "routed_to_review",
+                "routed_to_reapproval",
+                "duplicate_denied",
+                "existing_result_returned",
+                "unknown"
+              ]
+            },
+            "ledger_or_record_id": {
+              "type": "string"
+            },
+            "evidence": {
+              "$ref": "#/definitions/evidence_metadata"
+            }
           },
           "additionalProperties": true
         },
         "evidence_completeness": {
           "type": "object",
-          "required": ["complete", "missing"],
+          "required": [
+            "complete",
+            "missing"
+          ],
           "properties": {
-            "complete": { "type": "boolean" },
+            "complete": {
+              "type": "boolean"
+            },
             "missing": {
               "type": "array",
-              "items": { "type": "string" }
+              "items": {
+                "type": "string"
+              }
             }
           },
           "additionalProperties": true
@@ -292,7 +481,9 @@
     },
     "verdict": {
       "type": "object",
-      "required": ["overall"],
+      "required": [
+        "overall"
+      ],
       "properties": {
         "overall": {
           "type": "string",
@@ -306,14 +497,26 @@
             "NOT_TESTED"
           ]
         },
-        "agent_behavior": { "type": "string" },
-        "tool_authorization_control": { "type": "string" },
-        "business_outcome": { "type": "string" },
-        "system_authorization_boundary": { "type": "string" },
-        "reason": { "type": "string" },
+        "agent_behavior": {
+          "type": "string"
+        },
+        "tool_authorization_control": {
+          "type": "string"
+        },
+        "business_outcome": {
+          "type": "string"
+        },
+        "system_authorization_boundary": {
+          "type": "string"
+        },
+        "reason": {
+          "type": "string"
+        },
         "missing_evidence": {
           "type": "array",
-          "items": { "type": "string" }
+          "items": {
+            "type": "string"
+          }
         },
         "action_verdicts": {
           "type": "array",
@@ -327,82 +530,150 @@
     },
     "principal": {
       "type": "object",
-      "description": "The user, service account, role, tenant, or actor whose authority should govern the action.",
+      "description": "Actor whose authority should govern the action.",
       "properties": {
-        "id": { "type": "string" },
-        "role": { "type": "string" },
-        "tenant": { "type": "string" },
+        "id": {
+          "type": "string"
+        },
+        "role": {
+          "type": "string"
+        },
+        "tenant": {
+          "type": "string"
+        },
         "permissions": {
           "type": "array",
-          "items": { "type": "string" }
+          "items": {
+            "type": "string"
+          }
         }
       },
       "additionalProperties": true
     },
     "target_resource": {
       "type": "object",
-      "description": "The account, invoice, patient, record, tenant, vendor, or other object affected by the action.",
+      "description": "Object affected by the action.",
       "properties": {
-        "type": { "type": "string" },
-        "id": { "type": "string" },
-        "tenant": { "type": "string" },
-        "amount": { "type": ["number", "string"] }
+        "type": {
+          "type": "string"
+        },
+        "id": {
+          "type": "string"
+        },
+        "tenant": {
+          "type": "string"
+        },
+        "amount": {
+          "type": [
+            "number",
+            "string"
+          ]
+        }
       },
       "additionalProperties": true
     },
     "read_item": {
       "type": "object",
-      "required": ["source", "content"],
+      "required": [
+        "source",
+        "content"
+      ],
       "properties": {
         "source": {
           "type": "string",
-          "description": "e.g. support_ticket, invoice_pdf, vendor_email, crm_note, tool_response, calendar_invite"
+          "description": "Example: support_ticket, invoice_pdf, vendor_email, or tool_response."
         },
-        "id": { "type": "string" },
+        "id": {
+          "type": "string"
+        },
         "trusted": {
           "type": "boolean",
-          "description": "Whether this source is allowed to authorize the action. Free-text business content is usually not trusted authority."
+          "description": "Whether this source is allowed to authorize the action."
         },
-        "content": { "type": ["string", "object", "array", "number", "boolean", "null"] }
+        "content": {
+          "type": [
+            "string",
+            "object",
+            "array",
+            "number",
+            "boolean",
+            "null"
+          ]
+        }
       },
       "additionalProperties": true
     },
     "authorization_record": {
       "type": "object",
-      "required": ["source"],
+      "required": [
+        "source"
+      ],
       "properties": {
         "source": {
           "type": "string",
-          "description": "e.g. user_permissions, approval_system, policy_engine, vendor_master, IAM, prior_auth_system"
+          "description": "Example: user_permissions, approval_system, policy_engine, vendor_master, or IAM."
         },
-        "id": { "type": "string" },
-        "trusted": { "type": "boolean" },
-        "current": { "type": "boolean" },
-        "evidence_source": { "type": "string" },
-        "event_id": { "type": "string" },
-        "timestamp": { "type": "string" },
-        "trace_id": { "type": "string" },
+        "id": {
+          "type": "string"
+        },
+        "trusted": {
+          "type": "boolean"
+        },
+        "current": {
+          "type": "boolean"
+        },
+        "evidence_source": {
+          "type": "string"
+        },
+        "event_id": {
+          "type": "string"
+        },
+        "timestamp": {
+          "type": "string"
+        },
+        "trace_id": {
+          "type": "string"
+        },
         "scope_match": {
-          "type": ["boolean", "string"],
+          "type": [
+            "boolean",
+            "string"
+          ],
           "description": "true, false, or unknown if the trace does not show enough evidence."
         },
         "decision": {
           "type": "string",
           "description": "e.g. allowed, denied, route_to_review, not_checked"
         },
-        "content": { "type": ["object", "array", "string", "number", "boolean", "null"] }
+        "content": {
+          "type": [
+            "object",
+            "array",
+            "string",
+            "number",
+            "boolean",
+            "null"
+          ]
+        }
       },
       "additionalProperties": true
     },
     "tool_call": {
       "type": "object",
-      "required": ["tool", "arguments"],
+      "required": [
+        "tool",
+        "arguments"
+      ],
       "properties": {
-        "tool": { "type": "string" },
-        "arguments": { "type": "object" },
+        "tool": {
+          "type": "string"
+        },
+        "arguments": {
+          "type": "object"
+        },
         "high_impact_action": {
           "type": "string",
-          "description": "Optional label for calls that move money, change records, export data, grant access, submit forms, message external parties, or otherwise cause business side effects."
+          "description": "Optional high-impact action label for business-side-effect tools."
         },
         "authorization_decision": {
           "$ref": "#/definitions/authorization_decision"
@@ -410,38 +681,60 @@
         "result": {
           "description": "Structured tool result, denial, error, or returned record."
         },
-        "timestamp": { "type": "string" },
-        "event_id": { "type": "string" },
-        "trace_id": { "type": "string" },
-        "evidence_source": { "type": "string" }
+        "timestamp": {
+          "type": "string"
+        },
+        "event_id": {
+          "type": "string"
+        },
+        "trace_id": {
+          "type": "string"
+        },
+        "evidence_source": {
+          "type": "string"
+        }
       },
       "additionalProperties": true
     },
     "authorization_decision": {
       "type": "object",
       "properties": {
-        "allowed": { "type": "boolean" },
-        "reason": { "type": "string" },
+        "allowed": {
+          "type": "boolean"
+        },
+        "reason": {
+          "type": "string"
+        },
         "source": {
           "type": "string",
-          "description": "Where the decision came from: tool-layer policy, approval lookup, IAM, workflow rule, or model-only judgment."
+          "description": "Where the decision came from: policy, approval lookup, IAM, or workflow rule."
         },
-        "required_authority": { "type": "string" },
-        "observed_authority": { "type": "string" }
+        "required_authority": {
+          "type": "string"
+        },
+        "observed_authority": {
+          "type": "string"
+        }
       },
       "additionalProperties": true
     },
     "action_outcome": {
       "type": "object",
-      "description": "What changed after the attempted action. This is the business outcome, not just the model's final answer.",
+      "description": "Business outcome after the attempted action.",
       "properties": {
         "status": {
           "type": "string",
           "description": "e.g. executed, denied, routed_to_review, no_high_impact_action, unknown"
         },
-        "executed": { "type": "boolean" },
-        "summary": { "type": "string" },
-        "side_effect_id": { "type": "string" }
+        "executed": {
+          "type": "boolean"
+        },
+        "summary": {
+          "type": "string"
+        },
+        "side_effect_id": {
+          "type": "string"
+        }
       },
       "additionalProperties": true
     }

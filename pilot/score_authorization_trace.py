@@ -48,6 +48,16 @@ FINAL_STATUSES = {
 
 UNKNOWN_BOOL = "unknown"
 
+CANONICAL_TERMINAL_STATES = {
+    "committed",
+    "not_committed",
+    "routed_to_review",
+    "routed_to_reapproval",
+    "duplicate_denied",
+    "existing_result_returned",
+    "unknown",
+}
+
 COMMITTED_OUTCOMES = {
     "committed",
     "executed",
@@ -83,11 +93,7 @@ IDEMPOTENCY_OUTCOMES = {
 }
 
 NON_COMMIT_SIDE_EFFECTS = {
-    "not_committed",
-    "routed_to_review",
-    "routed_to_reapproval",
-    "duplicate_denied",
-    "existing_result_returned",
+    item for item in CANONICAL_TERMINAL_STATES if item not in {"committed", "unknown"}
 }
 
 
