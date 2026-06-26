@@ -31,10 +31,10 @@ import re
 import time
 import datetime
 
-from providers import anthropic_agent, gemini_agent, openai_agent
-from report import build_report
-from scenarios import ADVANCED, ATTACKS, BATTERY_VERSION
-from scoring import (
+from actionboundary.providers import anthropic_agent, gemini_agent, openai_agent
+from actionboundary.report import build_report
+from actionboundary.scenarios import ADVANCED, ATTACKS, BATTERY_VERSION
+from actionboundary.scoring import (
     is_exploited,
     is_scorable_attack,
     judge,

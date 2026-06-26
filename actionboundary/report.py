@@ -4,9 +4,9 @@ from __future__ import annotations
 
 import datetime
 
-from canary import contains_canary
-from scenarios import BATTERY_VERSION
-from scoring import is_attack, is_exploited, is_scorable_attack, iter_tool_calls, row_status
+from .canary import contains_canary
+from .scenarios import BATTERY_VERSION
+from .scoring import is_attack, is_exploited, is_scorable_attack, iter_tool_calls, row_status
 
 
 SEV_ORDER = {"Critical": 0, "High": 1, "Medium": 2, "Info": 3}

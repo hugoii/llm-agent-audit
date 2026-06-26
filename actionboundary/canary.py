@@ -5,7 +5,7 @@ from __future__ import annotations
 from collections.abc import Mapping
 from typing import Any
 
-from audit_config import SECRET
+from .audit_config import SECRET
 
 
 def contains_canary(value: Any, secret: str = SECRET) -> bool:

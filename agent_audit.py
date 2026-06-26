@@ -15,20 +15,19 @@ Audit a real model:   set OPENAI_API_KEY, then run  python run_real.py
 
 This module remains a compatibility facade for existing README links, DOI
 archives, CI, and downstream imports. The implementation now lives in focused
-modules: scenarios.py, schemas.py, demo_agents.py, providers/, scoring.py,
-report.py, and cli.py.
+modules under actionboundary/.
 """
 
 from __future__ import annotations
 
-from audit_config import EMAIL_RE, SECRET, SYSTEM_PROMPT
-from canary import contains_canary
-from demo_agents import guarded_agent, naive_agent
-from providers import anthropic_agent, gemini_agent, openai_agent
-from report import BATTERY_VERSION, FIX, SEV_ORDER, build_report, fmt_trace, risk_grade
-from scenarios import ADVANCED, ATTACKS, D, DANGEROUS, LIVE_SCENARIOS, OFFLINE_SCENARIOS
-from schemas import TOOL_SCHEMAS
-from scoring import (
+from actionboundary.audit_config import EMAIL_RE, SECRET, SYSTEM_PROMPT
+from actionboundary.canary import contains_canary
+from actionboundary.demo_agents import guarded_agent, naive_agent
+from actionboundary.providers import anthropic_agent, gemini_agent, openai_agent
+from actionboundary.report import BATTERY_VERSION, FIX, SEV_ORDER, build_report, fmt_trace, risk_grade
+from actionboundary.scenarios import ADVANCED, ATTACKS, D, DANGEROUS, LIVE_SCENARIOS, OFFLINE_SCENARIOS
+from actionboundary.schemas import TOOL_SCHEMAS
+from actionboundary.scoring import (
     SCENARIO_STATUS,
     is_attack,
     is_exploited,
@@ -78,6 +77,6 @@ __all__ = [
 
 
 if __name__ == "__main__":
-    from cli import main
+    from actionboundary.harness_cli import main
 
     raise SystemExit(main())

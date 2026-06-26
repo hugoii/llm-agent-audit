@@ -7,8 +7,8 @@ import os
 import urllib.error
 import urllib.request
 
-from audit_config import SYSTEM_PROMPT
-from schemas import TOOL_SCHEMAS
+from ..audit_config import SYSTEM_PROMPT
+from ..schemas import TOOL_SCHEMAS
 
 
 def anthropic_agent(scenario):

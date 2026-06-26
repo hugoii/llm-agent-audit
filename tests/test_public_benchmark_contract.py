@@ -3,11 +3,11 @@ from __future__ import annotations
 from pathlib import Path
 import unittest
 
-from audit_config import SECRET
-from canary import contains_canary
-from report import fmt_trace
-from scenarios import ADVANCED, ATTACKS, LIVE_SCENARIOS
-from scoring import observed_outcomes
+from actionboundary.audit_config import SECRET
+from actionboundary.canary import contains_canary
+from actionboundary.report import fmt_trace
+from actionboundary.scenarios import ADVANCED, ATTACKS, LIVE_SCENARIOS
+from actionboundary.scoring import observed_outcomes
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -31,7 +31,7 @@ class PublicBenchmarkContractTests(unittest.TestCase):
         paths = [
             ROOT / "agent_audit.py",
             ROOT / "run_real.py",
-            ROOT / "agent_report.md",
+            ROOT / "docs" / "offline-demo-report.md",
             ROOT / "benchmark" / "README.md",
             ROOT / "README.md",
         ]

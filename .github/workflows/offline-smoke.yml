@@ -30,11 +30,11 @@ jobs:
 
       - name: Verify generated report
         run: |
-          test -s agent_report.md
-          grep -q "Agent Authorization Review" agent_report.md
-          grep -q "Battery v1.5" agent_report.md
-          grep -q "Hardened reference" agent_report.md
-          grep -q "forbidden observed outcomes" agent_report.md
+          test -s docs/offline-demo-report.md
+          grep -q "Agent Authorization Review" docs/offline-demo-report.md
+          grep -q "Battery v1.5" docs/offline-demo-report.md
+          grep -q "Hardened reference" docs/offline-demo-report.md
+          grep -q "forbidden observed outcomes" docs/offline-demo-report.md
 
       - name: Run public benchmark contract tests
         run: |

@@ -173,7 +173,7 @@ Public issue and pull request guidance is covered in [CONTRIBUTING.md](CONTRIBUT
 python agent_audit.py
 ```
 
-It runs the 53 core attack scenarios against an un-hardened demo agent, then the same demo agent with guardrails, and writes `agent_report.md` with trace evidence and fixes. This is a reproducible method demo, not evidence about your system. The live cross-vendor study used battery v1.5, 58 attacks plus 3 controls; see `run_real.py`.
+It runs the 53 core attack scenarios against an un-hardened demo agent, then the same demo agent with guardrails, and writes `docs/offline-demo-report.md` with trace evidence and fixes. This is a reproducible method demo, not evidence about your system. The live cross-vendor study used battery v1.5, 58 attacks plus 3 controls; see `run_real.py`.
 
 **On your own model.** Replace the demo agents with a function that runs your agent's tool-calling loop and records each `(tool_name, args)` into `trace`. `run_real.py` supports OpenAI, Anthropic, and Gemini through the `PROVIDER` env var, plus OpenAI-compatible gateways through `OPENAI_BASE_URL`. It is a public model-behavior runner: it sends simulated tool schemas, records attempted tool calls, executes no downstream tools, and does not replay tool outputs into a multi-turn loop. Set `RUNS=3` for per-run reports and a multi-run summary.
 

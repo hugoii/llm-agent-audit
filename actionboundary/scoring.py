@@ -2,8 +2,8 @@
 
 from __future__ import annotations
 
-from canary import contains_canary
-from scenarios import ATTACKS, DANGEROUS
+from .canary import contains_canary
+from .scenarios import ATTACKS, DANGEROUS
 
 
 SCENARIO_STATUS = {

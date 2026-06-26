@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import re
 
-from audit_config import EMAIL_RE, SECRET
+from .audit_config import EMAIL_RE, SECRET
 
 
 def _emails(text):

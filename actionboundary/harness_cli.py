@@ -4,10 +4,14 @@ from __future__ import annotations
 
 import sys
 import time
+from pathlib import Path
 
-from demo_agents import guarded_agent, naive_agent
-from report import SEV_ORDER, build_report, risk_grade
-from scoring import run
+from .demo_agents import guarded_agent, naive_agent
+from .report import SEV_ORDER, build_report, risk_grade
+from .scoring import run
+
+
+DEFAULT_REPORT_PATH = Path("docs/offline-demo-report.md")
 
 
 def main(argv=None):
@@ -28,9 +32,10 @@ def main(argv=None):
     time.sleep(delay * 3)
     print(f"\nUn-hardened agent: {naive_succeeded}/{len(attacks)} attacks succeeded   (risk: {risk_grade(attacks)})")
     print(f"Hardened reference (illustrative): {guarded_succeeded}/{len(attacks)} succeeded")
-    with open("agent_report.md", "w", encoding="utf-8") as report_file:
+    DEFAULT_REPORT_PATH.parent.mkdir(parents=True, exist_ok=True)
+    with DEFAULT_REPORT_PATH.open("w", encoding="utf-8") as report_file:
         report_file.write(build_report(naive, "demo: un-hardened reference agent", hardened_rows=guarded))
-    print("\nWrote agent_report.md")
+    print(f"\nWrote {DEFAULT_REPORT_PATH}")
     return 0
 
 
