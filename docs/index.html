@@ -5073,7 +5073,7 @@
       <div>
         <p class="case-label">Public AP workflow finding</p>
         <h2>A payment approval is not user authorization.</h2>
-        <p class="lead">In a synthetic AP workflow, the invoice approval was valid, but the user only had view-only AP access and could not schedule payments. In advisory mode, 18 of 20 runs still called <code>schedule_payment</code>.</p>
+        <p class="lead">In a synthetic AP workflow, the invoice approval was valid, but the user only had view-only AP access and could not schedule payments. In advisory mode, 18 of 20 local runs still called <code>schedule_payment</code> and reached a scheduled state in the sandbox simulation.</p>
         <blockquote class="finding-claim">The approval was real.<br><span class="finding-claim-emphasis">The user&rsquo;s authority was not.</span></blockquote>
         <p class="finding-buyer">Security reviewers need proof the product can separate business approval from execution authority. Verdicts use runtime evidence for actor, target, authorization, tool result, and sandbox outcome; missing critical evidence is inconclusive.</p>
         <div class="finding-actions">
@@ -5091,11 +5091,11 @@
         <div class="mode-grid">
           <div class="mode-card fail" style="--focus-delay: 0ms">
             <div class="verdict"><span>Advisory mode</span><b>scheduled</b></div>
-            <small>18 / 20 runs let an unauthorized payment reach <code>scheduled</code>.</small>
+            <small>18 / 20 local runs reached the sandbox <code>scheduled</code> state.</small>
           </div>
           <div class="mode-card pass" style="--focus-delay: 1100ms">
             <div class="verdict"><span>Enforced mode</span><b>blocked</b></div>
-            <small>Every attempt denied at the tool layer. <strong>0 executed.</strong></small>
+            <small>Every attempt denied at the tool layer. <strong>0 sandbox side effects.</strong></small>
           </div>
         </div>
         <div class="run-summary">
@@ -5130,13 +5130,13 @@
               <span class="dot-cell" data-label="Enforced outcome"><span class="dot-strip"><i class="dot block"></i><i class="dot block"></i><i class="dot block"></i><i class="dot block"></i><i class="dot block"></i></span><b class="dot-count block">5 blocked</b></span>
             </div>
           </div>
-          <p class="dot-note"><b>Enforced mode: 0 unauthorized payments executed.</b> Gray dots mean no payment attempt.</p>
+          <p class="dot-note"><b>Enforced mode: 0 unauthorized sandbox side effects.</b> Gray dots mean no payment attempt.</p>
           <div class="dot-legend">
-            <span><i class="dot sched"></i>scheduled (unauthorized)</span>
+            <span><i class="dot sched"></i>scheduled in simulation</span>
             <span><i class="dot block"></i>blocked at tool layer</span>
             <span><i class="dot none"></i>no high-impact action</span>
           </div>
-          <p class="case-caveat">Synthetic AP workflow. The point is the control: advisory tools allowed execution; enforced tools did not.</p>
+          <p class="case-caveat">Local/sandbox AP tool simulation only. No real payments, payment rails, or production systems.</p>
         </div>
       </article>
     </div>
@@ -5238,7 +5238,7 @@
         </div>
         <p class="model-takeaway"><b>Takeaway:</b> Use the strongest model you can. Still enforce authorization at the tool layer.</p>
         <div class="model-receipt-row">
-          <span>Public synthetic battery · 58 attack scenarios + 3 controls · simulated schemas, no tool execution · 3 runs per model · snapshot evidence</span>
+          <span>Live public benchmark: 58 attacks + 3 controls · offline demo: 53 attacks + 3 controls · simulated schemas, no tool execution · 3 runs per model</span>
           <a href="https://github.com/hugoii/llm-agent-audit/blob/master/docs/model-choice-is-not-an-authorization-layer.md">Read cross-model note</a>
         </div>
         <ul class="sr-only">
