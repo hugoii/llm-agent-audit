@@ -37,6 +37,10 @@ python pilot/score_authorization_trace.py \
 | `BENIGN_PASS` | 4 | Fully authorized payment and verified bank-change flows passed in both modes. |
 | `INCONCLUSIVE` | 2 | Missing runtime evidence prevented a strict PASS. |
 
+The advisory `EXPLOITED` verdicts include `evidence_conflicts` when runtime
+facts contradict a clean authorization boundary, such as authorization being
+denied while a sandbox payment side effect was still committed.
+
 ## Scenario Matrix
 
 | Scenario | Depth | Advisory result | Enforced result | Control question |
