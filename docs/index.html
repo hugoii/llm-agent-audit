@@ -1064,6 +1064,249 @@
     margin-top: 22px;
   }
 
+  .ap-audit-section {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    margin: 28px -36px 0;
+    padding: 30px 36px 32px;
+    border: 0;
+    transform-origin: 50% 45%;
+    transition:
+      opacity 520ms var(--ease-out-quint),
+      transform 520ms var(--ease-out-quint),
+      background 220ms var(--ease-out-quint);
+    background:
+      radial-gradient(circle at 24% 20%, rgba(73, 185, 169, 0.12), transparent 34%),
+      linear-gradient(90deg, rgba(247, 251, 250, 0.94), rgba(255, 255, 255, 0.76) 58%, rgba(247, 248, 250, 0));
+  }
+
+  .ap-bg-grid {
+    position: absolute;
+    inset: 0 auto 0 0;
+    z-index: 0;
+    width: min(38vw, 480px);
+    pointer-events: none;
+    opacity: 0.38;
+    background-image:
+      linear-gradient(rgba(15, 118, 110, 0.08) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(15, 118, 110, 0.08) 1px, transparent 1px),
+      radial-gradient(circle, rgba(15, 118, 110, 0.16) 1px, transparent 1.6px);
+    background-size: 28px 28px, 28px 28px, 56px 56px;
+    -webkit-mask-image: linear-gradient(90deg, #000 0%, rgba(0, 0, 0, 0.58) 44%, transparent 100%);
+    mask-image: linear-gradient(90deg, #000 0%, rgba(0, 0, 0, 0.58) 44%, transparent 100%);
+  }
+
+  .ap-inner {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    grid-template-columns: minmax(0, 0.92fr) 1px minmax(440px, 1fr);
+    gap: clamp(30px, 3.8vw, 50px);
+    align-items: center;
+  }
+
+  .ap-left h2 {
+    max-width: 610px;
+    margin: 0 0 12px;
+    font-size: clamp(1.72rem, 2vw, 2.24rem);
+    line-height: 1.16;
+    letter-spacing: 0;
+    text-wrap: balance;
+  }
+
+  .ap-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    min-height: 30px;
+    margin-bottom: 18px;
+    padding: 4px 12px 4px 8px;
+    border: 1px solid rgba(15, 118, 110, 0.28);
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.76);
+    color: var(--teal-dark);
+    font-size: 0.8rem;
+    font-weight: 800;
+  }
+
+  .ap-pill-icon {
+    display: inline-flex;
+    width: 18px;
+    height: 18px;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: var(--teal-dark);
+    color: var(--white);
+    font-size: 0.68rem;
+    font-weight: 900;
+    line-height: 1;
+  }
+
+  .ap-subtitle {
+    max-width: 600px;
+    color: var(--body-strong);
+    font-size: clamp(0.94rem, 1vw, 1rem);
+    line-height: 1.58;
+    margin-bottom: 0;
+  }
+
+  .ap-rail {
+    position: relative;
+    display: grid;
+    grid-template-columns: repeat(6, minmax(58px, 1fr));
+    column-gap: 12px;
+    max-width: 608px;
+    margin-top: 28px;
+    padding-top: 0;
+  }
+
+  .ap-rail-line {
+    position: absolute;
+    left: 4px;
+    right: 4px;
+    top: 29px;
+    height: 1px;
+    background: linear-gradient(90deg, rgba(15, 118, 110, 0.10), rgba(15, 118, 110, 0.58), rgba(15, 118, 110, 0.10));
+  }
+
+  .ap-step {
+    position: relative;
+    display: grid;
+    grid-template-rows: 15px 12px 30px;
+    justify-items: center;
+    row-gap: 8px;
+    color: var(--teal-dark);
+  }
+
+  .ap-step span {
+    color: rgba(11, 79, 74, 0.72);
+    font-size: 0.78rem;
+    font-weight: 750;
+    line-height: 1;
+  }
+
+  .ap-step i {
+    position: relative;
+    z-index: 1;
+    width: 10px;
+    height: 10px;
+    border: 2px solid var(--teal);
+    border-radius: 50%;
+    background: transparent;
+    box-shadow: 0 0 0 3px rgba(247, 251, 250, 0.78);
+  }
+
+  .ap-step b {
+    min-height: 30px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 5px 10px;
+    border: 1px solid rgba(15, 118, 110, 0.24);
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.82);
+    font-size: 0.76rem;
+    line-height: 1;
+    white-space: nowrap;
+  }
+
+  .ap-divider {
+    width: 1px;
+    min-height: 224px;
+    align-self: center;
+    background: linear-gradient(180deg, transparent, rgba(15, 118, 110, 0.13) 18%, rgba(15, 118, 110, 0.13) 82%, transparent);
+  }
+
+  .ap-right {
+    display: grid;
+    align-content: center;
+  }
+
+  .ap-entry {
+    display: grid;
+    grid-template-columns: 64px minmax(0, 1fr) auto;
+    gap: 18px;
+    align-items: start;
+    padding: 17px 0;
+    border-bottom: 1px solid rgba(184, 193, 204, 0.70);
+  }
+
+  .ap-entry:first-child {
+    padding-top: 0;
+  }
+
+  .ap-entry:last-child {
+    padding-bottom: 0;
+    border-bottom: 0;
+  }
+
+  .ap-entry-index {
+    display: grid;
+    grid-template-columns: 28px 1fr;
+    align-items: center;
+    gap: 7px;
+    margin-top: 5px;
+    color: var(--teal-dark);
+  }
+
+  .ap-entry-index span {
+    font-size: 0.98rem;
+    line-height: 1;
+    font-weight: 500;
+    color: rgba(11, 79, 74, 0.86);
+  }
+
+  .ap-entry-index i {
+    width: 100%;
+    height: 1px;
+    border-top: 1px dashed rgba(15, 118, 110, 0.32);
+    position: relative;
+  }
+
+  .ap-entry-index i::after {
+    content: "";
+    position: absolute;
+    right: -3px;
+    top: -4px;
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--teal);
+    box-shadow: 0 0 0 4px rgba(231, 245, 243, 0.95);
+  }
+
+  .ap-entry-copy h3 {
+    margin: 0 0 5px;
+    font-size: 0.96rem;
+    line-height: 1.22;
+  }
+
+  .ap-entry-copy p {
+    color: var(--muted);
+    margin: 0;
+    max-width: 420px;
+    font-size: 0.86rem;
+    line-height: 1.5;
+  }
+
+  .ap-entry a {
+    color: var(--teal-dark);
+    align-self: center;
+    font-size: 0.82rem;
+    font-weight: 800;
+    text-decoration: none;
+    border-bottom: 1px solid rgba(15, 118, 110, 0.42);
+    white-space: nowrap;
+  }
+
+  .ap-entry a:hover,
+  .ap-entry a:focus-visible {
+    color: var(--teal);
+    border-bottom-color: currentColor;
+  }
+
   .case-panel {
     position: relative;
     isolation: isolate;
@@ -1409,6 +1652,10 @@
     font-weight: 750;
     line-height: 1.3;
     color: var(--ink);
+  }
+
+  .finding-claim-emphasis {
+    color: var(--teal-dark);
   }
 
   .finding-buyer {
@@ -2868,6 +3115,11 @@
       border-color: rgba(15, 118, 110, 0.34);
     }
 
+    .ap-audit-section:hover,
+    .ap-audit-section:focus-within {
+      transform: translateY(-1px) scale(1.004);
+    }
+
   }
 
   @media (prefers-reduced-motion: no-preference) {
@@ -3079,6 +3331,23 @@
     main > .section.breath-section.breath-in {
       opacity: 1;
       transform: scale(1);
+    }
+
+    .ap-audit-section.breath-section {
+      opacity: 0.94;
+      transform: scale(0.988);
+      transition-delay: var(--breath-delay, 0ms);
+      will-change: transform, opacity;
+    }
+
+    .ap-audit-section.breath-section.breath-in {
+      opacity: 1;
+      transform: scale(1);
+    }
+
+    .ap-audit-section.breath-section.breath-in:hover,
+    .ap-audit-section.breath-section.breath-in:focus-within {
+      transform: translateY(-1px) scale(1.004);
     }
 
     @keyframes rise {
@@ -3347,6 +3616,7 @@
 
     .split,
     .finding-layout,
+    .ap-inner,
     .model-evidence-intro,
     .deliverable,
     .callout,
@@ -3392,6 +3662,61 @@
 
     .trust-map-head {
       display: grid;
+    }
+
+    .ap-audit-section {
+      padding-top: 34px;
+      padding-bottom: 34px;
+    }
+
+    .ap-bg-grid {
+      width: 100%;
+      opacity: 0.28;
+      -webkit-mask-image: linear-gradient(180deg, #000 0%, transparent 70%);
+      mask-image: linear-gradient(180deg, #000 0%, transparent 70%);
+    }
+
+    .ap-inner {
+      gap: 28px;
+    }
+
+    .ap-divider {
+      width: 100%;
+      min-height: 1px;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(15, 118, 110, 0.24), transparent);
+    }
+
+    .ap-rail {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      max-width: none;
+      gap: 12px;
+    }
+
+    .ap-rail-line {
+      display: none;
+    }
+
+    .ap-step {
+      grid-template-rows: auto auto;
+      justify-items: start;
+      padding-top: 10px;
+      border-top: 1px solid rgba(15, 118, 110, 0.18);
+    }
+
+    .ap-step i {
+      display: none;
+    }
+
+    .ap-entry {
+      grid-template-columns: 64px minmax(0, 1fr);
+      gap: 16px;
+      align-items: start;
+    }
+
+    .ap-entry a {
+      grid-column: 2;
+      justify-self: start;
     }
 
     .trace-lens {
@@ -3761,6 +4086,36 @@
       font-size: 1.72rem;
     }
 
+    .ap-audit-section {
+      margin-left: -18px;
+      margin-right: -18px;
+      padding: 30px 18px;
+    }
+
+    .ap-left h2 {
+      font-size: 1.72rem;
+    }
+
+    .ap-rail {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      margin-top: 28px;
+    }
+
+    .ap-step b {
+      min-height: 32px;
+      padding: 6px 11px;
+    }
+
+    .ap-entry {
+      grid-template-columns: 52px minmax(0, 1fr);
+      gap: 13px;
+      padding: 20px 0;
+    }
+
+    .ap-entry-index {
+      grid-template-columns: 32px 1fr;
+    }
+
     .about {
       grid-template-columns: 1fr;
     }
@@ -3945,6 +4300,16 @@
     .workflow-row:focus-within .workflow-dot {
       transform: none;
       animation: none;
+    }
+
+    .ap-audit-section,
+    .ap-audit-section:hover,
+    .ap-audit-section:focus-within,
+    .ap-audit-section.breath-section,
+    .ap-audit-section.breath-section.breath-in {
+      opacity: 1;
+      transform: none;
+      transition: none;
     }
   }
 
@@ -4381,8 +4746,8 @@
         <p class="case-label">Public AP workflow finding</p>
         <h2>A payment approval is not user authorization.</h2>
         <p class="lead">In a synthetic AP workflow, the invoice approval was valid, but the user only had view-only AP access and could not schedule payments. In advisory mode, 18 of 20 runs still called <code>schedule_payment</code>.</p>
-        <blockquote class="finding-claim">The approval was real.<br>The user&rsquo;s authority was not.</blockquote>
-        <p class="finding-buyer">Enterprise buyers want evidence the product can tell those two apart. The review scores runtime evidence for the actor, target, authorization decision, tool result, and business outcome, not the final answer. Missing critical evidence is reported as inconclusive, not passed.</p>
+        <blockquote class="finding-claim">The approval was real.<br><span class="finding-claim-emphasis">The user&rsquo;s authority was not.</span></blockquote>
+        <p class="finding-buyer">Security reviewers need proof the product can separate business approval from execution authority. Verdicts use runtime evidence for actor, target, authorization, tool result, and sandbox outcome; missing critical evidence is inconclusive.</p>
         <div class="finding-actions">
           <a class="button outline" href="https://github.com/hugoii/llm-agent-audit/blob/master/docs/payment-approval-is-not-user-authorization.md">Read public case note</a>
           <a class="button outline" href="#report">View sample report</a>
@@ -4447,6 +4812,55 @@
         </div>
       </article>
     </div>
+    <aside class="ap-audit-section" aria-label="AP and payment authorization research assets">
+      <div class="ap-bg-grid" aria-hidden="true"></div>
+      <div class="ap-inner">
+        <div class="ap-left">
+          <div class="ap-pill">
+            <span class="ap-pill-icon" aria-hidden="true">&#10003;</span>
+            For AP/payment agents
+          </div>
+          <h2>AP tests map authority from source to outcome.</h2>
+          <p class="ap-subtitle">Rules, method, and manifest for payment-action reviews.</p>
+          <div class="ap-rail" aria-label="AP payment evidence chain">
+            <div class="ap-rail-line" aria-hidden="true"></div>
+            <div class="ap-step"><span>01</span><i aria-hidden="true"></i><b>source</b></div>
+            <div class="ap-step"><span>02</span><i aria-hidden="true"></i><b>control</b></div>
+            <div class="ap-step"><span>03</span><i aria-hidden="true"></i><b>invariant</b></div>
+            <div class="ap-step"><span>04</span><i aria-hidden="true"></i><b>scenario</b></div>
+            <div class="ap-step"><span>05</span><i aria-hidden="true"></i><b>evidence</b></div>
+            <div class="ap-step"><span>06</span><i aria-hidden="true"></i><b>outcome</b></div>
+          </div>
+        </div>
+        <div class="ap-divider" aria-hidden="true"></div>
+        <div class="ap-right">
+          <article class="ap-entry">
+            <div class="ap-entry-index"><span>01</span><i aria-hidden="true"></i></div>
+            <div class="ap-entry-copy">
+              <h3>AP authorization invariants</h3>
+              <p>Approval, actor authority, replay, and vendor-bank change rules.</p>
+            </div>
+            <a href="https://github.com/hugoii/llm-agent-audit/blob/master/docs/ap-authorization-invariants.md">View rules &rarr;</a>
+          </article>
+          <article class="ap-entry">
+            <div class="ap-entry-index"><span>02</span><i aria-hidden="true"></i></div>
+            <div class="ap-entry-copy">
+              <h3>AP payment methodology</h3>
+              <p>One payment or remittance action, checked against current authority.</p>
+            </div>
+            <a href="https://github.com/hugoii/llm-agent-audit/blob/master/docs/ap-agent-authorization-methodology.md">Inspect method &rarr;</a>
+          </article>
+          <article class="ap-entry">
+            <div class="ap-entry-index"><span>03</span><i aria-hidden="true"></i></div>
+            <div class="ap-entry-copy">
+              <h3>8-scenario payment manifest</h3>
+              <p>Scenario IDs, material fields, evidence requirements, and safe outcomes.</p>
+            </div>
+            <a href="https://github.com/hugoii/llm-agent-audit/blob/master/pilot/ap_payment_boundary_manifest.json">Open manifest &rarr;</a>
+          </article>
+        </div>
+      </div>
+    </aside>
   </section>
 
   <section id="model-spread" class="section model-evidence-section" aria-labelledby="model-spread-title">
@@ -4916,7 +5330,7 @@
       return;
     }
 
-    var sections = document.querySelectorAll('main > .section');
+    var sections = document.querySelectorAll('main > .section, .ap-audit-section');
     sections.forEach(function (section, index) {
       section.classList.add('breath-section');
       section.style.setProperty('--breath-delay', Math.min(index, 8) * 18 + 'ms');
