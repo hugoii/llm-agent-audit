@@ -14,15 +14,20 @@ We choose one safe way to run the scenarios:
 2. You provide a narrow staging test endpoint with synthetic data, and ActionBoundary runs the scenarios.
 3. If traces are not already easy to export, your team wires a small adapter first.
 
-Before the full run, we do one synthetic trace as an Evidence Readiness Check.
-That confirms the agent is reading the test data through the real staging path
-and that the trace contains enough runtime evidence to score.
+Before the full run, we first inspect one existing redacted trace or exported
+log if you already have one. That confirms whether the current trace format has
+enough runtime evidence to score. If no useful trace exists, or if the trace is
+not representative, we run one synthetic trace as the Evidence Readiness Check.
 
 ## Default path
 
 The default path is client-run, trace-based testing.
 
-You receive a small scenario pack written for your agent. Your team runs it against a staging or sandbox copy of the agent, then sends back a trace file with tool calls, authorization decisions, tool results, and side-effect or ledger outcomes.
+You can start by sending one existing redacted trace or exported log from the
+workflow. If that trace is scoreable, you receive a small scenario pack written
+for your agent. Your team runs it against a staging or sandbox copy of the
+agent, then sends back a trace file with tool calls, authorization decisions,
+tool results, and side-effect or ledger outcomes.
 
 This is usually the safest and lowest-friction path because:
 
@@ -48,7 +53,7 @@ You do:
 ActionBoundary does:
 
 - write the scenarios and verdict rules;
-- check the first trace before the full run;
+- check one existing trace or first synthetic trace before the full run;
 - normalize setup and runtime evidence separately;
 - score the traces against `verdict_protocol.md`;
 - write the report and retest rules.
@@ -80,9 +85,9 @@ You receive `adapter_template.py`, the flexible `trace_schema.json`, and the str
 Then the adapter writes `trace_results.json`.
 
 If authorization is spread across business code rather than a central tool
-gateway, the readiness check comes first. The output identifies the smallest
-instrumentation point needed to emit actor, authorization decision, tool result,
-and business outcome for one high-impact action.
+gateway, the existing trace diagnostic comes first. The output identifies the
+smallest instrumentation point needed to emit actor, authorization decision,
+tool result, and business outcome for one high-impact action.
 
 ## Not a good fit yet
 
@@ -102,11 +107,18 @@ same as a trace-backed authorization review.
 
 ## Evidence Readiness Check
 
-Before running all scenarios, run one synthetic scenario and send back the trace.
+Before running all scenarios, send one existing redacted trace or exported log
+if you already have one. Acceptable starting points include LangSmith,
+Langfuse, OpenTelemetry/OTLP, Datadog, Honeycomb, New Relic, CloudWatch,
+internal JSON logs, tool invocation tables, approval audit tables, payment job
+logs, webhook logs, or sandbox ledger events.
+
+If there is no useful existing trace, run one synthetic scenario and send back
+the trace.
 
 The readiness check confirms:
 
-- the scenario context enters through the intended staging path, such as a ticket, invoice, email, record, document, tool response, or benign user request;
+- the existing workflow context or synthetic scenario enters through the intended path, such as a ticket, invoice, email, record, document, tool response, or benign user request;
 - for indirect or untrusted-context scenarios, the test instruction is placed in data the agent reads, not pasted into the user prompt;
 - the trace includes tool names, arguments, and tool results when available;
 - high-impact tool calls are visible;

@@ -39,10 +39,11 @@ normalized runtime evidence is what the verdict uses.
 ## Files
 
 - `what-we-need.md`: the short first-contact checklist for sending three details before engineering setup.
-- `evidence-readiness-check.md`: the one-trace check that decides whether a full
-  trace-backed verdict is scoreable yet.
-- `client-handoff.md`: the technical handoff note for choosing a safe staging
-  path, running one setup scenario, and sending back traces.
+- `evidence-readiness-check.md`: the existing-trace-first check that decides
+  whether a full trace-backed verdict is scoreable yet.
+- `client-handoff.md`: the technical handoff note for starting from an existing
+  trace when available, choosing a safe staging path, running one setup
+  scenario, and sending back traces.
 - `trace_schema.json`: flexible client trace submission schema for what you send
   back (a `runs` array). It accepts imperfect existing logs.
 - `normalized_evidence_schema.json`: strict normalized runtime evidence schema
@@ -68,9 +69,16 @@ normalized runtime evidence is what the verdict uses.
 
 ## Steps
 
-1. Fill in `adapter_template.py` for your agent. Staging or sandbox only, with mocked or sandboxed tools.
-2. Run it on the scenario set you were sent. It writes `trace_results.json`.
-3. Optionally run the local scorer as a setup check:
+1. If available, send one existing redacted trace or exported log first. It can
+   come from LangSmith, Langfuse, OpenTelemetry, Datadog, CloudWatch, internal
+   JSON logs, tool tables, audit tables, or job logs.
+2. If the existing trace is scoreable, or if no useful existing trace exists,
+   choose a staging/sandbox path for the scenario set.
+3. Fill in `adapter_template.py` for your agent when a small adapter is the
+   easiest way to emit traces. Staging or sandbox only, with mocked or
+   sandboxed tools.
+4. Run it on the scenario set you were sent. It writes `trace_results.json`.
+5. Optionally run the local scorer as a setup check:
 
    ```bash
    python pilot/score_authorization_trace.py trace_results.json \
@@ -78,15 +86,15 @@ normalized runtime evidence is what the verdict uses.
      --out scored_trace_results.json
    ```
 
-4. Send `trace_results.json` back. The trace should be correlated enough to
+6. Send `trace_results.json` back. The trace should be correlated enough to
    identify the acting identity, target resource, authorization decision, tool
    result, and sandbox or business outcome. No production, no real customer
    data, no shared credentials.
 
-Tip: before the full run, do one scenario first and send it back so the wiring
-can be checked. The common mistakes are missing tool results, missing
-authorization decisions, missing side-effect evidence, copying fixture fields
-into runtime evidence, and, for indirect-injection scenarios, putting the test
-instruction in the user prompt instead of in the data the agent reads.
+Tip: before the full run, send one existing trace or do one scenario first so
+the wiring can be checked. The common mistakes are missing tool results,
+missing authorization decisions, missing side-effect evidence, copying fixture
+fields into runtime evidence, and, for indirect-injection scenarios, putting
+the test instruction in the user prompt instead of in the data the agent reads.
 
 Main project and writeup: https://github.com/hugoii/llm-agent-audit

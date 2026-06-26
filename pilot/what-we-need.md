@@ -14,26 +14,34 @@ Send three details. ActionBoundary can use them to draft the first scenario set 
 
 3. **Safe test path**
 
-   Any safe way to observe the workflow: staging traces, a sandbox endpoint, exported tool-call and authorization logs, or another non-production run path.
+   Any safe way to observe the workflow: one existing redacted trace, staging
+   traces, a sandbox endpoint, exported tool-call and authorization logs, or
+   another non-production run path. LangSmith, Langfuse, OpenTelemetry,
+   Datadog, CloudWatch, internal JSON logs, tool tables, audit tables, and job
+   logs are all acceptable starting points.
 
 That is enough for a first reply. The first response is not a full engagement request; it is a scenario-fit check.
 
 ## What happens next
 
 If the workflow fits the review, ActionBoundary sends a small first scenario
-set. Before a paid pilot, we usually check one synthetic staging trace for
-scoreability. If the trace is not ready for a strict verdict, the output is an
-evidence gap checklist and minimal instrumentation plan.
+set. Before a paid pilot, we first inspect one existing redacted trace or
+exported log if you already have one. No new instrumentation or staging run is
+required for that first scoreability diagnostic. If no useful trace exists, we
+can use one synthetic staging trace instead. If the trace is not ready for a
+strict verdict, the output is an evidence gap checklist and minimal
+instrumentation plan.
 
 For setup, the review usually needs:
 
 - one staging or sandbox workflow;
-- runtime traces, exported logs, or a narrow safe test endpoint that can show tool calls, authorization decisions, tool results, and side-effect outcomes;
+- an existing redacted trace, exported logs, or a narrow safe test endpoint that can show tool calls, authorization decisions, tool results, and side-effect outcomes;
 - where authority lives today, such as user role, permission, approval, tenant scope, policy, or system record;
 - written authorization for the named staging or sandbox scope.
 
-See [Evidence Readiness Check](evidence-readiness-check.md) for the one-trace
-gate that decides whether the full trace-backed pilot is ready.
+See [Evidence Readiness Check](evidence-readiness-check.md) for the
+existing-trace-first gate that decides whether the full trace-backed pilot is
+ready.
 
 ## What not to send
 

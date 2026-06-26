@@ -4575,31 +4575,70 @@
     color: var(--ink);
   }
 
-  .offer-price {
-    display: flex;
-    align-items: baseline;
-    flex-wrap: wrap;
-    gap: 4px 14px;
-    padding: 14px 0;
+  .offer-path {
+    display: grid;
+    margin: 16px 0 0;
     border-top: 1px solid var(--line);
     border-bottom: 1px solid var(--line);
   }
 
-  .offer-price b {
-    font-size: 2.85rem;
+  .offer-path-row {
+    display: grid;
+    grid-template-columns: minmax(150px, 0.45fr) 1fr;
+    gap: 24px;
+    padding: 16px 0;
+    align-items: start;
+  }
+
+  .offer-path-row + .offer-path-row {
+    border-top: 1px solid var(--line);
+  }
+
+  .offer-path-price {
+    display: flex;
+    align-items: baseline;
+    flex-wrap: wrap;
+    gap: 3px 8px;
+  }
+
+  .offer-path-price b {
+    font-size: 2.58rem;
     font-weight: 650;
     letter-spacing: -0.015em;
     color: var(--ink);
   }
 
-  .offer-price span {
+  .offer-path-price span {
     color: var(--muted);
-    font-size: 0.9rem;
+    font-size: 0.88rem;
+    font-weight: 700;
   }
 
-  .offer-price small {
-    flex-basis: 100%;
+  .offer-path-label {
+    display: block;
+    margin: 0 0 4px;
+    color: var(--teal-dark);
+    font-size: 0.78rem;
+    font-weight: 850;
+    letter-spacing: 0.02em;
+  }
+
+  .offer-path-copy h3 {
+    margin: 0 0 5px;
+    font-size: 1rem;
+    color: var(--ink);
+  }
+
+  .offer-path-copy p {
+    margin: 0;
     color: var(--body-strong);
+    line-height: 1.42;
+  }
+
+  .offer-path-copy small {
+    display: block;
+    margin-top: 6px;
+    color: var(--muted);
     font-size: 0.84rem;
     font-weight: 700;
   }
@@ -4824,6 +4863,16 @@
   }
 
   @media (max-width: 640px) {
+    .offer-path-row {
+      grid-template-columns: 1fr;
+      gap: 6px;
+      padding: 14px 0;
+    }
+
+    .offer-path-price b {
+      font-size: 2.28rem;
+    }
+
     .offer-grid,
     .offer-steps {
       grid-template-columns: 1fr;
@@ -5225,16 +5274,36 @@
 
   <section id="pilot" class="section">
     <h2>Get evidence for one high-impact workflow</h2>
-    <p class="lead">A fixed-scope first engagement: one staging workflow, 5 to 10 scenarios, and one included retest.</p>
+    <p class="lead">Start with one existing trace. Move into a fixed-scope pilot when the workflow is scoreable.</p>
     <article class="offer-card">
-      <span class="offer-badge">Founding pilot <span class="offer-badge-muted">&middot; fixed scope</span></span>
-      <p class="offer-value">Trace evidence your team can use in a customer security review.</p>
-      <div class="offer-price">
-        <b>$1,500</b>
-        <span>one-time &middot; one staging workflow &middot; report + retest</span>
-        <small>For the scoped report and included retest.</small>
+      <span class="offer-badge">Existing trace first <span class="offer-badge-muted">&middot; low-friction diagnostic</span></span>
+      <p class="offer-value">Check whether your current traces can support a real authorization verdict.</p>
+      <div class="offer-path" aria-label="Engagement options">
+        <div class="offer-path-row">
+          <div class="offer-path-price">
+            <b>$350</b>
+            <span>one-time</span>
+          </div>
+          <div class="offer-path-copy">
+            <span class="offer-path-label">First paid step</span>
+            <h3>Existing trace diagnostic</h3>
+            <p>Send one redacted trace or exported log. Output: scoreability memo, missing-evidence map, and next instrumentation step.</p>
+            <small>Credited toward a pilot if the workflow is ready.</small>
+          </div>
+        </div>
+        <div class="offer-path-row">
+          <div class="offer-path-price">
+            <b>$1,500</b>
+            <span>from</span>
+          </div>
+          <div class="offer-path-copy">
+            <span class="offer-path-label">Then, if scoreable</span>
+            <h3>Founding pilot</h3>
+            <p>One staging workflow, 5 to 10 scenarios, strict verdicts, fixes, and one included retest.</p>
+          </div>
+        </div>
       </div>
-      <p class="offer-scope">5 to 10 custom scenarios including benign controls, trace-based findings, and concrete application-layer fixes.</p>
+      <p class="offer-scope">Incomplete trace? You still get the exact evidence gap before a customer security review.</p>
       <p class="offer-safety">
         <svg viewBox="0 0 24 24" fill="none" aria-hidden="true" focusable="false">
           <path d="M12 2.75 5 5.4v5.6c0 4.2 3 7.9 7 9.25 4-1.35 7-5.05 7-9.25V5.4L12 2.75Z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"></path>
@@ -5242,11 +5311,11 @@
         </svg>
         No production access. No real customer data. No shared credentials.
       </p>
-      <a class="button primary" href="mailto:jiahao@actionboundary.dev?subject=3%20scenarios%20for%20our%20agent">Get 3 scenarios first</a>
+      <a class="button primary" href="mailto:jiahao@actionboundary.dev?subject=Existing%20trace%20diagnostic">Check one trace first</a>
     </article>
     <div class="offer-grid">
       <div class="offer-col">
-        <h3>What you get</h3>
+        <h3>Full pilot includes</h3>
         <ul class="offer-list get">
           <li>Custom attack scenarios and benign controls</li>
           <li>Per-action scoring against normalized runtime authority evidence, including identity, approval scope, tool result, and business outcome</li>
@@ -5256,21 +5325,22 @@
         </ul>
       </div>
       <div class="offer-col">
-        <h3>Minimal inputs</h3>
+        <h3>What to send first</h3>
         <ul class="offer-list provide">
           <li>One action your agent can trigger</li>
-          <li>A staging or sandbox path, no production</li>
-          <li>Existing staging logs or a safe test endpoint that can expose or correlate identity, authorization decision, tool result, and sandbox outcome</li>
+          <li>For the diagnostic: one existing redacted trace or log</li>
+          <li>For the pilot: a staging or sandbox path after scoreability is clear</li>
+          <li>LangSmith, Langfuse, OpenTelemetry, Datadog, CloudWatch, or internal logs are acceptable starting points</li>
           <li>Where authority lives today: roles, approvals, policy, or system records</li>
         </ul>
       </div>
     </div>
     <article id="readiness" class="readiness-gate" aria-labelledby="readiness-title">
       <div class="readiness-copy">
-        <span class="readiness-label">Before the paid pilot</span>
-        <h3 id="readiness-title">First, check one trace for scoreability.</h3>
-        <p>A strict verdict needs actor, target, authority source, tool result, and sandbox outcome in the same trace.</p>
-        <p>If the trace is not ready, you get a gap map and the smallest instrumentation plan.</p>
+        <span class="readiness-label">Lowest-friction first step</span>
+        <h3 id="readiness-title">Start with one existing trace.</h3>
+        <p>No new instrumentation or staging run is required for the first scoreability diagnostic.</p>
+        <p>If the trace is not ready, you get the missing-evidence map and smallest next instrumentation point.</p>
         <a class="readiness-link" href="https://github.com/hugoii/llm-agent-audit/blob/master/pilot/evidence-readiness-check.md">Read the readiness check &rarr;</a>
       </div>
       <div class="readiness-table-wrap" aria-label="Trace readiness levels">
@@ -5279,24 +5349,24 @@
             <tr>
               <th scope="col">Level</th>
               <th scope="col">What you have</th>
-              <th scope="col">What we can do</th>
+              <th scope="col">Best next step</th>
             </tr>
           </thead>
           <tbody>
             <tr>
               <td>0</td>
-              <td>No staging path or observable tool logs.</td>
-              <td>Scenario sketch or design review only.</td>
+              <td>Product/workflow description only.</td>
+              <td>Scenario design review.</td>
             </tr>
             <tr>
               <td>1</td>
-              <td>Tool calls visible; auth or outcome logs missing.</td>
-              <td>Evidence Readiness Check.</td>
+              <td>Existing trace; auth or outcome evidence incomplete.</td>
+              <td>Trace diagnostic.</td>
             </tr>
             <tr>
               <td>2</td>
-              <td>Tool and auth visible; final outcome missing.</td>
-              <td>Partial review plus instrumentation fixes.</td>
+              <td>Tool calls and partial auth evidence.</td>
+              <td>Synthetic readiness check.</td>
             </tr>
             <tr>
               <td>3</td>
@@ -5311,8 +5381,8 @@
       <p class="offer-flow-label">How it works</p>
       <ol class="flow-line">
         <li class="flow-node"><span class="flow-dot">1</span><span class="flow-text"><b>Scenario fit</b><span>ActionBoundary sends 3 first scenarios before any setup.</span></span></li>
-        <li class="flow-node"><span class="flow-dot">2</span><span class="flow-text"><b>Readiness trace</b><span>One synthetic trace decides whether the full verdict is scoreable.</span></span></li>
-        <li class="flow-node"><span class="flow-dot">3</span><span class="flow-text"><b>Report and retest</b><span>If ready, you receive the evidence report, fixes, and one retest.</span></span></li>
+        <li class="flow-node"><span class="flow-dot">2</span><span class="flow-text"><b>Existing trace</b><span>One redacted trace decides whether the full verdict is scoreable.</span></span></li>
+        <li class="flow-node"><span class="flow-dot">3</span><span class="flow-text"><b>Pilot or evidence plan</b><span>If ready, you receive the report; if not, you get the gap map.</span></span></li>
       </ol>
     </div>
   </section>
