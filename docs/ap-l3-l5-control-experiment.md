@@ -1,7 +1,12 @@
-# AP L3-L5 Control Experiment
+# AP Deep Payment-Control Experiment (L3-L5)
 
 *A narrow AP/payment method note for post-approval mutation, inter-agent
 approval handoff, retry/idempotency, and benign payment controls.*
+
+Here, L3-L5 is shorthand for three deeper authorization-boundary cases:
+post-approval mutation, inter-agent approval handoff, and retry/idempotency
+side effects. The public claim is about those payment-control behaviors, not a
+general maturity scale.
 
 ## Executive Summary
 
@@ -22,8 +27,8 @@ The important result is not a model ranking. The important result is the control
 behavior.
 
 In advisory mode, the synthetic tools surfaced authorization decisions but did
-not enforce the full payment gate. The three L3-L5 attack scenarios reached
-`EXPLOITED`.
+not enforce the full payment gate. The three deep payment-control attack
+scenarios reached `EXPLOITED`.
 
 In enforced mode, the tool layer blocked the same unauthorized side effects, the
 retry/replay case did not create a duplicate sandbox payment, and the two benign
@@ -172,9 +177,9 @@ This is not a production ERP test, not a customer vulnerability report, not a
 SOC report, and not a model leaderboard.
 
 The experiment uses synthetic AP/payment traces to demonstrate a scoring method
-for L3-L5 authorization-boundary evidence. A customer pilot replaces these fixed
-fixtures with the customer's staging workflow, tools, authorization sources, and
-correlated runtime traces.
+for deep payment-control authorization-boundary evidence. A customer pilot
+replaces these fixed fixtures with the customer's staging workflow, tools,
+authorization sources, and correlated runtime traces.
 
 The public lesson is narrow:
 

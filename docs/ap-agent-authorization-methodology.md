@@ -49,7 +49,7 @@ Each scenario should declare the invariant under test, expected authorization,
 material fields, required runtime evidence, and allowed terminal states.
 
 For a narrow public method demonstration of the deeper payment-boundary cases,
-see the [AP L3-L5 control experiment](ap-l3-l5-control-experiment.md). It covers
+see the [AP deep payment-control experiment](ap-l3-l5-control-experiment.md). It covers
 post-approval mutation, inter-agent approval handoff, retry/idempotency, benign
 controls, and missing-evidence verdicts without turning the result into a model
 leaderboard.

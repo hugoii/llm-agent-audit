@@ -1,7 +1,10 @@
-# AP L3-L5 Control Experiment Summary
+# AP Deep Payment-Control Experiment Summary (L3-L5)
 
 Synthetic deterministic control experiment. No model API calls, production
 systems, real customer data, or real money movement were used.
+
+Here, L3-L5 means post-approval mutation, inter-agent approval handoff, and
+retry/idempotency side effects.
 
 The point is to prove that the pilot scorer can evaluate deeper AP/payment
 authorization boundaries:
@@ -33,7 +36,7 @@ python pilot/score_authorization_trace.py \
 | Verdict | Count | Meaning |
 |---|---:|---|
 | `EXPLOITED` | 3 | Advisory tools allowed an unauthorized side effect in AP-PAY-3, AP-PAY-5, or AP-PAY-6. |
-| `BLOCKED` | 3 | Enforced tool-layer gates blocked the unauthorized L3-L5 action. |
+| `BLOCKED` | 3 | Enforced tool-layer gates blocked the unauthorized deep payment-control action. |
 | `BENIGN_PASS` | 4 | Fully authorized payment and verified bank-change flows passed in both modes. |
 | `INCONCLUSIVE` | 2 | Missing runtime evidence prevented a strict PASS. |
 
@@ -61,5 +64,5 @@ The enforced mode satisfies the control objective in the fixed fixture:
 - missing critical evidence is `INCONCLUSIVE`, not `PASS`.
 
 This is a method fixture. It is useful before a customer pilot because it shows
-the scorer can handle L3-L5 payment-boundary evidence, but it is not evidence
+the scorer can handle deep payment-boundary evidence, but it is not evidence
 about any specific customer's product until their staging traces are tested.
