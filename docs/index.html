@@ -2598,6 +2598,138 @@
     color: var(--ink);
   }
 
+  .readiness-gate {
+    position: relative;
+    width: min(100%, 900px);
+    margin: 30px 0 0;
+    display: grid;
+    grid-template-columns: minmax(0, 0.78fr) minmax(0, 1.22fr);
+    gap: 30px;
+    align-items: start;
+    overflow: hidden;
+    border-top: 1px solid rgba(15, 118, 110, 0.26);
+    border-bottom: 1px solid rgba(184, 193, 204, 0.54);
+    border-radius: 0;
+    background:
+      radial-gradient(circle at 12% 12%, rgba(211, 239, 235, 0.45), transparent 34%),
+      linear-gradient(90deg, rgba(248, 253, 252, 0.90), rgba(255, 255, 255, 0.58) 42%, rgba(247, 248, 250, 0.42));
+    padding: 22px 0 24px;
+    transition:
+      transform 260ms var(--ease-out-quint),
+      border-color 260ms var(--ease-out-quint),
+      box-shadow 260ms var(--ease-out-quint);
+  }
+
+  .readiness-gate::before {
+    content: "";
+    position: absolute;
+    inset: 20px auto 22px calc(43% - 2px);
+    width: 1px;
+    background: linear-gradient(180deg, transparent, rgba(15, 118, 110, 0.20) 12%, rgba(184, 193, 204, 0.55) 86%, transparent);
+  }
+
+  .readiness-copy {
+    position: relative;
+    z-index: 1;
+  }
+
+  .readiness-copy h3 {
+    margin: 0 0 9px;
+    max-width: 18ch;
+    font-size: clamp(1.25rem, 1.9vw, 1.55rem);
+    line-height: 1.16;
+    letter-spacing: 0;
+    text-wrap: balance;
+  }
+
+  .readiness-label {
+    display: inline-flex;
+    margin: 0 0 12px;
+    padding: 4px 10px;
+    border: 1px solid rgba(15, 118, 110, 0.24);
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.72);
+    color: var(--teal-dark);
+    font-size: 0.78rem;
+    font-weight: 800;
+  }
+
+  .readiness-copy p {
+    margin: 0;
+    max-width: 36ch;
+    color: var(--body-strong);
+    font-size: 0.92rem;
+    line-height: 1.55;
+  }
+
+  .readiness-copy p + p {
+    margin-top: 10px;
+    color: var(--muted);
+  }
+
+  .readiness-copy .readiness-link {
+    display: inline-flex;
+    margin-top: 15px;
+    color: var(--teal-dark);
+    font-weight: 800;
+    text-decoration: none;
+    border-bottom: 1px solid rgba(15, 118, 110, 0.30);
+  }
+
+  .readiness-copy .readiness-link:hover,
+  .readiness-copy .readiness-link:focus-visible {
+    color: var(--teal);
+    border-bottom-color: currentColor;
+  }
+
+  .readiness-table-wrap {
+    position: relative;
+    z-index: 1;
+    overflow: hidden;
+    border: 1px solid rgba(184, 193, 204, 0.62);
+    border-radius: 6px;
+    background: rgba(255, 255, 255, 0.68);
+  }
+
+  .readiness-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.84rem;
+  }
+
+  .readiness-table th {
+    padding: 9px 11px;
+    border-bottom: 1px solid var(--line);
+    color: var(--muted);
+    font-size: 0.76rem;
+    font-weight: 800;
+    text-align: left;
+  }
+
+  .readiness-table td {
+    padding: 10px 11px;
+    border-bottom: 1px solid rgba(219, 225, 232, 0.86);
+    color: var(--body-strong);
+    vertical-align: top;
+    line-height: 1.35;
+  }
+
+  .readiness-table tr:last-child td {
+    border-bottom: 0;
+  }
+
+  .readiness-table td:first-child {
+    width: 54px;
+    color: var(--teal-dark);
+    font-weight: 800;
+    white-space: nowrap;
+  }
+
+  .readiness-table td:last-child {
+    color: var(--ink);
+    font-weight: 700;
+  }
+
   .trust-map {
     position: relative;
     overflow: hidden;
@@ -3091,6 +3223,7 @@
     .lens-node,
     .report-frame,
     .flow-step,
+    .readiness-gate,
     .why-panel,
     .why-lens-card,
     .why-founder,
@@ -3105,6 +3238,8 @@
     .lens-node:hover,
     .report-frame:hover,
     .flow-step:hover,
+    .readiness-gate:hover,
+    .readiness-gate:focus-within,
     .why-panel:hover,
     .why-lens-card:hover,
     .why-founder:hover,
@@ -3614,6 +3749,19 @@
       grid-template-columns: repeat(2, 1fr);
     }
 
+    .readiness-gate {
+      grid-template-columns: 1fr;
+      gap: 20px;
+    }
+
+    .readiness-gate::before {
+      display: none;
+    }
+
+    .readiness-copy h3 {
+      max-width: 24ch;
+    }
+
     .split,
     .finding-layout,
     .ap-inner,
@@ -4028,6 +4176,50 @@
       content: "Enforced";
     }
 
+    .readiness-table {
+      display: block;
+    }
+
+    .readiness-table thead {
+      display: none;
+    }
+
+    .readiness-table tbody {
+      display: grid;
+      gap: 0;
+    }
+
+    .readiness-table tr {
+      display: grid;
+      grid-template-columns: 30px 1fr;
+      gap: 2px 10px;
+      padding: 10px 11px;
+      border-bottom: 1px solid rgba(219, 225, 232, 0.86);
+    }
+
+    .readiness-table tr:last-child {
+      border-bottom: 0;
+    }
+
+    .readiness-table td,
+    .readiness-table tr:last-child td {
+      display: block;
+      padding: 0;
+      border-bottom: 0;
+    }
+
+    .readiness-table td:first-child {
+      grid-row: span 2;
+      width: auto;
+      align-self: start;
+    }
+
+    .readiness-table td:nth-child(3) {
+      color: var(--ink);
+      font-size: 0.78rem;
+      font-weight: 800;
+    }
+
     .demo-toggle {
       align-self: flex-start;
       width: auto;
@@ -4305,6 +4497,9 @@
     .ap-audit-section,
     .ap-audit-section:hover,
     .ap-audit-section:focus-within,
+    .readiness-gate,
+    .readiness-gate:hover,
+    .readiness-gate:focus-within,
     .ap-audit-section.breath-section,
     .ap-audit-section.breath-section.breath-in {
       opacity: 1;
@@ -5070,12 +5265,54 @@
         </ul>
       </div>
     </div>
+    <article id="readiness" class="readiness-gate" aria-labelledby="readiness-title">
+      <div class="readiness-copy">
+        <span class="readiness-label">Before the paid pilot</span>
+        <h3 id="readiness-title">First, check one trace for scoreability.</h3>
+        <p>A strict verdict needs actor, target, authority source, tool result, and sandbox outcome in the same trace.</p>
+        <p>If the trace is not ready, you get a gap map and the smallest instrumentation plan.</p>
+        <a class="readiness-link" href="https://github.com/hugoii/llm-agent-audit/blob/master/pilot/evidence-readiness-check.md">Read the readiness check &rarr;</a>
+      </div>
+      <div class="readiness-table-wrap" aria-label="Trace readiness levels">
+        <table class="readiness-table">
+          <thead>
+            <tr>
+              <th scope="col">Level</th>
+              <th scope="col">What you have</th>
+              <th scope="col">What we can do</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>0</td>
+              <td>No staging path or observable tool logs.</td>
+              <td>Scenario sketch or design review only.</td>
+            </tr>
+            <tr>
+              <td>1</td>
+              <td>Tool calls visible; auth or outcome logs missing.</td>
+              <td>Evidence Readiness Check.</td>
+            </tr>
+            <tr>
+              <td>2</td>
+              <td>Tool and auth visible; final outcome missing.</td>
+              <td>Partial review plus instrumentation fixes.</td>
+            </tr>
+            <tr>
+              <td>3</td>
+              <td>Actor, target, auth, tool result, and outcome visible.</td>
+              <td>Full trace-backed pilot.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </article>
     <div class="offer-flow">
       <p class="offer-flow-label">How it works</p>
       <ol class="flow-line">
         <li class="flow-node"><span class="flow-dot">1</span><span class="flow-text"><b>Scenario fit</b><span>ActionBoundary sends 3 first scenarios before any setup.</span></span></li>
-        <li class="flow-node"><span class="flow-dot">2</span><span class="flow-text"><b>Staging run</b><span>You run the scenarios or provide a safe staging path.</span></span></li>
-        <li class="flow-node"><span class="flow-dot">3</span><span class="flow-text"><b>Report and retest</b><span>You receive the evidence report, fixes, and one retest.</span></span></li>
+        <li class="flow-node"><span class="flow-dot">2</span><span class="flow-text"><b>Readiness trace</b><span>One synthetic trace decides whether the full verdict is scoreable.</span></span></li>
+        <li class="flow-node"><span class="flow-dot">3</span><span class="flow-text"><b>Report and retest</b><span>If ready, you receive the evidence report, fixes, and one retest.</span></span></li>
       </ol>
     </div>
   </section>

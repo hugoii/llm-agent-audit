@@ -14,7 +14,9 @@ We choose one safe way to run the scenarios:
 2. You provide a narrow staging test endpoint with synthetic data, and ActionBoundary runs the scenarios.
 3. If traces are not already easy to export, your team wires a small adapter first.
 
-Before the full run, we do one scenario as a setup check. That confirms the agent is reading the test data through the real staging path and that the trace contains enough evidence to score.
+Before the full run, we do one synthetic trace as an Evidence Readiness Check.
+That confirms the agent is reading the test data through the real staging path
+and that the trace contains enough runtime evidence to score.
 
 ## Default path
 
@@ -66,7 +68,7 @@ You provide:
 
 ActionBoundary runs the scenarios through that endpoint and scores the resulting runtime evidence. If the endpoint does not expose tool calls, authorization decisions, and side-effect evidence, we still need a way to export or retrieve them.
 
-### Path C: you wire the adapter
+### Path C: you wire the adapter or minimal instrumentation
 
 Best when the agent exists but trace export is not yet clean.
 
@@ -76,6 +78,11 @@ You receive `adapter_template.py`, the flexible `trace_schema.json`, and the str
 - `run_agent`, which calls the agent and records each tool call as `{ "tool": "...", "arguments": {...} }`.
 
 Then the adapter writes `trace_results.json`.
+
+If authorization is spread across business code rather than a central tool
+gateway, the readiness check comes first. The output identifies the smallest
+instrumentation point needed to emit actor, authorization decision, tool result,
+and business outcome for one high-impact action.
 
 ## Not a good fit yet
 
@@ -89,13 +96,15 @@ Do not start the fixed-scope pilot if the only available option is:
 - no written authorization;
 - only a verbal product description with no runnable agent.
 
-If trace capture is missing, ActionBoundary can first do a small setup step or a lighter tool-surface review, but that is not the same as a trace-backed authorization review.
+If trace capture is missing, ActionBoundary can first do an Evidence Readiness
+Check, a small setup step, or a lighter tool-surface review, but that is not the
+same as a trace-backed authorization review.
 
-## One-scenario setup check
+## Evidence Readiness Check
 
-Before running all scenarios, run one scenario and send back the trace.
+Before running all scenarios, run one synthetic scenario and send back the trace.
 
-The setup check confirms:
+The readiness check confirms:
 
 - the scenario context enters through the intended staging path, such as a ticket, invoice, email, record, document, tool response, or benign user request;
 - for indirect or untrusted-context scenarios, the test instruction is placed in data the agent reads, not pasted into the user prompt;
@@ -105,7 +114,9 @@ The setup check confirms:
 - authorization lookups, policy decisions, approvals, or denial reasons are visible when the system has them;
 - the business outcome is visible enough to tell whether the action executed, was denied, routed to review, or was never attempted.
 
-If the first trace is not valid, we fix the setup before running the full set.
+If the first trace is not scoreable, ActionBoundary returns `READY`,
+`PARTIALLY_READY`, or `NOT_READY`, plus the missing evidence and minimal
+instrumentation needed before the full set.
 
 ## Minimum trace fields
 

@@ -20,7 +20,10 @@ That is enough for a first reply. The first response is not a full engagement re
 
 ## What happens next
 
-If the workflow fits the review, ActionBoundary sends a small first scenario set. The paid pilot starts only after the safe test path and evidence boundary are clear.
+If the workflow fits the review, ActionBoundary sends a small first scenario
+set. Before a paid pilot, we usually check one synthetic staging trace for
+scoreability. If the trace is not ready for a strict verdict, the output is an
+evidence gap checklist and minimal instrumentation plan.
 
 For setup, the review usually needs:
 
@@ -28,6 +31,9 @@ For setup, the review usually needs:
 - runtime traces, exported logs, or a narrow safe test endpoint that can show tool calls, authorization decisions, tool results, and side-effect outcomes;
 - where authority lives today, such as user role, permission, approval, tenant scope, policy, or system record;
 - written authorization for the named staging or sandbox scope.
+
+See [Evidence Readiness Check](evidence-readiness-check.md) for the one-trace
+gate that decides whether the full trace-backed pilot is ready.
 
 ## What not to send
 

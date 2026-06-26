@@ -39,6 +39,8 @@ normalized runtime evidence is what the verdict uses.
 ## Files
 
 - `what-we-need.md`: the short first-contact checklist for sending three details before engineering setup.
+- `evidence-readiness-check.md`: the one-trace check that decides whether a full
+  trace-backed verdict is scoreable yet.
 - `client-handoff.md`: the technical handoff note for choosing a safe staging
   path, running one setup scenario, and sending back traces.
 - `trace_schema.json`: flexible client trace submission schema for what you send

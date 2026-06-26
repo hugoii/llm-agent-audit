@@ -31,7 +31,12 @@ I help teams shipping tool-using AI agents produce staging trace evidence for cu
 | Public benchmark | Whether models attempt unsafe simulated tool calls in a fixed, reproducible battery. | Model-behavior evidence and an inspectable scoring method. It is not evidence about a customer's private system. |
 | Client pilot | Whether one real staging action has runtime evidence for the acting identity, target, authorization source, tool result, and business outcome. | Action-specific authorization evidence for a customer security review. Missing critical evidence is `INCONCLUSIVE`, not `PASS`. |
 
-**How it works.** A pilot starts with a 3-scenario sketch so you can judge fit before setup. If it fits, we pick one high-impact action and one safe staging path. I provide the scenarios, verdict rules, scoring, report, and retest. Your team needs a safe way to run the scenarios in staging or share a test endpoint, plus correlated staging traces showing the acting identity, target resource, authorization decision, tool result, and sandbox outcome where available. No production access, no real customer data, no shared credentials.
+**How it works.** The path starts with a 3-scenario sketch, then one synthetic
+trace readiness check before a full pilot. If the trace already shows the
+acting identity, target resource, authorization source, tool result, and sandbox
+outcome, we move into the fixed-scope review. If not, the first deliverable is
+an evidence gap map and minimal instrumentation plan, not a forced PASS/FAIL.
+No production access, no real customer data, no shared credentials.
 
 **Why it is different.** Most AI testing checks what the model says. This checks what the agent does: did it call a tool it should not have been allowed to call, and did the system enforce the right boundary? Strict verdicts come from normalized runtime evidence: the action attempted, who or what executed it, what authority was checked, what the tool returned, and whether a sandbox side effect occurred. Missing critical evidence is reported as inconclusive, not passed.
 
@@ -47,6 +52,7 @@ A poisoned ticket, invoice, or tool response can look like normal business conte
 - **[Sample evidence report](docs/sample-pilot-report-v0.7.md)**: what you receive, with findings, trace evidence, severity, authorization evidence, fixes, and retest rules.
 - **[Rendered PDF sample](docs/sample-evidence-report-v0.7.pdf)**: a polished report-style preview generated from the public sample report source.
 - **[Evidence flow](docs/evidence-flow.md)**: how untrusted content, tool calls, authorization evidence, findings, fixes, and retests connect.
+- **[Evidence readiness check](pilot/evidence-readiness-check.md)**: the one-trace gate that decides whether a full trace-backed verdict is scoreable yet.
 - **[Pilot verdict protocol](pilot/verdict_protocol.md)**: how flexible client traces become strict normalized evidence, and why missing runtime evidence is `INCONCLUSIVE` rather than `PASS`.
 - **[AP payment boundary scenarios](pilot/ap_payment_boundary_scenarios.md)**: an 8-scenario sketch for testing one staging payment action deeply, including post-approval changes, cross-agent handoff, and retry/idempotency.
 - **[AP authorization invariants](docs/ap-authorization-invariants.md)** and **[AP methodology](docs/ap-agent-authorization-methodology.md)**: the payment-boundary rules behind the AP pilot shape.
@@ -75,7 +81,7 @@ This repository is the reproducible public method, not a copy of a customer's pr
 |---|---|---|
 | Fixed battery | Battery v1.5, 58 attacks plus 3 controls, multiple real-model summaries, and a CI-checked offline harness. | The method is reproducible and scores actual tool-call traces, not model promises. |
 | Customer-like workflows | [AP payment approval](docs/payment-approval-is-not-user-authorization.md), [AP payment boundary scenarios](pilot/ap_payment_boundary_scenarios.md), [AP authorization invariants](docs/ap-authorization-invariants.md), [AP methodology](docs/ap-agent-authorization-methodology.md), [multi-turn prior-auth](docs/multi-turn-authorization-drift-case-note.md), source-of-truth authorization, current-user authority, scope, timing, idempotency, and tool-layer enforcement examples. | The method can ask business authorization questions, not only prompt-injection questions. |
-| Client pilot path | [Sample report](docs/sample-pilot-report-v0.7.md), [evidence flow](docs/evidence-flow.md), [flexible trace schema](pilot/trace_schema.json), [strict normalized evidence schema](pilot/normalized_evidence_schema.json), [verdict protocol](pilot/verdict_protocol.md), [adapter handoff](pilot/client-handoff.md), and 5 to 10 workflow-specific scenarios. | The public method transfers to your staging tools, approval sources, user roles, and traces. |
+| Client pilot path | [Evidence readiness check](pilot/evidence-readiness-check.md), [sample report](docs/sample-pilot-report-v0.7.md), [evidence flow](docs/evidence-flow.md), [flexible trace schema](pilot/trace_schema.json), [strict normalized evidence schema](pilot/normalized_evidence_schema.json), [verdict protocol](pilot/verdict_protocol.md), [adapter handoff](pilot/client-handoff.md), and 5 to 10 workflow-specific scenarios. | The public method transfers to your staging tools, approval sources, user roles, and traces. |
 
 Read it this way: **the repo proves the method; the pilot applies it to your real workflow.** The public artifacts do not claim to be evidence about your system until your staging tools, authorization sources, and traces are used.
 

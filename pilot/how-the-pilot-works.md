@@ -5,10 +5,21 @@ A fixed-scope, lightweight check of whether your tool-using agent only takes hig
 ## The steps
 
 1. We start with a 3-scenario sketch so you can judge fit before setup.
-2. If it fits, we agree on 5 to 10 scenarios mapped to actions your agent can trigger. ActionBoundary identifies the risky authorization cases and writes scenarios for your tools, not a generic checklist. Scenarios can cover a single high-impact action or a short workflow where an earlier approval might be reused or applied too broadly later in the workflow.
-3. Your team runs them against a staging copy of your agent or shares a safe test endpoint, then exports the tool-call traces plus authorization decisions, tool results, and side-effect or ledger evidence. There is a small adapter to make this easier, and we can do a quick one-scenario setup check first so the results separate scenario setup from runtime evidence.
-4. I normalize and score the runtime evidence against the pilot verdict protocol, then send you an OWASP/NIST-mapped report with the action evidence and concrete fixes.
-5. One included retest of the same scenario set after you apply fixes.
+2. If it fits, we check one synthetic staging trace for scoreability. This is
+   the Evidence Readiness Check.
+3. If the trace is ready, we agree on 5 to 10 scenarios mapped to actions your
+   agent can trigger. ActionBoundary identifies the risky authorization cases
+   and writes scenarios for your tools, not a generic checklist.
+4. Your team runs them against a staging copy of your agent or shares a safe
+   test endpoint, then exports the tool-call traces plus authorization
+   decisions, tool results, and side-effect or ledger evidence.
+5. I normalize and score the runtime evidence against the pilot verdict
+   protocol, then send you an OWASP/NIST-mapped report with the action evidence
+   and concrete fixes.
+6. One included retest of the same scenario set after you apply fixes.
+
+If the readiness trace is not scoreable yet, the output is an evidence gap map
+and the smallest instrumentation plan needed before a full trace-backed pilot.
 
 ## Minimal inputs
 
@@ -17,6 +28,15 @@ A fixed-scope, lightweight check of whether your tool-using agent only takes hig
 - A short written authorization for the test.
 
 No production access, no real customer data, no shared credentials.
+
+## Readiness levels
+
+| Level | What is available | What ActionBoundary can do |
+|---|---|---|
+| Level 0 | No staging path or no observable tool calls | Scenario sketch or design review only |
+| Level 1 | Tool calls are visible, but authorization or outcome logs are missing | Evidence Readiness Check |
+| Level 2 | Tool calls and authorization are visible, but final outcome is missing | Partial review plus instrumentation fixes |
+| Level 3 | Actor, target, authorization, tool result, and outcome are visible | Full trace-backed pilot |
 
 ## What you get
 
