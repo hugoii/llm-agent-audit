@@ -1225,21 +1225,37 @@
   }
 
   .ap-entry {
+    position: relative;
     display: grid;
     grid-template-columns: 64px minmax(0, 1fr) auto;
     gap: 18px;
     align-items: start;
-    padding: 17px 0;
+    margin: 0 -14px;
+    padding: 17px 14px;
     border-bottom: 1px solid rgba(184, 193, 204, 0.70);
+    border-radius: 8px;
+    transition:
+      transform 220ms cubic-bezier(0.22, 1, 0.36, 1),
+      background-color 220ms ease,
+      box-shadow 220ms ease,
+      border-color 220ms ease;
+    will-change: transform;
   }
 
   .ap-entry:first-child {
-    padding-top: 0;
+    margin-top: -10px;
   }
 
   .ap-entry:last-child {
-    padding-bottom: 0;
     border-bottom: 0;
+  }
+
+  .ap-entry:hover,
+  .ap-entry:focus-within {
+    transform: translateY(-3px);
+    background: rgba(235, 248, 246, 0.76);
+    border-bottom-color: rgba(15, 118, 110, 0.14);
+    box-shadow: 0 8px 14px rgba(11, 79, 74, 0.08);
   }
 
   .ap-entry-index {
@@ -1275,6 +1291,17 @@
     border-radius: 50%;
     background: var(--teal);
     box-shadow: 0 0 0 4px rgba(231, 245, 243, 0.95);
+    transition:
+      transform 220ms cubic-bezier(0.22, 1, 0.36, 1),
+      box-shadow 220ms ease,
+      background-color 220ms ease;
+  }
+
+  .ap-entry:hover .ap-entry-index i::after,
+  .ap-entry:focus-within .ap-entry-index i::after {
+    transform: scale(1.18);
+    background: var(--teal-dark);
+    box-shadow: 0 0 0 6px rgba(210, 239, 235, 0.95);
   }
 
   .ap-entry-copy h3 {
@@ -1299,12 +1326,19 @@
     text-decoration: none;
     border-bottom: 1px solid rgba(15, 118, 110, 0.42);
     white-space: nowrap;
+    transition:
+      color 180ms ease,
+      border-color 180ms ease,
+      transform 220ms cubic-bezier(0.22, 1, 0.36, 1);
   }
 
+  .ap-entry:hover a,
+  .ap-entry:focus-within a,
   .ap-entry a:hover,
   .ap-entry a:focus-visible {
     color: var(--teal);
     border-bottom-color: currentColor;
+    transform: translateX(2px);
   }
 
   .case-panel {
@@ -4301,7 +4335,8 @@
     .ap-entry {
       grid-template-columns: 52px minmax(0, 1fr);
       gap: 13px;
-      padding: 20px 0;
+      margin: 0 -10px;
+      padding: 20px 10px;
     }
 
     .ap-entry-index {
@@ -4505,6 +4540,17 @@
       opacity: 1;
       transform: none;
       transition: none;
+    }
+
+    .ap-entry,
+    .ap-entry:hover,
+    .ap-entry:focus-within,
+    .ap-entry:hover .ap-entry-index i::after,
+    .ap-entry:focus-within .ap-entry-index i::after,
+    .ap-entry:hover a,
+    .ap-entry:focus-within a {
+      transform: none;
+      transition: background-color 120ms ease, color 120ms ease, border-color 120ms ease;
     }
   }
 
@@ -5101,6 +5147,14 @@
               <p>Scenario IDs, material fields, evidence requirements, and safe outcomes.</p>
             </div>
             <a href="https://github.com/hugoii/llm-agent-audit/blob/master/pilot/ap_payment_boundary_manifest.json">Open manifest &rarr;</a>
+          </article>
+          <article class="ap-entry">
+            <div class="ap-entry-index"><span>04</span><i aria-hidden="true"></i></div>
+            <div class="ap-entry-copy">
+              <h3>L3-L5 control experiment</h3>
+              <p>Post-approval mutation, agent handoff, replay, and benign controls.</p>
+            </div>
+            <a href="https://github.com/hugoii/llm-agent-audit/blob/master/docs/ap-l3-l5-control-experiment.md">Read note &rarr;</a>
           </article>
         </div>
       </div>

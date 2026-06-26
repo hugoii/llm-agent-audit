@@ -66,6 +66,15 @@ normalized runtime evidence is what the verdict uses.
 - `ap_payment_boundary_manifest.json`: machine-readable AP payment scenario
   oracle with invariant IDs, material fields, required runtime evidence, and
   allowed terminal states.
+- `ap_l3_l5_control_experiment_manifest.json`: a narrow AP/payment control
+  experiment manifest for post-approval mutation, inter-agent handoff,
+  retry/idempotency, and benign controls.
+- `ap_l3_l5_control_experiment_traces.json`: fixed synthetic traces for that
+  control experiment.
+- `ap_l3_l5_normalized_evidence_samples.json`: selected strict action-level
+  evidence samples from the control experiment.
+- `ap_l3_l5_control_experiment_summary.md`: the fixed result summary for the
+  control experiment.
 
 ## Steps
 
