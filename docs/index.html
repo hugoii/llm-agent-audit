@@ -2493,12 +2493,22 @@
     isolation: isolate;
     justify-self: center;
     width: min(100%, 560px);
+    margin: 0;
     background: var(--white);
     border: 1px solid var(--line);
     border-radius: 8px;
     padding: 16px;
     overflow: visible;
     box-shadow: var(--shadow-soft);
+  }
+
+  .report-proof {
+    justify-self: center;
+    width: min(100%, 560px);
+  }
+
+  .report-proof .report-frame {
+    width: 100%;
   }
 
   .report-frame::before {
@@ -2544,6 +2554,34 @@
     z-index: 1;
     display: flex;
     justify-content: center;
+  }
+
+  .report-source-link {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    width: max-content;
+    max-width: 100%;
+    margin: 9px auto 0;
+    color: rgba(30, 41, 59, 0.42);
+    font-size: 0.72rem;
+    font-weight: 700;
+    line-height: 1.2;
+    text-decoration: none;
+    opacity: 0.82;
+  }
+
+  .report-source-link svg {
+    width: 12px;
+    height: 12px;
+    flex: 0 0 auto;
+  }
+
+  .report-source-link:hover,
+  .report-source-link:focus-visible {
+    color: var(--teal-dark);
+    opacity: 1;
   }
 
   .checklist {
@@ -4980,7 +5018,6 @@
     <div class="cta-row" aria-label="Primary actions">
       <a class="button primary" href="mailto:jiahao@actionboundary.dev?subject=3%20scenarios%20for%20our%20agent">Get 3 scenarios</a>
       <a class="button secondary" href="sample-evidence-report-v0.7.pdf">View sample evidence report</a>
-      <a class="button outline" href="https://github.com/hugoii/llm-agent-audit/blob/master/docs/sample-pilot-report-v0.7.md">Source markdown</a>
     </div>
     <div class="cta-note" role="list" aria-label="Engagement safety boundaries">
       <span class="cta-note-item" role="listitem">
@@ -5317,12 +5354,20 @@
           <div class="check"><span class="mark">&#10003;</span><span>Severity, OWASP/NIST mapping, and concrete application-layer fixes</span></div>
         </div>
       </div>
-      <figure class="report-frame">
-        <img src="sample-report-preview.png" alt="Rendered preview of the sample evidence report PDF cover page showing document control, scope, and engagement boundary">
-        <figcaption class="report-actions">
-          <a class="button outline" href="sample-evidence-report-v0.7.pdf">View sample report</a>
-        </figcaption>
-      </figure>
+      <div class="report-proof">
+        <figure class="report-frame">
+          <img src="sample-report-preview.png" alt="Rendered preview of the sample evidence report PDF cover page showing document control, scope, and engagement boundary">
+          <figcaption class="report-actions">
+            <a class="button outline" href="sample-evidence-report-v0.7.pdf">View sample report</a>
+          </figcaption>
+        </figure>
+        <a class="report-source-link" href="https://github.com/hugoii/llm-agent-audit/blob/master/docs/sample-pilot-report-v0.7.md" aria-label="Source markdown on GitHub">
+          <svg viewBox="0 0 16 16" aria-hidden="true" focusable="false">
+            <path fill="currentColor" d="M8 0C3.58 0 0 3.67 0 8.2c0 3.62 2.29 6.7 5.47 7.79.4.08.55-.18.55-.4v-1.39c-2.23.5-2.7-1.1-2.7-1.1-.36-.95-.89-1.2-.89-1.2-.73-.51.06-.5.06-.5.8.06 1.23.85 1.23.85.72 1.26 1.88.9 2.34.69.07-.53.28-.9.51-1.1-1.78-.21-3.64-.91-3.64-4.04 0-.89.31-1.62.82-2.2-.08-.2-.36-1.03.08-2.16 0 0 .67-.22 2.2.84A7.42 7.42 0 0 1 8 4.01c.68 0 1.36.09 2 .27 1.52-1.06 2.19-.84 2.19-.84.44 1.13.16 1.96.08 2.16.51.58.82 1.31.82 2.2 0 3.14-1.87 3.82-3.65 4.03.29.26.54.76.54 1.53v2.27c0 .22.15.48.55.4A8.15 8.15 0 0 0 16 8.2C16 3.67 12.42 0 8 0Z"></path>
+          </svg>
+          <span>Source markdown</span>
+        </a>
+      </div>
     </div>
   </section>
 
