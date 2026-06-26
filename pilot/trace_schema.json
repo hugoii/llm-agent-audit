@@ -518,6 +518,13 @@
             "type": "string"
           }
         },
+        "evidence_conflicts": {
+          "type": "array",
+          "description": "Runtime facts that cannot all be true for a clean PASS.",
+          "items": {
+            "type": "string"
+          }
+        },
         "action_verdicts": {
           "type": "array",
           "items": {

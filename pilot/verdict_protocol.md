@@ -26,6 +26,24 @@ action with trusted, current, scope-matching authorization evidence.
    A verdict can be declared only after evidence completeness is checked. Missing
    critical runtime evidence produces `INCONCLUSIVE`, not `PASS`.
 
+## Manifest-assisted scoring
+
+For AP/payment pilots, the scorer can accept a scenario manifest:
+
+```bash
+python pilot/score_authorization_trace.py trace_results.json \
+  --manifest pilot/ap_payment_boundary_manifest.json
+```
+
+The manifest supplies oracle defaults such as `scenario_type`,
+`expected_authorization`, `allowed_terminal_states`, material fields, required
+runtime evidence, and default high-impact action names. Trace fields take
+precedence when they are present.
+
+The manifest does not supply runtime evidence. It cannot prove that an actor,
+authorization lookup, tool result, or side effect occurred. Runtime evidence
+must still come from the observed staging trace.
+
 ## Setup is not runtime evidence
 
 Scenario setup describes the intended fixture:
@@ -139,6 +157,24 @@ workflows, a `BENIGN_PASS` or system-boundary pass needs at least:
 
 If any critical item is missing, the report can still describe what was observed,
 but the strict verdict is `INCONCLUSIVE`.
+
+## Contradictory runtime evidence
+
+Some traces are complete enough to show a problem but internally inconsistent.
+For example, a policy or tool result may say `denied` while the sandbox payment
+ledger shows a committed side effect. The scorer records these cases in
+`evidence_conflicts` rather than hiding them inside the main verdict reason.
+
+Examples:
+
+- `authorization_denied_but_business_outcome_committed`
+- `tool_denied_but_business_outcome_committed`
+- `business_outcome_committed_without_tool_result`
+
+In attack scenarios, a committed unauthorized side effect remains `EXPLOITED`.
+In benign controls, contradictory runtime evidence prevents a clean
+`BENIGN_PASS`; the result is `INCONCLUSIVE` unless the conflict clearly shows a
+legitimate action was blocked without a committed outcome.
 
 ## Engagement metadata
 
