@@ -360,9 +360,17 @@
   }
 
   .principle-key {
+    display: inline-flex;
+    gap: 0.015em;
+    white-space: nowrap;
     color: var(--hero-accent);
     text-transform: uppercase;
     letter-spacing: 0.02em;
+  }
+
+  .principle-letter {
+    display: inline-block;
+    color: var(--hero-accent);
   }
 
   .principle-foil {
@@ -371,11 +379,24 @@
   }
 
   .principle-strike {
+    position: relative;
+    display: inline-block;
     text-transform: uppercase;
     letter-spacing: 0.02em;
-    text-decoration: line-through;
-    text-decoration-color: rgba(174, 184, 197, 0.9);
-    text-decoration-thickness: 2.5px;
+    text-decoration: none;
+  }
+
+  .principle-strike::after {
+    content: "";
+    position: absolute;
+    left: -4%;
+    right: -4%;
+    top: 53%;
+    height: 2.5px;
+    border-radius: 999px;
+    background: linear-gradient(90deg, rgba(154, 215, 207, 0.58), rgba(174, 184, 197, 0.95));
+    transform: translateY(-50%) scaleX(1);
+    transform-origin: right center;
   }
 
   .cta-row {
@@ -3413,6 +3434,17 @@
       animation: principle-scan 720ms var(--ease-out-quint) 520ms both;
     }
 
+    .principle-letter {
+      animation: principle-letter-scan 5.8s linear infinite both;
+      animation-delay: calc(840ms + (var(--letter-index, 0) * 80ms));
+      will-change: color, text-shadow, transform;
+    }
+
+    .principle-strike::after {
+      animation: principle-strike-in 780ms cubic-bezier(0.16, 1, 0.3, 1) 1680ms both;
+      will-change: opacity, transform;
+    }
+
     .workflow-surface.workflow-in::after {
       animation: workflow-surface-scan 960ms var(--ease-out-quint) 120ms both;
     }
@@ -3437,6 +3469,49 @@
     @keyframes principle-scan {
       from { transform: scaleX(0); }
       to { transform: scaleX(1); }
+    }
+
+    @keyframes principle-letter-scan {
+      0%,
+      12%,
+      100% {
+        color: var(--hero-accent);
+        text-shadow: none;
+        transform: translateY(0);
+      }
+
+      5.4% {
+        color: #f7fffd;
+        text-shadow:
+          0 0 9px rgba(154, 215, 207, 0.58),
+          0 0 22px rgba(15, 118, 110, 0.42);
+        transform: translateY(-1px);
+      }
+
+      8.2% {
+        color: #c8eee8;
+        text-shadow:
+          0 0 6px rgba(154, 215, 207, 0.34),
+          0 0 14px rgba(15, 118, 110, 0.24);
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes principle-strike-in {
+      0% {
+        opacity: 0;
+        transform: translateX(72%) translateY(-50%) scaleX(0.08);
+      }
+
+      38% {
+        opacity: 1;
+        transform: translateX(24%) translateY(-50%) scaleX(0.56);
+      }
+
+      100% {
+        opacity: 1;
+        transform: translateX(0) translateY(-50%) scaleX(1);
+      }
     }
 
     @keyframes workflow-head-assemble {
@@ -5100,7 +5175,13 @@
     <p class="hero-copy">
       ActionBoundary helps finance, healthcare, and enterprise agent teams test high-impact tool actions against the right user, approval, policy, and source of truth.
     </p>
-    <p class="hero-principle">We test <span class="principle-key">actions</span>, <span class="principle-foil">not <span class="principle-strike">answers</span></span>.</p>
+    <p class="hero-principle" aria-label="We test actions, not answers.">
+      <span aria-hidden="true">
+        We test
+        <span class="principle-key"><span class="principle-letter" style="--letter-index: 0">A</span><span class="principle-letter" style="--letter-index: 1">C</span><span class="principle-letter" style="--letter-index: 2">T</span><span class="principle-letter" style="--letter-index: 3">I</span><span class="principle-letter" style="--letter-index: 4">O</span><span class="principle-letter" style="--letter-index: 5">N</span><span class="principle-letter" style="--letter-index: 6">S</span></span>,
+        <span class="principle-foil">not <span class="principle-strike">answers</span></span>.
+      </span>
+    </p>
     <div class="cta-row" aria-label="Primary actions">
       <a class="button primary" href="mailto:jiahao@actionboundary.dev?subject=3%20scenarios%20for%20our%20agent">Get 3 scenarios</a>
       <a class="button secondary" href="sample-evidence-report-v0.8.pdf">View sample evidence report</a>
