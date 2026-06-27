@@ -142,46 +142,20 @@ trace adapters should emit canonical `observed_actor`; legacy
 reports use your agent, tools, traces, and workflow-specific authorization
 rules.</sub></p>
 
-- **[Sample evidence report](docs/sample-pilot-report-v0.8.md)**: what you receive, with findings, trace evidence, severity, authorization evidence, fixes, and retest rules.
-- **[Rendered PDF sample](docs/sample-evidence-report-v0.8.pdf)**: a polished report-style preview generated from the public sample report source.
-- **[Evidence flow](docs/evidence-flow.md)**: how untrusted content, tool calls, authorization evidence, findings, fixes, and retests connect.
-- **[Evidence readiness check](pilot/evidence-readiness-check.md)**: the existing-trace-first gate that decides whether a full trace-backed verdict is scoreable yet.
-- **[Engineer quickstart artifacts](examples/ap_payment_trace.redacted.json)**:
-  a redacted AP trace, [scenario pack](examples/ap_payment_scenario_pack.json),
-  root-level schemas, and `python -m actionboundary` scoring path.
-- **[Pilot verdict protocol](pilot/verdict_protocol.md)**: how flexible client
-  traces become strict normalized evidence, and why missing runtime evidence is
-  `INCONCLUSIVE` rather than `PASS`.
-- **[AP payment boundary scenarios](pilot/ap_payment_boundary_scenarios.md)**:
-  an AP/payment scenario oracle for testing one staging payment action deeply,
-  including post-approval changes, cross-agent handoff, retry/idempotency, and a
-  larger benign-control library.
-- **[AP authorization invariants](docs/ap-authorization-invariants.md)** and
-  **[AP methodology](docs/ap-agent-authorization-methodology.md)**: the
-  payment-boundary rules behind the AP pilot shape.
-- **[AP payment lifecycle status mapping](docs/ap-payment-lifecycle-status-mapping.md)**:
-  how customer statuses such as draft, scheduled, released, settled, reversed,
-  and duplicate-denied map into strict terminal evidence.
-- **[AP payment manifest](pilot/ap_payment_boundary_manifest.json)**: machine-readable scenario oracle for the AP payment boundary.
-- **[Trust & data handling](TRUST.md)**: staging-only scope, trace transfer, redaction, retention, deletion, no third-party LLMs by default, and default subprocessors.
-- **[AP deep payment-control experiment](docs/ap-l3-l5-control-experiment.md)**:
-  a narrow method note showing post-approval mutation, inter-agent handoff,
-  retry/idempotency, benign controls, and missing-evidence verdicts.
-- **[A focused payment-permission case note](docs/payment-approval-is-not-user-authorization.md)**:
-  a customer-like AP workflow where four model APIs often attempted payment
-  under a viewer principal, while tool-side enforcement blocked the same action.
-- **[A worked example: an accounts-payable agent](docs/ap-action-boundary-case-note.md)**:
-  the method run end to end on a real tool-calling model in a synthetic AP
-  workflow. It caught an unauthorized data export and still passed the benign
-  controls.
-- **[A multi-turn case note](docs/multi-turn-authorization-drift-case-note.md)**:
-  a healthcare prior-auth workflow where the early action was authorized, then a
-  later note tried to carry that approval too far. Includes a recent live
-  agent-loop check and a paired benign control.
-- **[Why model behavior is not authorization control](docs/model-behavior-is-not-authorization-control.md)**:
-  the plain-language logic behind the review, using finance approvals as the
-  analogy.
-- **[How the pilot works](pilot/how-the-pilot-works.md)**: the process, async, staging-only, fixed-scope, about a week.
+- **[Sample evidence report](docs/sample-pilot-report-v0.8.md)**: what you
+  receive, with findings, trace evidence, severity, fixes, and retest rules.
+- **[Rendered PDF sample](docs/sample-evidence-report-v0.8.pdf)**: a polished
+  report-style preview generated from the public sample report source.
+- **[Evidence flow](docs/evidence-flow.md)**: how runtime evidence becomes a
+  finding, verdict, fix, and retest rule.
+- **[Technical evidence directory](docs/README.md)**: grouped paths for sample
+  deliverables, customer handoff, AP/payment evidence, method notes, schemas,
+  scorer artifacts, and public run summaries.
+- **[Trust & data handling](TRUST.md)**: staging-only scope, trace transfer,
+  redaction, retention, deletion, no third-party LLMs by default, and default
+  subprocessors.
+- **[How the pilot works](pilot/how-the-pilot-works.md)**: the process, async,
+  staging-only, fixed-scope, about a week.
 
 ## Proof artifacts
 
