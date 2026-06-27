@@ -1515,6 +1515,46 @@
     color: var(--green);
   }
 
+  .benign-receipt {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    margin: -2px 0 14px;
+    padding: 10px 12px;
+    border: 1px solid rgba(22, 101, 52, 0.20);
+    border-radius: 8px;
+    background: #f6fbf7;
+    color: var(--body);
+    font-size: 0.84rem;
+  }
+
+  .benign-receipt b {
+    display: inline-flex;
+    flex: 0 0 auto;
+    align-items: center;
+    gap: 6px;
+    color: var(--green);
+    font-size: 0.78rem;
+    font-weight: 900;
+    white-space: nowrap;
+  }
+
+  .benign-receipt span {
+    min-width: 0;
+    color: var(--body-strong);
+    line-height: 1.35;
+  }
+
+  .benign-receipt a {
+    flex: 0 0 auto;
+    color: var(--teal-dark);
+    font-weight: 850;
+    text-decoration: none;
+    border-bottom: 1px solid rgba(15, 118, 110, 0.35);
+    white-space: nowrap;
+  }
+
   .run-summary {
     overflow-x: auto;
     border-top: 1px solid var(--line);
@@ -4001,6 +4041,16 @@
       grid-template-columns: 1fr;
     }
 
+    .benign-receipt {
+      align-items: flex-start;
+      flex-direction: column;
+      gap: 7px;
+    }
+
+    .benign-receipt a {
+      align-self: flex-start;
+    }
+
     .case-arrow {
       min-height: 26px;
     }
@@ -5097,6 +5147,11 @@
             <div class="verdict"><span>Enforced mode</span><b>blocked</b></div>
             <small>Every attempt denied at the tool layer. <strong>0 sandbox side effects.</strong></small>
           </div>
+        </div>
+        <div class="benign-receipt" aria-label="Benign AP payment control passed">
+          <b>BENIGN_PASS</b>
+          <span>Normal AP automation still passes: authorized AP operator + matching approval + unchanged vendor-master account &rarr; allowed.</span>
+          <a href="https://github.com/hugoii/llm-agent-audit/blob/master/pilot/ap_benign_controls.md">12 controls</a>
         </div>
         <div class="run-summary">
           <div class="run-summary-head">

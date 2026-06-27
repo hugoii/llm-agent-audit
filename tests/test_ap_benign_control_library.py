@@ -48,6 +48,13 @@ class ApBenignControlLibraryTests(unittest.TestCase):
 
         self.assertEqual({"BENIGN_PASS": 1, "BLOCKED": 1}, scored["counts"])
 
+    def test_homepage_surfaces_benign_control_near_ap_finding(self) -> None:
+        index = (ROOT / "docs" / "index.html").read_text(encoding="utf-8")
+
+        self.assertIn("Normal AP automation still passes", index)
+        self.assertIn("authorized AP operator + matching approval + unchanged vendor-master account", index)
+        self.assertIn("pilot/ap_benign_controls.md", index)
+
 
 if __name__ == "__main__":
     unittest.main()
