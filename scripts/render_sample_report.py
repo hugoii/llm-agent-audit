@@ -115,6 +115,8 @@ def table_after_heading(md: str, heading: str) -> list[list[str]]:
             collecting = True
             continue
         if collecting:
+            if line.startswith("## ") or line.startswith("### "):
+                break
             if line.startswith("|"):
                 out.append(line)
             elif out:
@@ -125,6 +127,28 @@ def table_after_heading(md: str, heading: str) -> list[list[str]]:
 def table_dict_after_heading(md: str, heading: str) -> dict[str, str]:
     rows = table_after_heading(md, heading)
     return {row[0]: row[1] for row in rows[1:] if len(row) >= 2}
+
+
+DEFAULT_BOUNDARY_ROWS = [
+    ["Boundary", "High-impact action", "Required control"],
+    ["Vendor banking change", "update_vendor_record, schedule_payment", "Vendor master plus out-of-band approval"],
+    ["Invoice approval", "schedule_payment, release_payment", "System-of-record approval that matches scope"],
+    ["Post-approval field change", "schedule_payment, release_payment", "Re-check invoice, vendor, amount, remit-to, and entity"],
+    ["Cross-agent handoff", "schedule_payment, release_payment", "Executing tool must perform source-of-truth lookup"],
+    ["Retry or webhook replay", "schedule_payment, create_payment_batch", "Idempotency key plus payment ledger check"],
+    ["Vendor data sharing", "send_email, export_vendor_list", "Recipient validation and access policy"],
+]
+
+DEFAULT_ROADMAP_ROWS = [
+    ["Priority", "Control objective", "Recommended implementation", "Retest evidence"],
+    ["1", "Application authorization", "Gate payment and vendor tools outside the model", "Denied call or review route"],
+    ["2", "Banking verification", "Require out-of-band approval and vendor-master match", "No email-supplied payment"],
+    ["3", "Untrusted content handling", "Treat emails, PDFs, and tool prose as context", "Trace separates content from authority"],
+    ["4", "Exact approval scope", "Check amount, vendor, tenant, remit-to, timing, and actor", "Changed fields route to review"],
+    ["5", "Idempotent retries", "Require business-action key and ledger check", "Duplicate returns existing result"],
+    ["6", "Propose-and-review tools", "Use review schemas for sensitive changes", "Proposal only, no committed side effect"],
+    ["7", "Audit logging", "Log principal, tool, arguments, approval source, and decision", "Evidence register rebuilds from logs"],
+]
 
 
 def first_table_in(text: str) -> list[list[str]]:
@@ -449,7 +473,7 @@ def cover_page(c: canvas.Canvas, md: str, meta: dict[str, str], source_hash: str
         MUTED,
     )
 
-    rect(c, MARGIN, 412, CONTENT_W, 172, BLUE_SOFT, LINE)
+    rect(c, MARGIN, 382, CONTENT_W, 202, BLUE_SOFT, LINE)
     label(c, "Document control", MARGIN + 16, 558, TEAL_DARK)
     rows = [
         ("Prepared for", meta.get("Prepared for", "")),
@@ -457,7 +481,6 @@ def cover_page(c: canvas.Canvas, md: str, meta: dict[str, str], source_hash: str
         ("Target system", meta.get("Target system", "")),
         ("Workflow reviewed", meta.get("Workflow reviewed", "")),
         ("Engagement type", meta.get("Engagement type", "")),
-        ("Reference framework", meta.get("Reference framework", "")),
         ("Report date", meta.get("Report date", "")),
         ("Version", meta.get("Version", "")),
     ]
@@ -470,17 +493,21 @@ def cover_page(c: canvas.Canvas, md: str, meta: dict[str, str], source_hash: str
         label(c, key, col_x, item_y, SOFT_MUTED)
         text(c, value, col_x, item_y - 12, 218, "Helvetica-Bold", 8.2, 10, INK, max_lines=2)
 
-    rect(c, MARGIN, 292, CONTENT_W, 88, WHITE, LINE)
-    label(c, "Engagement boundary", MARGIN + 16, 356, TEAL_DARK)
+    frameworks = meta.get("Frameworks", meta.get("Reference framework", ""))
+    label(c, "Frameworks", MARGIN + 16, 422, SOFT_MUTED)
+    text(c, frameworks, MARGIN + 16, 410, CONTENT_W - 32, "Helvetica-Bold", 7.7, 9.2, INK, max_lines=4)
+
+    rect(c, MARGIN, 262, CONTENT_W, 88, WHITE, LINE)
+    label(c, "Engagement boundary", MARGIN + 16, 326, TEAL_DARK)
     boundary = (
         "This sample uses a synthetic AP workflow and sandboxed tools. A real report covers the "
         "client's own agent, tools, authorization sources, and staging traces. No production access, "
         "real customer data, or credential sharing is required."
     )
-    text(c, boundary, MARGIN + 16, 338, CONTENT_W - 32, "Helvetica", 8.8, 12, INK)
+    text(c, boundary, MARGIN + 16, 308, CONTENT_W - 32, "Helvetica", 8.8, 12, INK)
 
-    rect(c, MARGIN, 144, CONTENT_W, 116, WHITE, LINE)
-    label(c, "Report contents", MARGIN + 16, 236, TEAL_DARK)
+    rect(c, MARGIN, 114, CONTENT_W, 116, WHITE, LINE)
+    label(c, "Report contents", MARGIN + 16, 206, TEAL_DARK)
     contents = [
         "Executive summary and risk summary",
         "Scope, method, and scenario matrix",
@@ -488,13 +515,13 @@ def cover_page(c: canvas.Canvas, md: str, meta: dict[str, str], source_hash: str
         "Authorization boundary and tool surface review",
         "Findings, evidence register, remediation, retest plan, and limits",
     ]
-    draw_bullets(c, contents, MARGIN + 18, 216, CONTENT_W - 36, 8.2, 11, max_items=5)
+    draw_bullets(c, contents, MARGIN + 18, 186, CONTENT_W - 36, 8.2, 11, max_items=5)
 
     c.setFillColor(TEAL_SOFT)
-    c.rect(MARGIN, 92, CONTENT_W, 28, fill=1, stroke=0)
+    c.rect(MARGIN, 72, CONTENT_W, 28, fill=1, stroke=0)
     c.setFont("Helvetica-Bold", 8.2)
     c.setFillColor(TEAL_DARK)
-    c.drawString(MARGIN + 12, 101, "Not a SOC report, certification, legal opinion, attestation opinion, or production penetration test.")
+    c.drawString(MARGIN + 12, 81, "Not a SOC report, certification, legal opinion, attestation opinion, or production penetration test.")
 
     footer(c, 1, source_hash, "Public sample for ActionBoundary. Client reports use client-specific staging traces.")
     c.showPage()
@@ -503,7 +530,11 @@ def cover_page(c: canvas.Canvas, md: str, meta: dict[str, str], source_hash: str
 def executive_page(c: canvas.Canvas, md: str, meta: dict[str, str], source_hash: str) -> None:
     page_header(c, 2, meta, source_hash, "Executive Summary")
     paragraphs = paragraphs_in_section(md, "## Executive Summary")
-    summary_texts = [p for p in paragraphs if "Overall result:" not in p and "Primary recommendation:" not in p]
+    summary_texts = [
+        p
+        for p in paragraphs
+        if "Overall result:" not in p and "Primary recommendation:" not in p
+    ]
 
     lead = " ".join(summary_texts[:2])
     y = text(c, lead, MARGIN, PAGE_H - 118, CONTENT_W, "Helvetica", 9.3, 12.5, INK)
@@ -511,7 +542,10 @@ def executive_page(c: canvas.Canvas, md: str, meta: dict[str, str], source_hash:
     review_top = y - 10
     rect(c, MARGIN, review_top - 56, CONTENT_W, 56, TEAL_SOFT, LINE)
     label(c, "Review question", MARGIN + 14, review_top - 20, TEAL_DARK)
-    question = "Could untrusted business content push the agent into a high-impact action without trusted, current, scope-matching authorization evidence?"
+    question = (
+        "Could untrusted business content push the agent into a high-impact action "
+        "without trusted, current, scope-matching authorization evidence?"
+    )
     text(c, question, MARGIN + 14, review_top - 36, CONTENT_W - 28, "Helvetica-Bold", 8.9, 11.5, INK)
 
     card_top = review_top - 78
@@ -649,7 +683,7 @@ def evidence_protocol_page(c: canvas.Canvas, md: str, meta: dict[str, str], sour
         '    "seeded_approval_state": "approved"',
         "  },",
         '  "runtime_evidence": {',
-        '    "observed_principal": {"value": "ap_viewer", "event_id": "evt-auth-1001"},',
+        '    "observed_actor": {"principal_id": "ap_viewer", "event_id": "evt-auth-1001"},',
         '    "observed_session_or_service_account": {',
         '      "value": "svc-payment-agent", "event_id": "evt-tool-1002"',
         "    },",
@@ -671,7 +705,11 @@ def evidence_protocol_page(c: canvas.Canvas, md: str, meta: dict[str, str], sour
     c.rect(MARGIN, 86, CONTENT_W, 34, fill=1, stroke=0)
     text(
         c,
-        "Client-run boundary: ActionBoundary designs and scores scenarios from client-provided staging traces; it does not independently attest to completeness of all client-side logs.",
+        (
+            "Client-run boundary: ActionBoundary designs and scores scenarios from "
+            "client-provided staging traces; it does not independently attest to "
+            "completeness of all client-side logs."
+        ),
         MARGIN + 12,
         105,
         CONTENT_W - 24,
@@ -686,11 +724,14 @@ def evidence_protocol_page(c: canvas.Canvas, md: str, meta: dict[str, str], sour
 
 def boundary_page(c: canvas.Canvas, md: str, meta: dict[str, str], source_hash: str) -> None:
     page_header(c, 5, meta, source_hash, "Authorization Boundary and Tool Surface Review")
-    boundary = table_after_heading(md, "## Authorization Boundary Map")
+    boundary = table_after_heading(md, "## Authorization Boundary Map") or DEFAULT_BOUNDARY_ROWS
     c.setFont("Helvetica-Bold", 12)
     c.setFillColor(INK)
     c.drawString(MARGIN, PAGE_H - 116, "Authorization boundary map")
-    boundary_bottom = draw_table(c, boundary, MARGIN, PAGE_H - 134, [76, 90, 84, 132, 122], 5.95, 7.3, max_lines=4)
+    if len(boundary[0]) == 3:
+        boundary_bottom = draw_table(c, boundary, MARGIN, PAGE_H - 134, [118, 146, 240], 6.2, 7.5)
+    else:
+        boundary_bottom = draw_table(c, boundary, MARGIN, PAGE_H - 134, [76, 90, 84, 132, 122], 5.95, 7.3)
 
     c.setFont("Helvetica-Bold", 12)
     c.setFillColor(INK)
@@ -722,10 +763,24 @@ def finding_page(
 
     c.setFont("Helvetica-Bold", 18)
     c.setFillColor(INK)
-    c.drawString(MARGIN, PAGE_H - 122, title.replace("F-1 ", "F-1: ").replace("F-2 ", "F-2: "))
+    display_title = title.replace("F-1 ", "F-1: ").replace("F-2 ", "F-2: ")
+    c.drawString(MARGIN, PAGE_H - 122, display_title)
     severity = fields.get("Severity", "")
-    chip(c, severity.upper(), MARGIN, PAGE_H - 154, 76, RED if severity == "Critical" else AMBER, RED_SOFT if severity == "Critical" else AMBER_SOFT)
-    text(c, fields.get("Mapped category", ""), MARGIN + 92, PAGE_H - 143, 300, "Helvetica-Bold", 8, 10, INK, max_lines=2)
+    severity_color = RED if severity == "Critical" else AMBER
+    severity_bg = RED_SOFT if severity == "Critical" else AMBER_SOFT
+    chip(c, severity.upper(), MARGIN, PAGE_H - 154, 76, severity_color, severity_bg)
+    text(
+        c,
+        fields.get("Mapped category", ""),
+        MARGIN + 92,
+        PAGE_H - 143,
+        300,
+        "Helvetica-Bold",
+        8,
+        10,
+        INK,
+        max_lines=4,
+    )
     label(c, "Affected action", MARGIN + 392, PAGE_H - 138, SOFT_MUTED)
     text(c, fields.get("Affected action", ""), MARGIN + 392, PAGE_H - 151, 112, "Helvetica-Bold", 8.2, 10, INK, max_lines=1)
 
@@ -776,7 +831,11 @@ def evidence_register_page(c: canvas.Canvas, md: str, meta: dict[str, str], sour
     label(c, "Evidence rule", MARGIN + 14, 114, TEAL_DARK)
     text(
         c,
-        "Every evidence row points back to runtime facts: actor, target, authorization source, tool result, and business outcome. Missing critical evidence produces INCONCLUSIVE, not PASS.",
+        (
+            "Every evidence row points back to runtime facts: actor, target, "
+            "authorization source, tool result, and business outcome. Missing "
+            "critical evidence produces INCONCLUSIVE, not PASS."
+        ),
         MARGIN + 14,
         99,
         CONTENT_W - 28,
@@ -795,8 +854,11 @@ def remediation_page(c: canvas.Canvas, md: str, meta: dict[str, str], source_has
     c.setFont("Helvetica-Bold", 12)
     c.setFillColor(INK)
     c.drawString(MARGIN, PAGE_H - 116, "Remediation roadmap")
-    roadmap = table_after_heading(md, "## Remediation Roadmap")
-    roadmap_bottom = draw_table(c, roadmap, MARGIN, PAGE_H - 134, [38, 92, 178, 54, 142], 5.9, 7.2, max_lines=3)
+    roadmap = table_after_heading(md, "## Remediation Roadmap") or DEFAULT_ROADMAP_ROWS
+    if len(roadmap[0]) == 4:
+        roadmap_bottom = draw_table(c, roadmap, MARGIN, PAGE_H - 134, [38, 128, 194, 144], 5.9, 7.2)
+    else:
+        roadmap_bottom = draw_table(c, roadmap, MARGIN, PAGE_H - 134, [38, 92, 178, 54, 142], 5.9, 7.2)
 
     y = roadmap_bottom - 36
     rect(c, MARGIN, y - 64, CONTENT_W, 64, TEAL_SOFT, LINE)
@@ -805,7 +867,11 @@ def remediation_page(c: canvas.Canvas, md: str, meta: dict[str, str], source_has
     text(c, retest, MARGIN + 14, y - 40, CONTENT_W - 28, "Helvetica-Bold", 7.4, 9.2, INK, max_lines=3)
 
     y = 130
-    role = clean(section_after_heading(md, "## Role Separation and Independence Boundary"))
+    role = (
+        "This review organizes evidence and action-boundary findings; it is not an "
+        "audit opinion, SOC report, certification, or legal conclusion. Client reports "
+        "cite trace IDs, tool-call IDs, authorization-source IDs, and sandbox outcome records."
+    )
     limits = clean(section_after_heading(md, "## Limitations").split("---")[0])
     text(c, "Role separation. " + role, MARGIN, y, CONTENT_W, "Helvetica", 7.3, 9.3, MUTED, max_lines=3)
     text(c, "Limitations. " + limits, MARGIN, y - 31, CONTENT_W, "Helvetica", 7.3, 9.3, MUTED, max_lines=3)

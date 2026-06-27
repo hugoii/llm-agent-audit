@@ -1,6 +1,9 @@
 # Contributing
 
-Thanks for taking a look at this project. ActionBoundary is a defensive, trace-backed review method for tool-using AI agents. Contributions are most useful when they make the evidence clearer, the offline harness easier to reproduce, or the public documentation more accurate.
+Thanks for taking a look at this project. ActionBoundary is a defensive,
+trace-backed review method for tool-using AI agents. Contributions are most
+useful when they make the evidence clearer, the offline harness easier to
+reproduce, or the public documentation more accurate.
 
 ## Good public contributions
 
@@ -12,7 +15,9 @@ Useful public issues or pull requests include:
 - fixes to report rendering, examples, or broken links;
 - small code changes that improve trace clarity or scoring readability.
 
-Please keep contributions narrow. This repository is not trying to become a general AI security scanner, a benchmark leaderboard, or a compliance framework.
+Please keep contributions narrow. This repository is not trying to become a
+general AI security scanner, a benchmark leaderboard, or a compliance
+framework.
 
 ## Do not submit sensitive data
 
@@ -53,7 +58,9 @@ The offline demo has no API key requirement:
 python agent_audit.py
 ```
 
-It writes `agent_report.md` and compares an un-hardened reference agent with a guarded reference agent. The live model battery and client pilot path are separate from this offline smoke test.
+It writes `agent_report.md` and compares an un-hardened reference agent with a
+guarded reference agent. The live model battery and client pilot path are
+separate from this offline smoke test.
 
 ## Pull request guidance
 

@@ -2,12 +2,12 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://actionboundary.dev/schemas/normalized_trace.schema.json",
   "title": "ActionBoundary trace submission schema",
-  "description": "Customer-facing trace artifact for an Agent Authorization Review. A trace may be a flexible runs[] submission or a strict normalized_actions[] submission.",
+  "description": "Trace artifact for Agent Authorization Review. Supports flexible runs[] or strict normalized_actions[].",
   "type": "object",
   "$defs": {
     "observedActor": {
       "type": "object",
-      "description": "Canonical actor observed at runtime. Legacy adapters may submit observed_principal; the scorer normalizes that alias to observed_actor.",
+      "description": "Canonical runtime actor. Legacy observed_principal is accepted as an alias.",
       "required": ["principal_id"],
       "properties": {
         "principal_id": { "type": "string", "minLength": 1 },
@@ -75,7 +75,7 @@
           "timestamp": { "type": "string" },
           "expected_authorization": {
             "type": "string",
-            "enum": ["ALLOW", "DENY"]
+            "enum": ["ALLOW", "DENY", "DENY_DUPLICATE"]
           },
           "allowed_terminal_states": {
             "type": "array",
@@ -117,9 +117,24 @@
       "minItems": 1,
       "items": {
         "type": "object",
-        "required": ["scenario_id", "observed_actor", "action", "authorization", "tool_result", "business_outcome"],
+        "required": [
+          "scenario_id",
+          "observed_actor",
+          "action",
+          "authorization",
+          "tool_result",
+          "business_outcome"
+        ],
         "properties": {
           "scenario_id": { "type": "string", "minLength": 1 },
+          "expected_authorization": {
+            "type": "string",
+            "enum": ["ALLOW", "DENY", "DENY_DUPLICATE"]
+          },
+          "allowed_terminal_states": {
+            "type": "array",
+            "items": { "type": "string" }
+          },
           "observed_actor": { "$ref": "#/$defs/observedActor" },
           "action": { "type": "object" },
           "authorization": { "type": "object" },

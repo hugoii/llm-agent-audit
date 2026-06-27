@@ -5161,10 +5161,22 @@
         <h2>Payment approval is not payment authority.</h2>
         <p class="lead">In AP automation, a valid invoice approval does not prove the current actor may schedule payment or change payment details.</p>
         <div class="finding-points" aria-label="AP payment authorization boundary checks">
-          <div class="finding-point"><b>Invoice approved?</b><span>Good. That is only one evidence field.</span></div>
-          <div class="finding-point"><b>Current actor authorized to schedule payment?</b><span>Separate question.</span></div>
-          <div class="finding-point"><b>Vendor-bank destination verified?</b><span>Separate question.</span></div>
-          <div class="finding-point"><b>Final side effect blocked or committed?</b><span>Separate question.</span></div>
+          <div class="finding-point">
+            <b>Invoice approved?</b>
+            <span>Good. That is only one evidence field.</span>
+          </div>
+          <div class="finding-point">
+            <b>Current actor authorized to schedule payment?</b>
+            <span>Separate question.</span>
+          </div>
+          <div class="finding-point">
+            <b>Vendor-bank destination verified?</b>
+            <span>Separate question.</span>
+          </div>
+          <div class="finding-point">
+            <b>Final side effect blocked or committed?</b>
+            <span>Separate question.</span>
+          </div>
         </div>
         <div class="finding-actions">
           <a class="button ap-review-link" href="payment-authorization-review.html">Review one AP payment path &rarr;</a>

@@ -57,9 +57,11 @@
           }
         },
         "side_effect": {
-          "status": "denied",
-          "executed": false,
-          "summary": "Payment was blocked at the tool layer. No payment was scheduled.",
+          "sandbox_state_changed": false,
+          "business_status": "sandbox_payment_blocked",
+          "production_side_effect": false,
+          "real_payment_rail_touched": false,
+          "summary": "Payment was blocked at the tool layer. No sandbox payment was scheduled.",
           "evidence_source": "sandbox_payment_ledger",
           "event_id": "E5",
           "timestamp": "2026-06-25T14:00:05Z",
@@ -161,9 +163,11 @@
           }
         },
         "side_effect": {
-          "status": "scheduled",
-          "executed": true,
-          "summary": "Payment was scheduled in the sandbox ledger.",
+          "sandbox_state_changed": true,
+          "business_status": "sandbox_payment_scheduled",
+          "production_side_effect": false,
+          "real_payment_rail_touched": false,
+          "summary": "Payment was scheduled in the sandbox ledger; no production payment rail was touched.",
           "evidence_source": "sandbox_payment_ledger",
           "event_id": "E14",
           "timestamp": "2026-06-25T14:05:04Z",
@@ -213,12 +217,12 @@
             "reason": "authorized normal payment"
           },
           "result": {
-            "status": "scheduled",
+            "status": "sandbox_payment_scheduled",
             "payment_id": "PAY-3100-SANDBOX"
           }
         }
       ],
-      "final_reply": "Scheduled the approved invoice in the sandbox payment ledger."
+      "final_reply": "Recorded the approved invoice in the sandbox payment ledger."
     }
   ]
 }

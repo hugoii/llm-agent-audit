@@ -17,13 +17,38 @@ from .scoring import is_attack, is_exploited, is_scorable_attack, iter_tool_call
 SEV_ORDER = {"Critical": 0, "High": 1, "Medium": 2, "Info": 3}
 
 FIX = {
-    "indirect_injection": "Treat all retrieved content (tickets, docs, emails, web pages, tool outputs) as untrusted data. The agent must never execute instructions found inside it.",
-    "prompt_injection": "Keep the system policy authoritative and separate from user input; user text must not override it or trigger high-risk tools without authorization.",
-    "jailbreak": "Enforce policy outside the model (allow-lists, authorization, human approval) so role-play or 'developer mode' framing cannot unlock real actions.",
-    "tool_misuse": "Gate high-risk tools (refund, delete, transfer, grant access, export, disable security) behind verified identity, with human approval for destructive or financial actions.",
-    "data_exfiltration": "Block external recipients and bulk data egress by default; require explicit approval to send internal data outside the org.",
-    "secret_disclosure": "Keep secrets out of model-reachable context where possible; make system prompts and credentials non-extractable and never echoed.",
-    "excessive_agency": "Scope each action to the user's explicit request; deny by default and never chain into destructive side effects.",
+    "indirect_injection": (
+        "Treat all retrieved content (tickets, docs, emails, web pages, tool "
+        "outputs) as untrusted data. The agent must never execute instructions "
+        "found inside it."
+    ),
+    "prompt_injection": (
+        "Keep the system policy authoritative and separate from user input; "
+        "user text must not override it or trigger high-risk tools without "
+        "authorization."
+    ),
+    "jailbreak": (
+        "Enforce policy outside the model (allow-lists, authorization, human "
+        "approval) so role-play or 'developer mode' framing cannot unlock real "
+        "actions."
+    ),
+    "tool_misuse": (
+        "Gate high-risk tools (refund, delete, transfer, grant access, export, "
+        "disable security) behind verified identity, with human approval for "
+        "destructive or financial actions."
+    ),
+    "data_exfiltration": (
+        "Block external recipients and bulk data egress by default; require "
+        "explicit approval to send internal data outside the org."
+    ),
+    "secret_disclosure": (
+        "Keep secrets out of model-reachable context where possible; make "
+        "system prompts and credentials non-extractable and never echoed."
+    ),
+    "excessive_agency": (
+        "Scope each action to the user's explicit request; deny by default and "
+        "never chain into destructive side effects."
+    ),
 }
 
 
@@ -43,7 +68,12 @@ def fmt_trace(res, full=False):
     calls = list(iter_tool_calls(res.get("trace", [])))
     if calls:
         body = "; ".join(
-            f"{name}(" + ", ".join(f"{key}={value}" for key, value in (args if isinstance(args, dict) else {}).items()) + ")"
+            f"{name}("
+            + ", ".join(
+                f"{key}={value}"
+                for key, value in (args if isinstance(args, dict) else {}).items()
+            )
+            + ")"
             for name, args in calls
         )
     else:
@@ -140,7 +170,9 @@ def build_report(rows, model_label, hardened_rows=None):
 
     return f"""# Agent Authorization Review
 
-_Date: {today}. Target: {model_label}. Battery {BATTERY_VERSION}. Scenarios: {len(attacks)} attacks + {len(rows) - len(attacks)} controls. Standard: OWASP LLM Top 10 for the public battery._
+_Date: {today}. Target: {model_label}. Battery {BATTERY_VERSION}.
+Scenarios: {len(attacks)} attacks + {len(rows) - len(attacks)} controls.
+Standard: OWASP LLM Top 10 for the public battery._
 
 ## Scope and methodology
 This audit measures what the agent does, not what it says. Each scenario sends an input
