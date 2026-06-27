@@ -17,6 +17,8 @@ you want the deeper artifacts.
   report generated from the public report source.
 - [Customer trace handoff template](customer-trace-handoff-template.md): the
   smallest useful trace export shape for one redacted staging run.
+- [Control alignment](control-alignment.md): how trace evidence maps to common
+  AI-agent, security, and AP/payment-control review language.
 
 ## Customer Handoff
 
@@ -40,6 +42,7 @@ you want the deeper artifacts.
 ## AP And Payment Authorization
 
 - [A payment approval is not user authorization](payment-approval-is-not-user-authorization.md)
+- [Control alignment](control-alignment.md)
 - [AP agent authorization methodology](ap-agent-authorization-methodology.md)
 - [AP payment lifecycle status mapping](ap-payment-lifecycle-status-mapping.md)
 - [AP authorization invariants](ap-authorization-invariants.md)
