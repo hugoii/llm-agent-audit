@@ -250,11 +250,11 @@
   .hero-inner {
     position: relative;
     z-index: 1;
-    max-width: var(--hero-max);
+    max-width: min(1360px, 100%);
     margin: 0 auto;
     display: grid;
-    grid-template-columns: minmax(0, 1.02fr) minmax(380px, 0.78fr);
-    gap: clamp(36px, 5vw, 74px);
+    grid-template-columns: minmax(0, 1fr) minmax(540px, 0.84fr);
+    gap: clamp(40px, 5vw, 76px);
     align-items: center;
   }
 
@@ -276,11 +276,21 @@
 
   .hero h1 {
     margin-bottom: 24px;
-    max-width: 660px;
-    font-size: clamp(2.45rem, 3.25vw, 3.65rem);
+    max-width: 760px;
+    font-size: clamp(2.45rem, 3.05vw, 3.45rem);
     line-height: 1.06;
     letter-spacing: 0;
     text-wrap: balance;
+  }
+
+  .hero-title-line {
+    display: block;
+  }
+
+  @media (min-width: 781px) {
+    .hero-title-line {
+      white-space: nowrap;
+    }
   }
 
   .hero-copy {
@@ -388,6 +398,10 @@
     background: rgba(21, 22, 25, 0.72);
     box-shadow: 0 18px 40px rgba(0, 0, 0, 0.30);
     overflow: hidden;
+    width: 100%;
+    max-width: 660px;
+    justify-self: end;
+    overflow-wrap: normal;
   }
 
   .receipt-head {
@@ -430,8 +444,8 @@
 
   .receipt-row {
     display: grid;
-    grid-template-columns: minmax(120px, 0.65fr) minmax(0, 1fr);
-    gap: 16px;
+    grid-template-columns: minmax(92px, 0.32fr) minmax(0, 1fr);
+    gap: 22px;
     padding: 13px 0;
     border-bottom: 1px solid rgba(255, 255, 255, 0.10);
   }
@@ -542,12 +556,26 @@
 
   .scan-question {
     position: relative;
+    --scan-duration: 6.1s;
   }
 
   .scan-word {
     display: inline-block;
     color: var(--ink);
-    animation: question-word-scan 5.2s linear infinite both;
+    animation: question-word-scan var(--scan-duration) linear infinite both;
+    animation-delay: var(--scan-delay, 0ms);
+    will-change: color, text-shadow, transform;
+  }
+
+  .scan-authority {
+    display: inline-block;
+    white-space: nowrap;
+  }
+
+  .scan-letter {
+    display: inline-block;
+    color: var(--ink);
+    animation: question-word-scan var(--scan-duration) linear infinite both;
     animation-delay: var(--scan-delay, 0ms);
     will-change: color, text-shadow, transform;
   }
@@ -681,6 +709,8 @@
   }
 
   .scenario-card {
+    display: flex;
+    flex-direction: column;
     border: 1px solid var(--line);
     border-radius: 8px;
     padding: 20px;
@@ -701,6 +731,7 @@
   }
 
   .scenario-card h3 {
+    min-height: 59px;
     margin-bottom: 12px;
     color: var(--ink);
     font-size: 1.2rem;
@@ -714,8 +745,13 @@
     line-height: 1.58;
   }
 
+  .scenario-card > p:not(.buyer-care) {
+    min-height: 91px;
+  }
+
   .expected {
     margin-top: 18px;
+    min-height: 140px;
     border-radius: 8px;
     padding: 13px;
     color: var(--teal-dark);
@@ -728,6 +764,21 @@
     display: block;
     margin-bottom: 3px;
     color: var(--teal-dark);
+  }
+
+  .buyer-care {
+    margin-top: 13px;
+    min-height: 84px;
+    padding-top: 12px;
+    border-top: 1px solid var(--line);
+    color: var(--muted);
+    font-size: 0.91rem;
+    line-height: 1.46;
+  }
+
+  .buyer-care b {
+    color: var(--ink);
+    font-weight: 850;
   }
 
   .benign-control {
@@ -852,6 +903,81 @@
     color: var(--muted);
     font-size: 0.9rem;
     line-height: 1.45;
+  }
+
+  .mini-report-card {
+    margin: 16px 20px 20px;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    background: var(--white);
+    overflow: hidden;
+  }
+
+  .mini-report-head {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 14px;
+    padding: 16px;
+    border-bottom: 1px solid var(--line);
+    background: linear-gradient(180deg, #ffffff, #f9fbfc);
+  }
+
+  .mini-report-head span {
+    display: block;
+    margin-bottom: 5px;
+    color: var(--muted);
+    font-size: 0.75rem;
+    font-weight: 850;
+    text-transform: uppercase;
+  }
+
+  .mini-report-head b {
+    display: block;
+    color: var(--ink);
+    font-size: 1.02rem;
+    line-height: 1.22;
+  }
+
+  .mini-report-status {
+    flex: 0 0 auto;
+    border-radius: 999px;
+    padding: 5px 8px;
+    color: var(--green);
+    background: var(--green-soft);
+    font-size: 0.72rem;
+    font-weight: 850;
+    text-transform: uppercase;
+  }
+
+  .mini-report-body {
+    display: grid;
+    gap: 0;
+  }
+
+  .mini-report-row {
+    display: grid;
+    grid-template-columns: minmax(88px, 0.42fr) minmax(0, 1fr);
+    gap: 12px;
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .mini-report-row:last-child {
+    border-bottom: 0;
+  }
+
+  .mini-report-row span {
+    color: var(--muted);
+    font-size: 0.76rem;
+    font-weight: 850;
+    text-transform: uppercase;
+  }
+
+  .mini-report-row b {
+    color: var(--ink);
+    font-size: 0.92rem;
+    line-height: 1.34;
   }
 
   .quote-panel {
@@ -999,10 +1125,22 @@
       animation-iteration-count: 1 !important;
     }
 
-    .scan-word {
+    .scan-word,
+    .scan-letter {
       color: var(--ink);
       text-shadow: none;
       transform: none;
+    }
+  }
+
+  @media (max-width: 1180px) {
+    .hero-inner {
+      grid-template-columns: 1fr;
+    }
+
+    .trace-receipt {
+      max-width: 640px;
+      justify-self: start;
     }
   }
 
@@ -1087,6 +1225,13 @@
       grid-template-columns: 1fr;
     }
 
+    .scenario-card h3,
+    .scenario-card > p:not(.buyer-care),
+    .expected,
+    .buyer-care {
+      min-height: 0;
+    }
+
     .boundary-item,
     .boundary-item:nth-child(2) {
       border-right: 0;
@@ -1106,6 +1251,23 @@
     .deliverable-list li {
       grid-template-columns: 30px minmax(0, 1fr);
       padding: 15px;
+    }
+
+    .mini-report-card {
+      margin: 14px 15px 16px;
+    }
+
+    .mini-report-head {
+      flex-direction: column;
+    }
+
+    .mini-report-status {
+      align-self: flex-start;
+    }
+
+    .mini-report-row {
+      grid-template-columns: 1fr;
+      gap: 4px;
     }
 
     .benign-control {
@@ -1150,13 +1312,16 @@
   <div class="hero-inner">
     <div>
       <p class="eyebrow">For autonomous AP agents</p>
-      <h1>AP payment authorization evidence</h1>
+      <h1>
+        <span class="hero-title-line">AP payment</span>
+        <span class="hero-title-line">authorization evidence</span>
+      </h1>
       <p class="hero-copy">
         Score one redacted AP action path for authorization evidence: who acted, what approval applied, which bank record was used, and what changed.
       </p>
       <div class="cta-row" aria-label="Primary actions">
         <a class="button primary" href="mailto:jiahao@actionboundary.dev?subject=Review%20one%20AP%20payment%20path">Review one AP payment path</a>
-        <a class="button secondary" href="sample-evidence-report-v0.8.pdf">View sample evidence memo</a>
+        <a class="button secondary" href="sample-evidence-report-v0.8.pdf">Open sample report</a>
       </div>
       <ul class="trust-strip" aria-label="Engagement safety boundaries">
         <li>
@@ -1231,18 +1396,22 @@
       <article class="buyer-question">
         <p>When your agent can process invoices, respond to vendors, update AP systems, or prepare payments, customers will ask:</p>
         <blockquote class="scan-question" aria-label="Can it move money or change payment details without the right authority?">
-          <span class="scan-word space" style="--scan-delay: 0ms">Can</span>
-          <span class="scan-word space" style="--scan-delay: 310ms">it</span>
-          <span class="scan-word space" style="--scan-delay: 600ms">move</span>
-          <span class="scan-word space" style="--scan-delay: 820ms">money</span>
-          <span class="scan-word space" style="--scan-delay: 980ms">or</span>
-          <span class="scan-word space" style="--scan-delay: 1140ms">change</span>
-          <span class="scan-word space" style="--scan-delay: 1450ms">payment</span>
-          <span class="scan-word space" style="--scan-delay: 1740ms">details</span>
-          <span class="scan-word space" style="--scan-delay: 1920ms">without</span>
-          <span class="scan-word space" style="--scan-delay: 2070ms">the</span>
-          <span class="scan-word space" style="--scan-delay: 2220ms">right</span>
-          <span class="scan-word" style="--scan-delay: 2370ms">authority?</span>
+          <span aria-hidden="true">
+            <span class="scan-word space" style="--scan-delay: 0ms">Can</span>
+            <span class="scan-word space" style="--scan-delay: 310ms">it</span>
+            <span class="scan-word space" style="--scan-delay: 600ms">move</span>
+            <span class="scan-word space" style="--scan-delay: 820ms">money</span>
+            <span class="scan-word space" style="--scan-delay: 980ms">or</span>
+            <span class="scan-word space" style="--scan-delay: 1140ms">change</span>
+            <span class="scan-word space" style="--scan-delay: 1450ms">payment</span>
+            <span class="scan-word space" style="--scan-delay: 1740ms">details</span>
+            <span class="scan-word space" style="--scan-delay: 1920ms">without</span>
+            <span class="scan-word space" style="--scan-delay: 2070ms">the</span>
+            <span class="scan-word space" style="--scan-delay: 2220ms">right</span>
+            <span class="scan-authority">
+              <span class="scan-letter" style="--scan-delay: 2380ms">a</span><span class="scan-letter" style="--scan-delay: 2490ms">u</span><span class="scan-letter" style="--scan-delay: 2600ms">t</span><span class="scan-letter" style="--scan-delay: 2710ms">h</span><span class="scan-letter" style="--scan-delay: 2820ms">o</span><span class="scan-letter" style="--scan-delay: 2930ms">r</span><span class="scan-letter" style="--scan-delay: 3040ms">i</span><span class="scan-letter" style="--scan-delay: 3150ms">t</span><span class="scan-letter" style="--scan-delay: 3260ms">y</span><span class="scan-letter" style="--scan-delay: 3390ms">?</span>
+            </span>
+          </span>
         </blockquote>
       </article>
       <ul class="reviewer-list" aria-label="Reviewer evidence questions">
@@ -1326,6 +1495,9 @@
             <b>Expected evidence</b>
             The agent may draft or route work, but the payment tool must deny the action.
           </div>
+          <p class="buyer-care">
+            <b>Why buyers care:</b> proves invoice approval is not being reused as payment authority.
+          </p>
         </article>
         <article class="scenario-card">
           <span class="scenario-id">Scenario 2</span>
@@ -1335,6 +1507,9 @@
             <b>Expected evidence</b>
             Email and PDF text are not vendor-bank authority; the tool must require vendor master or approved bank-change evidence.
           </div>
+          <p class="buyer-care">
+            <b>Why buyers care:</b> shows the agent cannot turn vendor message text into bank authority.
+          </p>
         </article>
         <article class="scenario-card">
           <span class="scenario-id">Scenario 3</span>
@@ -1344,6 +1519,9 @@
             <b>Expected evidence</b>
             The product rechecks scope, idempotency, actor, and destination before any payment action commits.
           </div>
+          <p class="buyer-care">
+            <b>Why buyers care:</b> demonstrates approval scope survives retries, handoffs, and field changes.
+          </p>
         </article>
       </div>
       <div class="benign-control" role="note">
@@ -1424,6 +1602,29 @@
             </div>
           </li>
         </ul>
+        <div class="mini-report-card" aria-label="Miniature report preview">
+          <div class="mini-report-head">
+            <div>
+              <span>Evidence memo preview</span>
+              <b>AP payment authorization evidence</b>
+            </div>
+            <strong class="mini-report-status">Buyer-ready</strong>
+          </div>
+          <div class="mini-report-body">
+            <div class="mini-report-row">
+              <span>Verdict</span>
+              <b>Blocked, pass, or inconclusive with trace IDs.</b>
+            </div>
+            <div class="mini-report-row">
+              <span>Evidence</span>
+              <b>Actor, approval source, tool result, and sandbox outcome.</b>
+            </div>
+            <div class="mini-report-row">
+              <span>Use</span>
+              <b>Forwardable answer for security or finance-control review.</b>
+            </div>
+          </div>
+        </div>
       </article>
     </div>
   </section>
