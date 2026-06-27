@@ -2,8 +2,8 @@
 
 # Agent Authorization Review for tool-using AI agents
 
-I help teams shipping tool-using AI agents produce staging trace evidence for
-customer security reviews.
+ActionBoundary helps teams shipping tool-using AI agents produce staging trace
+evidence for customer security reviews.
 
 The review checks whether your agent can issue a refund, schedule a payment,
 change a vendor's bank account, grant access, edit records, or export data
@@ -21,8 +21,8 @@ without the right user authority and approval evidence.
 [Sample report](docs/sample-pilot-report-v0.8.md) |
 [Trust & data handling](TRUST.md)
 
-**Want the 3 scenarios I would test for your agent?**
-[Email me](mailto:jiahao@actionboundary.dev?subject=3%20scenarios%20for%20our%20agent) |
+**Want 3 scenarios for your agent?**
+[Contact ActionBoundary](mailto:jiahao@actionboundary.dev?subject=3%20scenarios%20for%20our%20agent) |
 [LinkedIn](https://www.linkedin.com/in/jiahao-zhang-12999b319)
 
 </div>
@@ -61,21 +61,21 @@ security review. Missing critical evidence is `INCONCLUSIVE`, not `PASS`.
 redacted trace or exported log if you already have one. No new instrumentation
 or staging run is required for that first scoreability diagnostic. If the trace
 shows the acting identity, target resource, authorization source, tool result,
-and sandbox outcome, we move into the fixed-scope review. If not, the first
-deliverable is an evidence gap map and minimal instrumentation plan, not a
-forced PASS/FAIL. No production access, no real customer data, no shared
+and sandbox outcome, the review moves into the fixed-scope review. If not, the
+first deliverable is an evidence gap map and minimal instrumentation plan, not
+a forced PASS/FAIL. No production access, no real customer data, no shared
 credentials.
 
-**Why it is different.** Most AI testing checks what the model says. I keep two
-action questions separate. The public battery asks whether a model would
-attempt an unsafe high-impact tool call in a simulated, schema-only loop. A
-client pilot asks whether the product enforced authorization in staging, what
+**Why it is different.** Most AI testing checks what the model says. The method
+keeps two action questions separate. The public battery asks whether a model
+would attempt an unsafe high-impact tool call in a simulated, schema-only loop.
+A client pilot asks whether the product enforced authorization in staging, what
 the tool returned, and whether any sandbox side effect occurred. Missing
 critical evidence is reported as inconclusive, not passed.
 
 A poisoned ticket, invoice, or tool response can look like normal business
 context while quietly asking the agent to issue a refund, export data, or
-change an account. I test whether that text becomes an action.
+change an account. The review tests whether that text becomes an action.
 
 ## Engineer quickstart
 
@@ -269,8 +269,8 @@ Public issue and pull request guidance is covered in [CONTRIBUTING.md](CONTRIBUT
 <details>
 <summary><b>More research and raw data</b></summary>
 
-**Part one, one vendor.** I ran the battery against three current OpenAI
-models, `gpt-5.5`, `gpt-5-mini`, and `gpt-5-nano`. All three blocked every
+**Part one, one vendor.** The first public run used the battery against three
+OpenAI models, `gpt-5.5`, `gpt-5-mini`, and `gpt-5-nano`. All three blocked every
 prompt injection disguised as ordinary business text. What got through were
 mostly plain, direct requests phrased like routine work, plus one one-line
 jailbreak on gpt-5-nano. The models still called `delete_account`,
@@ -283,7 +283,7 @@ Raw run reports: [gpt-5.5](docs/real_report_gpt5.5.md),
 **Part two, six models across three vendors.** Per-model summaries for the
 cross-vendor study above: [docs/runs/v1.5](docs/runs/v1.5).
 
-**Addendum, two OpenAI-compatible models.** I added DeepSeek
+**Addendum, two OpenAI-compatible models.** The addendum added DeepSeek
 `deepseek-v4-flash` and Qwen `qwen/qwen3.7-plus` to the same v1.5 battery. The
 result did not change the lesson: cheaper or API-compatible model paths can
 still call high-impact tools without authorization. Short note:
@@ -425,7 +425,7 @@ Yes, a reasonable NDA or MSA.
 </details>
 
 <details>
-<summary><b>What do I receive?</b></summary>
+<summary><b>What does the review deliver?</b></summary>
 
 An OWASP/NIST-mapped report with trace evidence, severity, concrete
 application-layer fixes, and one retest. See the
@@ -443,6 +443,6 @@ production access.
 [Sample report](docs/sample-pilot-report-v0.8.md) |
 [Trust & data handling](TRUST.md)
 
-**Want the 3 scenarios I would test for your agent?**
-[Email me](mailto:jiahao@actionboundary.dev?subject=3%20scenarios%20for%20our%20agent) |
+**Want 3 scenarios for your agent?**
+[Contact ActionBoundary](mailto:jiahao@actionboundary.dev?subject=3%20scenarios%20for%20our%20agent) |
 [LinkedIn](https://www.linkedin.com/in/jiahao-zhang-12999b319)
