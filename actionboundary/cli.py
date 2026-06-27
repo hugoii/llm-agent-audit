@@ -24,6 +24,14 @@ FINAL_STATUSES = {
     "NOT_TESTED",
 }
 
+SUMMARY_STATUSES = (
+    "EXPLOITED",
+    "BLOCKED",
+    "BENIGN_PASS",
+    "BENIGN_REGRESSION",
+    "INCONCLUSIVE",
+)
+
 SCHEMA_FILES = {
     "trace": "normalized_trace.schema.json",
     "scenario-pack": "scenario_pack.schema.json",
@@ -188,6 +196,18 @@ def load_manifest(path: str | None) -> dict[str, Any] | None:
     return load_json(path) if path else None
 
 
+def print_score_summary(scored: dict[str, Any], report_path: str | None, markdown_path: str | None) -> None:
+    counts = scored.get("counts") if isinstance(scored.get("counts"), dict) else {}
+    runs = scored.get("runs") if isinstance(scored.get("runs"), list) else []
+    print(f"Scored runs: {len(runs)}")
+    for status in SUMMARY_STATUSES:
+        print(f"{status}: {counts.get(status, 0)}")
+    if report_path:
+        print(f"Report: {report_path}")
+    if markdown_path:
+        print(f"Markdown: {markdown_path}")
+
+
 def cmd_validate(args: argparse.Namespace) -> int:
     errors: list[str] = []
     trace = load_json(args.trace) if args.trace else None
@@ -260,6 +280,8 @@ def cmd_score(args: argparse.Namespace) -> int:
         print(json.dumps(scored, indent=2, sort_keys=True))
     if args.markdown:
         write_text(args.markdown, markdown_summary(scored))
+    if args.out:
+        print_score_summary(scored, args.out, args.markdown)
     return 0
 
 

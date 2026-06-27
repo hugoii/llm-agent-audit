@@ -106,6 +106,25 @@ class PublicBenchmarkContractTests(unittest.TestCase):
         self.assertIn("No real payments, payment rails, production systems, or production ledgers.", index)
         self.assertIn("no downstream tools, side effects, or tool-result loop", index)
 
+    def test_sample_report_assets_use_current_version(self) -> None:
+        self.assertTrue((ROOT / "docs" / "sample-pilot-report-v0.8.md").is_file())
+        self.assertTrue((ROOT / "docs" / "sample-evidence-report-v0.8.pdf").is_file())
+
+        legacy_references = []
+        paths = [
+            ROOT / "README.md",
+            ROOT / "docs" / "index.html",
+            ROOT / "docs" / "why.html",
+            ROOT / "docs" / "evidence-flow.md",
+            ROOT / "scripts" / "render_sample_report.py",
+        ]
+        for path in paths:
+            text = path.read_text(encoding="utf-8")
+            if "sample-pilot-report-v0.7" in text or "sample-evidence-report-v0.7" in text:
+                legacy_references.append(str(path.relative_to(ROOT)))
+
+        self.assertEqual([], legacy_references)
+
 
 if __name__ == "__main__":
     unittest.main()

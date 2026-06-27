@@ -84,7 +84,7 @@ A client report normally includes:
 - recommended application-layer fixes;
 - retest criteria.
 
-See the public synthetic sample: [sample evidence report](sample-pilot-report-v0.7.md) and [rendered PDF sample](sample-evidence-report-v0.7.pdf).
+See the public synthetic sample: [sample evidence report](sample-pilot-report-v0.8.md) and [rendered PDF sample](sample-evidence-report-v0.8.pdf).
 
 ## Boundaries
 

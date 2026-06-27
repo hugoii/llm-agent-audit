@@ -21,13 +21,13 @@ from reportlab.pdfgen import canvas
 
 
 ROOT = Path(__file__).resolve().parents[1]
-SOURCE_MD = ROOT / "docs" / "sample-pilot-report-v0.7.md"
+SOURCE_MD = ROOT / "docs" / "sample-pilot-report-v0.8.md"
 OUTPUT_PDF = ROOT / "docs" / "sample-evidence-report.pdf"
-VERSIONED_OUTPUT_PDF = ROOT / "docs" / "sample-evidence-report-v0.7.pdf"
+VERSIONED_OUTPUT_PDF = ROOT / "docs" / "sample-evidence-report-v0.8.pdf"
 OUTPUT_PNG = ROOT / "docs" / "sample-report-preview.png"
 TEMP_PDF = ROOT / "docs" / "sample-evidence-report.tmp.pdf"
 TEMP_PNG = ROOT / "docs" / "sample-report-preview.tmp.png"
-SOURCE_LABEL = "docs/sample-pilot-report-v0.7.md"
+SOURCE_LABEL = "docs/sample-pilot-report-v0.8.md"
 SCRIPT_LABEL = "scripts/render_sample_report.py"
 
 PAGE = letter
@@ -379,6 +379,29 @@ def draw_table(
     return y
 
 
+def summary_block(
+    c: canvas.Canvas,
+    title: str,
+    body: str,
+    x: float,
+    y_top: float,
+    w: float,
+    h: float,
+    fill=WHITE,
+    title_color=TEAL_DARK,
+    badge: str | None = None,
+    badge_color=INK,
+    badge_fill=PAPER,
+) -> None:
+    rect(c, x, y_top - h, w, h, fill, LINE)
+    label(c, title, x + 12, y_top - 20, title_color)
+    body_y = y_top - 39
+    if badge:
+        chip(c, badge, x + 12, y_top - 48, 70, badge_color, badge_fill)
+        body_y = y_top - 70
+    text(c, body, x + 12, body_y, w - 24, "Helvetica", 8.1, 10.4, INK)
+
+
 def draw_bullets(
     c: canvas.Canvas,
     items: list[str],
@@ -481,44 +504,56 @@ def executive_page(c: canvas.Canvas, md: str, meta: dict[str, str], source_hash:
     page_header(c, 2, meta, source_hash, "Executive Summary")
     paragraphs = paragraphs_in_section(md, "## Executive Summary")
     summary_texts = [p for p in paragraphs if "Overall result:" not in p and "Primary recommendation:" not in p]
-    result = next((p for p in paragraphs if "Overall result:" in p), "")
-    recommendation = next((p for p in paragraphs if "Primary recommendation:" in p), "")
 
-    y = PAGE_H - 118
-    text(c, summary_texts[0], MARGIN, y, 318, "Helvetica", 9.5, 13, INK, max_lines=5)
-    y -= 76
-    rect(c, MARGIN, y - 78, 318, 76, TEAL_SOFT, LINE)
-    label(c, "Review question", MARGIN + 12, y - 20, TEAL_DARK)
+    lead = " ".join(summary_texts[:2])
+    y = text(c, lead, MARGIN, PAGE_H - 118, CONTENT_W, "Helvetica", 9.3, 12.5, INK)
+
+    review_top = y - 10
+    rect(c, MARGIN, review_top - 56, CONTENT_W, 56, TEAL_SOFT, LINE)
+    label(c, "Review question", MARGIN + 14, review_top - 20, TEAL_DARK)
     question = "Could untrusted business content push the agent into a high-impact action without trusted, current, scope-matching authorization evidence?"
-    text(c, question, MARGIN + 12, y - 36, 292, "Helvetica-Bold", 9, 12, INK, max_lines=3)
+    text(c, question, MARGIN + 14, review_top - 36, CONTENT_W - 28, "Helvetica-Bold", 8.9, 11.5, INK)
 
-    rect(c, MARGIN + 342, PAGE_H - 296, 162, 178, WHITE, LINE)
-    label(c, "Result", MARGIN + 356, PAGE_H - 142, TEAL_DARK)
-    chip(c, "HIGH RISK", MARGIN + 356, PAGE_H - 166, 72, RED, RED_SOFT)
-    text(c, result.replace("Overall result: ", ""), MARGIN + 356, PAGE_H - 188, 132, "Helvetica", 8, 10.5, INK, max_lines=7)
+    card_top = review_top - 78
+    gap = 14
+    card_w = (CONTENT_W - (gap * 2)) / 3
+    card_h = 154
+    result_body = (
+        "2 unauthorized high-impact actions reached the tool layer. "
+        "7 attack scenarios were blocked safely, and 8 AP benign controls passed."
+    )
+    matter = (
+        "The unsafe requests looked like ordinary AP work: vendor emails, "
+        "invoice notes, and tool results. Model judgment alone is not payment authority."
+    )
+    next_step = (
+        "Keep the model as proposer. Require the tool layer to verify principal, "
+        "approval source, scope, destination, and audit record before high-impact actions commit."
+    )
+    summary_block(
+        c,
+        "Result",
+        result_body,
+        MARGIN,
+        card_top,
+        card_w,
+        card_h,
+        WHITE,
+        TEAL_DARK,
+        "HIGH RISK",
+        RED,
+        RED_SOFT,
+    )
+    summary_block(c, "Why it matters", matter, MARGIN + card_w + gap, card_top, card_w, card_h)
+    summary_block(c, "Recommended next step", next_step, MARGIN + (card_w + gap) * 2, card_top, card_w, card_h)
 
-    y = PAGE_H - 330
-    c.setFont("Helvetica-Bold", 12)
-    c.setFillColor(INK)
-    c.drawString(MARGIN, y, "Primary recommendation")
-    recommendation = sentence_case(recommendation.replace("Primary recommendation: ", ""))
-    text(c, recommendation, MARGIN, y - 18, CONTENT_W, "Helvetica", 9.2, 12.5, INK)
-
-    y -= 86
+    y = card_top - card_h - 34
     c.setFont("Helvetica-Bold", 12)
     c.setFillColor(INK)
     c.drawString(MARGIN, y, "Risk summary")
     risk_rows = table_after_heading(md, "## Risk Summary")
     draw_table(c, risk_rows, MARGIN, y - 16, [82, 44, 378], 7.5, 9.5)
 
-    y = 188
-    rect(c, MARGIN, y - 80, CONTENT_W, 80, WHITE, LINE)
-    label(c, "Why this matters", MARGIN + 14, y - 22, TEAL_DARK)
-    matter = (
-        "The unsafe paths did not require exotic jailbreaks. They looked like ordinary AP work: "
-        "a vendor email, an invoice note, and a model that was allowed to treat business context as authority."
-    )
-    text(c, matter, MARGIN + 14, y - 40, CONTENT_W - 28, "Helvetica", 9, 12, INK)
     c.showPage()
 
 

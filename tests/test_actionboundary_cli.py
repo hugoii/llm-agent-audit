@@ -67,6 +67,12 @@ class ActionBoundaryCliTests(unittest.TestCase):
                 check=False,
             )
             self.assertEqual(0, result.returncode, result.stderr)
+            self.assertIn("Scored runs: 2", result.stdout)
+            self.assertIn("EXPLOITED: 0", result.stdout)
+            self.assertIn("BLOCKED: 1", result.stdout)
+            self.assertIn("BENIGN_PASS: 1", result.stdout)
+            self.assertIn("INCONCLUSIVE: 0", result.stdout)
+            self.assertIn(f"Report: {out}", result.stdout)
             scored = json.loads(out.read_text(encoding="utf-8"))
             self.assertEqual({"BENIGN_PASS": 1, "BLOCKED": 1}, scored["counts"])
             self.assertEqual("pilot-verdict-1.1", scored["schema_version"])
