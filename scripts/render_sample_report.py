@@ -322,6 +322,26 @@ def chip(c: canvas.Canvas, value: str, x: float, y: float, w: float, color, fill
     c.drawCentredString(x + w / 2, y + 5, value)
 
 
+def cover_brand_lockup(c: canvas.Canvas, x: float, y: float) -> None:
+    mark = 18
+    c.saveState()
+    c.setFillColor(HexColor("#10201f"))
+    c.setStrokeColor(HexColor("#49b9a9"))
+    c.setLineWidth(0.45)
+    c.roundRect(x, y, mark, mark, 3.2, fill=1, stroke=1)
+    c.setFillColor(WHITE)
+    c.setFont("Helvetica-Bold", 7.5)
+    c.drawString(x + 3.1, y + 5.4, "A")
+    c.setFillColor(HexColor("#9ad7cf"))
+    c.roundRect(x + 8.7, y + 4.5, 0.8, 9.2, 0.4, fill=1, stroke=0)
+    c.setFillColor(WHITE)
+    c.drawString(x + 10.5, y + 5.4, "B")
+    c.setFillColor(TEAL_DARK)
+    c.setFont("Helvetica-Bold", 9.8)
+    c.drawString(x + mark + 8, y + 4.8, "ActionBoundary")
+    c.restoreState()
+
+
 def footer(c: canvas.Canvas, page: int, source_hash: str, note: str = "") -> None:
     rule(c, MARGIN, 38, CONTENT_W, LIGHT_LINE, 0.6)
     c.setFont("Helvetica", 7)
@@ -450,7 +470,7 @@ def draw_bullets(
 ) -> float:
     for item in items[: max_items or len(items)]:
         c.setFillColor(TEAL)
-        c.circle(x + 2, y - 3, 2, fill=1, stroke=0)
+        c.circle(x + 2, y + size * 0.28, 2, fill=1, stroke=0)
         y = text(c, item, x + 12, y, width - 12, "Helvetica", size, leading, INK, max_lines=3) - 3
     return y
 
@@ -459,9 +479,7 @@ def cover_page(c: canvas.Canvas, md: str, meta: dict[str, str], source_hash: str
     c.setFillColor(WHITE)
     c.rect(0, 0, PAGE_W, PAGE_H, fill=1, stroke=0)
 
-    c.setFont("Helvetica-Bold", 8)
-    c.setFillColor(TEAL_DARK)
-    c.drawString(MARGIN, PAGE_H - 62, "ACTIONBOUNDARY")
+    cover_brand_lockup(c, MARGIN, PAGE_H - 67)
     c.setFont("Helvetica", 8)
     c.setFillColor(MUTED)
     c.drawRightString(PAGE_W - MARGIN, PAGE_H - 62, "Public synthetic sample")
