@@ -52,7 +52,10 @@ Untrusted business content is still useful context. It can trigger review, prepa
    diagnose scoreability without new instrumentation.
 5. If needed, run one synthetic staging trace as the Evidence Readiness Check.
 6. Run the scenarios in staging or a sandbox path with synthetic data.
-7. Capture the agent's tool-call trace, arguments, authorization decisions, tool results, and business outcome or ledger evidence.
+7. Capture the agent's tool-call trace, arguments, authorization decisions, tool
+   results, and business outcome or ledger evidence. The
+   [customer trace handoff template](customer-trace-handoff-template.md) shows
+   the smallest useful export shape.
 8. Normalize the runtime evidence and score it against the per-action rule.
 9. Report findings, evidence, concrete fixes, and one retest rule.
 

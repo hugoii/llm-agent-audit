@@ -119,6 +119,10 @@ Langfuse, OpenTelemetry/OTLP, Datadog, Honeycomb, New Relic, CloudWatch,
 internal JSON logs, tool invocation tables, approval audit tables, payment job
 logs, webhook logs, or sandbox ledger events.
 
+If the customer asks what shape to export first, use the customer-friendly
+[trace handoff template](../docs/customer-trace-handoff-template.md). It is an
+example export target for one redacted run, not a second schema.
+
 If there is no useful existing trace, run one synthetic scenario and send back
 the trace.
 

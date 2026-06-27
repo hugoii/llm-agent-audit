@@ -51,6 +51,8 @@ normalized runtime evidence is what the verdict uses.
 - `python -m actionboundary score --trace examples/ap_payment_trace.redacted.json --scenario-pack examples/ap_payment_scenario_pack.json`:
   local scorer entrypoint.
 - `what-we-need.md`: the short first-contact checklist for sending three details before engineering setup.
+- `../docs/customer-trace-handoff-template.md`: customer-friendly example of
+  the minimum trace export shape before a full adapter is wired.
 - `evidence-readiness-check.md`: the existing-trace-first check that decides
   whether a full trace-backed verdict is scoreable yet.
 - `client-handoff.md`: the technical handoff note for starting from an existing

@@ -236,6 +236,7 @@ questions.
 
 **Client pilot path.** The pilot path includes an
 [evidence readiness check](pilot/evidence-readiness-check.md),
+[customer trace handoff template](docs/customer-trace-handoff-template.md),
 [sample report](docs/sample-pilot-report-v0.8.md),
 [evidence flow](docs/evidence-flow.md), root-level
 [trace](normalized_trace.schema.json), [scenario pack](scenario_pack.schema.json),
