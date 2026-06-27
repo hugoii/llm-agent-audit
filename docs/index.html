@@ -408,6 +408,27 @@
     color: var(--hero-accent);
   }
 
+  .hero-ap-route {
+    display: inline-flex;
+    align-items: center;
+    width: fit-content;
+    margin: -4px 0 22px;
+    border: 1px solid rgba(154, 215, 207, 0.26);
+    border-radius: 8px;
+    padding: 9px 11px;
+    color: var(--hero-button-hover);
+    background: rgba(154, 215, 207, 0.08);
+    font-size: 0.92rem;
+    font-weight: 750;
+    text-decoration: none;
+  }
+
+  .hero-ap-route:hover {
+    border-color: rgba(154, 215, 207, 0.48);
+    color: var(--white);
+    background: rgba(154, 215, 207, 0.12);
+  }
+
   .button {
     display: inline-flex;
     align-items: center;
@@ -465,6 +486,18 @@
     color: var(--teal-dark);
     border-color: rgba(15, 118, 110, 0.45);
     background: var(--teal-soft);
+  }
+
+  .button.ap-review-link {
+    color: var(--teal-dark);
+    border-color: rgba(15, 118, 110, 0.30);
+    background: var(--teal-soft);
+  }
+
+  .button.ap-review-link:hover {
+    color: var(--teal-dark);
+    border-color: rgba(15, 118, 110, 0.52);
+    background: var(--white);
   }
 
   .method-menu {
@@ -1040,7 +1073,7 @@
   .finding-points {
     display: grid;
     gap: 12px;
-    margin: 20px 0 0;
+    margin: 20px 0 18px;
   }
 
   .finding-point {
@@ -1058,10 +1091,18 @@
   }
 
   .finding-actions {
-    display: flex;
-    flex-wrap: wrap;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
     gap: 12px;
     margin-top: 22px;
+  }
+
+  .finding-actions .ap-review-link {
+    grid-column: 1 / -1;
+  }
+
+  .finding-actions .button {
+    width: 100%;
   }
 
   .ap-audit-section {
@@ -1730,12 +1771,6 @@
 
   .finding-claim-emphasis {
     color: var(--teal-dark);
-  }
-
-  .finding-buyer {
-    max-width: 48ch;
-    margin: 0 0 22px;
-    color: var(--muted);
   }
 
   .dot-table {
@@ -5086,6 +5121,7 @@
         <span>Real customer data is not required.</span>
       </span>
     </div>
+    <a class="hero-ap-route" href="payment-authorization-review.html">For AP/payment agents: review one payment authorization path &rarr;</a>
     <div class="trace-scene" data-demo aria-label="Mini evidence demo: authorization boundary trace">
       <div class="scene-label">
         <span class="demo-title">
@@ -5121,12 +5157,17 @@
   <section id="finding" class="section finding-section" aria-label="Payment workflow finding">
     <div class="finding-layout">
       <div>
-        <p class="case-label">Public AP workflow finding</p>
-        <h2>A payment approval is not user authorization.</h2>
-        <p class="lead">In a synthetic AP workflow, the invoice approval was valid, but the user only had view-only AP access and could not schedule payments. In advisory mode, 18 of 20 local runs still called <code>schedule_payment</code> and reached a scheduled state in the sandbox simulation.</p>
-        <blockquote class="finding-claim">The approval was real.<br><span class="finding-claim-emphasis">The user&rsquo;s authority was not.</span></blockquote>
-        <p class="finding-buyer">Security reviewers need proof the product can separate business approval from execution authority. Verdicts use runtime evidence for actor, target, authorization, tool result, and sandbox outcome; missing critical evidence is inconclusive.</p>
+        <p class="case-label">The boundary we test</p>
+        <h2>Payment approval is not payment authority.</h2>
+        <p class="lead">In AP automation, a valid invoice approval does not prove the current actor may schedule payment or change payment details.</p>
+        <div class="finding-points" aria-label="AP payment authorization boundary checks">
+          <div class="finding-point"><b>Invoice approved?</b><span>Good. That is only one evidence field.</span></div>
+          <div class="finding-point"><b>Current actor authorized to schedule payment?</b><span>Separate question.</span></div>
+          <div class="finding-point"><b>Vendor-bank destination verified?</b><span>Separate question.</span></div>
+          <div class="finding-point"><b>Final side effect blocked or committed?</b><span>Separate question.</span></div>
+        </div>
         <div class="finding-actions">
+          <a class="button ap-review-link" href="payment-authorization-review.html">Review one AP payment path &rarr;</a>
           <a class="button outline" href="https://github.com/hugoii/llm-agent-audit/blob/master/docs/payment-approval-is-not-user-authorization.md">Read public case note</a>
           <a class="button outline" href="#report">View sample report</a>
         </div>
@@ -5254,6 +5295,57 @@
     </aside>
   </section>
 
+
+  <section id="what" class="section">
+    <h2>What ActionBoundary tests</h2>
+    <p class="lead">ActionBoundary checks the action path against authorization evidence: what the agent read, what it called, who had authority, and what changed.</p>
+    <div class="trace-lens" aria-label="Action path authorization evidence lens">
+      <div class="lens-path" role="list">
+        <div class="lens-node" style="--i: 0" role="listitem">
+          <span class="lens-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none">
+              <path d="M5 6.5 12 12l7-5.5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"></path>
+              <path d="M5 7h14v10H5z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"></path>
+            </svg>
+          </span>
+          <b>Untrusted context</b>
+          <small>Emails, tickets, documents, tool responses.</small>
+        </div>
+        <div class="lens-node" style="--i: 1" role="listitem">
+          <span class="lens-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none">
+              <path d="m8 9-4 3 4 3" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"></path>
+              <path d="m16 9 4 3-4 3" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"></path>
+              <path d="m13 5-2 14" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"></path>
+            </svg>
+          </span>
+          <b>Tool call</b>
+          <small>Refund, payment, export, access grant.</small>
+        </div>
+        <div class="lens-node" style="--i: 2" role="listitem">
+          <span class="lens-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none">
+              <path d="M12 3 5 5.7v5.8c0 4.1 2.8 7.6 7 9 4.2-1.4 7-4.9 7-9V5.7L12 3Z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"></path>
+              <path d="m8.8 12.1 2.1 2.1 4.3-4.6" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"></path>
+            </svg>
+          </span>
+          <b>Authorization source</b>
+          <small>User, tenant, approval, policy, source of truth.</small>
+        </div>
+        <div class="lens-node" style="--i: 3" role="listitem">
+          <span class="lens-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none">
+              <path d="M7 4h10v16H7z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"></path>
+              <path d="M10 8h4M10 12h4M10 16h2" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"></path>
+            </svg>
+          </span>
+          <b>Action outcome</b>
+          <small>What executed, changed, or was denied.</small>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <section id="model-spread" class="section model-evidence-section" aria-labelledby="model-spread-title">
     <div class="model-evidence-shell">
       <div class="model-evidence-intro">
@@ -5307,57 +5399,6 @@
       </article>
     </div>
   </section>
-
-  <section id="what" class="section">
-    <h2>What ActionBoundary tests</h2>
-    <p class="lead">ActionBoundary checks the action path against authorization evidence: what the agent read, what it called, who had authority, and what changed.</p>
-    <div class="trace-lens" aria-label="Action path authorization evidence lens">
-      <div class="lens-path" role="list">
-        <div class="lens-node" style="--i: 0" role="listitem">
-          <span class="lens-icon" aria-hidden="true">
-            <svg viewBox="0 0 24 24" fill="none">
-              <path d="M5 6.5 12 12l7-5.5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"></path>
-              <path d="M5 7h14v10H5z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"></path>
-            </svg>
-          </span>
-          <b>Untrusted context</b>
-          <small>Emails, tickets, documents, tool responses.</small>
-        </div>
-        <div class="lens-node" style="--i: 1" role="listitem">
-          <span class="lens-icon" aria-hidden="true">
-            <svg viewBox="0 0 24 24" fill="none">
-              <path d="m8 9-4 3 4 3" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"></path>
-              <path d="m16 9 4 3-4 3" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"></path>
-              <path d="m13 5-2 14" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"></path>
-            </svg>
-          </span>
-          <b>Tool call</b>
-          <small>Refund, payment, export, access grant.</small>
-        </div>
-        <div class="lens-node" style="--i: 2" role="listitem">
-          <span class="lens-icon" aria-hidden="true">
-            <svg viewBox="0 0 24 24" fill="none">
-              <path d="M12 3 5 5.7v5.8c0 4.1 2.8 7.6 7 9 4.2-1.4 7-4.9 7-9V5.7L12 3Z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"></path>
-              <path d="m8.8 12.1 2.1 2.1 4.3-4.6" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"></path>
-            </svg>
-          </span>
-          <b>Authorization source</b>
-          <small>User, tenant, approval, policy, source of truth.</small>
-        </div>
-        <div class="lens-node" style="--i: 3" role="listitem">
-          <span class="lens-icon" aria-hidden="true">
-            <svg viewBox="0 0 24 24" fill="none">
-              <path d="M7 4h10v16H7z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"></path>
-              <path d="M10 8h4M10 12h4M10 16h2" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"></path>
-            </svg>
-          </span>
-          <b>Action outcome</b>
-          <small>What executed, changed, or was denied.</small>
-        </div>
-      </div>
-    </div>
-  </section>
-
   <section class="section workflow-section">
     <h2>Pick the workflow that can block a deal.</h2>
     <p class="lead">Start with the action your buyer will ask you to prove is controlled.</p>
