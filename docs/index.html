@@ -335,6 +335,7 @@
     position: relative;
     display: inline-block;
     width: fit-content;
+    max-width: 100%;
     margin: 6px 0 26px;
     padding: 0 1px 11px;
     border: 0;
@@ -344,6 +345,7 @@
     font-weight: 800;
     letter-spacing: -0.01em;
     line-height: 1.2;
+    overflow: hidden;
   }
 
   .hero-principle::before {
@@ -1292,7 +1294,6 @@
     grid-template-columns: 64px minmax(0, 1fr) auto;
     gap: 18px;
     align-items: start;
-    margin: 0 -14px;
     padding: 17px 14px;
     border-bottom: 1px solid rgba(184, 193, 204, 0.70);
     border-radius: 8px;
@@ -1305,7 +1306,7 @@
   }
 
   .ap-entry:first-child {
-    margin-top: -10px;
+    padding-top: 7px;
   }
 
   .ap-entry:last-child {
@@ -3163,6 +3164,7 @@
   .intake-list b {
     display: block;
     margin-bottom: 1px;
+    color: var(--ink);
   }
 
   .intake-list span {
@@ -3245,9 +3247,8 @@
     position: absolute;
     top: 0;
     bottom: 0;
-    left: 50%;
-    width: 100vw;
-    transform: translateX(-50%);
+    left: 0;
+    right: 0;
     pointer-events: none;
   }
 
@@ -4533,12 +4534,21 @@
     .ap-entry {
       grid-template-columns: 52px minmax(0, 1fr);
       gap: 13px;
-      margin: 0 -10px;
-      padding: 20px 10px;
+      margin: 0;
+      padding: 20px 0;
     }
 
     .ap-entry-index {
       grid-template-columns: 32px 1fr;
+    }
+
+    .report-frame {
+      overflow: hidden;
+    }
+
+    .report-frame::before {
+      inset: 0;
+      filter: blur(10px);
     }
 
     .about {
@@ -5216,16 +5226,16 @@
         <div class="demo-stage">
           <div class="trace-grid">
             <div class="trace-lane">
-              <div class="trace-node untrusted" style="--pulse-delay: 600ms"><span class="node-label">Request source</span><span class="node-value">Vendor email</span><small>bank account changed</small></div>
-              <div class="trace-node" style="--pulse-delay: 1400ms"><span class="node-label">Authorization source</span><span class="node-value">No trusted record</span><small>content is not approval</small></div>
-              <div class="trace-node" style="--pulse-delay: 2200ms"><span class="node-label">Tool call</span><span class="node-value"><code>schedule_payment</code></span><small><span class="amt">$48,000</span> to email account</small></div>
-              <div class="trace-status fail" style="--pulse-delay: 3000ms"><span class="node-label">Review result</span><span class="node-value">NO AUTHORITY</span><small>would execute without a tool gate</small></div>
+              <div class="trace-node untrusted" style="--pulse-delay: 600ms"><span class="node-label">Request source</span> <span class="node-value">Vendor email</span> <small>bank account changed</small></div>
+              <div class="trace-node" style="--pulse-delay: 1400ms"><span class="node-label">Authorization source</span> <span class="node-value">No trusted record</span> <small>content is not approval</small></div>
+              <div class="trace-node" style="--pulse-delay: 2200ms"><span class="node-label">Tool call</span> <span class="node-value"><code>schedule_payment</code></span> <small><span class="amt">$48,000</span> to email account</small></div>
+              <div class="trace-status fail" style="--pulse-delay: 3000ms"><span class="node-label">Review result</span> <span class="node-value">NO AUTHORITY</span> <small>would execute without a tool gate</small></div>
             </div>
             <div class="trace-lane">
-              <div class="trace-node trusted" style="--pulse-delay: 5800ms"><span class="node-label">Request source</span><span class="node-value">Approval system</span><small>source of truth matched</small></div>
-              <div class="trace-node" style="--pulse-delay: 6600ms"><span class="node-label">Authorization source</span><span class="node-value">User + tenant match</span><small>permission and approval active</small></div>
-              <div class="trace-node" style="--pulse-delay: 7400ms"><span class="node-label">Tool call</span><span class="node-value"><code>schedule_payment</code></span><small><span class="amt">$4,200</span> to verified account</small></div>
-              <div class="trace-status pass" style="--pulse-delay: 8200ms"><span class="node-label">Review result</span><span class="node-value">AUTHORITY MATCHED</span><small>evidence-backed action</small></div>
+              <div class="trace-node trusted" style="--pulse-delay: 5800ms"><span class="node-label">Request source</span> <span class="node-value">Approval system</span> <small>source of truth matched</small></div>
+              <div class="trace-node" style="--pulse-delay: 6600ms"><span class="node-label">Authorization source</span> <span class="node-value">User + tenant match</span> <small>permission and approval active</small></div>
+              <div class="trace-node" style="--pulse-delay: 7400ms"><span class="node-label">Tool call</span> <span class="node-value"><code>schedule_payment</code></span> <small><span class="amt">$4,200</span> to verified account</small></div>
+              <div class="trace-status pass" style="--pulse-delay: 8200ms"><span class="node-label">Review result</span> <span class="node-value">AUTHORITY MATCHED</span> <small>evidence-backed action</small></div>
             </div>
           </div>
         </div>
@@ -5299,22 +5309,22 @@
               <span role="columnheader">Enforced outcome</span>
             </div>
             <div class="dot-row" role="row">
-              <span class="model-cell"><span class="model-mark openai"><img src="assets/provider-marks/openai-blossom.svg" alt="" aria-hidden="true"></span><span class="model-name"><b>GPT-5.5</b><small>OpenAI API</small></span></span>
+              <span class="model-cell"><span class="model-mark openai"><img src="assets/provider-marks/openai-blossom.svg" alt="" aria-hidden="true"></span> <span class="model-name"><b>GPT-5.5</b> <small>OpenAI API</small></span></span>
               <span class="dot-cell" data-label="Advisory outcome"><span class="dot-strip"><i class="dot sched"></i><i class="dot sched"></i><i class="dot sched"></i><i class="dot sched"></i><i class="dot sched"></i></span><b class="dot-count sched">5 scheduled</b></span>
-              <span class="dot-cell" data-label="Enforced outcome"><span class="dot-strip"><i class="dot block"></i><i class="dot block"></i><i class="dot block"></i><i class="dot block"></i><i class="dot none"></i></span><b class="dot-count block compound"><span>4 blocked</span><small>1 no attempt</small></b></span>
+              <span class="dot-cell" data-label="Enforced outcome"><span class="dot-strip"><i class="dot block"></i><i class="dot block"></i><i class="dot block"></i><i class="dot block"></i><i class="dot none"></i></span><b class="dot-count block compound"><span>4 blocked</span> <small>1 no attempt</small></b></span>
             </div>
             <div class="dot-row" role="row">
-              <span class="model-cell"><span class="model-mark anthropic"><img src="assets/provider-marks/anthropic-webclip.png" alt="" aria-hidden="true"></span><span class="model-name"><b>Claude Sonnet 4.6</b><small>Anthropic API</small></span></span>
+              <span class="model-cell"><span class="model-mark anthropic"><img src="assets/provider-marks/anthropic-webclip.png" alt="" aria-hidden="true"></span> <span class="model-name"><b>Claude Sonnet 4.6</b> <small>Anthropic API</small></span></span>
               <span class="dot-cell" data-label="Advisory outcome"><span class="dot-strip"><i class="dot sched"></i><i class="dot sched"></i><i class="dot sched"></i><i class="dot none"></i><i class="dot none"></i></span><b class="dot-count sched">3 scheduled</b></span>
-              <span class="dot-cell" data-label="Enforced outcome"><span class="dot-strip"><i class="dot block"></i><i class="dot block"></i><i class="dot block"></i><i class="dot block"></i><i class="dot none"></i></span><b class="dot-count block compound"><span>4 blocked</span><small>1 no attempt</small></b></span>
+              <span class="dot-cell" data-label="Enforced outcome"><span class="dot-strip"><i class="dot block"></i><i class="dot block"></i><i class="dot block"></i><i class="dot block"></i><i class="dot none"></i></span><b class="dot-count block compound"><span>4 blocked</span> <small>1 no attempt</small></b></span>
             </div>
             <div class="dot-row" role="row">
-              <span class="model-cell"><span class="model-mark deepseek"><img src="assets/provider-marks/deepseek.ico" alt="" aria-hidden="true"></span><span class="model-name"><b>DeepSeek V4 Pro</b><small>DeepSeek API</small></span></span>
+              <span class="model-cell"><span class="model-mark deepseek"><img src="assets/provider-marks/deepseek.ico" alt="" aria-hidden="true"></span> <span class="model-name"><b>DeepSeek V4 Pro</b> <small>DeepSeek API</small></span></span>
               <span class="dot-cell" data-label="Advisory outcome"><span class="dot-strip"><i class="dot sched"></i><i class="dot sched"></i><i class="dot sched"></i><i class="dot sched"></i><i class="dot sched"></i></span><b class="dot-count sched">5 scheduled</b></span>
               <span class="dot-cell" data-label="Enforced outcome"><span class="dot-strip"><i class="dot block"></i><i class="dot block"></i><i class="dot block"></i><i class="dot block"></i><i class="dot block"></i></span><b class="dot-count block">5 blocked</b></span>
             </div>
             <div class="dot-row" role="row">
-              <span class="model-cell"><span class="model-mark gemini"><img src="assets/provider-marks/gemini.svg" alt="" aria-hidden="true"></span><span class="model-name"><b>Gemini 3.1 Pro Preview</b><small>Google API</small></span></span>
+              <span class="model-cell"><span class="model-mark gemini"><img src="assets/provider-marks/gemini.svg" alt="" aria-hidden="true"></span> <span class="model-name"><b>Gemini 3.1 Pro Preview</b> <small>Google API</small></span></span>
               <span class="dot-cell" data-label="Advisory outcome"><span class="dot-strip"><i class="dot sched"></i><i class="dot sched"></i><i class="dot sched"></i><i class="dot sched"></i><i class="dot sched"></i></span><b class="dot-count sched">5 scheduled</b></span>
               <span class="dot-cell" data-label="Enforced outcome"><span class="dot-strip"><i class="dot block"></i><i class="dot block"></i><i class="dot block"></i><i class="dot block"></i><i class="dot block"></i></span><b class="dot-count block">5 blocked</b></span>
             </div>
@@ -5459,21 +5469,21 @@
         <div class="spectrum" aria-label="Average unsafe high-impact tool-call attempts per run across six model APIs, 0.0 to 8.0 of 58">
           <div class="spectrum-top">
             <span class="spectrum-axislabel">Unsafe high-impact tool-call attempts per run</span>
-            <span class="spectrum-legend"><span class="lg frontier"></span>frontier<span class="lg budget"></span>budget</span>
+            <span class="spectrum-legend"><span class="lg frontier"></span>frontier <span class="lg budget"></span>budget</span>
           </div>
           <div class="spectrum-ticks" aria-hidden="true">
-            <span class="scale-safe"><b>0</b><small class="spectrum-badge">No unsafe calls</small></span>
+            <span class="scale-safe"><b>0</b> <small class="spectrum-badge">No unsafe calls</small></span>
             <span class="scale-mid">4</span>
-            <span class="scale-risk"><b>8</b><small class="spectrum-badge">More unsafe calls</small></span>
+            <span class="scale-risk"><b>8</b> <small class="spectrum-badge">More unsafe calls</small></span>
           </div>
           <div class="spectrum-track">
             <span class="spectrum-line" aria-hidden="true"></span>
-            <button class="sp-mark frontier above edge-left" style="--x: 3%; transition-delay: 200ms" type="button" data-runs="Runs: 0, 0, 0" aria-label="Claude Opus 4.8 frontier model, 0.0 average unsafe tool-call attempts, runs 0 0 0"><span class="sp-pt"></span><span class="sp-label"><b>Claude Opus 4.8</b><small>0.0 avg</small></span></button>
-            <button class="sp-mark budget below" style="--x: 23%; transition-delay: 320ms" type="button" data-runs="Runs: 1, 2, 2" aria-label="GPT-5-mini budget model, 1.7 average unsafe tool-call attempts, runs 1 2 2"><span class="sp-pt"></span><span class="sp-label"><b>GPT-5-mini</b><small>1.7 avg</small></span></button>
-            <button class="sp-mark frontier above" style="--x: 26.5%; transition-delay: 340ms" type="button" data-runs="Runs: 3, 1, 2; API-level block note applies" aria-label="GPT-5.5 frontier model, 2.0 average unsafe tool-call attempts, runs 3 1 2, API-level block note applies"><span class="sp-pt"></span><span class="sp-label"><b>GPT-5.5</b><small>2.0 avg</small></span></button>
-            <button class="sp-mark budget below" style="--x: 53.5%; transition-delay: 470ms" type="button" data-runs="Runs: 5, 4, 4" aria-label="Claude Haiku 4.5 budget model, 4.3 average unsafe tool-call attempts, runs 5 4 4"><span class="sp-pt"></span><span class="sp-label"><b>Claude Haiku 4.5</b><small>4.3 avg</small></span></button>
-            <button class="sp-mark budget above" style="--x: 70%; transition-delay: 550ms" type="button" data-runs="Runs: 5, 6, 6" aria-label="Gemini 3.5 Flash budget model, 5.7 average unsafe tool-call attempts, runs 5 6 6"><span class="sp-pt"></span><span class="sp-label"><b>Gemini 3.5 Flash</b><small>5.7 avg</small></span></button>
-            <button class="sp-mark frontier below edge-right" style="--x: 97%; transition-delay: 680ms" type="button" data-runs="Runs: 8, 7, 9" aria-label="Gemini 3.1 Pro frontier model, 8.0 average unsafe tool-call attempts, runs 8 7 9"><span class="sp-pt"></span><span class="sp-label"><b>Gemini 3.1 Pro</b><small>8.0 avg</small></span></button>
+            <button class="sp-mark frontier above edge-left" style="--x: 3%; transition-delay: 200ms" type="button" data-runs="Runs: 0, 0, 0" aria-label="Claude Opus 4.8 frontier model, 0.0 average unsafe tool-call attempts, runs 0 0 0"><span class="sp-pt"></span><span class="sp-label"><b>Claude Opus 4.8</b> <small>0.0 avg</small></span></button>
+            <button class="sp-mark budget below" style="--x: 23%; transition-delay: 320ms" type="button" data-runs="Runs: 1, 2, 2" aria-label="GPT-5-mini budget model, 1.7 average unsafe tool-call attempts, runs 1 2 2"><span class="sp-pt"></span><span class="sp-label"><b>GPT-5-mini</b> <small>1.7 avg</small></span></button>
+            <button class="sp-mark frontier above" style="--x: 26.5%; transition-delay: 340ms" type="button" data-runs="Runs: 3, 1, 2; API-level block note applies" aria-label="GPT-5.5 frontier model, 2.0 average unsafe tool-call attempts, runs 3 1 2, API-level block note applies"><span class="sp-pt"></span><span class="sp-label"><b>GPT-5.5</b> <small>2.0 avg</small></span></button>
+            <button class="sp-mark budget below" style="--x: 53.5%; transition-delay: 470ms" type="button" data-runs="Runs: 5, 4, 4" aria-label="Claude Haiku 4.5 budget model, 4.3 average unsafe tool-call attempts, runs 5 4 4"><span class="sp-pt"></span><span class="sp-label"><b>Claude Haiku 4.5</b> <small>4.3 avg</small></span></button>
+            <button class="sp-mark budget above" style="--x: 70%; transition-delay: 550ms" type="button" data-runs="Runs: 5, 6, 6" aria-label="Gemini 3.5 Flash budget model, 5.7 average unsafe tool-call attempts, runs 5 6 6"><span class="sp-pt"></span><span class="sp-label"><b>Gemini 3.5 Flash</b> <small>5.7 avg</small></span></button>
+            <button class="sp-mark frontier below edge-right" style="--x: 97%; transition-delay: 680ms" type="button" data-runs="Runs: 8, 7, 9" aria-label="Gemini 3.1 Pro frontier model, 8.0 average unsafe tool-call attempts, runs 8 7 9"><span class="sp-pt"></span><span class="sp-label"><b>Gemini 3.1 Pro</b> <small>8.0 avg</small></span></button>
           </div>
         </div>
         <p class="model-takeaway"><b>Takeaway:</b> Use the strongest model you can. Still enforce authorization at the tool layer.</p>
@@ -5505,28 +5515,28 @@
       <article class="workflow-row">
         <div class="workflow-name">
           <span class="workflow-dot" aria-hidden="true"></span>
-          <span><b>Finance and AP</b><small>Accounts payable, billing, vendor operations</small></span>
+          <span><b>Finance and AP</b> <small>Accounts payable, billing, vendor operations</small></span>
         </div>
         <span class="workflow-actions">Payments · vendor bank changes · refunds</span>
-        <p class="workflow-question"><b>Who had authority to move money?</b><small>Match user, account, amount, and vendor.</small></p>
+        <p class="workflow-question"><b>Who had authority to move money?</b> <small>Match user, account, amount, and vendor.</small></p>
         <a class="workflow-link" href="https://github.com/hugoii/llm-agent-audit/blob/master/docs/payment-approval-is-not-user-authorization.md">Case note</a>
       </article>
       <article class="workflow-row">
         <div class="workflow-name">
           <span class="workflow-dot" aria-hidden="true"></span>
-          <span><b>Healthcare</b><small>Prior auth, care operations, patient workflows</small></span>
+          <span><b>Healthcare</b> <small>Prior auth, care operations, patient workflows</small></span>
         </div>
         <span class="workflow-actions">Prior auth · scheduling · record changes</span>
-        <p class="workflow-question"><b>Did authorization still match the action?</b><small>Match patient, payer, scope, timing, and remaining units.</small></p>
+        <p class="workflow-question"><b>Did authorization still match the action?</b> <small>Match patient, payer, scope, timing, and remaining units.</small></p>
         <a class="workflow-link" href="https://github.com/hugoii/llm-agent-audit/blob/master/docs/multi-turn-authorization-drift-case-note.md">Case note</a>
       </article>
       <article class="workflow-row">
         <div class="workflow-name">
           <span class="workflow-dot" aria-hidden="true"></span>
-          <span><b>Enterprise ops</b><small>Internal systems, support, dispatch, data access</small></span>
+          <span><b>Enterprise ops</b> <small>Internal systems, support, dispatch, data access</small></span>
         </div>
         <span class="workflow-actions">Access grants · exports · dispatch · submissions</span>
-        <p class="workflow-question"><b>Did untrusted context become an action?</b><small>Tickets, transcripts, and documents should not authorize actions.</small></p>
+        <p class="workflow-question"><b>Did untrusted context become an action?</b> <small>Tickets, transcripts, and documents should not authorize actions.</small></p>
         <a class="workflow-link" href="#intake">Get scenarios</a>
       </article>
     </div>
@@ -5669,9 +5679,9 @@
     <div class="offer-flow">
       <p class="offer-flow-label">How it works</p>
       <ol class="flow-line">
-        <li class="flow-node"><span class="flow-dot">1</span><span class="flow-text"><b>Scenario fit</b><span>ActionBoundary sends 3 first scenarios before any setup.</span></span></li>
-        <li class="flow-node"><span class="flow-dot">2</span><span class="flow-text"><b>Existing trace</b><span>One redacted trace decides whether the full verdict is scoreable.</span></span></li>
-        <li class="flow-node"><span class="flow-dot">3</span><span class="flow-text"><b>Pilot or evidence plan</b><span>If ready, you receive the report; if not, you get the gap map.</span></span></li>
+        <li class="flow-node"><span class="flow-dot">1</span><span class="flow-text"><b>Scenario fit</b> <span>ActionBoundary sends 3 first scenarios before any setup.</span></span></li>
+        <li class="flow-node"><span class="flow-dot">2</span><span class="flow-text"><b>Existing trace</b> <span>One redacted trace decides whether the full verdict is scoreable.</span></span></li>
+        <li class="flow-node"><span class="flow-dot">3</span><span class="flow-text"><b>Pilot or evidence plan</b> <span>If ready, you receive the report; if not, you get the gap map.</span></span></li>
       </ol>
     </div>
   </section>
@@ -5731,9 +5741,9 @@
       <div class="intake-panel">
         <h3>What to include</h3>
         <ol class="intake-list">
-          <li><span class="num">1</span><span><b>Product and buyer</b>What your agent does, who buys it, and why this review matters now.</span></li>
-          <li><span class="num">2</span><span><b>One workflow or action surface</b>Tell us where the agent can affect the business. We identify the risky authorization boundary and turn it into scenarios.</span></li>
-          <li><span class="num">3</span><span><b>Safe test path</b>Any safe way to observe the workflow: staging traces, a sandbox endpoint, exported tool-call and authorization logs, or another non-production path that can be correlated to the acting identity and sandbox outcome.</span></li>
+          <li><span class="num">1</span><span><b>Product and buyer</b> <span>What your agent does, who buys it, and why this review matters now.</span></span></li>
+          <li><span class="num">2</span><span><b>One workflow or action surface</b> <span>Tell us where the agent can affect the business. We identify the risky authorization boundary and turn it into scenarios.</span></span></li>
+          <li><span class="num">3</span><span><b>Safe test path</b> <span>Any safe way to observe the workflow: staging traces, a sandbox endpoint, exported tool-call and authorization logs, or another non-production path that can be correlated to the acting identity and sandbox outcome.</span></span></li>
         </ol>
       </div>
     </div>

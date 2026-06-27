@@ -426,6 +426,18 @@ def summary_block(
     text(c, body, x + 12, body_y, w - 24, "Helvetica", 8.1, 10.4, INK)
 
 
+def cover_summary_item(
+    c: canvas.Canvas,
+    title: str,
+    body: str,
+    x: float,
+    y_top: float,
+    w: float,
+) -> None:
+    label(c, title, x, y_top, TEAL_DARK)
+    text(c, body, x, y_top - 14, w, "Helvetica-Bold", 8.0, 10.2, INK, max_lines=2)
+
+
 def draw_bullets(
     c: canvas.Canvas,
     items: list[str],
@@ -473,7 +485,7 @@ def cover_page(c: canvas.Canvas, md: str, meta: dict[str, str], source_hash: str
         MUTED,
     )
 
-    rect(c, MARGIN, 382, CONTENT_W, 202, BLUE_SOFT, LINE)
+    rect(c, MARGIN, 410, CONTENT_W, 174, BLUE_SOFT, LINE)
     label(c, "Document control", MARGIN + 16, 558, TEAL_DARK)
     rows = [
         ("Prepared for", meta.get("Prepared for", "")),
@@ -493,21 +505,32 @@ def cover_page(c: canvas.Canvas, md: str, meta: dict[str, str], source_hash: str
         label(c, key, col_x, item_y, SOFT_MUTED)
         text(c, value, col_x, item_y - 12, 218, "Helvetica-Bold", 8.2, 10, INK, max_lines=2)
 
-    frameworks = meta.get("Frameworks", meta.get("Reference framework", ""))
-    label(c, "Frameworks", MARGIN + 16, 422, SOFT_MUTED)
-    text(c, frameworks, MARGIN + 16, 410, CONTENT_W - 32, "Helvetica-Bold", 7.7, 9.2, INK, max_lines=4)
+    rect(c, MARGIN, 278, CONTENT_W, 106, WHITE, LINE)
+    label(c, "At a glance", MARGIN + 16, 362, TEAL_DARK)
+    gap = 16
+    item_w = (CONTENT_W - 32 - gap) / 2
+    item_tops = (338, 306)
+    items = [
+        ("Verdict", "High risk in the tested workflow."),
+        ("Reviewed workflow", "AP payment and vendor-data workflow."),
+        ("Evidence status", "Scoreable sample: actor, approval, tool result, and side effect."),
+        ("Next step", "Tool-layer authorization gate, then retest."),
+    ]
+    for idx, (title, body) in enumerate(items):
+        x = MARGIN + 16 + (item_w + gap) * (idx % 2)
+        cover_summary_item(c, title, body, x, item_tops[idx // 2], item_w)
 
-    rect(c, MARGIN, 262, CONTENT_W, 88, WHITE, LINE)
-    label(c, "Engagement boundary", MARGIN + 16, 326, TEAL_DARK)
+    rect(c, MARGIN, 198, CONTENT_W, 68, WHITE, LINE)
+    label(c, "Engagement boundary", MARGIN + 16, 242, TEAL_DARK)
     boundary = (
         "This sample uses a synthetic AP workflow and sandboxed tools. A real report covers the "
         "client's own agent, tools, authorization sources, and staging traces. No production access, "
         "real customer data, or credential sharing is required."
     )
-    text(c, boundary, MARGIN + 16, 308, CONTENT_W - 32, "Helvetica", 8.8, 12, INK)
+    text(c, boundary, MARGIN + 16, 224, CONTENT_W - 32, "Helvetica", 8.3, 10.8, INK, max_lines=3)
 
-    rect(c, MARGIN, 114, CONTENT_W, 116, WHITE, LINE)
-    label(c, "Report contents", MARGIN + 16, 206, TEAL_DARK)
+    rect(c, MARGIN, 90, CONTENT_W, 84, WHITE, LINE)
+    label(c, "Report contents", MARGIN + 16, 150, TEAL_DARK)
     contents = [
         "Executive summary and risk summary",
         "Scope, method, and scenario matrix",
@@ -515,13 +538,15 @@ def cover_page(c: canvas.Canvas, md: str, meta: dict[str, str], source_hash: str
         "Authorization boundary and tool surface review",
         "Findings, evidence register, remediation, retest plan, and limits",
     ]
-    draw_bullets(c, contents, MARGIN + 18, 186, CONTENT_W - 36, 8.2, 11, max_items=5)
+    content_col_w = (CONTENT_W - 52) / 2
+    draw_bullets(c, contents[:3], MARGIN + 18, 132, content_col_w, 7.3, 8.8)
+    draw_bullets(c, contents[3:], MARGIN + 18 + content_col_w + 20, 132, content_col_w, 7.3, 8.8)
 
     c.setFillColor(TEAL_SOFT)
-    c.rect(MARGIN, 72, CONTENT_W, 28, fill=1, stroke=0)
+    c.rect(MARGIN, 56, CONTENT_W, 22, fill=1, stroke=0)
     c.setFont("Helvetica-Bold", 8.2)
     c.setFillColor(TEAL_DARK)
-    c.drawString(MARGIN + 12, 81, "Not a SOC report, certification, legal opinion, attestation opinion, or production penetration test.")
+    c.drawString(MARGIN + 12, 63, "Not a SOC report, certification, legal opinion, attestation opinion, or production penetration test.")
 
     footer(c, 1, source_hash, "Public sample for ActionBoundary. Client reports use client-specific staging traces.")
     c.showPage()
@@ -594,7 +619,24 @@ def executive_page(c: canvas.Canvas, md: str, meta: dict[str, str], source_hash:
 def scope_page(c: canvas.Canvas, md: str, meta: dict[str, str], source_hash: str) -> None:
     page_header(c, 3, meta, source_hash, "Scope, Method, and Scenario Matrix")
     scope_rows = table_after_heading(md, "## Scope and Method")
-    draw_table(c, scope_rows, MARGIN, PAGE_H - 116, [128, 376], 7.3, 9.2)
+    scope_bottom = draw_table(c, scope_rows, MARGIN, PAGE_H - 116, [128, 376], 7.3, 9.2)
+
+    frameworks = meta.get("Frameworks", meta.get("Reference framework", ""))
+    framework_top = min(scope_bottom - 18, 476)
+    rect(c, MARGIN, framework_top - 44, CONTENT_W, 44, TEAL_SOFT, LINE)
+    label(c, "Framework references", MARGIN + 14, framework_top - 16, TEAL_DARK)
+    text(
+        c,
+        frameworks + ". Used as review-language support; trace evidence drives the verdict.",
+        MARGIN + 14,
+        framework_top - 30,
+        CONTENT_W - 28,
+        "Helvetica-Bold",
+        6.5,
+        7.8,
+        INK,
+        max_lines=2,
+    )
 
     c.setFont("Helvetica-Bold", 12)
     c.setFillColor(INK)

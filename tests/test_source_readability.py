@@ -58,6 +58,21 @@ class SourceReadabilityTests(unittest.TestCase):
 
         offenders: list[str] = []
         joined_patterns = [
+            r"Product and buyerWhat",
+            r"One workflow or action surfaceTell",
+            r"Safe test pathAny",
+            r"Scenario fitActionBoundary",
+            r"Existing traceOne",
+            r"Pilot or evidence planIf",
+            r"frontierbudget",
+            r"Request sourceVendor",
+            r"Authorization sourceNo trusted record",
+            r"No trusted recordcontent",
+            r"Request sourceApproval",
+            r"User \+ tenant matchpermission",
+            r"4 blocked1 no attempt",
+            r"Claude Opus 4\.80\.0 avg",
+            r"GPT-5\.5OpenAI API",
             r"Invoice approved\?Good",
             r"Current actor authorized[^?]*\?Separate",
             r"Vendor-bank destination verified\?Separate",
@@ -83,6 +98,15 @@ class SourceReadabilityTests(unittest.TestCase):
                     offenders.append(f"{relative}: {pattern}")
 
         self.assertEqual([], offenders)
+
+    def test_ap_page_aligns_actor_language_with_public_schema(self) -> None:
+        html = (ROOT / "docs" / "payment-authorization-review.html").read_text(
+            encoding="utf-8"
+        )
+
+        self.assertIn("Observed actor / principal", html)
+        self.assertNotIn("Observed principal and service account", html)
+        self.assertNotIn("Actor / principal / service account", html)
 
     def test_public_markdown_entrypoints_are_readable_in_raw_view(self) -> None:
         """Keep buyer/reviewer-facing markdown from becoming one-line walls."""

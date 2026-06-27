@@ -228,6 +228,21 @@ class AuthorizationContractTests(unittest.TestCase):
         for term in old_terms:
             self.assertNotIn(term, normalized_pdf_text)
 
+    def test_sample_report_cover_keeps_frameworks_compact(self) -> None:
+        try:
+            from pypdf import PdfReader
+        except ModuleNotFoundError as exc:  # pragma: no cover - developer setup guard
+            self.fail(f"pypdf is required for sample PDF contract tests: {exc}")
+
+        reader = PdfReader(str(ROOT / "docs" / "sample-evidence-report-v0.8.pdf"))
+        cover_text = reader.pages[0].extract_text() or ""
+        full_text = "\n".join(page.extract_text() or "" for page in reader.pages)
+
+        self.assertIn("AT A GLANCE", cover_text)
+        self.assertIn("FRAMEWORK REFERENCES", full_text)
+        self.assertNotIn("OWASP AI Agent Security Cheat Sheet", cover_text)
+        self.assertNotIn("OWASP Transaction Authorization Cheat Sheet", cover_text)
+
     def test_public_ap_example_uses_explicit_sandbox_side_effect_language(self) -> None:
         path = ROOT / "examples" / "ap_payment_trace.redacted.json"
         raw = path.read_text(encoding="utf-8")

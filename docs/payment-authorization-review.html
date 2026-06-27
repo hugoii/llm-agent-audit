@@ -8,7 +8,7 @@
 <link rel="canonical" href="https://actionboundary.dev/payment-authorization-review.html">
 <meta property="og:type" content="website">
 <meta property="og:title" content="Payment Authorization Review for AP Agents | ActionBoundary">
-<meta property="og:description" content="Turn one AP staging trace into buyer-ready evidence about principal authority, approval scope, vendor-bank source of truth, tool result, and side effect.">
+<meta property="og:description" content="Turn one AP staging trace into buyer-ready evidence about observed actor / principal authority, approval scope, vendor-bank source of truth, tool result, and side effect.">
 <meta property="og:url" content="https://actionboundary.dev/payment-authorization-review.html">
 <meta property="og:image" content="https://actionboundary.dev/og-image.png">
 <meta name="twitter:card" content="summary_large_image">
@@ -1359,29 +1359,25 @@
         <div class="receipt-row">
           <span>Actor</span>
           <div>
-            <b>Observed principal and service account</b>
-            <small>Who caused the payment tool to run?</small>
+            <b>Observed actor / principal</b> <small>Who caused the payment tool to run?</small>
           </div>
         </div>
         <div class="receipt-row">
           <span>Approval</span>
           <div>
-            <b>Scope-matching approval source</b>
-            <small>Vendor, amount, tenant, currency, invoice, and timing.</small>
+            <b>Scope-matching approval source</b> <small>Vendor, amount, tenant, currency, invoice, and timing.</small>
           </div>
         </div>
         <div class="receipt-row">
           <span>Destination</span>
           <div>
-            <b>Vendor-bank source of truth</b>
-            <small>Email and PDF content are not bank authority.</small>
+            <b>Vendor-bank source of truth</b> <small>Email and PDF content are not bank authority.</small>
           </div>
         </div>
         <div class="receipt-row">
           <span>Outcome</span>
           <div>
-            <b>Tool result and sandbox side effect</b>
-            <small>Blocked, drafted, scheduled, or committed.</small>
+            <b>Tool result and sandbox side effect</b> <small>Blocked, drafted, scheduled, or committed.</small>
           </div>
         </div>
       </div>
@@ -1418,29 +1414,25 @@
         <li>
           <span aria-hidden="true">1</span>
           <div>
-            <b>Who was the acting principal?</b>
-            <small>User, service account, tenant, and role observed from runtime evidence.</small>
+            <b>Who was the observed actor / principal?</b> <small>User, service account, tenant, and role observed from runtime evidence.</small>
           </div>
         </li>
         <li>
           <span aria-hidden="true">2</span>
           <div>
-            <b>What approval scope existed?</b>
-            <small>Invoice, amount, vendor, destination, currency, and timing checked against the source of truth.</small>
+            <b>What approval scope existed?</b> <small>Invoice, amount, vendor, destination, currency, and timing checked against the source of truth.</small>
           </div>
         </li>
         <li>
           <span aria-hidden="true">3</span>
           <div>
-            <b>Which vendor-bank record was used?</b>
-            <small>Vendor master or approved bank-change workflow, not email or PDF instructions.</small>
+            <b>Which vendor-bank record was used?</b> <small>Vendor master or approved bank-change workflow, not email or PDF instructions.</small>
           </div>
         </li>
         <li>
           <span aria-hidden="true">4</span>
           <div>
-            <b>What side effect actually happened?</b>
-            <small>Drafted, denied, scheduled, reversed, committed, or inconclusive from missing evidence.</small>
+            <b>What side effect actually happened?</b> <small>Drafted, denied, scheduled, reversed, committed, or inconclusive from missing evidence.</small>
           </div>
         </li>
       </ul>
@@ -1546,22 +1538,19 @@
           <li>
             <span aria-hidden="true">A</span>
             <div>
-              <b>Actor / principal / service account</b>
-              <small>Observed identity, role, tenant, and session or service account.</small>
+              <b>Observed actor / principal</b> <small>User, service account, role, tenant, and permissions at action time.</small>
             </div>
           </li>
           <li>
             <span aria-hidden="true">B</span>
             <div>
-              <b>Approval or policy source</b>
-              <small>The trusted source used to decide whether this action was authorized.</small>
+              <b>Approval or policy source</b> <small>The trusted source used to decide whether this action was authorized.</small>
             </div>
           </li>
           <li>
             <span aria-hidden="true">C</span>
             <div>
-              <b>Tool result and sandbox business outcome</b>
-              <small>What the tool returned and whether a side effect occurred in staging.</small>
+              <b>Tool result and sandbox business outcome</b> <small>What the tool returned and whether a side effect occurred in staging.</small>
             </div>
           </li>
         </ul>
