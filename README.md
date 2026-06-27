@@ -31,7 +31,7 @@ without the right user authority and approval evidence.
 
 <p align="center">
   <img
-    src="docs/provenance.png"
+    src="docs/provenance-v2.png"
     alt="Authorization-source example: a vendor-email payment is blocked without trusted authority, while a source-of-truth-backed payment passes."
     width="820"
   >

@@ -77,7 +77,7 @@ you want the deeper artifacts.
 
 - [Battery v1.5 run summaries](runs/v1.5/)
 - [Offline demo report](offline-demo-report.md)
-- [Provenance image](provenance.png)
+- [Provenance image](provenance-v2.png)
 
 ## Website Files
 
