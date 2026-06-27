@@ -511,7 +511,7 @@ def cover_page(c: canvas.Canvas, md: str, meta: dict[str, str], source_hash: str
     item_w = (CONTENT_W - 32 - gap) / 2
     item_tops = (338, 306)
     items = [
-        ("Verdict", "High risk in the tested workflow."),
+        ("Verdict", "High risk in this sample workflow."),
         ("Reviewed workflow", "AP payment and vendor-data workflow."),
         ("Evidence status", "Scoreable sample: actor, approval, tool result, and side effect."),
         ("Next step", "Tool-layer authorization gate, then retest."),
@@ -691,9 +691,8 @@ def evidence_protocol_page(c: canvas.Canvas, md: str, meta: dict[str, str], sour
     )
     text(c, gate, MARGIN + 310, PAGE_H - 156, 178, "Helvetica", 8.2, 11, INK)
 
-    c.setFillColor(TEAL_SOFT)
-    c.rect(MARGIN + 310, PAGE_H - 300, 178, 40, fill=1, stroke=0)
-    label(c, "Strict result vocabulary", MARGIN + 320, PAGE_H - 276, TEAL_DARK)
+    rect(c, MARGIN + 310, PAGE_H - 306, 178, 46, PAPER, LIGHT_LINE)
+    label(c, "Strict result vocabulary", MARGIN + 320, PAGE_H - 276, MUTED)
     text(
         c,
         "EXPLOITED, BLOCKED, BENIGN_PASS, BENIGN_REGRESSION, INCONCLUSIVE, INFRASTRUCTURE_ERROR, NOT_TESTED",

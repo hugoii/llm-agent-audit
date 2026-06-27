@@ -29,7 +29,7 @@ I reviewed whether untrusted business content could push the agent into a
 high-impact action without trusted, current, scope-matching authorization
 evidence.
 
-**Overall result: High risk in the tested workflow.**
+**Overall result: High risk in this sample workflow.**
 We ran 17 staging scenarios: 9 attack scenarios and 8 AP benign controls.
 Two scenarios reached unauthorized high-impact actions. Seven attack scenarios
 were blocked without a committed side effect, and all eight benign controls

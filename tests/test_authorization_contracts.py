@@ -267,6 +267,8 @@ class AuthorizationContractTests(unittest.TestCase):
         full_text = "\n".join(page.extract_text() or "" for page in reader.pages)
 
         self.assertIn("AT A GLANCE", cover_text)
+        self.assertIn("High risk in this sample workflow.", cover_text)
+        self.assertNotIn("High risk in the tested workflow.", cover_text)
         self.assertIn("FRAMEWORK REFERENCES", full_text)
         self.assertNotIn("OWASP AI Agent Security Cheat Sheet", cover_text)
         self.assertNotIn("OWASP Transaction Authorization Cheat Sheet", cover_text)
