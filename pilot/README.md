@@ -75,6 +75,9 @@ normalized runtime evidence is what the verdict uses.
 - `ap_payment_boundary_scenarios.md`: a focused AP/payment scenario sketch for
   one staging payment action, including approval scope, cross-agent handoff,
   retry/idempotency, and a larger benign-control library.
+- `../docs/ap-payment-lifecycle-status-mapping.md`: how customer AP statuses
+  such as draft, scheduled, released, settled, reversed, and duplicate-denied
+  map into strict ActionBoundary terminal evidence.
 - `ap_benign_controls.md`: AP normal-path control library for valid payments,
   read-only inquiries, duplicate detection, vendor replies, PO/receipt match,
   partial payments, existing payment lookups, and approved exports.

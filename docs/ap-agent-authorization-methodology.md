@@ -108,6 +108,8 @@ sandbox payment, or settled payment.
 
 For customer handoff, the normalized evidence should keep both the raw lifecycle
 status and the mapped terminal state so a reviewer can inspect the judgment.
+For a customer-facing adapter guide, see
+[AP payment lifecycle status mapping](ap-payment-lifecycle-status-mapping.md).
 
 ## 6. Apply The Verdict Protocol
 

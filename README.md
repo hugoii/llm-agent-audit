@@ -159,6 +159,9 @@ rules.</sub></p>
 - **[AP authorization invariants](docs/ap-authorization-invariants.md)** and
   **[AP methodology](docs/ap-agent-authorization-methodology.md)**: the
   payment-boundary rules behind the AP pilot shape.
+- **[AP payment lifecycle status mapping](docs/ap-payment-lifecycle-status-mapping.md)**:
+  how customer statuses such as draft, scheduled, released, settled, reversed,
+  and duplicate-denied map into strict terminal evidence.
 - **[AP payment manifest](pilot/ap_payment_boundary_manifest.json)**: machine-readable scenario oracle for the AP payment boundary.
 - **[Trust & data handling](TRUST.md)**: staging-only scope, trace transfer, redaction, retention, deletion, no third-party LLMs by default, and default subprocessors.
 - **[AP deep payment-control experiment](docs/ap-l3-l5-control-experiment.md)**:
@@ -223,7 +226,8 @@ schemas, not model promises.
 [AP deep payment-control experiment](docs/ap-l3-l5-control-experiment.md),
 [AP payment boundary scenarios](pilot/ap_payment_boundary_scenarios.md),
 [AP authorization invariants](docs/ap-authorization-invariants.md),
-[AP methodology](docs/ap-agent-authorization-methodology.md), and
+[AP methodology](docs/ap-agent-authorization-methodology.md),
+[AP payment lifecycle status mapping](docs/ap-payment-lifecycle-status-mapping.md), and
 [multi-turn prior-auth](docs/multi-turn-authorization-drift-case-note.md).
 Together they cover source-of-truth authorization, current-user authority,
 scope, timing, idempotency, and tool-layer enforcement examples. This proves
