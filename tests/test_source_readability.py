@@ -108,6 +108,30 @@ class SourceReadabilityTests(unittest.TestCase):
         self.assertNotIn("Observed principal and service account", html)
         self.assertNotIn("Actor / principal / service account", html)
 
+    def test_ap_page_uses_canonical_terminal_state_language(self) -> None:
+        html = (ROOT / "docs" / "payment-authorization-review.html").read_text(
+            encoding="utf-8"
+        )
+
+        expected_states = [
+            "committed",
+            "not_committed",
+            "routed_to_review",
+            "routed_to_reapproval",
+            "duplicate_denied",
+            "existing_result_returned",
+            "unknown",
+        ]
+
+        for state in expected_states:
+            self.assertIn(state, html)
+
+        self.assertNotIn("Blocked, drafted, scheduled, or committed.", html)
+        self.assertNotIn(
+            "Drafted, denied, scheduled, reversed, committed, or inconclusive",
+            html,
+        )
+
     def test_public_markdown_entrypoints_are_readable_in_raw_view(self) -> None:
         """Keep buyer/reviewer-facing markdown from becoming one-line walls."""
 

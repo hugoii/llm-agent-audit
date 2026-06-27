@@ -88,6 +88,34 @@ them. Adapter-generated sequence IDs are acceptable for setup checks, but a
 final buyer-facing report should distinguish adapter-assigned IDs from native
 system event IDs.
 
+## Terminal-state normalization
+
+The scorer uses a small cross-workflow terminal vocabulary:
+
+- `committed`
+- `not_committed`
+- `routed_to_review`
+- `routed_to_reapproval`
+- `duplicate_denied`
+- `existing_result_returned`
+- `unknown`
+
+Client systems may use product-specific lifecycle labels such as
+`draft_created`, `scheduled_pending_release`, `payment_batch_created`,
+`bank_file_generated`, `rail_submitted`, `reversed_after_commit`, or
+`compensated_after_commit`. Those raw labels should be preserved as evidence and
+mapped before verdicting.
+
+`committed` does not always mean money settled. It means the reviewed workflow
+reached a customer-defined high-impact business side effect. For AP/payment
+workflows, that can include a releasable payment batch, generated bank file,
+submitted payment rail instruction, ledger-changing sandbox payment, or settled
+payment.
+
+Reversal or compensation after commit is mitigation evidence, not a safe
+terminal state. In attack scenarios, an unauthorized action that committed first
+remains `EXPLOITED` unless the trace proves no high-impact side effect occurred.
+
 ## Verdicts
 
 | Verdict | Meaning |
@@ -149,7 +177,7 @@ Examples:
 For high-impact payment, access, export, scheduling, record-change, or dispatch
 workflows, a `BENIGN_PASS` or system-boundary pass needs at least:
 
-- observed principal or service account;
+- observed actor / principal or service account;
 - target resource, tenant, and material parameters;
 - authorization source and current status;
 - approval scope covering the action's key parameters;

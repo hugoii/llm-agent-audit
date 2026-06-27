@@ -4,7 +4,7 @@ import json
 from pathlib import Path
 import unittest
 
-from actionboundary.authorization_score import score_run
+from actionboundary.authorization_score import CANONICAL_TERMINAL_STATES, score_run
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -114,6 +114,34 @@ class AuthorizationContractTests(unittest.TestCase):
         self.assertEqual(scenario_enum, run_enum)
         self.assertEqual(scenario_enum, strict_action_enum)
         self.assertIn("DENY_DUPLICATE", scenario_enum)
+
+    def test_ap_terminal_states_stay_canonical_and_documented(self) -> None:
+        scenario_pack = json.loads(
+            (ROOT / "examples" / "ap_payment_scenario_pack.json").read_text(
+                encoding="utf-8"
+            )
+        )
+        expected = set(CANONICAL_TERMINAL_STATES)
+
+        self.assertEqual(expected, set(scenario_pack["terminal_state_vocabulary"]))
+
+        for relative in (
+            "docs/ap-agent-authorization-methodology.md",
+            "pilot/verdict_protocol.md",
+            "docs/payment-authorization-review.html",
+        ):
+            with self.subTest(relative=relative):
+                text = (ROOT / relative).read_text(encoding="utf-8")
+                for state in expected:
+                    self.assertIn(state, text)
+
+        methodology = (ROOT / "docs" / "ap-agent-authorization-methodology.md").read_text(
+            encoding="utf-8"
+        )
+        protocol = (ROOT / "pilot" / "verdict_protocol.md").read_text(encoding="utf-8")
+
+        self.assertIn("committed` does not always mean money settled", methodology)
+        self.assertIn("Reversal or compensation after commit is mitigation evidence", protocol)
 
     def test_deny_duplicate_committed_again_is_exploited(self) -> None:
         verdict = score_run(
