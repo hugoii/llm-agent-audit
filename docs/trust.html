@@ -229,6 +229,7 @@
   }
 
   .trust-hero {
+    min-height: 760px;
     background:
       radial-gradient(circle at 14% 14%, rgba(73, 185, 169, 0.22), transparent 30%),
       radial-gradient(circle at 86% 22%, rgba(180, 83, 9, 0.08), transparent 28%),
@@ -312,6 +313,8 @@
   }
 
   .trust-brief {
+    position: relative;
+    overflow: hidden;
     border: 1px solid rgba(154, 215, 207, 0.24);
     border-radius: 8px;
     background:
@@ -319,6 +322,22 @@
       rgba(10, 12, 15, 0.36);
     padding: 20px;
     box-shadow: 0 16px 36px rgba(0, 0, 0, 0.28);
+    transform-origin: 50% 45%;
+    transition:
+      border-color 220ms var(--ease-out-quint),
+      box-shadow 220ms var(--ease-out-quint),
+      transform 220ms var(--ease-out-quint);
+  }
+
+  .trust-brief::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    pointer-events: none;
+    background: linear-gradient(105deg, transparent 0%, transparent 34%, rgba(154, 215, 207, 0.12) 50%, transparent 66%, transparent 100%);
+    opacity: 0;
+    transform: translateX(-120%);
   }
 
   .trust-brief-head {
@@ -347,6 +366,10 @@
     gap: 12px;
     padding: 12px 0;
     border-top: 1px solid rgba(154, 215, 207, 0.16);
+    transition:
+      background-color 180ms var(--ease-out-quint),
+      border-color 180ms var(--ease-out-quint),
+      transform 180ms var(--ease-out-quint);
   }
 
   .brief-row b {
@@ -413,6 +436,11 @@
     border-radius: 8px;
     background: var(--white);
     padding: 18px;
+    transition:
+      border-color 180ms var(--ease-out-quint),
+      background-color 180ms var(--ease-out-quint),
+      box-shadow 180ms var(--ease-out-quint),
+      transform 180ms var(--ease-out-quint);
   }
 
   .fact b {
@@ -447,6 +475,10 @@
     border-radius: 8px;
     overflow: hidden;
     background: var(--white);
+    transition:
+      border-color 180ms var(--ease-out-quint),
+      box-shadow 180ms var(--ease-out-quint),
+      transform 180ms var(--ease-out-quint);
   }
 
   .ledger-row {
@@ -454,6 +486,9 @@
     grid-template-columns: minmax(180px, 0.42fr) 1fr;
     gap: 0;
     border-top: 1px solid var(--line);
+    transition:
+      background-color 180ms var(--ease-out-quint),
+      transform 180ms var(--ease-out-quint);
   }
 
   .ledger-row:first-child {
@@ -488,6 +523,10 @@
     border-radius: 8px;
     background: var(--red-soft);
     padding: clamp(22px, 4vw, 34px);
+    transition:
+      border-color 180ms var(--ease-out-quint),
+      box-shadow 180ms var(--ease-out-quint),
+      transform 180ms var(--ease-out-quint);
   }
 
   .do-not-send {
@@ -511,6 +550,10 @@
     border-radius: 8px;
     background: var(--white);
     padding: 20px;
+    transition:
+      border-color 180ms var(--ease-out-quint),
+      box-shadow 180ms var(--ease-out-quint),
+      transform 180ms var(--ease-out-quint);
   }
 
   .contract-item p {
@@ -528,6 +571,10 @@
     border-radius: 8px;
     background: var(--teal-soft);
     padding: 24px;
+    transition:
+      border-color 180ms var(--ease-out-quint),
+      box-shadow 180ms var(--ease-out-quint),
+      transform 180ms var(--ease-out-quint);
   }
 
   .cta-panel p {
@@ -596,6 +643,156 @@
     background: var(--teal-soft);
   }
 
+  @media (prefers-reduced-motion: no-preference) {
+    .trust-brief {
+      animation: trust-brief-breathe 7.6s var(--ease-out-quint) infinite;
+    }
+
+    .trust-brief::before {
+      animation: trust-brief-sheen 7.6s var(--ease-out-quint) infinite;
+    }
+
+    .trust-brief:hover,
+    .trust-brief:focus-within {
+      animation: none;
+      border-color: rgba(154, 215, 207, 0.42);
+      box-shadow: 0 10px 14px rgba(0, 0, 0, 0.24);
+      transform: translateY(-2px) scale(1.004);
+    }
+
+    .trust-brief:hover::before,
+    .trust-brief:focus-within::before {
+      animation: none;
+      opacity: 0;
+    }
+
+    .brief-row:hover {
+      background: rgba(154, 215, 207, 0.055);
+      border-top-color: rgba(154, 215, 207, 0.28);
+      transform: translateX(2px);
+    }
+
+    .trust-claim-strip span {
+      animation: trust-claim-rise 520ms var(--ease-out-quint) both;
+      animation-delay: var(--claim-delay, 0ms);
+    }
+
+    main > .section.motion-section {
+      opacity: 0.94;
+      transform: translateY(7px) scale(0.988);
+      transform-origin: 50% 38%;
+      transition:
+        opacity 560ms var(--ease-out-quint),
+        transform 560ms var(--ease-out-quint);
+      transition-delay: var(--motion-delay, 0ms);
+      will-change: transform, opacity;
+    }
+
+    main > .section.motion-section.motion-in {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+
+    .motion-surface {
+      opacity: 0.965;
+      transform: translateY(8px);
+      transition:
+        opacity 520ms var(--ease-out-quint),
+        transform 520ms var(--ease-out-quint),
+        border-color 180ms var(--ease-out-quint),
+        background-color 180ms var(--ease-out-quint),
+        box-shadow 180ms var(--ease-out-quint);
+      transition-delay: var(--motion-item-delay, var(--motion-delay, 0ms));
+      will-change: transform, opacity;
+    }
+
+    .motion-section.motion-in .motion-surface {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .fact.motion-surface:hover,
+    .ledger.motion-surface:hover,
+    .warning-band.motion-surface:hover,
+    .contract-item.motion-surface:hover,
+    .cta-panel.motion-surface:hover {
+      border-color: rgba(15, 118, 110, 0.30);
+      box-shadow: 0 6px 12px rgba(16, 24, 40, 0.09);
+      transform: translateY(-3px);
+    }
+
+    .ledger-row.motion-surface:hover,
+    .do-not-send li.motion-surface:hover {
+      background-color: rgba(231, 245, 243, 0.48);
+      transform: translateX(2px);
+    }
+
+    @keyframes trust-brief-breathe {
+      0%,
+      100% {
+        transform: translateY(0) scale(1);
+      }
+
+      48% {
+        transform: translateY(-2px) scale(1.003);
+      }
+    }
+
+    @keyframes trust-brief-sheen {
+      0%,
+      42% {
+        opacity: 0;
+        transform: translateX(-120%);
+      }
+
+      55% {
+        opacity: 1;
+      }
+
+      72%,
+      100% {
+        opacity: 0;
+        transform: translateX(120%);
+      }
+    }
+
+    @keyframes trust-claim-rise {
+      from {
+        opacity: 0.78;
+        transform: translateY(5px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      scroll-behavior: auto !important;
+      transition-duration: 0.01ms !important;
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+    }
+
+    .trust-brief,
+    main > .section.motion-section,
+    main > .section.motion-section.motion-in,
+    .motion-surface,
+    .motion-section.motion-in .motion-surface {
+      opacity: 1;
+      transform: none;
+    }
+
+    .trust-brief::before {
+      display: none;
+    }
+  }
+
   footer {
     padding: 24px;
     color: #343b43;
@@ -620,6 +817,7 @@
     }
 
     .trust-hero {
+      min-height: 0;
       padding-top: 112px;
       padding-bottom: 54px;
     }
@@ -657,6 +855,7 @@
     }
 
     .trust-hero {
+      min-height: 0;
       padding-top: 112px;
       padding-bottom: 44px;
     }
@@ -937,6 +1136,49 @@
       }
     }, { passive: true });
     window.addEventListener('resize', updateNavGlass);
+  })();
+
+  (function () {
+    if (!('IntersectionObserver' in window)) {
+      return;
+    }
+    if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      return;
+    }
+
+    document.querySelectorAll('.trust-claim-strip span').forEach(function (claim, index) {
+      claim.style.setProperty('--claim-delay', Math.min(index, 8) * 70 + 'ms');
+    });
+
+    var surfaceSelector = [
+      '.fact',
+      '.ledger',
+      '.ledger-row',
+      '.warning-band',
+      '.do-not-send li',
+      '.contract-item',
+      '.cta-panel'
+    ].join(',');
+
+    var sections = document.querySelectorAll('main > .section');
+    sections.forEach(function (section, sectionIndex) {
+      section.classList.add('motion-section');
+      section.style.setProperty('--motion-delay', Math.min(sectionIndex, 8) * 20 + 'ms');
+      section.querySelectorAll(surfaceSelector).forEach(function (surface, surfaceIndex) {
+        surface.classList.add('motion-surface');
+        surface.style.setProperty('--motion-item-delay', (Math.min(sectionIndex, 8) * 20 + Math.min(surfaceIndex, 10) * 30) + 'ms');
+      });
+    });
+
+    var motionObserver = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        entry.target.classList.toggle('motion-in', entry.isIntersecting);
+      });
+    }, { threshold: 0.16, rootMargin: '-8% 0px -12% 0px' });
+
+    sections.forEach(function (section) {
+      motionObserver.observe(section);
+    });
   })();
 </script>
 </body>

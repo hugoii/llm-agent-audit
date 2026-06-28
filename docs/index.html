@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>ActionBoundary | Agent Authorization Review for AI agents</title>
-<meta name="description" content="ActionBoundary helps B2B AI startups test high-impact agent tool actions in staging and produce trace-backed authorization evidence for customer security reviews.">
+<meta name="description" content="ActionBoundary helps B2B AI teams review high-impact agent tool actions in staging and produce trace-backed authorization evidence for customer security reviews.">
 <link rel="canonical" href="https://actionboundary.dev/">
 <meta property="og:type" content="website">
 <meta property="og:title" content="ActionBoundary | Agent Authorization Review for AI agents">
@@ -258,9 +258,11 @@
   }
 
   .hero {
+    min-height: 760px;
     background:
-      radial-gradient(circle at 68% 12%, rgba(15, 118, 110, 0.18), transparent 32%),
-      linear-gradient(180deg, rgba(21, 22, 25, 0.96), rgba(21, 22, 25, 0.99));
+      radial-gradient(circle at 14% 14%, rgba(73, 185, 169, 0.22), transparent 30%),
+      radial-gradient(circle at 86% 22%, rgba(180, 83, 9, 0.08), transparent 28%),
+      linear-gradient(135deg, #111317, #1d2429 62%, #151619);
     color: var(--white);
     border-bottom: 1px solid var(--hero-border);
   }
@@ -268,12 +270,14 @@
   .hero-inner {
     max-width: var(--max);
     margin: 0 auto;
-    padding: 98px 36px 30px;
+    min-height: 760px;
+    padding: 124px 36px 54px;
     display: grid;
-    grid-template-columns: minmax(0, 0.95fr) minmax(520px, 1.05fr);
-    column-gap: 32px;
+    grid-template-columns: minmax(0, 1.12fr) minmax(460px, 0.88fr);
+    column-gap: 42px;
     row-gap: 0;
     align-items: center;
+    align-content: center;
   }
 
   .hero-inner > :not(.trace-scene) {
@@ -297,11 +301,11 @@
   }
 
   h1 {
-    max-width: 720px;
-    font-size: clamp(2.55rem, 3.6vw, 3.2rem);
-    line-height: 1.04;
+    max-width: 900px;
+    font-size: clamp(3.2rem, 4.45vw, 4.35rem);
+    line-height: 1.02;
     letter-spacing: 0;
-    margin-bottom: 18px;
+    margin-bottom: 22px;
     text-wrap: wrap;
   }
 
@@ -319,12 +323,17 @@
     display: block;
   }
 
+  .hero-title-line {
+    display: block;
+    white-space: nowrap;
+  }
+
   .hero-copy {
     max-width: 650px;
     color: #d8dde5;
     font-size: 1rem;
     line-height: 1.52;
-    margin-bottom: 16px;
+    margin-bottom: 34px;
   }
 
   .hero-copy strong {
@@ -336,12 +345,12 @@
     display: inline-block;
     width: fit-content;
     max-width: 100%;
-    margin: 6px 0 26px;
+    margin: 0 0 42px;
     padding: 0 1px 11px;
     border: 0;
     background: none;
     color: #eaf2f1;
-    font-size: clamp(1.16rem, 1.55vw, 1.42rem);
+    font-size: clamp(1.22rem, 1.68vw, 1.52rem);
     font-weight: 800;
     letter-spacing: -0.01em;
     line-height: 1.2;
@@ -364,10 +373,14 @@
   .principle-key {
     display: inline-flex;
     gap: 0.015em;
+    margin-left: 0.38em;
     white-space: nowrap;
     color: var(--hero-accent);
+    font-size: 1.08em;
     text-transform: uppercase;
     letter-spacing: 0.02em;
+    line-height: 1;
+    vertical-align: -0.02em;
   }
 
   .principle-letter {
@@ -383,9 +396,13 @@
   .principle-strike {
     position: relative;
     display: inline-block;
+    margin-left: 0.32em;
+    font-size: 1.06em;
     text-transform: uppercase;
     letter-spacing: 0.02em;
+    line-height: 1;
     text-decoration: none;
+    vertical-align: -0.01em;
   }
 
   .principle-strike::after {
@@ -429,27 +446,6 @@
     height: 15px;
     margin-top: 3px;
     color: var(--hero-accent);
-  }
-
-  .hero-ap-route {
-    display: inline-flex;
-    align-items: center;
-    width: fit-content;
-    margin: -4px 0 22px;
-    border: 1px solid rgba(154, 215, 207, 0.26);
-    border-radius: 8px;
-    padding: 9px 11px;
-    color: var(--hero-button-hover);
-    background: rgba(154, 215, 207, 0.08);
-    font-size: 0.92rem;
-    font-weight: 750;
-    text-decoration: none;
-  }
-
-  .hero-ap-route:hover {
-    border-color: rgba(154, 215, 207, 0.48);
-    color: var(--white);
-    background: rgba(154, 215, 207, 0.12);
   }
 
   .button {
@@ -512,15 +508,46 @@
   }
 
   .button.ap-review-link {
-    color: var(--teal-dark);
-    border-color: rgba(15, 118, 110, 0.30);
-    background: var(--teal-soft);
+    position: relative;
+    overflow: hidden;
+    gap: 8px;
+    color: #073f3a;
+    border-color: rgba(15, 118, 110, 0.50);
+    background: linear-gradient(135deg, #dcf3ef 0%, #f7fffd 54%, #ccece6 100%);
+    box-shadow: inset 0 0 0 1px rgba(15, 118, 110, 0.08);
+    transition: color 180ms var(--ease-out-quart), border-color 180ms var(--ease-out-quart), background 180ms var(--ease-out-quart), transform 180ms var(--ease-out-quart);
+  }
+
+  .button.ap-review-link::before {
+    content: "";
+    position: absolute;
+    inset: -1px;
+    background: linear-gradient(105deg, transparent 0%, transparent 34%, rgba(255, 255, 255, 0.72) 50%, transparent 66%, transparent 100%);
+    opacity: 0.78;
+    pointer-events: none;
+    transform: translateX(-125%);
+  }
+
+  .button.ap-review-link span {
+    position: relative;
+    z-index: 1;
+  }
+
+  .button.ap-review-link .button-arrow {
+    display: inline-block;
+    transition: transform 180ms var(--ease-out-quart);
   }
 
   .button.ap-review-link:hover {
-    color: var(--teal-dark);
-    border-color: rgba(15, 118, 110, 0.52);
-    background: var(--white);
+    color: #063631;
+    border-color: rgba(15, 118, 110, 0.72);
+    background: linear-gradient(135deg, #d2eee8 0%, #ffffff 58%, #c4e8e1 100%);
+    transform: translateY(-1px);
+  }
+
+  .button.ap-review-link:hover .button-arrow,
+  .button.ap-review-link:focus-visible .button-arrow {
+    transform: translateX(4px);
   }
 
   .method-menu {
@@ -816,20 +843,32 @@
   .demo-progress {
     position: relative;
     z-index: 1;
-    height: 3px;
+    height: 4px;
     margin: 0 0 12px;
     overflow: hidden;
     border-radius: 999px;
     background: rgba(255,255,255,0.10);
   }
 
-  .demo-progress::before {
+  .demo-progress::before,
+  .demo-progress::after {
     content: "";
     position: absolute;
-    inset: 0;
-    background: linear-gradient(90deg, rgba(154, 215, 207, 0.36), rgba(154, 215, 207, 0.92));
-    transform-origin: left;
+    top: 0;
+    bottom: 0;
+    width: calc(50% - 4px);
+    transform-origin: left center;
     transform: scaleX(0);
+  }
+
+  .demo-progress::before {
+    left: 0;
+    background: linear-gradient(90deg, rgba(248, 113, 113, 0.30), rgba(248, 113, 113, 0.88));
+  }
+
+  .demo-progress::after {
+    right: 0;
+    background: linear-gradient(90deg, rgba(74, 222, 128, 0.30), rgba(74, 222, 128, 0.88));
   }
 
   .trace-grid {
@@ -842,10 +881,77 @@
 
   .trace-lane {
     position: relative;
+    isolation: isolate;
     display: grid;
-    grid-template-columns: 0.9fr 1fr 1.05fr 1.15fr;
+    grid-template-columns: minmax(0, 1.08fr) minmax(0, 0.92fr);
+    grid-template-areas:
+      "source result"
+      "auth result"
+      "tool tool";
     align-items: stretch;
     gap: 8px;
+    border-radius: 8px;
+  }
+
+  .trace-lane-fail {
+    --trace-step-border: rgba(248, 113, 113, 0.70);
+    --trace-step-ring: rgba(248, 113, 113, 0.17);
+    --trace-step-glow: rgba(153, 27, 27, 0.30);
+  }
+
+  .trace-lane-pass {
+    --trace-step-border: rgba(74, 222, 128, 0.66);
+    --trace-step-ring: rgba(74, 222, 128, 0.16);
+    --trace-step-glow: rgba(22, 101, 52, 0.30);
+  }
+
+  .trace-lane::before {
+    content: "";
+    position: absolute;
+    inset: -4px;
+    z-index: 0;
+    pointer-events: none;
+    border: 1px solid transparent;
+    border-radius: 10px;
+    opacity: 0;
+    transform: scale(0.995);
+  }
+
+  .trace-lane > * {
+    position: relative;
+    z-index: 1;
+  }
+
+  .trace-lane > :nth-child(1) {
+    grid-area: source;
+  }
+
+  .trace-lane > :nth-child(2) {
+    grid-area: auth;
+  }
+
+  .trace-lane > :nth-child(3) {
+    grid-area: tool;
+  }
+
+  .trace-lane > :nth-child(4) {
+    grid-area: result;
+  }
+
+  .trace-lane > :nth-child(1) {
+    --trace-step-delay: 0ms;
+  }
+
+  .trace-lane > :nth-child(2) {
+    --trace-step-delay: 520ms;
+  }
+
+  .trace-lane > :nth-child(3) {
+    --trace-step-delay: 1040ms;
+  }
+
+  .trace-lane > :nth-child(4) {
+    --trace-step-delay: 1560ms;
   }
 
   .trace-node,
@@ -853,7 +959,7 @@
   .trace-arrow {
     border: 1px solid rgba(255,255,255,0.13);
     background: rgba(255,255,255,0.07);
-    min-height: 78px;
+    min-height: 66px;
     border-radius: 8px;
     overflow-wrap: normal;
     word-break: normal;
@@ -873,15 +979,23 @@
     font-size: 0.94rem;
   }
 
+  .trace-lane > .trace-node:nth-child(3) {
+    min-height: 48px;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 10px;
+  }
+
   .trace-node code {
     color: var(--code-on-dark);
     font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
-    font-size: 0.8rem;
+    font-size: 0.78rem;
+    white-space: nowrap;
   }
 
   .node-label {
     display: block;
-    min-height: 2.4em;
     color: rgba(216, 242, 238, 0.76);
     font-size: 0.64rem;
     font-weight: 900;
@@ -893,7 +1007,6 @@
 
   .node-value {
     display: block;
-    min-height: 2.5em;
     font-size: 0.92rem;
     font-weight: 700;
     line-height: 1.25;
@@ -904,9 +1017,15 @@
   }
 
   .trace-status .node-value {
-    min-height: 2.45em;
     font-size: 0.98rem;
     font-weight: 800;
+  }
+
+  .trace-lane > .trace-node:nth-child(3) .node-label,
+  .trace-lane > .trace-node:nth-child(3) .node-value,
+  .trace-lane > .trace-node:nth-child(3) small {
+    min-height: 0;
+    margin: 0;
   }
 
   .amt {
@@ -1122,6 +1241,8 @@
 
   .finding-actions .ap-review-link {
     grid-column: 1 / -1;
+    min-height: 58px;
+    font-size: clamp(1rem, 1.15vw, 1.08rem);
   }
 
   .finding-actions .button {
@@ -3467,6 +3588,14 @@
       animation: why-teaser-flow 18s cubic-bezier(0.22, 1, 0.36, 1) infinite alternate;
     }
 
+    .button.ap-review-link::before {
+      animation: ap-review-sheen 4.8s var(--ease-out-quint) infinite;
+    }
+
+    .button.ap-review-link .button-arrow {
+      animation: ap-review-arrow 2.4s var(--ease-out-quart) infinite;
+    }
+
     @keyframes principle-scan {
       from { transform: scaleX(0); }
       to { transform: scaleX(1); }
@@ -3575,6 +3704,30 @@
       }
     }
 
+    @keyframes ap-review-sheen {
+      0%,
+      38% {
+        transform: translateX(-125%);
+      }
+
+      62%,
+      100% {
+        transform: translateX(125%);
+      }
+    }
+
+    @keyframes ap-review-arrow {
+      0%,
+      56%,
+      100% {
+        transform: translateX(0);
+      }
+
+      70% {
+        transform: translateX(4px);
+      }
+    }
+
     .spectrum.anim .spectrum-line {
       transform: translateY(-50%) scaleX(0);
       transform-origin: left center;
@@ -3594,27 +3747,44 @@
       opacity: 1;
     }
 
-    .trace-node,
-    .trace-status {
-      animation: trace-node-replay 12s var(--ease-out-quint) infinite;
-      animation-delay: var(--pulse-delay, 0ms);
+    .trace-lane-fail::before {
+      animation: trace-fail-lane-replay 9s var(--ease-out-quint) infinite;
     }
 
-    .trace-arrow {
-      animation: trace-arrow-replay 12s var(--ease-out-quint) infinite;
-      animation-delay: var(--pulse-delay, 0ms);
+    .trace-lane-pass::before {
+      animation: trace-pass-lane-replay 9s var(--ease-out-quint) infinite;
     }
 
-    .trace-status.fail {
-      animation-name: trace-fail-replay;
+    .trace-lane-fail .trace-node {
+      animation:
+        trace-fail-cell-replay 9s var(--ease-out-quint) infinite,
+        trace-flow-step 9s var(--ease-out-quint) infinite;
+      animation-delay: 0ms, var(--trace-step-delay, 0ms);
     }
 
-    .trace-status.pass {
-      animation-name: trace-pass-replay;
+    .trace-lane-pass .trace-node {
+      animation:
+        trace-pass-cell-replay 9s var(--ease-out-quint) infinite,
+        trace-flow-step 9s var(--ease-out-quint) infinite;
+      animation-delay: 0ms, var(--trace-step-delay, 0ms);
+    }
+
+    .trace-lane-fail .trace-status.fail {
+      animation:
+        trace-fail-status-replay 9s var(--ease-out-quint) infinite,
+        trace-flow-result 9s var(--ease-out-quint) infinite;
+      animation-delay: 0ms, var(--trace-step-delay, 0ms);
+    }
+
+    .trace-lane-pass .trace-status.pass {
+      animation:
+        trace-pass-status-replay 9s var(--ease-out-quint) infinite,
+        trace-flow-result 9s var(--ease-out-quint) infinite;
+      animation-delay: 0ms, var(--trace-step-delay, 0ms);
     }
 
     .trace-scene::before {
-      animation: trace-scene-scan 12s var(--ease-out-quint) infinite;
+      animation: trace-scene-scan 9s var(--ease-out-quint) infinite;
     }
 
     .rule-line::after {
@@ -3622,7 +3792,11 @@
     }
 
     .demo-progress::before {
-      animation: demo-progress-replay 12s linear infinite;
+      animation: demo-progress-fail-replay 9s linear infinite;
+    }
+
+    .demo-progress::after {
+      animation: demo-progress-pass-replay 9s linear infinite;
     }
 
     .demo-step {
@@ -3841,9 +4015,40 @@
       }
     }
 
-    @keyframes demo-progress-replay {
-      from { transform: scaleX(0); }
-      to { transform: scaleX(1); }
+    @keyframes demo-progress-fail-replay {
+      0%, 100% {
+        opacity: 0.34;
+        transform: scaleX(0);
+      }
+      10% {
+        opacity: 0.96;
+      }
+      34%, 74% {
+        opacity: 0.96;
+        transform: scaleX(1);
+      }
+      88% {
+        opacity: 0.34;
+        transform: scaleX(1);
+      }
+    }
+
+    @keyframes demo-progress-pass-replay {
+      0%, 100% {
+        opacity: 0.34;
+        transform: scaleX(0);
+      }
+      10% {
+        opacity: 0.96;
+      }
+      34%, 74% {
+        opacity: 0.96;
+        transform: scaleX(1);
+      }
+      88% {
+        opacity: 0.34;
+        transform: scaleX(1);
+      }
     }
 
     @keyframes demo-step-focus {
@@ -3889,59 +4094,111 @@
       }
     }
 
-    @keyframes trace-node-replay {
-      0%, 16%, 100% {
+    @keyframes trace-fail-lane-replay {
+      0%, 100% {
+        opacity: 0;
+        transform: scale(0.995);
+        box-shadow: none;
+      }
+      12%, 68% {
+        opacity: 1;
+        transform: scale(1);
+        border-color: rgba(248, 113, 113, 0.42);
+        box-shadow: 0 0 0 1px rgba(248, 113, 113, 0.12), 0 0 20px rgba(153, 27, 27, 0.20);
+      }
+    }
+
+    @keyframes trace-pass-lane-replay {
+      0%, 100% {
+        opacity: 0;
+        transform: scale(0.995);
+        box-shadow: none;
+      }
+      12%, 68% {
+        opacity: 1;
+        transform: scale(1);
+        border-color: rgba(74, 222, 128, 0.42);
+        box-shadow: 0 0 0 1px rgba(74, 222, 128, 0.12), 0 0 20px rgba(22, 101, 52, 0.20);
+      }
+    }
+
+    @keyframes trace-flow-step {
+      0%, 10%, 26%, 100% {
         transform: translateY(0);
-        border-color: rgba(255,255,255,0.13);
-        background: rgba(255,255,255,0.07);
+        filter: none;
         box-shadow: none;
       }
-      5%, 11% {
+      13%, 19% {
+        transform: translateY(-4px) scale(1.012);
+        filter: brightness(1.12);
+        border-color: var(--trace-step-border);
+        box-shadow: 0 0 0 1px var(--trace-step-ring), 0 0 22px var(--trace-step-glow);
+      }
+    }
+
+    @keyframes trace-flow-result {
+      0%, 10%, 32%, 100% {
+        transform: translateY(0);
+        filter: none;
+        box-shadow: none;
+      }
+      13%, 24% {
+        transform: translateY(-5px) scale(1.014);
+        filter: brightness(1.14);
+        border-color: var(--trace-step-border);
+        box-shadow: 0 0 0 1px var(--trace-step-ring), 0 0 28px var(--trace-step-glow);
+      }
+    }
+
+    @keyframes trace-fail-cell-replay {
+      0%, 100% {
+        transform: translateY(0);
+        box-shadow: none;
+      }
+      12%, 58% {
         transform: translateY(-1px);
-        border-color: rgba(154, 215, 207, 0.64);
-        background: rgba(255,255,255,0.105);
-        box-shadow: 0 0 0 1px rgba(154, 215, 207, 0.16), 0 0 18px rgba(15, 118, 110, 0.20);
+        border-color: rgba(248, 113, 113, 0.40);
+        background: rgba(153, 27, 27, 0.13);
+        box-shadow: inset 0 0 0 1px rgba(248, 113, 113, 0.07);
       }
     }
 
-    @keyframes trace-arrow-replay {
-      0%, 16%, 100% {
-        color: var(--hero-subtle);
-        border-color: rgba(255,255,255,0.13);
-        background: rgba(255,255,255,0.07);
+    @keyframes trace-pass-cell-replay {
+      0%, 100% {
+        transform: translateY(0);
         box-shadow: none;
       }
-      5%, 11% {
-        color: var(--hero-accent);
-        border-color: rgba(154, 215, 207, 0.45);
-        background: rgba(154, 215, 207, 0.10);
-        box-shadow: inset 0 0 0 1px rgba(154, 215, 207, 0.08);
+      12%, 58% {
+        transform: translateY(-1px);
+        border-color: rgba(74, 222, 128, 0.36);
+        background: rgba(22, 101, 52, 0.13);
+        box-shadow: inset 0 0 0 1px rgba(74, 222, 128, 0.07);
       }
     }
 
-    @keyframes trace-fail-replay {
-      0%, 16%, 100% {
+    @keyframes trace-fail-status-replay {
+      0%, 100% {
         transform: translateY(0);
         background: rgba(153, 27, 27, 0.18);
         border-color: var(--red-border);
         box-shadow: none;
       }
-      5%, 11% {
+      12%, 58% {
         transform: translateY(-1px);
-        background: rgba(153, 27, 27, 0.24);
-        border-color: rgba(248, 113, 113, 0.72);
-        box-shadow: 0 0 0 1px rgba(248, 113, 113, 0.16), 0 0 18px rgba(153, 27, 27, 0.24);
+        background: rgba(153, 27, 27, 0.27);
+        border-color: rgba(248, 113, 113, 0.76);
+        box-shadow: 0 0 0 1px rgba(248, 113, 113, 0.16), 0 0 18px rgba(153, 27, 27, 0.26);
       }
     }
 
-    @keyframes trace-pass-replay {
-      0%, 16%, 100% {
+    @keyframes trace-pass-status-replay {
+      0%, 100% {
         transform: translateY(0);
         background: rgba(22, 101, 52, 0.18);
         border-color: var(--green-border);
         box-shadow: none;
       }
-      5%, 11% {
+      12%, 58% {
         transform: translateY(-1px);
         background: rgba(22, 101, 52, 0.25);
         border-color: rgba(74, 222, 128, 0.70);
@@ -3950,21 +4207,35 @@
     }
   }
 
-  @media (max-width: 1100px) {
+  @media (max-width: 1240px) {
+    .hero {
+      min-height: 0;
+    }
+
     .hero-inner {
       display: block;
-      padding-top: 92px;
+      min-height: 0;
+      padding-top: 112px;
+      padding-bottom: 54px;
     }
 
     .trace-scene {
       margin-top: 28px;
     }
+
+    .trace-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
   }
 
   @media (max-width: 900px) {
     h1 {
-      font-size: 3rem;
+      font-size: clamp(2.7rem, 7.2vw, 3.6rem);
       max-width: 880px;
+    }
+
+    .hero-title-line {
+      white-space: normal;
     }
 
     .hero-proof,
@@ -4208,13 +4479,12 @@
       display: none;
     }
 
-    .nav-cta {
-      padding: 7px 10px;
-      font-size: 0.86rem;
+    .nav-links {
+      display: none;
     }
 
     .hero-inner {
-      padding: 92px 22px 36px;
+      padding: 112px 22px 44px;
     }
 
     h1 {
@@ -4228,6 +4498,18 @@
 
     .hero-copy-detail {
       display: none;
+    }
+
+    .cta-row {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 10px;
+      align-items: stretch;
+      max-width: 340px;
+    }
+
+    .cta-row .button {
+      width: 100%;
     }
 
     .scene-label {
@@ -4619,6 +4901,25 @@
       font-size: 0.9rem;
     }
 
+    .trace-lane {
+      grid-template-columns: 1fr;
+      grid-template-areas:
+        "source"
+        "auth"
+        "tool"
+        "result";
+    }
+
+    .trace-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .trace-lane > .trace-node:nth-child(3) {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 4px;
+    }
+
     .rule-line {
       font-size: 0.86rem;
       line-height: 1.42;
@@ -4734,6 +5035,34 @@
     .workflow-row:hover .workflow-dot,
     .workflow-row:focus-within .workflow-dot {
       transform: none;
+      animation: none;
+    }
+
+    .button.ap-review-link,
+    .button.ap-review-link:hover,
+    .button.ap-review-link:focus-visible,
+    .button.ap-review-link .button-arrow {
+      transform: none;
+      animation: none;
+    }
+
+    .button.ap-review-link:hover .button-arrow,
+    .button.ap-review-link:focus-visible .button-arrow {
+      transform: none;
+    }
+
+    .button.ap-review-link::before {
+      display: none;
+    }
+
+    .trace-lane::before,
+    .trace-lane-fail .trace-node,
+    .trace-lane-pass .trace-node,
+    .trace-lane-fail .trace-status.fail,
+    .trace-lane-pass .trace-status.pass,
+    .trace-scene::before,
+    .demo-progress::before,
+    .demo-progress::after {
       animation: none;
     }
 
@@ -5181,7 +5510,7 @@
 <header class="hero">
   <div class="hero-inner">
     <p class="eyebrow">ActionBoundary. Staging-only. Customer review evidence.</p>
-    <h1>AI agent authorization <br class="wide-break">testing for B2B AI startups</h1>
+    <h1><span class="hero-title-line">Agent authorization</span><span class="hero-title-line">reviews for B2B AI</span><span class="hero-title-line">teams</span></h1>
     <p class="hero-copy">
       ActionBoundary helps finance, healthcare, and enterprise agent teams test high-impact tool actions against the right user, approval, policy, and source of truth.
     </p>
@@ -5212,7 +5541,6 @@
         <span>Real customer data is not required.</span>
       </span>
     </div>
-    <a class="hero-ap-route" href="payment-authorization-review.html">For AP/payment agents: review one payment authorization path &rarr;</a>
     <div class="trace-scene" data-demo aria-label="Mini evidence demo: authorization boundary trace">
       <div class="scene-label">
         <span class="demo-title">
@@ -5225,17 +5553,17 @@
       <div class="demo-body">
         <div class="demo-stage">
           <div class="trace-grid">
-            <div class="trace-lane">
-              <div class="trace-node untrusted" style="--pulse-delay: 600ms"><span class="node-label">Request source</span> <span class="node-value">Vendor email</span> <small>bank account changed</small></div>
-              <div class="trace-node" style="--pulse-delay: 1400ms"><span class="node-label">Authorization source</span> <span class="node-value">No trusted record</span> <small>content is not approval</small></div>
-              <div class="trace-node" style="--pulse-delay: 2200ms"><span class="node-label">Tool call</span> <span class="node-value"><code>schedule_payment</code></span> <small><span class="amt">$4,200</span> to email account</small></div>
-              <div class="trace-status fail" style="--pulse-delay: 3000ms"><span class="node-label">Review result</span> <span class="node-value">NO AUTHORITY</span> <small>would execute without a tool gate</small></div>
+            <div class="trace-lane trace-lane-fail">
+              <div class="trace-node untrusted"><span class="node-label">Request source</span> <span class="node-value">Vendor email</span> <small>bank account changed</small></div>
+              <div class="trace-node"><span class="node-label">Authorization source</span> <span class="node-value">No trusted record</span> <small>content is not approval</small></div>
+              <div class="trace-node"><span class="node-label">Tool call</span> <span class="node-value"><code>schedule_payment</code></span> <small><span class="amt">$4,200</span> to email account</small></div>
+              <div class="trace-status fail"><span class="node-label">Review result</span> <span class="node-value">NO AUTHORITY</span> <small>would execute without a tool gate</small></div>
             </div>
-            <div class="trace-lane">
-              <div class="trace-node trusted" style="--pulse-delay: 5800ms"><span class="node-label">Request source</span> <span class="node-value">Approval system</span> <small>source of truth matched</small></div>
-              <div class="trace-node" style="--pulse-delay: 6600ms"><span class="node-label">Authorization source</span> <span class="node-value">User + tenant match</span> <small>permission and approval active</small></div>
-              <div class="trace-node" style="--pulse-delay: 7400ms"><span class="node-label">Tool call</span> <span class="node-value"><code>schedule_payment</code></span> <small><span class="amt">$4,200</span> to verified account</small></div>
-              <div class="trace-status pass" style="--pulse-delay: 8200ms"><span class="node-label">Review result</span> <span class="node-value">AUTHORITY MATCHED</span> <small>evidence-backed action</small></div>
+            <div class="trace-lane trace-lane-pass">
+              <div class="trace-node trusted"><span class="node-label">Request source</span> <span class="node-value">Approval system</span> <small>source of truth matched</small></div>
+              <div class="trace-node"><span class="node-label">Authorization source</span> <span class="node-value">User + tenant match</span> <small>permission and approval active</small></div>
+              <div class="trace-node"><span class="node-label">Tool call</span> <span class="node-value"><code>schedule_payment</code></span> <small><span class="amt">$4,200</span> to verified account</small></div>
+              <div class="trace-status pass"><span class="node-label">Review result</span> <span class="node-value">AUTHORITY MATCHED</span> <small>evidence-backed action</small></div>
             </div>
           </div>
         </div>
@@ -5270,7 +5598,7 @@
           </div>
         </div>
         <div class="finding-actions">
-          <a class="button ap-review-link" href="payment-authorization-review.html">Review one AP payment path &rarr;</a>
+          <a class="button ap-review-link" href="payment-authorization-review.html"><span>Review one AP payment path</span> <span class="button-arrow" aria-hidden="true">&rarr;</span></a>
           <a class="button outline" href="https://github.com/hugoii/llm-agent-audit/blob/master/docs/payment-approval-is-not-user-authorization.md">Read public case note</a>
           <a class="button outline" href="#report">View sample report</a>
         </div>
