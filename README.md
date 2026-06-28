@@ -127,6 +127,47 @@ Schema validation first, then ActionBoundary-specific scoreability checks. New
 trace adapters should emit canonical `observed_actor`; legacy
 `observed_principal` inputs are normalized as an adapter alias.
 
+## Versioning model
+
+The repository uses separate version numbers for separate review surfaces:
+
+| Surface | Current public version | What it means |
+|---|---:|---|
+| GitHub release | `v1.5.1` | Public proof assets, documentation, and archived research package. |
+| Public benchmark battery | `v1.5` | Fixed cross-model scenario battery and run summaries under `docs/runs/v1.5`. |
+| Python package / CLI | `0.1.0` | Local validation and scoring package installed from `pyproject.toml`. |
+| Sample report template | `v0.8` | Public synthetic AP report source and rendered PDF sample. |
+| Pilot verdict contract | `pilot-verdict-1.1` | Machine-readable scored verdict schema used by the CLI and pilot tests. |
+
+These versions do not move in lockstep. A benchmark release can update public
+proof assets without implying a stable `1.x` Python package API, and a report
+template can change without changing the fixed benchmark battery.
+
+## Verification and repository hygiene
+
+The public CI badge tracks the
+[offline smoke workflow](.github/workflows/offline-smoke.yml). On each push to
+`master`, that workflow installs the package with developer dependencies, runs
+the offline audit harness, checks the generated report, runs the public unit
+tests, validates and scores the AP example trace, runs pilot verdict tests, and
+runs the AP L4 local harness.
+
+The reproducible path is intentionally small:
+
+- `python agent_audit.py` regenerates the offline demo report with no API key.
+- `make validate` runs JSON Schema validation and scoring for the AP example.
+- `python -m unittest discover -s tests -p "test_*.py"` runs the public
+  contract/readability tests.
+- `python -m unittest discover -s pilot/tests -p "test_*.py"` runs the pilot
+  verdict tests.
+- `python pilot/ap_l4_verify_local.py` runs the AP L4 local harness.
+
+Runtime dependencies are intentionally minimal (`jsonschema` at package
+runtime); developer tooling is declared in `pyproject.toml`. Security reporting
+and disclosure boundaries are documented in [SECURITY.md](SECURITY.md). The
+public examples use synthetic data and harmless canaries; client reviews are
+staging-only by default and do not require production credentials.
+
 ## Start here
 
 <p align="center">
