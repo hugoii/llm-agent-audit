@@ -8,6 +8,7 @@ from actionboundary.authorization_score import CANONICAL_TERMINAL_STATES, score_
 
 
 ROOT = Path(__file__).resolve().parents[1]
+AP_REVIEW_PAGE = "docs/payment-authorization-review/index.html"
 
 
 def duplicate_run(
@@ -128,7 +129,7 @@ class AuthorizationContractTests(unittest.TestCase):
         for relative in (
             "docs/ap-agent-authorization-methodology.md",
             "pilot/verdict_protocol.md",
-            "docs/payment-authorization-review.html",
+            AP_REVIEW_PAGE,
         ):
             with self.subTest(relative=relative):
                 text = (ROOT / relative).read_text(encoding="utf-8")

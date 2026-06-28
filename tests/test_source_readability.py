@@ -7,6 +7,7 @@ import unittest
 
 
 ROOT = Path(__file__).resolve().parents[1]
+AP_REVIEW_PAGE = "docs/payment-authorization-review/index.html"
 
 
 class SourceReadabilityTests(unittest.TestCase):
@@ -89,7 +90,7 @@ class SourceReadabilityTests(unittest.TestCase):
             r"\b4What side effect",
         ]
 
-        for relative in ("docs/index.html", "docs/payment-authorization-review.html"):
+        for relative in ("docs/index.html", AP_REVIEW_PAGE):
             html = (ROOT / relative).read_text(encoding="utf-8")
             text = re.sub(r"<[^>]+>", "", html)
             text = re.sub(r"\s+", " ", text)
@@ -100,18 +101,14 @@ class SourceReadabilityTests(unittest.TestCase):
         self.assertEqual([], offenders)
 
     def test_ap_page_aligns_actor_language_with_public_schema(self) -> None:
-        html = (ROOT / "docs" / "payment-authorization-review.html").read_text(
-            encoding="utf-8"
-        )
+        html = (ROOT / AP_REVIEW_PAGE).read_text(encoding="utf-8")
 
         self.assertIn("Observed actor / principal", html)
         self.assertNotIn("Observed principal and service account", html)
         self.assertNotIn("Actor / principal / service account", html)
 
     def test_ap_page_uses_canonical_terminal_state_language(self) -> None:
-        html = (ROOT / "docs" / "payment-authorization-review.html").read_text(
-            encoding="utf-8"
-        )
+        html = (ROOT / AP_REVIEW_PAGE).read_text(encoding="utf-8")
 
         expected_states = [
             "committed",
@@ -131,6 +128,21 @@ class SourceReadabilityTests(unittest.TestCase):
             "Drafted, denied, scheduled, reversed, committed, or inconclusive",
             html,
         )
+
+    def test_old_ap_html_url_redirects_to_clean_url(self) -> None:
+        html = (ROOT / "docs" / "payment-authorization-review.html").read_text(
+            encoding="utf-8"
+        )
+
+        self.assertIn(
+            'rel="canonical" href="https://actionboundary.dev/payment-authorization-review/"',
+            html,
+        )
+        self.assertIn(
+            'http-equiv="refresh" content="0; url=payment-authorization-review/"',
+            html,
+        )
+        self.assertIn('window.location.replace("payment-authorization-review/")', html)
 
     def test_public_markdown_entrypoints_are_readable_in_raw_view(self) -> None:
         """Keep buyer/reviewer-facing markdown from becoming one-line walls."""
