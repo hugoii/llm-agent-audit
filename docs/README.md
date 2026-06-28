@@ -87,5 +87,5 @@ path:
 - [Home page](index.html)
 - [Trust page](trust.html)
 - [Why page](why.html)
-- [Payment authorization review page](payment-authorization-review.html)
+- [Payment authorization review page](payment-authorization-review/)
 - [Site assets](assets/)
