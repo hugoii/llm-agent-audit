@@ -121,7 +121,7 @@
     top: 12px;
     left: 12px;
     right: 12px;
-    z-index: 30;
+    z-index: 100;
     border: 1px solid rgba(255, 255, 255, 0.18);
     border-radius: 8px;
     background:
@@ -241,6 +241,99 @@
 
   .nav-links a:hover {
     color: var(--nav-link-hover);
+  }
+
+  .nav-dropdown {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+  }
+
+  .nav-dropdown-trigger {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+  }
+
+  .nav-dropdown-trigger span {
+    color: rgba(154, 215, 207, 0.86);
+    font-size: 0.72rem;
+    line-height: 1;
+  }
+
+  .nav-dropdown-panel {
+    position: absolute;
+    top: calc(100% + 14px);
+    left: -16px;
+    z-index: 120;
+    width: min(420px, calc(100vw - 32px));
+    padding: 10px;
+    border: 1px solid rgba(154, 215, 207, 0.24);
+    border-radius: 8px;
+    background:
+      radial-gradient(circle at 18% 0%, rgba(73, 185, 169, 0.12), transparent 34%),
+      linear-gradient(145deg, #20252b, #111317);
+    box-shadow: 0 18px 34px rgba(0, 0, 0, 0.34);
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(6px);
+    visibility: hidden;
+    white-space: normal;
+    transition:
+      opacity 160ms var(--ease-out-quint),
+      transform 160ms var(--ease-out-quint),
+      visibility 160ms var(--ease-out-quint);
+  }
+
+  .nav-dropdown:hover .nav-dropdown-panel,
+  .nav-dropdown:focus-within .nav-dropdown-panel {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateY(0);
+    visibility: visible;
+  }
+
+  .nav-dropdown-panel::before {
+    content: "";
+    position: absolute;
+    left: 18px;
+    right: 18px;
+    top: -15px;
+    height: 15px;
+  }
+
+  .nav-dropdown-panel .nav-path {
+    display: block;
+    padding: 12px;
+    border-radius: 8px;
+    color: #c5ced8;
+    text-decoration: none;
+  }
+
+  .nav-dropdown-panel .nav-path:hover,
+  .nav-dropdown-panel .nav-path:focus-visible {
+    background: rgba(154, 215, 207, 0.10);
+    color: #c5ced8;
+  }
+
+  .nav-path strong {
+    display: block;
+    color: #f7fbfb;
+    font-size: 0.94rem;
+    line-height: 1.2;
+  }
+
+  .nav-path span {
+    display: block;
+    color: #c5ced8;
+    font-size: 0.82rem;
+    line-height: 1.38;
+    margin-top: 4px;
+  }
+
+  .nav-path-featured {
+    border: 1px solid rgba(154, 215, 207, 0.24);
+    background: rgba(15, 118, 110, 0.18);
   }
 
   .nav-links .nav-cta {
@@ -4483,6 +4576,10 @@
       display: none;
     }
 
+    .nav-dropdown {
+      display: none;
+    }
+
     .hero-inner {
       padding: 112px 22px 44px;
     }
@@ -5257,6 +5354,14 @@
     color: var(--teal);
   }
 
+  .offer-safety span {
+    min-width: 0;
+  }
+
+  .offer-safety a {
+    white-space: nowrap;
+  }
+
   .offer-card .button {
     margin-top: 18px;
   }
@@ -5495,7 +5600,29 @@
       </span>
     </a>
     <div class="nav-links" aria-label="Site links">
-      <a href="#what">What we test</a>
+      <div class="nav-dropdown">
+        <a class="nav-dropdown-trigger" href="#what" aria-haspopup="true">
+          What we test <span aria-hidden="true">&#9662;</span>
+        </a>
+        <div class="nav-dropdown-panel" aria-label="Review paths">
+          <a class="nav-path nav-path-featured" href="payment-authorization-review/">
+            <strong>AP / payment authorization</strong>
+            <span>User, approval, vendor-bank, terminal outcome.</span>
+          </a>
+          <a class="nav-path" href="#intake">
+            <strong>Record changes / ERP writes</strong>
+            <span>Source-of-truth authority for business state changes.</span>
+          </a>
+          <a class="nav-path" href="#intake">
+            <strong>Data export / access grants</strong>
+            <span>Actor, scope, tenant, and destination checks.</span>
+          </a>
+          <a class="nav-path" href="#intake">
+            <strong>Support, scheduling, operations</strong>
+            <span>Agent handoffs where authority can drift.</span>
+          </a>
+        </div>
+      </div>
       <a href="#report">Sample report</a>
       <a href="#pilot">Pilot</a>
       <a href="trust.html">Trust</a>
@@ -5924,31 +6051,33 @@
             <span>from</span>
           </div>
           <div class="offer-path-copy">
-            <span class="offer-path-label">Then, if scoreable</span>
-            <h3>Founding pilot</h3>
-            <p>One staging workflow, 5 to 10 selected scenarios, strict verdicts, fixes, and one included retest.</p>
+            <span class="offer-path-label">Limited early pricing</span>
+            <h3>Founding design-partner review</h3>
+            <p>Limited early pricing for the first design partners.</p>
+            <p>We start by identifying 2 to 3 candidate high-impact action paths, then select one representative path for a narrow but deep staging review.</p>
+            <p>Includes 5 to 10 selected scenarios, benign controls, strict verdicts, concrete fixes, a compact buyer-ready evidence memo, and one same-path retest.</p>
           </div>
         </div>
       </div>
-      <p class="offer-scope">Incomplete trace? You still get the exact evidence gap before a customer security review.</p>
+      <p class="offer-scope">Incomplete trace? You still get the exact evidence gap before a customer security review. This is not full-product certification; it is the first defensible evidence artifact for the action path your buyer is most likely to question. Broader workflows, additional paths, expanded reports, or extra retests are scoped separately.</p>
       <p class="offer-safety">
         <svg viewBox="0 0 24 24" fill="none" aria-hidden="true" focusable="false">
           <path d="M12 2.75 5 5.4v5.6c0 4.2 3 7.9 7 9.25 4-1.35 7-5.05 7-9.25V5.4L12 2.75Z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"></path>
           <path d="m8.8 12.1 2.25 2.25 4.15-4.5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"></path>
         </svg>
-        No production access. No real customer data. No shared credentials. <a href="trust.html">Trust &amp; data handling</a>.
+        <span>No production access. No real customer data. No shared credentials. <a href="trust.html">Trust boundary</a>.</span>
       </p>
       <a class="button primary" href="mailto:jiahao@actionboundary.dev?subject=Existing%20trace%20diagnostic">Check one trace first</a>
     </article>
     <div class="offer-grid">
       <div class="offer-col">
-        <h3>Full pilot includes</h3>
+        <h3>Design-partner review includes</h3>
         <ul class="offer-list get">
-          <li>Custom attack scenarios and selected benign controls from a workflow-specific library</li>
-          <li>Per-action scoring against normalized runtime authority evidence, including identity, approval scope, tool result, and business outcome</li>
-          <li>OWASP/NIST-mapped evidence report for security review</li>
+          <li>Custom risk scenarios and selected benign controls from a workflow-specific library</li>
+          <li>Per-action scoring against observed identity, approval scope, source-of-truth evidence, tool result, and business outcome</li>
+          <li>Compact buyer-ready evidence memo with relevant OWASP/NIST control language</li>
           <li>Concrete application-layer fixes</li>
-          <li>One retest after fixes</li>
+          <li>One retest of the same path after fixes</li>
         </ul>
       </div>
       <div class="offer-col">

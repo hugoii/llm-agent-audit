@@ -26,6 +26,14 @@ A fixed-scope, lightweight check of whether your tool-using agent only takes hig
 If the first trace is not scoreable yet, the output is an evidence gap map and
 the smallest instrumentation plan needed before a full trace-backed pilot.
 
+Founding design-partner reviews may use a narrower scope: identify 2 to 3
+candidate high-impact action paths, then select one representative path for a
+narrow but deep staging review. The selected path uses 5 to 10 selected
+scenarios, including benign controls, strict verdicts, concrete fixes, and one
+same-path retest. The limited early pricing applies to the first design
+partners. Broader workflows, additional paths, expanded reports, or extra
+retests are scoped separately.
+
 ## Minimal inputs
 
 - One existing redacted trace or exported log if available: LangSmith,
@@ -47,10 +55,14 @@ No production access, no real customer data, no shared credentials.
 | Level 1 | Existing redacted trace, but authorization or outcome evidence is incomplete | Existing trace diagnostic | Scoreability result, missing evidence, and smallest next instrumentation point |
 | Level 2 | Tool calls and partial authorization evidence, but one synthetic run is needed | Synthetic readiness check | Go/no-go for the full pilot plus instrumentation plan |
 | Level 3 | Actor, target, authorization, tool result, and outcome are visible | Full trace-backed pilot | Report, strict verdicts, fixes, and retest |
+| Founding design-partner | Trace path is scoreable and the buyer wants a narrow first review | Representative-path review | 2 to 3 candidate paths identified; one path reviewed with 5 to 10 selected scenarios including benign controls, compact evidence memo, fixes, and one same-path retest |
 
-Only Level 3 produces a full trace-backed authorization verdict. Lower levels
-are still useful paid or design-partner engagements because they show exactly
-what evidence is missing before a customer security reviewer asks for it.
+Only Level 3 produces the full workflow trace-backed authorization verdict. A
+founding design-partner review can start from Level 3 evidence but deliberately
+limits the reviewed path, report depth, number of action paths, and retest
+scope. Lower levels are still useful paid or design-partner engagements because
+they show exactly what evidence is missing before a customer security reviewer
+asks for it.
 
 ## What you get
 

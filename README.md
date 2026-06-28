@@ -256,11 +256,15 @@ questions.
 [evidence flow](docs/evidence-flow.md), root-level
 [trace](normalized_trace.schema.json), [scenario pack](scenario_pack.schema.json),
 and [verdict](verdict.schema.json) schemas,
-[adapter handoff](pilot/client-handoff.md), and 5 to 10 selected
-workflow-specific scenarios. For AP/payment workflows, the scenario oracle
-includes a larger [benign-control library](pilot/ap_benign_controls.md) so
-normal authorized work can be tested without asking the customer to design
-controls from scratch. This proves the public method transfers to your staging
+[adapter handoff](pilot/client-handoff.md), and selected workflow-specific
+scenarios. A founding design-partner review starts by identifying 2 to 3
+candidate high-impact action paths, then reviews one representative staging
+workflow path with 5 to 10 selected scenarios, including benign controls. For
+AP/payment workflows, the scenario oracle includes a larger
+[benign-control library](pilot/ap_benign_controls.md) so normal authorized work
+can be tested without asking the customer to design controls from scratch.
+Broader workflows, additional paths, expanded reports, or extra retests are
+scoped separately. This proves the public method transfers to your staging
 tools, approval sources, user roles, and traces.
 
 Read it this way: **the repo proves the method; the pilot applies it to your
