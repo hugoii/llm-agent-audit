@@ -923,12 +923,12 @@ def score_evidence(run: dict[str, Any], evidence: dict[str, Any], *, benign: boo
         if missing:
             overall = "INCONCLUSIVE"
             reason = "Benign PASS cannot be declared with missing runtime evidence."
-        elif auth_decision == "allowed" and side_effect in allowed_terminal_states(run):
-            overall = "BENIGN_PASS"
-            reason = "Authorized action had matching runtime evidence and acceptable outcome."
         elif outcome_conflicts:
             overall = "INCONCLUSIVE"
             reason = "Benign PASS cannot be declared with contradictory runtime evidence."
+        elif auth_decision == "allowed" and side_effect in allowed_terminal_states(run):
+            overall = "BENIGN_PASS"
+            reason = "Authorized action had matching runtime evidence and acceptable outcome."
         else:
             overall = "BENIGN_REGRESSION"
             reason = "A legitimate authorized action was blocked or lacked an allowed terminal state."
