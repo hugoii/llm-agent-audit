@@ -3,12 +3,12 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Why ActionBoundary Exists | Agent Authorization Review</title>
-<meta name="description" content="Why ActionBoundary reviews the boundary where AI agents move from language into high-impact business action.">
+<title>About ActionBoundary | Agent Authorization Review</title>
+<meta name="description" content="Why ActionBoundary exists, how the review lens works, and how the company keeps agent authorization reviews bounded, evidence-backed, and accountable.">
 <link rel="canonical" href="https://actionboundary.dev/why.html">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Why ActionBoundary Exists">
-<meta property="og:description" content="ActionBoundary reviews what an AI agent read, what it called, what authority existed, and what changed.">
+<meta property="og:title" content="About ActionBoundary">
+<meta property="og:description" content="A company-run, method-driven review practice for the moment AI agents cross from language into high-impact business action.">
 <meta property="og:url" content="https://actionboundary.dev/why.html">
 <meta property="og:image" content="https://actionboundary.dev/og-image.png">
 <meta name="twitter:card" content="summary_large_image">
@@ -294,10 +294,15 @@
   }
 
   .hero h1,
-  .hero .lead,
-  .claim-strip span,
-  .trace-row span {
+  .claim-strip span {
     overflow-wrap: normal;
+    word-break: normal;
+  }
+
+  .hero .lead,
+  .trace-row span {
+    min-width: 0;
+    overflow-wrap: break-word;
     word-break: normal;
   }
 
@@ -322,6 +327,7 @@
   }
 
   .hero-panel {
+    min-width: 0;
     border: 1px solid rgba(154, 215, 207, 0.24);
     border-radius: 8px;
     background:
@@ -404,6 +410,10 @@
     gap: 10px;
   }
 
+  .boundary-path.about-path {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
   .boundary-step {
     min-height: 150px;
     border: 1px solid rgba(154, 215, 207, 0.22);
@@ -424,6 +434,17 @@
     color: var(--hero-muted);
     font-size: 0.9rem;
     line-height: 1.45;
+  }
+
+  .plain-stack {
+    display: grid;
+    gap: 14px;
+  }
+
+  .plain-stack p {
+    margin: 0;
+    color: var(--body-strong);
+    font-size: 1.02rem;
   }
 
   .note {
@@ -502,10 +523,55 @@
   }
 
   .lens-item span,
+  .lens-item p,
   .trust-item span {
     color: var(--muted);
     font-size: 0.94rem;
     line-height: 1.5;
+  }
+
+  .lens-item p {
+    margin-bottom: 0;
+  }
+
+  .accountability-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 14px;
+    margin-top: 28px;
+  }
+
+  .accountability-item {
+    background: var(--white);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 22px;
+    box-shadow: var(--shadow-soft);
+  }
+
+  .accountability-item p {
+    color: var(--body-strong);
+    margin-bottom: 0;
+  }
+
+  .method-path {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 24px;
+  }
+
+  .method-path span {
+    display: inline-flex;
+    align-items: center;
+    min-height: 34px;
+    padding: 6px 10px;
+    border: 1px solid rgba(15, 118, 110, 0.22);
+    border-radius: 999px;
+    background: rgba(15, 118, 110, 0.06);
+    color: var(--teal-dark);
+    font-size: 0.84rem;
+    font-weight: 800;
   }
 
   .trust-grid {
@@ -547,6 +613,41 @@
     margin-bottom: 10px;
   }
 
+  .operator p:last-child {
+    margin-bottom: 0;
+  }
+
+  .claim-boundary {
+    display: grid;
+    grid-template-columns: minmax(0, 0.95fr) minmax(320px, 1.05fr);
+    gap: clamp(24px, 5vw, 56px);
+    align-items: start;
+    background:
+      linear-gradient(135deg, rgba(15, 118, 110, 0.10), transparent 38%),
+      var(--white);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: clamp(24px, 5vw, 42px);
+    box-shadow: var(--shadow-soft);
+  }
+
+  .claim-list {
+    display: grid;
+    gap: 10px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .claim-list li {
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.72);
+    padding: 12px 14px;
+    color: var(--body-strong);
+    font-weight: 720;
+  }
+
   .cta-band {
     background:
       linear-gradient(135deg, rgba(15, 118, 110, 0.10), transparent 38%),
@@ -582,7 +683,9 @@
     .ap-panel,
     .lens-item,
     .trust-item,
+    .accountability-item,
     .operator,
+    .claim-boundary,
     .cta-band {
       transition: transform 160ms ease, box-shadow 160ms ease, border-color 160ms ease;
     }
@@ -592,7 +695,9 @@
     .ap-panel:hover,
     .lens-item:hover,
     .trust-item:hover,
+    .accountability-item:hover,
     .operator:hover,
+    .claim-boundary:hover,
     .cta-band:hover {
       transform: translateY(-1px);
       box-shadow: var(--shadow);
@@ -607,11 +712,9 @@
 
     @keyframes rise {
       from {
-        opacity: 0;
         transform: translateY(8px);
       }
       to {
-        opacity: 1;
         transform: translateY(0);
       }
     }
@@ -625,12 +728,23 @@
 
     .boundary-path,
     .lens-grid,
-    .trust-grid {
+    .trust-grid,
+    .accountability-grid,
+    .claim-boundary {
       grid-template-columns: 1fr 1fr;
     }
   }
 
   @media (max-width: 640px) {
+    body {
+      overflow-x: hidden;
+    }
+
+    .site-nav {
+      overflow: hidden;
+      max-width: calc(100vw - 24px);
+    }
+
     .nav-inner {
       align-items: center;
       flex-direction: row;
@@ -639,13 +753,17 @@
     }
 
     .nav-links {
+      position: absolute;
+      top: 50%;
+      right: 14px;
+      transform: translateY(-50%);
       width: auto;
       overflow-x: visible;
       flex-wrap: nowrap;
       white-space: normal;
       padding-bottom: 0;
       gap: 0;
-      margin-left: auto;
+      margin-left: 0;
     }
 
     .nav-links a:not(.nav-cta) {
@@ -657,13 +775,30 @@
     }
 
     .nav-cta {
-      padding: 7px 10px;
-      font-size: 0.86rem;
+      display: none;
+      padding: 7px 9px;
+      min-width: 54px;
+      font-size: 0;
+      white-space: nowrap;
+    }
+
+    .nav-cta::after {
+      content: "Start";
+      font-size: 0.82rem;
     }
 
     .hero {
       padding-top: 112px;
       padding-bottom: 44px;
+    }
+
+    .hero-inner,
+    .section-inner,
+    .footer-inner {
+      width: calc(100vw - 36px);
+      width: calc(100dvw - 36px);
+      max-width: calc(100vw - 36px);
+      max-width: calc(100dvw - 36px);
     }
 
     h1 {
@@ -695,8 +830,8 @@
     }
 
     .trace-row {
-      grid-template-columns: 70px minmax(0, 1fr);
-      gap: 8px;
+      grid-template-columns: 1fr;
+      gap: 4px;
     }
 
     .trace-row span:last-child {
@@ -708,14 +843,63 @@
     }
 
     .boundary-path,
+    .boundary-path.about-path,
     .lens-grid,
     .trust-grid,
+    .accountability-grid,
+    .claim-boundary,
     .operator {
       grid-template-columns: 1fr;
     }
 
     .boundary-step {
       min-height: 0;
+    }
+
+    .hero-panel,
+    .dark-board,
+    .ap-panel,
+    .lens-item,
+    .accountability-item,
+    .operator,
+    .claim-boundary,
+    .cta-band {
+      width: 100%;
+      max-width: calc(100vw - 36px);
+      max-width: calc(100dvw - 36px);
+      overflow: hidden;
+    }
+
+    .hero-panel,
+    .dark-board {
+      justify-self: start;
+      max-width: 38ch;
+    }
+
+    .hero .lead,
+    .plain-stack,
+    .plain-stack p,
+    .note,
+    .trace-row span,
+    .boundary-step span,
+    .lens-item p,
+    .accountability-item p,
+    .operator p,
+    .claim-list li,
+    .cta-band .lead {
+      overflow-wrap: anywhere;
+    }
+
+    .hero .lead,
+    .plain-stack,
+    .note,
+    .cta-band .lead {
+      max-width: 34ch;
+    }
+
+    .trace-row span:last-child,
+    .boundary-step span {
+      max-width: 30ch;
     }
 
     .operator img {
@@ -765,39 +949,44 @@
 <header class="hero">
   <div class="hero-inner hero-grid">
     <div>
-      <h1>Built for the moment<br>agents take action.</h1>
-      <p class="lead">ActionBoundary reviews the point where untrusted context becomes a high-impact tool call: payments, record changes, exports, access grants, or submissions.</p>
+      <h1>Built for the moment<br>AI agents turn<br>language into action.</h1>
+      <p class="lead">AI agents are no longer only answering questions. They are preparing payments, changing records, granting access, routing work, and submitting decisions. ActionBoundary exists for the crossing point: when ordinary business context becomes a high-impact action.</p>
       <div class="claim-strip" aria-label="Review properties">
-        <span>Staging-only</span>
-        <span>Trace-backed</span>
-        <span>Authorization evidence</span>
+        <span>Company-run review practice</span>
+        <span>Staging-only evidence</span>
+        <span>Narrow defensible claims</span>
       </div>
     </div>
-    <aside class="hero-panel" aria-label="The review question">
-      <b>The review question</b>
+    <aside class="hero-panel" aria-label="What the About page answers">
+      <b>What this page answers</b>
       <div class="trace-rows">
-        <div class="trace-row"><span>Read</span><span>What untrusted context did the agent consume?</span></div>
-        <div class="trace-row"><span>Call</span><span>What high-impact tool did it call, with what arguments?</span></div>
-        <div class="trace-row"><span>Authority</span><span>Which trusted record authorized that user, scope, tenant, and action?</span></div>
-        <div class="trace-row"><span>Outcome</span><span>What executed, changed, or was denied?</span></div>
+        <div class="trace-row"><span>Origin</span><span>Why action authority became the review boundary.</span></div>
+        <div class="trace-row"><span>Lens</span><span>How software traces, incentives, and handoffs are read together.</span></div>
+        <div class="trace-row"><span>Method</span><span>How a review stays bounded, repeatable, and evidence-backed.</span></div>
+        <div class="trace-row"><span>Claims</span><span>What ActionBoundary will and will not say from the evidence.</span></div>
       </div>
     </aside>
   </div>
 </header>
 
 <main>
-  <section id="operator" class="section">
+  <section id="why-exists" class="section">
     <div class="section-inner two-col">
       <div>
-        <h2>The boundary is not the answer. It is the action.</h2>
-        <p class="lead">A model can sound careful and still attempt the wrong tool call. A model can refuse one request and still fail the next workflow. The durable question is whether the action had trusted, current, scope-matching authorization.</p>
+        <h2>Why this company exists.</h2>
+        <div class="plain-stack">
+          <p>Most AI testing asks whether the model said the right thing.</p>
+          <p>ActionBoundary cares about the moment after that: what the system allowed the agent to do.</p>
+          <p>A careful answer is not an authorization control. A plausible invoice note is not payment authority. A handoff that says "approved" is not necessarily source-of-truth approval.</p>
+          <p>That distinction is why ActionBoundary exists.</p>
+        </div>
       </div>
       <div class="dark-board" aria-label="ActionBoundary scoring path">
-        <div class="boundary-path">
-          <div class="boundary-step"><strong>Untrusted context</strong><span>Emails, tickets, documents, transcripts, and tool responses.</span></div>
-          <div class="boundary-step"><strong>Tool call</strong><span>Refund, payment, export, access grant, scheduling, or submission.</span></div>
-          <div class="boundary-step"><strong>Authorization source</strong><span>User role, tenant scope, approval state, policy, and source of truth.</span></div>
-          <div class="boundary-step"><strong>Action outcome</strong><span>Executed, blocked, changed, denied, or no high-impact attempt.</span></div>
+        <div class="boundary-path about-path">
+          <div class="boundary-step"><strong>Business context</strong><span>Emails, tickets, documents, tool responses, and agent handoffs.</span></div>
+          <div class="boundary-step"><strong>High-impact call</strong><span>Payment, export, access grant, record change, scheduling, or submission.</span></div>
+          <div class="boundary-step"><strong>Current authority</strong><span>User, tenant, approval, policy, and source-of-truth evidence at action time.</span></div>
+          <div class="boundary-step"><strong>Defensible outcome</strong><span>What changed, what was blocked, and what the evidence can actually support.</span></div>
         </div>
       </div>
     </div>
@@ -806,8 +995,12 @@
   <section class="section">
     <div class="section-inner two-col">
       <div>
-        <h2>Why AP payments were the first public example.</h2>
-        <p class="lead">AP is a useful starting point because the authorization boundary is concrete: an invoice can be valid, a vendor email can be persuasive, and an approval can exist, while the current user still lacks authority to move money.</p>
+        <h2>Why AP was first.</h2>
+        <p class="lead">Accounts payable made the boundary impossible to ignore.</p>
+        <div class="plain-stack">
+          <p>An invoice can be valid. A vendor email can be persuasive. An approval can be real. And the current actor can still lack authority to schedule payment or change bank details.</p>
+          <p>That is the kind of distinction ordinary prompt testing misses.</p>
+        </div>
         <p class="note">The public AP case note is a worked example, not a claim that ActionBoundary is a fraud-detection product. The same review pattern applies to other high-impact actions where a buyer needs proof that the agent respected authorization.</p>
       </div>
       <article class="ap-panel">
@@ -824,20 +1017,20 @@
 
   <section class="section">
     <div class="section-inner">
-      <h2>The review lens is intentionally cross-functional.</h2>
-      <p class="lead">Authorization failures are technical, operational, and commercial at the same time. ActionBoundary is built to read all three layers without turning the engagement into broad AI consulting.</p>
+      <h2>The ActionBoundary lens.</h2>
+      <p class="lead">The review lens combines software engineering, economics, and international management because agent failures are rarely only code failures. They are also workflow failures, incentive failures, handoff failures, and buyer-trust failures.</p>
       <div class="lens-grid">
         <div class="lens-item">
-          <h3>Software traces</h3>
-          <span>Tool names, arguments, returned data, logs, and observed outcomes from a staging run.</span>
+          <h3>Software engineering</h3>
+          <p>We inspect traces: tool calls, arguments, source records, runtime identity, returned data, and side effects.</p>
         </div>
         <div class="lens-item">
-          <h3>Authorization evidence</h3>
-          <span>User role, approval state, tenant scope, policy rule, source of truth, and timing.</span>
+          <h3>Economics</h3>
+          <p>We ask where authority, incentives, loss, and buyer risk actually sit when a workflow becomes automated.</p>
         </div>
         <div class="lens-item">
-          <h3>Commercial review</h3>
-          <span>A report your founder, engineering lead, or security reviewer can inspect without relying on slogans.</span>
+          <h3>International management and operations</h3>
+          <p>We look at handoffs: teams, vendors, tenants, systems of record, approval chains, and operating context.</p>
         </div>
       </div>
     </div>
@@ -845,46 +1038,58 @@
 
   <section class="section">
     <div class="section-inner">
-      <h2>Why the method is inspectable.</h2>
-      <p class="lead">The public artifacts show the shape of the work before a pilot starts. The private pilot applies the same pattern to your agent, tools, traces, and authorization sources.</p>
-      <div class="trust-grid">
-        <a class="trust-item" href="https://github.com/hugoii/llm-agent-audit">
-          <h3>Open harness</h3>
-          <span>Trace runner and scoring rules are available for inspection.</span>
-        </a>
-        <a class="trust-item" href="https://github.com/hugoii/llm-agent-audit/blob/master/docs/payment-approval-is-not-user-authorization.md">
-          <h3>Case notes</h3>
-          <span>Public worked examples show the workflow shape and claim boundary.</span>
-        </a>
-        <a class="trust-item" href="sample-evidence-report-v0.8.pdf">
-          <h3>Sample report</h3>
-          <span>The deliverable format is visible before a pilot starts.</span>
-        </a>
-        <a class="trust-item" href="https://doi.org/10.5281/zenodo.20585658">
-          <h3>Archived DOI</h3>
-          <span>The cross-vendor technical report is preserved for citation and review.</span>
-        </a>
+      <h2>Company-run. Method-driven. Human-accountable.</h2>
+      <p class="lead">ActionBoundary is operated by JZ Software Consulting as a focused review practice, not an anonymous scanner, not a crowdsourced red-team marketplace, and not a generic AI safety lab.</p>
+      <div class="accountability-grid">
+        <article class="accountability-item">
+          <h3>Company-run means accountable.</h3>
+          <p>Each engagement has a defined action boundary, a staging-only evidence path, a written claim boundary, and named reviewer roles in the client report.</p>
+        </article>
+        <article class="accountability-item">
+          <h3>Method-driven means repeatable.</h3>
+          <p>The work is not just running prompts. It is making a bounded judgment about what the agent read, what it called, what authority existed, what changed, and what the evidence can support.</p>
+        </article>
       </div>
-    </div>
-  </section>
-
-  <section id="operator" class="section">
-    <div class="section-inner">
-      <h2>Company-run and method-driven.</h2>
+      <div class="method-path" aria-label="ActionBoundary review path">
+        <span>Scenario design</span>
+        <span>Staging trace review</span>
+        <span>Authorization analysis</span>
+        <span>Buyer-ready report</span>
+        <span>Retest</span>
+      </div>
       <div class="operator">
         <img src="assets/actionboundary-mark.svg" alt="ActionBoundary review mark" width="112" height="112">
         <div>
-          <p>ActionBoundary is operated by JZ Software Consulting. Reviews follow a repeatable process for scenario design, staging trace review, authorization analysis, buyer-ready reporting, and retest.</p>
-          <p>The review lens combines software engineering, economics, and international management because authorization failures are technical, operational, and commercial at the same time.</p>
-          <p>Prepared by ActionBoundary Review Team. Named reviewers and roles are included in client reports. Contact ActionBoundary at <a href="mailto:jiahao@actionboundary.dev">jiahao@actionboundary.dev</a>.</p>
+          <p>The public repo shows the method. Client pilots apply it to private staging workflows, client tools, redacted traces, and customer authorization sources.</p>
+          <p>Prepared by ActionBoundary Review Team. Contact ActionBoundary at <a href="mailto:jiahao@actionboundary.dev">jiahao@actionboundary.dev</a>.</p>
+          <div class="link-row">
+            <a class="button outline" href="https://github.com/hugoii/llm-agent-audit">Inspect public method</a>
+            <a class="button outline" href="sample-evidence-report-v0.8.pdf">View sample report</a>
+            <a class="button outline" href="trust.html">Read trust boundary</a>
+          </div>
         </div>
       </div>
     </div>
   </section>
 
   <section class="section compact">
+    <div class="section-inner claim-boundary">
+      <div>
+        <h2>Claim boundaries matter.</h2>
+        <p class="lead">ActionBoundary makes narrow claims because narrow claims can be defended. Missing evidence is not treated as safety. It is reported as missing evidence.</p>
+      </div>
+      <ul class="claim-list" aria-label="ActionBoundary claim boundaries">
+        <li>We do not certify that an entire AI system is safe.</li>
+        <li>We do not treat model refusal as application security.</li>
+        <li>We do not treat missing traces as proof that nothing happened.</li>
+        <li>We do not need production data to start.</li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="section compact">
     <div class="section-inner cta-band">
-      <h2>Send 3 details. Get 3 scenarios.</h2>
+      <h2>Send one workflow. Get three boundary scenarios.</h2>
       <p class="lead">Start with one product, one workflow or action surface, and one existing redacted trace or safe test path if available. ActionBoundary identifies the risky authorization boundary and replies with a first scenario set before any pilot setup.</p>
       <div class="link-row">
         <a class="button primary" href="mailto:jiahao@actionboundary.dev?subject=3%20scenarios%20for%20our%20agent">Get 3 scenarios</a>
