@@ -1305,6 +1305,12 @@
     max-width: 660px;
   }
 
+  .report-preview {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
   .report-frame {
     margin: 0;
     border: 1px solid var(--line);
@@ -1327,6 +1333,10 @@
     flex-wrap: wrap;
     gap: 10px;
     margin-top: 18px;
+  }
+
+  .report-preview .report-actions {
+    margin-top: 0;
   }
 
   .limits {
@@ -2214,14 +2224,16 @@
         <div class="quote-panel">
           <p>Your staging trace shows the payment tool checked the <span>acting principal</span>, <span>approval scope</span>, <span>vendor-bank source of truth</span>, and <span>final side effect</span>.</p>
         </div>
+      </div>
+      <div class="report-preview">
+        <figure class="report-frame">
+          <img src="/sample-report-preview.png" alt="Rendered preview of the ActionBoundary sample evidence report cover page">
+        </figure>
         <div class="report-actions">
-          <a class="button outline" href="/sample-evidence-report-v0.8.pdf">Open sample evidence memo</a>
+          <a class="button outline" href="/sample-evidence-report-v0.8.pdf">View sample evidence report</a>
           <a class="button outline" href="/trust.html">Read trust boundary</a>
         </div>
       </div>
-      <figure class="report-frame">
-        <img src="/sample-report-preview.png" alt="Rendered preview of the ActionBoundary sample evidence report cover page">
-      </figure>
     </div>
   </section>
 
