@@ -160,6 +160,55 @@
     gap: 18px;
   }
 
+  .nav-identity {
+    display: flex;
+    align-items: center;
+    gap: 13px;
+    min-width: 0;
+  }
+
+  .home-return {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    color: var(--nav-muted);
+    font-size: 0.74rem;
+    font-weight: 700;
+    line-height: 1;
+    text-decoration: none;
+    white-space: nowrap;
+    opacity: 0.82;
+    transition:
+      color 180ms var(--ease-out-quint),
+      opacity 180ms var(--ease-out-quint);
+  }
+
+  .home-return-icon {
+    font-size: 0.86rem;
+    line-height: 1;
+    transform: translateY(-0.5px);
+    transition: transform 180ms var(--ease-out-quint);
+  }
+
+  .home-return:hover,
+  .home-return:focus-visible {
+    color: var(--nav-link-hover);
+    opacity: 1;
+  }
+
+  .home-return:hover .home-return-icon,
+  .home-return:focus-visible .home-return-icon {
+    transform: translate(-2px, -0.5px);
+  }
+
+  .nav-identity-rule {
+    width: 1px;
+    height: 32px;
+    flex: 0 0 auto;
+    background: var(--nav-muted);
+    opacity: 0.34;
+  }
+
   .brand {
     display: flex;
     align-items: center;
@@ -1587,6 +1636,19 @@
       gap: 11px;
     }
 
+    .nav-identity {
+      max-width: 100%;
+      gap: 10px;
+    }
+
+    .home-return {
+      font-size: 0.72rem;
+    }
+
+    .nav-identity-rule {
+      height: 28px;
+    }
+
     .nav-links {
       width: 100%;
       gap: 8px;
@@ -1697,13 +1759,20 @@
 <body>
 <nav class="site-nav" aria-label="Primary">
   <div class="nav-inner">
-    <a class="brand" href="/" aria-label="ActionBoundary home">
-      <img class="brand-mark" src="/assets/actionboundary-mark.svg" alt="" width="30" height="30" aria-hidden="true">
-      <span class="brand-copy">
-        <strong>ActionBoundary</strong>
-        <span class="brand-subtitle">Agent Authorization Review</span>
-      </span>
-    </a>
+    <div class="nav-identity">
+      <a class="home-return" href="/" aria-label="Return to ActionBoundary home">
+        <span class="home-return-icon" aria-hidden="true">&larr;</span>
+        <span>Home</span>
+      </a>
+      <span class="nav-identity-rule" aria-hidden="true"></span>
+      <a class="brand" href="/" aria-label="ActionBoundary home">
+        <img class="brand-mark" src="/assets/actionboundary-mark.svg" alt="" width="30" height="30" aria-hidden="true">
+        <span class="brand-copy">
+          <strong>ActionBoundary</strong>
+          <span class="brand-subtitle">Agent Authorization Review</span>
+        </span>
+      </a>
+    </div>
     <div class="nav-links" aria-label="Site links">
       <div class="nav-dropdown">
         <a class="nav-dropdown-trigger" href="/#what" aria-haspopup="true">
