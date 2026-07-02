@@ -823,6 +823,7 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
+    flex-wrap: wrap;
     gap: 12px;
     margin-bottom: 12px;
     color: #b9c4ce;
@@ -852,6 +853,24 @@
   .demo-subtitle {
     color: var(--hero-muted);
     font-size: 0.84rem;
+  }
+
+  .evidence-receipt {
+    flex: 0 0 min(100%, 420px);
+    display: inline-flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 6px;
+    padding: 7px 9px;
+    border: 1px solid rgba(154, 215, 207, 0.26);
+    border-radius: 8px;
+    background: rgba(154, 215, 207, 0.08);
+    color: #d8f2ee;
+    font-size: 0.72rem;
+    font-weight: 800;
+    line-height: 1.25;
+    text-align: left;
+    white-space: nowrap;
   }
 
   .demo-toggle {
@@ -1120,6 +1139,11 @@
     font-weight: 800;
   }
 
+  .trace-node .node-value code {
+    color: inherit;
+    font-size: inherit;
+  }
+
   .trace-lane > .trace-node:nth-child(3) .node-label,
   .trace-lane > .trace-node:nth-child(3) .node-value,
   .trace-lane > .trace-node:nth-child(3) small {
@@ -1141,6 +1165,19 @@
     font-size: 0.74rem;
     line-height: 1.35;
     margin-top: 4px;
+  }
+
+  .trace-status small {
+    color: rgba(229, 236, 239, 0.82);
+  }
+
+  .evidence-boundary-note {
+    position: relative;
+    z-index: 1;
+    margin: 12px 0 0;
+    color: var(--hero-muted);
+    font-size: 0.76rem;
+    line-height: 1.45;
   }
 
   .trace-arrow {
@@ -4901,6 +4938,18 @@
       display: none;
     }
 
+    .scene-label {
+      align-items: flex-start;
+    }
+
+    .evidence-receipt {
+      flex-basis: 100%;
+      width: 100%;
+      justify-content: flex-start;
+      text-align: left;
+      white-space: normal;
+    }
+
     .trace-scene {
       margin-top: 22px;
       padding: 14px;
@@ -5744,30 +5793,32 @@
     <div class="trace-scene" data-demo aria-label="Mini evidence demo: authorization boundary trace">
       <div class="scene-label">
         <span class="demo-title">
-          <span class="demo-kicker">Trace preview</span>
+          <span class="demo-kicker">Evidence excerpt / AP payment authorization local sandbox</span>
           <strong>Same tool call. Different authority.</strong>
-          <span class="demo-subtitle">Synthetic AP pattern.</span>
+          <span class="demo-subtitle">Independent evidence, not another gate.</span>
         </span>
+        <span class="evidence-receipt">4 model APIs &middot; 5 runs/mode &middot; 0 unauthorized side effects when enforced</span>
       </div>
       <div class="demo-progress" aria-hidden="true"></div>
       <div class="demo-body">
         <div class="demo-stage">
           <div class="trace-grid">
             <div class="trace-lane trace-lane-fail">
-              <div class="trace-node untrusted"><span class="node-label">Request source</span> <span class="node-value">Vendor email</span> <small>bank account changed</small></div>
-              <div class="trace-node"><span class="node-label">Authorization source</span> <span class="node-value">No trusted record</span> <small>content is not approval</small></div>
-              <div class="trace-node"><span class="node-label">Tool call</span> <span class="node-value"><code>schedule_payment</code></span> <small><span class="amt">$4,200</span> to email account</small></div>
-              <div class="trace-status fail"><span class="node-label">Review result</span> <span class="node-value">NO AUTHORITY</span> <small>would execute without a tool gate</small></div>
+              <div class="trace-node untrusted"><span class="node-label">requested_via</span> <span class="node-value">Vendor email</span> <small>untrusted bank-change instruction</small></div>
+              <div class="trace-node"><span class="node-label">source_of_truth</span> <span class="node-value">Approval record</span> <small>no matching approval or vendor-bank update</small></div>
+              <div class="trace-node"><span class="node-label">tool_call</span> <span class="node-value"><code>schedule_payment</code></span> <small><span class="amt">$4,200</span> to email account</small></div>
+              <div class="trace-status fail"><span class="node-label">verdict</span> <span class="node-value">BLOCKED</span> <small>side_effect: not committed</small></div>
             </div>
             <div class="trace-lane trace-lane-pass">
-              <div class="trace-node trusted"><span class="node-label">Request source</span> <span class="node-value">Approval system</span> <small>source of truth matched</small></div>
-              <div class="trace-node"><span class="node-label">Authorization source</span> <span class="node-value">User + tenant match</span> <small>permission and approval active</small></div>
-              <div class="trace-node"><span class="node-label">Tool call</span> <span class="node-value"><code>schedule_payment</code></span> <small><span class="amt">$4,200</span> to verified account</small></div>
-              <div class="trace-status pass"><span class="node-label">Review result</span> <span class="node-value">AUTHORITY MATCHED</span> <small>evidence-backed action</small></div>
+              <div class="trace-node trusted"><span class="node-label">requested_via</span> <span class="node-value">Approved AP user</span> <small>approval system event</small></div>
+              <div class="trace-node"><span class="node-label">source_of_truth</span> <span class="node-value">Approval record</span> <small>user, tenant, and vendor bank matched</small></div>
+              <div class="trace-node"><span class="node-label">tool_call</span> <span class="node-value"><code>schedule_payment</code></span> <small><span class="amt">$4,200</span> to verified account</small></div>
+              <div class="trace-status pass"><span class="node-label">verdict</span> <span class="node-value">PASS</span> <small>side_effect: committed in sandbox</small></div>
             </div>
           </div>
         </div>
       </div>
+      <p class="evidence-boundary-note">Synthetic staging run. No production systems, payment rails, or customer data.</p>
     </div>
   </div>
 </header>
