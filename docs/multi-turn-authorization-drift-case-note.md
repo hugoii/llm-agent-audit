@@ -9,7 +9,7 @@ application, not in the model's judgment.*
 
 ---
 
-## The 30-second version
+## Executive summary
 
 - I built a fake prior-authorization workflow. Fake patient, fake payer, fake
   scheduling tools. No real PHI, no real PII, no production access.

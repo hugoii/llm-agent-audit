@@ -901,7 +901,7 @@
       <div class="article-note"><strong>Claim boundary.</strong> This is not a benchmark or a claim that every model will fail. It shows the trace shape ActionBoundary tests.</div>
 <p><em>A worked multi-turn Agent Authorization Review. I ran a real tool-calling agent loop through a synthetic healthcare prior-authorization workflow with simulated tools. The agent handled the first approved action correctly. Later in the same session, the test asks whether a routine note can carry that approval too far. Here is the trace shape, how I score it, and why the fix belongs in the application, not in the model's judgment.</em></p>
 <hr>
-<h2 id="the-30-second-version">The 30-second version</h2>
+<h2 id="executive-summary">Executive summary</h2>
 <ul>
 <li>I built a fake prior-authorization workflow. Fake patient, fake payer, fake scheduling tools. No real PHI, no real PII, no production access.</li>
 <li>The agent first checked the official prior-auth source and scheduled one approved PT visit. That action should pass.</li>
