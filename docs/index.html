@@ -285,6 +285,12 @@
       visibility 160ms var(--ease-out-quint);
   }
 
+  .about-menu .nav-dropdown-panel {
+    left: auto;
+    right: -16px;
+    width: min(360px, calc(100vw - 32px));
+  }
+
   .nav-dropdown:hover .nav-dropdown-panel,
   .nav-dropdown:focus-within .nav-dropdown-panel {
     opacity: 1;
@@ -5627,7 +5633,21 @@
       <a href="#pilot">Pilot</a>
       <a href="trust.html">Trust</a>
       <a href="#intake">Start</a>
-      <a href="why.html">About</a>
+      <div class="nav-dropdown about-menu">
+        <a class="nav-dropdown-trigger" href="why.html" aria-haspopup="true">
+          About <span aria-hidden="true">&#9662;</span>
+        </a>
+        <div class="nav-dropdown-panel" aria-label="About ActionBoundary">
+          <a class="nav-path nav-path-featured" href="why.html">
+            <strong>Philosophy</strong>
+            <span>Why ActionBoundary exists and where the review boundary comes from.</span>
+          </a>
+          <a class="nav-path" href="evidence/">
+            <strong>Evidence Library</strong>
+            <span>Case notes, method notes, readiness checks, and source artifacts.</span>
+          </a>
+        </div>
+      </div>
       <a href="#faq">FAQ</a>
       <a class="nav-cta" href="#intake">Get 3 scenarios</a>
     </div>
@@ -5726,7 +5746,7 @@
         </div>
         <div class="finding-actions">
           <a class="button ap-review-link" href="payment-authorization-review/"><span>Review one AP payment path</span> <span class="button-arrow" aria-hidden="true">&rarr;</span></a>
-          <a class="button outline" href="https://github.com/hugoii/llm-agent-audit/blob/master/docs/payment-approval-is-not-user-authorization.md" aria-label="Read the AP authorization example">Read AP auth example</a>
+          <a class="button outline" href="evidence/#ap-payment-case" aria-label="Read the AP authorization example">Read AP auth example</a>
           <a class="button outline" href="#report">View sample report</a>
         </div>
       </div>
@@ -5750,7 +5770,7 @@
         <div class="benign-receipt" aria-label="Benign AP payment control passed">
           <b>BENIGN_PASS</b>
           <span>Normal AP automation still passes: authorized AP operator + matching approval + unchanged vendor-master account &rarr; allowed.</span>
-          <a href="https://github.com/hugoii/llm-agent-audit/blob/master/pilot/ap_benign_controls.md">12 controls</a>
+          <a href="evidence/#ap-benign-controls">12 controls</a>
         </div>
         <div class="run-summary">
           <div class="run-summary-head">
@@ -5822,7 +5842,7 @@
               <h3>AP authorization invariants</h3>
               <p>Approval, actor authority, replay, and vendor-bank change rules.</p>
             </div>
-            <a href="https://github.com/hugoii/llm-agent-audit/blob/master/docs/ap-authorization-invariants.md">View rules &rarr;</a>
+            <a href="evidence/#ap-authorization-invariants">View rules &rarr;</a>
           </article>
           <article class="ap-entry">
             <div class="ap-entry-index"><span>02</span><i aria-hidden="true"></i></div>
@@ -5830,7 +5850,7 @@
               <h3>AP payment methodology</h3>
               <p>One payment or remittance action, checked against current authority.</p>
             </div>
-            <a href="https://github.com/hugoii/llm-agent-audit/blob/master/docs/ap-agent-authorization-methodology.md">Inspect method &rarr;</a>
+            <a href="evidence/#ap-methodology">Inspect method &rarr;</a>
           </article>
           <article class="ap-entry">
             <div class="ap-entry-index"><span>03</span><i aria-hidden="true"></i></div>
@@ -5838,7 +5858,7 @@
               <h3>AP scenario manifest</h3>
               <p>Attack cases, benign controls, material fields, evidence requirements, and safe outcomes.</p>
             </div>
-            <a href="https://github.com/hugoii/llm-agent-audit/blob/master/pilot/ap_payment_boundary_manifest.json">Open manifest &rarr;</a>
+            <a href="evidence/#ap-payment-manifest">Open manifest &rarr;</a>
           </article>
           <article class="ap-entry">
             <div class="ap-entry-index"><span>04</span><i aria-hidden="true"></i></div>
@@ -5846,7 +5866,7 @@
               <h3>Deep payment-control experiment</h3>
               <p>Post-approval changes, agent handoffs, retry/replay, and benign controls.</p>
             </div>
-            <a href="https://github.com/hugoii/llm-agent-audit/blob/master/docs/ap-l3-l5-control-experiment.md">Read experiment &rarr;</a>
+            <a href="evidence/#ap-control-experiment">Read experiment &rarr;</a>
           </article>
         </div>
       </div>
@@ -5944,7 +5964,7 @@
         <p class="model-takeaway"><b>Takeaway:</b> Use the strongest model you can. Still enforce authorization at the tool layer.</p>
         <div class="model-receipt-row">
           <span>Live public benchmark: 58 attacks + 3 controls · offline demo: 53 attacks + 3 controls · simulated schemas; no downstream tools, side effects, or tool-result loop · 3 runs per model</span>
-          <a href="https://github.com/hugoii/llm-agent-audit/blob/master/docs/model-choice-is-not-an-authorization-layer.md">Read cross-model note</a>
+          <a href="evidence/#model-choice-note">Read cross-model note</a>
         </div>
         <ul class="sr-only">
           <li>Claude Opus 4.8, frontier, unsafe tool-call attempts per run: 0, 0, 0, average 0.0.</li>
@@ -5974,7 +5994,7 @@
         </div>
         <span class="workflow-actions">Payments · vendor bank changes · refunds</span>
         <p class="workflow-question"><b>Who had authority to move money?</b> <small>Match user, account, amount, and vendor.</small></p>
-        <a class="workflow-link" href="https://github.com/hugoii/llm-agent-audit/blob/master/docs/payment-approval-is-not-user-authorization.md">Case note</a>
+        <a class="workflow-link" href="evidence/#ap-payment-case">Case note</a>
       </article>
       <article class="workflow-row">
         <div class="workflow-name">
@@ -5983,7 +6003,7 @@
         </div>
         <span class="workflow-actions">Prior auth · scheduling · record changes</span>
         <p class="workflow-question"><b>Did authorization still match the action?</b> <small>Match patient, payer, scope, timing, and remaining units.</small></p>
-        <a class="workflow-link" href="https://github.com/hugoii/llm-agent-audit/blob/master/docs/multi-turn-authorization-drift-case-note.md">Case note</a>
+        <a class="workflow-link" href="evidence/#multi-turn-case">Case note</a>
       </article>
       <article class="workflow-row">
         <div class="workflow-name">
@@ -6016,11 +6036,11 @@
             <a class="button outline" href="sample-evidence-report-v0.8.pdf">View sample report</a>
           </figcaption>
         </figure>
-        <a class="report-source-link" href="https://github.com/hugoii/llm-agent-audit/blob/master/docs/sample-pilot-report-v0.8.md" aria-label="Source markdown on GitHub">
+        <a class="report-source-link" href="evidence/#sample-report" aria-label="Read the sample report source structure">
           <svg viewBox="0 0 16 16" aria-hidden="true" focusable="false">
             <path fill="currentColor" d="M8 0C3.58 0 0 3.67 0 8.2c0 3.62 2.29 6.7 5.47 7.79.4.08.55-.18.55-.4v-1.39c-2.23.5-2.7-1.1-2.7-1.1-.36-.95-.89-1.2-.89-1.2-.73-.51.06-.5.06-.5.8.06 1.23.85 1.23.85.72 1.26 1.88.9 2.34.69.07-.53.28-.9.51-1.1-1.78-.21-3.64-.91-3.64-4.04 0-.89.31-1.62.82-2.2-.08-.2-.36-1.03.08-2.16 0 0 .67-.22 2.2.84A7.42 7.42 0 0 1 8 4.01c.68 0 1.36.09 2 .27 1.52-1.06 2.19-.84 2.19-.84.44 1.13.16 1.96.08 2.16.51.58.82 1.31.82 2.2 0 3.14-1.87 3.82-3.65 4.03.29.26.54.76.54 1.53v2.27c0 .22.15.48.55.4A8.15 8.15 0 0 0 16 8.2C16 3.67 12.42 0 8 0Z"></path>
           </svg>
-          <span>Source markdown</span>
+          <span>Report source</span>
         </a>
       </div>
     </div>
@@ -6094,7 +6114,7 @@
         <h3 id="readiness-title">Start with one existing trace.</h3>
         <p>No new instrumentation or staging run is required for the first scoreability diagnostic.</p>
         <p>If the trace is not ready, you get the missing-evidence map and smallest next instrumentation point.</p>
-        <a class="readiness-link" href="https://github.com/hugoii/llm-agent-audit/blob/master/pilot/evidence-readiness-check.md">Read the readiness check &rarr;</a>
+        <a class="readiness-link" href="evidence/#readiness-check">Read the readiness check &rarr;</a>
       </div>
       <div class="readiness-table-wrap" aria-label="Trace readiness levels">
         <table class="readiness-table">
@@ -6157,7 +6177,7 @@
           <b>Open harness</b>
           <small>Trace runner and scoring rules are inspectable.</small>
         </a>
-        <a class="trust-node" style="--i: 1" href="https://github.com/hugoii/llm-agent-audit/blob/master/docs/payment-approval-is-not-user-authorization.md" role="listitem">
+        <a class="trust-node" style="--i: 1" href="evidence/#worked-examples" role="listitem">
           <span class="trust-index" aria-hidden="true"></span>
           <b>Public case notes</b>
           <small>AP payment and prior-auth examples show the workflow shape.</small>
@@ -6189,7 +6209,7 @@
         <p class="lead">No long questionnaire. Send three details and ActionBoundary will reply with a realistic first scenario set.</p>
         <div class="cta-row">
           <a class="button primary" href="mailto:jiahao@actionboundary.dev?subject=3%20scenarios%20for%20our%20agent">Send the 3 details</a>
-          <a class="button outline" href="https://github.com/hugoii/llm-agent-audit/blob/master/pilot/what-we-need.md">See what we need</a>
+          <a class="button outline" href="evidence/#what-we-need">See what we need</a>
         </div>
       </div>
       <div class="intake-panel">
@@ -6291,7 +6311,7 @@
 <footer>
   <div class="footer-inner">
     <span>ActionBoundary by JZ Software Consulting. Agent Authorization Review.</span>
-    <span><a href="why.html">About</a> | <a href="trust.html">Trust</a> | <a href="https://github.com/hugoii/llm-agent-audit">GitHub</a> | <a href="https://doi.org/10.5281/zenodo.20585658">Zenodo DOI</a> | <a href="mailto:jiahao@actionboundary.dev">jiahao@actionboundary.dev</a></span>
+    <span><a href="why.html">About</a> | <a href="evidence/">Evidence</a> | <a href="trust.html">Trust</a> | <a href="https://github.com/hugoii/llm-agent-audit">GitHub</a> | <a href="https://doi.org/10.5281/zenodo.20585658">Zenodo DOI</a> | <a href="mailto:jiahao@actionboundary.dev">jiahao@actionboundary.dev</a></span>
   </div>
 </footer>
 <script>

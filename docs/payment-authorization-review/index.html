@@ -306,6 +306,12 @@
       visibility 160ms var(--ease-out-quint);
   }
 
+  .about-menu .nav-dropdown-panel {
+    left: auto;
+    right: -16px;
+    width: min(360px, calc(100vw - 32px));
+  }
+
   .nav-dropdown:hover .nav-dropdown-panel,
   .nav-dropdown:focus-within .nav-dropdown-panel {
     opacity: 1;
@@ -1811,7 +1817,21 @@
       <a href="/#pilot">Pilot</a>
       <a href="/trust.html">Trust</a>
       <a href="/#intake">Start</a>
-      <a href="/why.html">About</a>
+      <div class="nav-dropdown about-menu">
+        <a class="nav-dropdown-trigger" href="/why.html" aria-haspopup="true">
+          About <span aria-hidden="true">&#9662;</span>
+        </a>
+        <div class="nav-dropdown-panel" aria-label="About ActionBoundary">
+          <a class="nav-path nav-path-featured" href="/why.html">
+            <strong>Philosophy</strong>
+            <span>Why ActionBoundary exists and where the review boundary comes from.</span>
+          </a>
+          <a class="nav-path" href="/evidence/">
+            <strong>Evidence Library</strong>
+            <span>Case notes, method notes, readiness checks, and source artifacts.</span>
+          </a>
+        </div>
+      </div>
       <a href="/#faq">FAQ</a>
       <a class="nav-cta" href="/#intake">Get 3 scenarios</a>
     </div>
@@ -2202,7 +2222,7 @@
         <p class="section-kicker">Control alignment</p>
         <h2 id="control-language-title">Mapped to control language your buyer already knows.</h2>
         <p class="lead">The report maps AP agent evidence to transaction authorization, least privilege, separation of duties, vendor-bank source of truth, BEC/vendor-fraud risk, and audit logging. Trace evidence still drives the verdict; this is not a compliance certification.</p>
-        <a class="control-link" href="https://github.com/hugoii/llm-agent-audit/blob/master/docs/control-alignment.md">Read the control alignment</a>
+        <a class="control-link" href="/evidence/#control-alignment">Read the control alignment</a>
       </div>
       <ul class="control-tags" aria-label="Reference language used in AP payment authorization reviews">
         <li>OWASP AI Agent Security</li>
@@ -2273,7 +2293,7 @@
 <footer>
   <div class="footer-inner">
     <span>ActionBoundary Review Team. Staging-only Agent Authorization Review.</span>
-    <span><a href="/">Home</a> | <a href="/why.html">About</a> | <a href="/trust.html">Trust</a> | <a href="/sample-evidence-report-v0.8.pdf">Sample report</a> | <a href="mailto:jiahao@actionboundary.dev">jiahao@actionboundary.dev</a></span>
+    <span><a href="/">Home</a> | <a href="/why.html">About</a> | <a href="/evidence/">Evidence</a> | <a href="/trust.html">Trust</a> | <a href="/sample-evidence-report-v0.8.pdf">Sample report</a> | <a href="mailto:jiahao@actionboundary.dev">jiahao@actionboundary.dev</a></span>
   </div>
 </footer>
 

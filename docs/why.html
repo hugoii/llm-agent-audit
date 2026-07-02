@@ -251,6 +251,12 @@
       visibility 160ms var(--ease-out-quint);
   }
 
+  .about-menu .nav-dropdown-panel {
+    left: auto;
+    right: -16px;
+    width: min(360px, calc(100vw - 32px));
+  }
+
   .nav-dropdown:hover .nav-dropdown-panel,
   .nav-dropdown:focus-within .nav-dropdown-panel {
     opacity: 1;
@@ -1058,7 +1064,21 @@
       <a href="index.html#pilot">Pilot</a>
       <a href="trust.html">Trust</a>
       <a href="index.html#intake">Start</a>
-      <a href="why.html">About</a>
+      <div class="nav-dropdown about-menu">
+        <a class="nav-dropdown-trigger" href="why.html" aria-haspopup="true">
+          About <span aria-hidden="true">&#9662;</span>
+        </a>
+        <div class="nav-dropdown-panel" aria-label="About ActionBoundary">
+          <a class="nav-path nav-path-featured" href="why.html">
+            <strong>Philosophy</strong>
+            <span>Why ActionBoundary exists and where the review boundary comes from.</span>
+          </a>
+          <a class="nav-path" href="evidence/">
+            <strong>Evidence Library</strong>
+            <span>Case notes, method notes, readiness checks, and source artifacts.</span>
+          </a>
+        </div>
+      </div>
       <a href="index.html#faq">FAQ</a>
       <a class="nav-cta" href="mailto:jiahao@actionboundary.dev?subject=3%20scenarios%20for%20our%20agent">Get 3 scenarios</a>
     </div>
@@ -1127,7 +1147,7 @@
         <p>That distinction is where a tool-using agent review becomes more than prompt testing. The evidence has to connect the attempted action to a trusted authorization record, not just to a plausible explanation from the model.</p>
         <p class="note">External context: the <a href="https://www.ic3.gov/AnnualReport/Reports/2025_IC3Report.pdf">FBI IC3 Internet Crime Report</a> and <a href="https://genai.owasp.org/resource/agentic-ai-threats-and-mitigations/">OWASP Agentic AI guidance</a> both point to why action-level controls deserve attention as agents touch money, data, and operational systems.</p>
         <div class="link-row">
-          <a class="button outline" href="https://github.com/hugoii/llm-agent-audit/blob/master/docs/payment-approval-is-not-user-authorization.md">Read AP case note</a>
+          <a class="button outline" href="evidence/#ap-payment-case">Read AP case note</a>
           <a class="button outline" href="sample-evidence-report-v0.8.pdf">View sample report</a>
         </div>
       </article>
@@ -1182,7 +1202,7 @@
           <p>The public repo shows the method. Client pilots apply it to private staging workflows, client tools, redacted traces, and customer authorization sources.</p>
           <p>Prepared by ActionBoundary Review Team. Contact ActionBoundary at <a href="mailto:jiahao@actionboundary.dev">jiahao@actionboundary.dev</a>.</p>
           <div class="link-row">
-            <a class="button outline" href="https://github.com/hugoii/llm-agent-audit">Inspect public method</a>
+            <a class="button outline" href="evidence/">Open evidence library</a>
             <a class="button outline" href="sample-evidence-report-v0.8.pdf">View sample report</a>
             <a class="button outline" href="trust.html">Read trust boundary</a>
           </div>
@@ -1221,7 +1241,7 @@
 <footer>
   <div class="footer-inner">
     <span>ActionBoundary by JZ Software Consulting. Agent Authorization Review.</span>
-    <span><a href="index.html">Home</a> | <a href="https://github.com/hugoii/llm-agent-audit">GitHub</a> | <a href="https://doi.org/10.5281/zenodo.20585658">Zenodo DOI</a> | <a href="mailto:jiahao@actionboundary.dev">jiahao@actionboundary.dev</a></span>
+    <span><a href="index.html">Home</a> | <a href="evidence/">Evidence</a> | <a href="https://github.com/hugoii/llm-agent-audit">GitHub</a> | <a href="https://doi.org/10.5281/zenodo.20585658">Zenodo DOI</a> | <a href="mailto:jiahao@actionboundary.dev">jiahao@actionboundary.dev</a></span>
   </div>
 </footer>
 <script>

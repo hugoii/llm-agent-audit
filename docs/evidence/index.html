@@ -1,0 +1,1323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Evidence Library | ActionBoundary</title>
+<meta name="description" content="ActionBoundary evidence library: public case notes, method notes, sample report, readiness checks, source artifacts, and reproducibility links for Agent Authorization Review.">
+<link rel="canonical" href="https://actionboundary.dev/evidence/">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Evidence Library | ActionBoundary">
+<meta property="og:description" content="Public proof artifacts for ActionBoundary: case notes, method notes, sample report, readiness checks, source artifacts, and reproducibility links.">
+<meta property="og:url" content="https://actionboundary.dev/evidence/">
+<meta property="og:image" content="https://actionboundary.dev/og-image.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Evidence Library | ActionBoundary">
+<meta name="twitter:description" content="Case notes, method notes, sample report, readiness checks, and source artifacts for ActionBoundary.">
+<meta name="twitter:image" content="https://actionboundary.dev/og-image.png">
+<link rel="icon" type="image/svg+xml" href="../favicon.svg">
+<style>
+  :root {
+    --ink: #161719;
+    --muted: #626a75;
+    --paper: #f7f8fa;
+    --white: #ffffff;
+    --line: #dbe1e8;
+    --line-strong: #b8c1cc;
+    --teal: #0f766e;
+    --teal-dark: #0b4f4a;
+    --teal-soft: #e7f5f3;
+    --amber: #b45309;
+    --amber-soft: #fff7ed;
+    --red: #991b1b;
+    --red-soft: #fef2f2;
+    --green: #166534;
+    --green-soft: #ecfdf5;
+    --charcoal: #151619;
+    --charcoal-2: #202227;
+    --charcoal-3: #2b2f36;
+    --hero-border: #0f1114;
+    --hero-accent: #9ad7cf;
+    --hero-muted: #aeb8c5;
+    --lead: #3e454d;
+    --footer-ink: #343b43;
+    --footer-muted: #b9c2cd;
+    --shadow-soft: 0 2px 8px rgba(16, 24, 40, 0.08);
+    --ease-out-quint: cubic-bezier(0.22, 1, 0.36, 1);
+    --max: 1280px;
+    --readable: 820px;
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    overflow-x: hidden;
+  }
+
+  body {
+    margin: 0;
+    color: var(--ink);
+    background: var(--paper);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    line-height: 1.6;
+    overflow-wrap: anywhere;
+  }
+
+  a {
+    color: var(--teal-dark);
+    text-decoration-thickness: 1px;
+    text-underline-offset: 3px;
+  }
+
+  a:hover {
+    color: var(--teal);
+  }
+
+  a:focus-visible,
+  summary:focus-visible {
+    outline: 2px solid rgba(15, 118, 110, 0.42);
+    outline-offset: 4px;
+    border-radius: 4px;
+  }
+
+  img {
+    max-width: 100%;
+    height: auto;
+  }
+
+  .site-nav {
+    --nav-ink: #f6f8f9;
+    --nav-muted: rgba(215, 226, 229, 0.74);
+    --nav-link: rgba(246, 248, 249, 0.86);
+    --nav-link-hover: var(--white);
+    position: fixed;
+    top: 12px;
+    left: 12px;
+    right: 12px;
+    z-index: 100;
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    border-radius: 8px;
+    background:
+      linear-gradient(180deg, rgba(255, 255, 255, 0.14), rgba(255, 255, 255, 0.055)),
+      linear-gradient(180deg, rgba(18, 22, 26, 0.42), rgba(18, 22, 26, 0.30));
+    box-shadow:
+      0 8px 18px rgba(0, 0, 0, 0.18),
+      inset 0 1px 0 rgba(255, 255, 255, 0.28),
+      inset 0 -1px 0 rgba(255, 255, 255, 0.06);
+    -webkit-backdrop-filter: blur(26px) saturate(170%);
+    backdrop-filter: blur(26px) saturate(170%);
+    transition:
+      background-color 220ms var(--ease-out-quint),
+      background 220ms var(--ease-out-quint),
+      border-color 220ms var(--ease-out-quint),
+      box-shadow 220ms var(--ease-out-quint);
+  }
+
+  .site-nav.is-over-light {
+    --nav-ink: var(--ink);
+    --nav-muted: var(--muted);
+    --nav-link: rgba(22, 23, 25, 0.78);
+    --nav-link-hover: var(--teal-dark);
+    border-color: rgba(15, 118, 110, 0.18);
+    background:
+      linear-gradient(180deg, rgba(255, 255, 255, 0.68), rgba(255, 255, 255, 0.36)),
+      linear-gradient(110deg, rgba(231, 245, 243, 0.26), rgba(255, 255, 255, 0.12));
+    box-shadow:
+      0 8px 18px rgba(16, 24, 40, 0.10),
+      inset 0 1px 0 rgba(255, 255, 255, 0.72),
+      inset 0 -1px 0 rgba(15, 118, 110, 0.08);
+  }
+
+  .site-nav::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    border-radius: inherit;
+    background:
+      linear-gradient(180deg, rgba(255, 255, 255, 0.24), transparent 46%),
+      linear-gradient(100deg, transparent 8%, rgba(255, 255, 255, 0.12) 34%, transparent 58%);
+    opacity: 0.76;
+    transition: opacity 220ms var(--ease-out-quint), background 220ms var(--ease-out-quint);
+  }
+
+  .site-nav.is-over-light::after {
+    background:
+      linear-gradient(180deg, rgba(255, 255, 255, 0.56), transparent 50%),
+      linear-gradient(100deg, transparent 6%, rgba(255, 255, 255, 0.28) 32%, transparent 58%);
+    opacity: 0.9;
+  }
+
+  .nav-inner {
+    position: relative;
+    z-index: 1;
+    max-width: var(--max);
+    margin: 0 auto;
+    padding: 13px 22px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 18px;
+  }
+
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    text-decoration: none;
+    color: var(--nav-ink);
+    min-width: 0;
+    transition: color 220ms var(--ease-out-quint);
+  }
+
+  .brand-mark {
+    width: 30px;
+    height: 30px;
+    flex: 0 0 auto;
+    border-radius: 8px;
+  }
+
+  .brand-copy {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+  }
+
+  .brand strong {
+    font-size: 1.02rem;
+    line-height: 1.1;
+    letter-spacing: 0;
+  }
+
+  .brand-subtitle {
+    color: var(--nav-muted);
+    font-size: 0.78rem;
+    line-height: 1.25;
+    margin-top: 3px;
+    transition: color 220ms var(--ease-out-quint);
+  }
+
+  .nav-links {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    font-size: 0.92rem;
+    white-space: nowrap;
+  }
+
+  .nav-links a {
+    color: var(--nav-link);
+    text-decoration: none;
+    transition: color 160ms var(--ease-out-quint), opacity 160ms var(--ease-out-quint);
+  }
+
+  .nav-links a:hover {
+    color: var(--nav-link-hover);
+  }
+
+  .nav-dropdown {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+  }
+
+  .nav-dropdown-trigger {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+  }
+
+  .nav-dropdown-trigger span {
+    color: rgba(154, 215, 207, 0.86);
+    font-size: 0.72rem;
+    line-height: 1;
+  }
+
+  .nav-dropdown-panel {
+    position: absolute;
+    top: calc(100% + 14px);
+    left: -16px;
+    z-index: 120;
+    width: min(420px, calc(100vw - 32px));
+    padding: 10px;
+    border: 1px solid rgba(154, 215, 207, 0.24);
+    border-radius: 8px;
+    background:
+      radial-gradient(circle at 18% 0%, rgba(73, 185, 169, 0.12), transparent 34%),
+      linear-gradient(145deg, #20252b, #111317);
+    box-shadow: 0 18px 34px rgba(0, 0, 0, 0.34);
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(6px);
+    visibility: hidden;
+    white-space: normal;
+    transition:
+      opacity 160ms var(--ease-out-quint),
+      transform 160ms var(--ease-out-quint),
+      visibility 160ms var(--ease-out-quint);
+  }
+
+  .about-menu .nav-dropdown-panel {
+    left: auto;
+    right: -16px;
+    width: min(360px, calc(100vw - 32px));
+  }
+
+  .nav-dropdown:hover .nav-dropdown-panel,
+  .nav-dropdown:focus-within .nav-dropdown-panel {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateY(0);
+    visibility: visible;
+  }
+
+  .nav-dropdown-panel::before {
+    content: "";
+    position: absolute;
+    left: 18px;
+    right: 18px;
+    top: -15px;
+    height: 15px;
+  }
+
+  .nav-dropdown-panel .nav-path {
+    display: block;
+    padding: 12px;
+    border-radius: 8px;
+    color: #c5ced8;
+    text-decoration: none;
+  }
+
+  .nav-dropdown-panel .nav-path:hover,
+  .nav-dropdown-panel .nav-path:focus-visible {
+    background: rgba(154, 215, 207, 0.10);
+    color: #c5ced8;
+  }
+
+  .nav-path strong {
+    display: block;
+    color: #f7fbfb;
+    font-size: 0.94rem;
+    line-height: 1.2;
+  }
+
+  .nav-path span {
+    display: block;
+    color: #c5ced8;
+    font-size: 0.82rem;
+    line-height: 1.38;
+    margin-top: 4px;
+  }
+
+  .nav-path-featured {
+    border: 1px solid rgba(154, 215, 207, 0.24);
+    background: rgba(15, 118, 110, 0.18);
+  }
+
+  .nav-links .nav-cta {
+    border: 1px solid rgba(154, 215, 207, 0.36);
+    background: rgba(11, 79, 74, 0.88);
+    color: var(--white);
+    padding: 8px 12px;
+    border-radius: 8px;
+  }
+
+  .nav-links .nav-cta:hover {
+    background: rgba(15, 118, 110, 0.96);
+    border-color: rgba(154, 215, 207, 0.54);
+    color: var(--white);
+  }
+
+  .hero {
+    min-height: 620px;
+    background:
+      radial-gradient(circle at 12% 12%, rgba(73, 185, 169, 0.22), transparent 32%),
+      radial-gradient(circle at 90% 18%, rgba(180, 83, 9, 0.08), transparent 26%),
+      linear-gradient(135deg, #111317, #1d2429 62%, #151619);
+    color: var(--white);
+    border-bottom: 1px solid var(--hero-border);
+  }
+
+  .hero-inner {
+    max-width: var(--max);
+    min-height: 620px;
+    margin: 0 auto;
+    padding: 126px 36px 58px;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(360px, 0.55fr);
+    gap: 42px;
+    align-items: center;
+  }
+
+  .eyebrow,
+  .section-kicker {
+    margin: 0 0 14px;
+    color: var(--hero-accent);
+    font-size: 0.82rem;
+    font-weight: 800;
+    letter-spacing: 0;
+    text-transform: uppercase;
+  }
+
+  h1,
+  h2,
+  h3,
+  p {
+    margin-top: 0;
+  }
+
+  h1 {
+    max-width: 900px;
+    margin-bottom: 22px;
+    font-size: clamp(3.1rem, 5vw, 4.35rem);
+    line-height: 1.02;
+    letter-spacing: 0;
+    text-wrap: balance;
+  }
+
+  h2,
+  h3 {
+    text-wrap: balance;
+  }
+
+  p,
+  li {
+    text-wrap: pretty;
+  }
+
+  .hero-copy {
+    max-width: 710px;
+    color: #d8dde5;
+    font-size: 1.04rem;
+    line-height: 1.58;
+    margin-bottom: 30px;
+  }
+
+  .hero-actions,
+  .card-actions,
+  .source-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    align-items: center;
+  }
+
+  .button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 44px;
+    padding: 11px 15px;
+    border-radius: 8px;
+    font-weight: 750;
+    text-decoration: none;
+    border: 1px solid transparent;
+  }
+
+  .button.primary {
+    background: var(--charcoal);
+    color: var(--white);
+    border-color: var(--charcoal);
+  }
+
+  .hero .button.primary {
+    background: #f3f8f7;
+    color: #10201f;
+    border-color: #f3f8f7;
+  }
+
+  .button.primary:hover {
+    background: var(--teal-dark);
+    color: var(--white);
+    border-color: var(--teal-dark);
+  }
+
+  .hero .button.primary:hover {
+    background: #d8efec;
+    color: #10201f;
+    border-color: #d8efec;
+  }
+
+  .button.secondary {
+    color: var(--white);
+    border-color: rgba(255, 255, 255, 0.32);
+    background: rgba(255, 255, 255, 0.08);
+  }
+
+  .button.secondary:hover {
+    background: rgba(255, 255, 255, 0.14);
+    color: var(--white);
+  }
+
+  .button.outline {
+    color: var(--charcoal);
+    border-color: var(--line-strong);
+    background: var(--white);
+  }
+
+  .button.outline:hover {
+    color: var(--teal-dark);
+    border-color: rgba(15, 118, 110, 0.45);
+    background: var(--teal-soft);
+  }
+
+  .hero-ledger {
+    border: 1px solid rgba(154, 215, 207, 0.24);
+    border-radius: 8px;
+    background:
+      radial-gradient(circle at 12% 0%, rgba(73, 185, 169, 0.14), transparent 34%),
+      linear-gradient(145deg, #20252b, #111317);
+    box-shadow: 0 8px 14px rgba(0, 0, 0, 0.22);
+    padding: 18px;
+  }
+
+  .ledger-title {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    align-items: flex-start;
+    padding-bottom: 14px;
+    border-bottom: 1px solid rgba(215, 221, 228, 0.16);
+  }
+
+  .ledger-title b {
+    display: block;
+    color: #f7fbfb;
+    line-height: 1.2;
+  }
+
+  .ledger-title span,
+  .ledger-row span {
+    color: var(--hero-muted);
+    font-size: 0.83rem;
+  }
+
+  .ledger-status {
+    flex: 0 0 auto;
+    border: 1px solid rgba(154, 215, 207, 0.36);
+    border-radius: 999px;
+    padding: 4px 8px;
+    color: var(--hero-accent);
+    font-size: 0.76rem;
+    font-weight: 800;
+  }
+
+  .ledger-row {
+    display: grid;
+    grid-template-columns: 110px minmax(0, 1fr);
+    gap: 14px;
+    padding: 13px 0;
+    border-bottom: 1px solid rgba(215, 221, 228, 0.12);
+  }
+
+  .ledger-row:last-child {
+    border-bottom: 0;
+    padding-bottom: 0;
+  }
+
+  .ledger-row b {
+    color: #f7fbfb;
+  }
+
+  .section {
+    padding: 70px 36px;
+  }
+
+  .section.alt {
+    background: var(--white);
+  }
+
+  .section-inner {
+    max-width: var(--max);
+    margin: 0 auto;
+  }
+
+  .section-head {
+    max-width: var(--readable);
+    margin-bottom: 28px;
+  }
+
+  .section-head .section-kicker {
+    color: var(--teal-dark);
+  }
+
+  .section-head h2 {
+    margin-bottom: 12px;
+    font-size: clamp(2rem, 3.5vw, 3rem);
+    line-height: 1.08;
+    letter-spacing: 0;
+  }
+
+  .lead {
+    color: var(--lead);
+    font-size: 1.04rem;
+  }
+
+  .library-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 14px;
+  }
+
+  .library-card,
+  .artifact,
+  .source-card {
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    background: var(--white);
+    box-shadow: var(--shadow-soft);
+  }
+
+  .library-card {
+    padding: 18px;
+  }
+
+  .library-card b {
+    display: block;
+    color: var(--ink);
+    font-size: 1.04rem;
+    line-height: 1.25;
+    margin-bottom: 7px;
+  }
+
+  .library-card p {
+    color: var(--muted);
+    margin-bottom: 14px;
+  }
+
+  .library-card a {
+    font-weight: 800;
+    text-decoration: none;
+  }
+
+  .artifact-stack {
+    display: grid;
+    gap: 18px;
+  }
+
+  .artifact {
+    overflow: hidden;
+  }
+
+  .artifact-main {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(280px, 0.48fr);
+    gap: 0;
+  }
+
+  .artifact-copy {
+    padding: 28px;
+  }
+
+  .artifact-side {
+    border-left: 1px solid var(--line);
+    background:
+      linear-gradient(180deg, rgba(231, 245, 243, 0.55), rgba(255, 255, 255, 0.75));
+    padding: 24px;
+  }
+
+  .artifact-label {
+    display: inline-flex;
+    width: fit-content;
+    margin-bottom: 14px;
+    border: 1px solid rgba(15, 118, 110, 0.22);
+    border-radius: 999px;
+    padding: 5px 9px;
+    color: var(--teal-dark);
+    background: var(--teal-soft);
+    font-size: 0.78rem;
+    font-weight: 800;
+  }
+
+  .artifact h3 {
+    margin-bottom: 10px;
+    font-size: clamp(1.55rem, 2.5vw, 2.1rem);
+    line-height: 1.1;
+  }
+
+  .artifact p {
+    color: var(--lead);
+  }
+
+  .evidence-list {
+    display: grid;
+    gap: 10px;
+    margin: 18px 0 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .evidence-list li {
+    display: grid;
+    grid-template-columns: 132px minmax(0, 1fr);
+    gap: 12px;
+    border-top: 1px solid var(--line);
+    padding-top: 10px;
+  }
+
+  .evidence-list b {
+    color: var(--body-strong, #313840);
+    font-size: 0.86rem;
+  }
+
+  .evidence-list span {
+    color: var(--muted);
+  }
+
+  .artifact-side h4 {
+    margin: 0 0 10px;
+    color: var(--ink);
+    font-size: 1rem;
+  }
+
+  .artifact-side ul {
+    margin: 0 0 18px;
+    padding-left: 18px;
+    color: var(--lead);
+  }
+
+  .source-actions a {
+    display: inline-flex;
+    width: fit-content;
+    min-height: 36px;
+    align-items: center;
+    border: 1px solid var(--line-strong);
+    border-radius: 8px;
+    padding: 7px 10px;
+    background: var(--white);
+    color: var(--teal-dark);
+    font-size: 0.86rem;
+    font-weight: 800;
+    text-decoration: none;
+  }
+
+  .source-actions a:hover {
+    background: var(--teal-soft);
+    border-color: rgba(15, 118, 110, 0.45);
+  }
+
+  .technical-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 14px;
+  }
+
+  .technical-item {
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    background: var(--white);
+    padding: 18px;
+  }
+
+  .technical-item h3 {
+    margin-bottom: 8px;
+    font-size: 1.12rem;
+  }
+
+  .technical-item p {
+    color: var(--muted);
+    margin-bottom: 12px;
+  }
+
+  .source-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 14px;
+  }
+
+  .source-card {
+    padding: 18px;
+    text-decoration: none;
+    color: var(--ink);
+  }
+
+  .source-card b {
+    display: block;
+    margin-bottom: 6px;
+  }
+
+  .source-card span {
+    color: var(--muted);
+    font-size: 0.92rem;
+  }
+
+  .source-card:hover {
+    border-color: rgba(15, 118, 110, 0.38);
+    color: var(--ink);
+  }
+
+  .cta-panel {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 24px;
+    align-items: center;
+    border-radius: 8px;
+    background: var(--charcoal);
+    color: var(--white);
+    padding: 28px;
+  }
+
+  .cta-panel h2 {
+    margin-bottom: 8px;
+    font-size: clamp(1.8rem, 3vw, 2.6rem);
+    line-height: 1.1;
+  }
+
+  .cta-panel p {
+    color: #d8dde5;
+    margin-bottom: 0;
+  }
+
+  footer {
+    padding: 34px 36px;
+    color: var(--footer-muted);
+    background: var(--footer-ink);
+  }
+
+  .footer-inner {
+    max-width: var(--max);
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    gap: 18px;
+    flex-wrap: wrap;
+    font-size: 0.9rem;
+  }
+
+  footer a {
+    color: var(--white);
+  }
+
+  @media (max-width: 1040px) {
+    .nav-links {
+      gap: 12px;
+      font-size: 0.88rem;
+    }
+
+    .hero-inner,
+    .artifact-main {
+      grid-template-columns: 1fr;
+    }
+
+    .artifact-side {
+      border-left: 0;
+      border-top: 1px solid var(--line);
+    }
+
+    .library-grid,
+    .source-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @media (max-width: 760px) {
+    .site-nav {
+      left: 8px;
+      right: 8px;
+      top: 8px;
+      overflow: hidden;
+      max-width: calc(100vw - 16px);
+    }
+
+    .nav-inner {
+      padding: 10px 12px;
+      align-items: center;
+      flex-direction: row;
+      gap: 12px;
+    }
+
+    .nav-links {
+      display: none;
+    }
+
+    .brand-subtitle {
+      display: none;
+    }
+
+    .hero-inner {
+      min-height: 0;
+      padding: 112px 22px 46px;
+    }
+
+    h1 {
+      font-size: 2.28rem;
+      line-height: 1.05;
+    }
+
+    .section {
+      padding: 46px 22px;
+    }
+
+    .library-grid,
+    .technical-grid,
+    .source-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .artifact-copy,
+    .artifact-side,
+    .cta-panel {
+      padding: 18px;
+    }
+
+    .evidence-list li {
+      grid-template-columns: 1fr;
+      gap: 3px;
+    }
+
+    .cta-panel {
+      grid-template-columns: 1fr;
+    }
+
+    .button,
+    .cta-panel .button {
+      width: 100%;
+    }
+  }
+</style>
+</head>
+<body>
+<nav class="site-nav" aria-label="Primary">
+  <div class="nav-inner">
+    <a class="brand" href="../index.html" aria-label="ActionBoundary home">
+      <img class="brand-mark" src="../assets/actionboundary-mark.svg" alt="" width="30" height="30" aria-hidden="true">
+      <span class="brand-copy">
+        <strong>ActionBoundary</strong>
+        <span class="brand-subtitle">Agent Authorization Review</span>
+      </span>
+    </a>
+    <div class="nav-links" aria-label="Site links">
+      <div class="nav-dropdown">
+        <a class="nav-dropdown-trigger" href="../index.html#what" aria-haspopup="true">
+          What we test <span aria-hidden="true">&#9662;</span>
+        </a>
+        <div class="nav-dropdown-panel" aria-label="Review paths">
+          <a class="nav-path nav-path-featured" href="../payment-authorization-review/">
+            <strong>AP / payment authorization</strong>
+            <span>User, approval, vendor-bank, terminal outcome.</span>
+          </a>
+          <a class="nav-path" href="../index.html#intake">
+            <strong>Record changes / ERP writes</strong>
+            <span>Source-of-truth authority for business state changes.</span>
+          </a>
+          <a class="nav-path" href="../index.html#intake">
+            <strong>Data export / access grants</strong>
+            <span>Actor, scope, tenant, and destination checks.</span>
+          </a>
+          <a class="nav-path" href="../index.html#intake">
+            <strong>Support, scheduling, operations</strong>
+            <span>Agent handoffs where authority can drift.</span>
+          </a>
+        </div>
+      </div>
+      <a href="../index.html#report">Sample report</a>
+      <a href="../index.html#pilot">Pilot</a>
+      <a href="../trust.html">Trust</a>
+      <a href="../index.html#intake">Start</a>
+      <div class="nav-dropdown about-menu">
+        <a class="nav-dropdown-trigger" href="../why.html" aria-haspopup="true">
+          About <span aria-hidden="true">&#9662;</span>
+        </a>
+        <div class="nav-dropdown-panel" aria-label="About ActionBoundary">
+          <a class="nav-path nav-path-featured" href="../why.html">
+            <strong>Philosophy</strong>
+            <span>Why ActionBoundary exists and where the review boundary comes from.</span>
+          </a>
+          <a class="nav-path" href="./">
+            <strong>Evidence Library</strong>
+            <span>Case notes, method notes, readiness checks, and source artifacts.</span>
+          </a>
+        </div>
+      </div>
+      <a href="../index.html#faq">FAQ</a>
+      <a class="nav-cta" href="../index.html#intake">Get 3 scenarios</a>
+    </div>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="hero-inner">
+    <div>
+      <p class="eyebrow">Evidence Library</p>
+      <h1>Public proof, separated from source code.</h1>
+      <p class="hero-copy">This is the station-owned reading layer for ActionBoundary: case notes, method notes, readiness checks, and sample deliverables. GitHub stays available as the source layer, but buyers can understand the evidence here first.</p>
+      <div class="hero-actions" aria-label="Evidence library shortcuts">
+        <a class="button primary" href="#worked-examples">Read case notes</a>
+        <a class="button secondary" href="#customer-readiness">Prepare a trace</a>
+      </div>
+    </div>
+    <aside class="hero-ledger" aria-label="Evidence library map">
+      <div class="ledger-title">
+        <div>
+          <b>Public evidence stack</b>
+          <span>What a reviewer can inspect before a pilot starts.</span>
+        </div>
+        <strong class="ledger-status">Open</strong>
+      </div>
+      <div class="ledger-row"><b>Case notes</b><span>Worked AP/payment and multi-turn authorization examples.</span></div>
+      <div class="ledger-row"><b>Methods</b><span>How ActionBoundary separates model behavior from authorization evidence.</span></div>
+      <div class="ledger-row"><b>Deliverable</b><span>Sample evidence report and report structure.</span></div>
+      <div class="ledger-row"><b>Source layer</b><span>GitHub harness, source notes, raw summaries, and DOI archive.</span></div>
+    </aside>
+  </div>
+</header>
+
+<main>
+  <section class="section" aria-labelledby="start-title">
+    <div class="section-inner">
+      <div class="section-head">
+        <p class="section-kicker">Start here</p>
+        <h2 id="start-title">The buyer-readable route through the evidence.</h2>
+        <p class="lead">Use these pages to understand the review before opening source files. The public repo proves the method; a pilot applies it to your staging workflow.</p>
+      </div>
+      <div class="library-grid">
+        <article class="library-card">
+          <b>Sample evidence report</b>
+          <p>Report structure, evidence register, findings, fixes, and retest plan for a synthetic AP workflow.</p>
+          <a href="#sample-report">Read the report structure</a>
+        </article>
+        <article class="library-card">
+          <b>AP payment authorization</b>
+          <p>Why invoice approval, current user authority, vendor-bank source of truth, and final side effect are separate evidence fields.</p>
+          <a href="#ap-payment-case">Read the case note</a>
+        </article>
+        <article class="library-card">
+          <b>Trace readiness</b>
+          <p>How one redacted trace becomes either a scoreable review input or a missing-evidence map.</p>
+          <a href="#readiness-check">Read the readiness check</a>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section id="worked-examples" class="section alt" aria-labelledby="worked-title">
+    <div class="section-inner">
+      <div class="section-head">
+        <p class="section-kicker">Worked examples</p>
+        <h2 id="worked-title">Case notes that show the authorization boundary.</h2>
+        <p class="lead">These are public worked examples, not claims about a customer's private system. They show the kind of evidence ActionBoundary looks for in a staging pilot.</p>
+      </div>
+      <div class="artifact-stack">
+        <article id="ap-payment-case" class="artifact">
+          <div class="artifact-main">
+            <div class="artifact-copy">
+              <span class="artifact-label">AP/payment case note</span>
+              <h3>A payment approval is not user authorization.</h3>
+              <p>In an AP workflow, a valid invoice approval does not prove the current actor may schedule payment or change payment details. The review separates approval scope, acting principal, vendor-bank source of truth, tool result, and sandbox side effect.</p>
+              <ul class="evidence-list">
+                <li><b>What it proves</b><span>Action authorization has to be enforced at the tool layer, not inferred from persuasive business context.</span></li>
+                <li><b>What it does not prove</b><span>It is not a live payment-rail audit, fraud-detection certification, or claim about a customer's production AP system.</span></li>
+                <li><b>Buyer use</b><span>Explains why a security or finance-control reviewer should ask for runtime authority evidence before an agent can move money.</span></li>
+              </ul>
+            </div>
+            <aside class="artifact-side">
+              <h4>Best first read</h4>
+              <ul>
+                <li>Start with the AP payment authorization page.</li>
+                <li>Then inspect the source note if a reviewer wants the full public writeup.</li>
+              </ul>
+              <div class="source-actions">
+                <a href="../payment-authorization-review/">AP review page</a>
+                <a href="https://github.com/hugoii/llm-agent-audit/blob/master/docs/payment-approval-is-not-user-authorization.md">Source on GitHub</a>
+              </div>
+            </aside>
+          </div>
+        </article>
+
+        <article id="multi-turn-case" class="artifact">
+          <div class="artifact-main">
+            <div class="artifact-copy">
+              <span class="artifact-label">Multi-turn case note</span>
+              <h3>When an agent treats a note as authorization.</h3>
+              <p>A multi-turn workflow can drift when an earlier note, handoff, or status update is reused as authority later. The evidence question is whether the agent checked a current source of truth at action time, not whether a plausible note existed somewhere in the conversation.</p>
+              <ul class="evidence-list">
+                <li><b>What it proves</b><span>Authorization can drift across turns unless scope, source, actor, and timing are rechecked before the high-impact action.</span></li>
+                <li><b>What it does not prove</b><span>It is not a broad benchmark of every agent framework or every model's multi-turn behavior.</span></li>
+                <li><b>Buyer use</b><span>Useful for healthcare, insurance, support, scheduling, and operational workflows where a note can be mistaken for approval.</span></li>
+              </ul>
+            </div>
+            <aside class="artifact-side">
+              <h4>Source and method</h4>
+              <ul>
+                <li>Case note shows the worked example.</li>
+                <li>Method note explains pass, fail, and benign-control rules.</li>
+              </ul>
+              <div class="source-actions">
+                <a href="#multi-turn-method">Read method below</a>
+                <a href="https://github.com/hugoii/llm-agent-audit/blob/master/docs/multi-turn-authorization-drift-case-note.md">Source on GitHub</a>
+              </div>
+            </aside>
+          </div>
+        </article>
+
+        <article id="model-choice-note" class="artifact">
+          <div class="artifact-main">
+            <div class="artifact-copy">
+              <span class="artifact-label">Model-behavior note</span>
+              <h3>Model choice is not an authorization layer.</h3>
+              <p>The public cross-model battery shows that different model APIs produce different attempted tool-call behavior on the same simulated high-impact actions. The business conclusion is narrow: model behavior is evidence to inspect, but application-layer authorization still has to enforce the boundary.</p>
+              <ul class="evidence-list">
+                <li><b>What it proves</b><span>Refusal behavior and frontier labels are not enough to answer whether an agent may take a high-impact action.</span></li>
+                <li><b>What it does not prove</b><span>It is not a vendor ranking, product endorsement, or claim that one model is globally safe or unsafe.</span></li>
+                <li><b>Buyer use</b><span>Helps a security reviewer see why the pilot grades actions and runtime evidence rather than model promises.</span></li>
+              </ul>
+            </div>
+            <aside class="artifact-side">
+              <h4>Reproducibility</h4>
+              <ul>
+                <li>Public summary is station-readable here.</li>
+                <li>Raw summaries and technical report remain source artifacts.</li>
+              </ul>
+              <div class="source-actions">
+                <a href="#source-layer">Raw summaries</a>
+                <a href="https://github.com/hugoii/llm-agent-audit/blob/master/docs/model-choice-is-not-an-authorization-layer.md">Source on GitHub</a>
+              </div>
+            </aside>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="method-title">
+    <div class="section-inner">
+      <div class="section-head">
+        <p class="section-kicker">Method notes</p>
+        <h2 id="method-title">How the review keeps claims narrow.</h2>
+        <p class="lead">These notes define the boundaries that keep ActionBoundary from overclaiming. Missing evidence is not treated as safety; it is reported as missing evidence.</p>
+      </div>
+      <div class="artifact-stack">
+        <article id="multi-turn-method" class="artifact">
+          <div class="artifact-main">
+            <div class="artifact-copy">
+              <span class="artifact-label">Authorization-drift method</span>
+              <h3>Testing multi-turn authorization drift.</h3>
+              <p>The method asks whether trusted authorization evidence is current at the moment of action. It checks trace shape, authority source, pass/fail criteria, and benign controls so a normal authorized path still works.</p>
+              <ul class="evidence-list">
+                <li><b>Evidence standard</b><span>Actor, target, authorization source, scope, timing, tool result, and observed business outcome.</span></li>
+                <li><b>Pass rule</b><span>High-impact action proceeds only when current trusted evidence matches the action scope.</span></li>
+                <li><b>Fail rule</b><span>Untrusted content, stale notes, or mismatched scope cannot authorize the action.</span></li>
+              </ul>
+            </div>
+            <aside class="artifact-side">
+              <h4>Public method source</h4>
+              <ul>
+                <li>Use this when evaluating handoffs, retries, state changes, and multi-step approvals.</li>
+              </ul>
+              <div class="source-actions">
+                <a href="https://github.com/hugoii/llm-agent-audit/blob/master/docs/multi-turn-authorization-drift-method.md">Source on GitHub</a>
+              </div>
+            </aside>
+          </div>
+        </article>
+
+        <article id="sample-report" class="artifact">
+          <div class="artifact-main">
+            <div class="artifact-copy">
+              <span class="artifact-label">Sample deliverable</span>
+              <h3>Sample evidence report.</h3>
+              <p>The sample report shows the deliverable shape: executive summary, scope, scenario matrix, evidence register, findings, fixes, retest plan, independence boundary, and limitations. It is synthetic, but it is structured like the buyer-ready report a pilot produces.</p>
+              <ul class="evidence-list">
+                <li><b>What it proves</b><span>The deliverable is not a vague red-team memo; it is organized around trace evidence and action-specific verdicts.</span></li>
+                <li><b>What it does not prove</b><span>It is not a customer's report or evidence about a private production system.</span></li>
+                <li><b>Buyer use</b><span>Lets a founder or security reviewer inspect the report format before committing to a pilot.</span></li>
+              </ul>
+            </div>
+            <aside class="artifact-side">
+              <h4>Report artifacts</h4>
+              <ul>
+                <li>PDF is the polished read.</li>
+                <li>Markdown source remains available for auditability.</li>
+              </ul>
+              <div class="source-actions">
+                <a href="../sample-evidence-report-v0.8.pdf">View PDF</a>
+                <a href="https://github.com/hugoii/llm-agent-audit/blob/master/docs/sample-pilot-report-v0.8.md">Source on GitHub</a>
+              </div>
+            </aside>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section id="customer-readiness" class="section alt" aria-labelledby="readiness-title">
+    <div class="section-inner">
+      <div class="section-head">
+        <p class="section-kicker">Customer readiness</p>
+        <h2 id="readiness-title">How a first trace becomes reviewable.</h2>
+        <p class="lead">These are the near-conversion pages. They should live on the site because they explain what to send before engineering setup.</p>
+      </div>
+      <div class="artifact-stack">
+        <article id="readiness-check" class="artifact">
+          <div class="artifact-main">
+            <div class="artifact-copy">
+              <span class="artifact-label">Evidence readiness check</span>
+              <h3>Start with one existing trace.</h3>
+              <p>The first paid diagnostic checks whether one redacted trace or exported log contains enough actor, target, authorization, tool-result, and outcome evidence for a defensible verdict. If it is not ready, the output is a missing-evidence map.</p>
+              <ul class="evidence-list">
+                <li><b>Input</b><span>One redacted LangSmith, Langfuse, OpenTelemetry, Datadog, CloudWatch, or internal trace/log export.</span></li>
+                <li><b>Output</b><span>Scoreability memo, missing-evidence map, and smallest next instrumentation point.</span></li>
+                <li><b>Boundary</b><span>No production access, no real customer data, no shared credentials.</span></li>
+              </ul>
+            </div>
+            <aside class="artifact-side">
+              <h4>Diagnostic use</h4>
+              <ul>
+                <li>Best for teams that already have traces but do not know whether they are review-grade.</li>
+              </ul>
+              <div class="source-actions">
+                <a href="../index.html#pilot">Pilot scope</a>
+                <a href="https://github.com/hugoii/llm-agent-audit/blob/master/pilot/evidence-readiness-check.md">Source on GitHub</a>
+              </div>
+            </aside>
+          </div>
+        </article>
+
+        <article id="what-we-need" class="artifact">
+          <div class="artifact-main">
+            <div class="artifact-copy">
+              <span class="artifact-label">First-contact checklist</span>
+              <h3>What ActionBoundary needs first.</h3>
+              <p>Send three details: the product and buyer pressure, one workflow or action surface, and a safe test path or existing trace if available. ActionBoundary replies with a realistic first scenario set before pilot setup.</p>
+              <ul class="evidence-list">
+                <li><b>Detail one</b><span>What your agent does, who buys it, and why the review matters now.</span></li>
+                <li><b>Detail two</b><span>One workflow where the agent can affect money, records, access, dispatch, or data.</span></li>
+                <li><b>Detail three</b><span>A safe way to observe it: staging trace, sandbox endpoint, exported logs, or another non-production path.</span></li>
+              </ul>
+            </div>
+            <aside class="artifact-side">
+              <h4>What not to send</h4>
+              <ul>
+                <li>No production credentials.</li>
+                <li>No real customer data by default.</li>
+                <li>No public issues or public PRs for private traces.</li>
+              </ul>
+              <div class="source-actions">
+                <a href="mailto:jiahao@actionboundary.dev?subject=3%20scenarios%20for%20our%20agent">Send 3 details</a>
+                <a href="https://github.com/hugoii/llm-agent-audit/blob/master/pilot/what-we-need.md">Source on GitHub</a>
+              </div>
+            </aside>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="ap-stack-title">
+    <div class="section-inner">
+      <div class="section-head">
+        <p class="section-kicker">AP technical stack</p>
+        <h2 id="ap-stack-title">Payment review assets without dropping readers into GitHub first.</h2>
+        <p class="lead">These entries summarize the technical AP artifacts on-site. Engineers can still inspect the source files when they need exact schema, manifest, or control details.</p>
+      </div>
+      <div class="technical-grid">
+        <article id="ap-authorization-invariants" class="technical-item">
+          <h3>AP authorization invariants</h3>
+          <p>Rules for approval scope, actor authority, replay, vendor-bank changes, and source-of-truth evidence.</p>
+          <a href="https://github.com/hugoii/llm-agent-audit/blob/master/docs/ap-authorization-invariants.md">Source on GitHub</a>
+        </article>
+        <article id="ap-methodology" class="technical-item">
+          <h3>AP payment methodology</h3>
+          <p>How one payment or remittance action is normalized and checked against current authority.</p>
+          <a href="https://github.com/hugoii/llm-agent-audit/blob/master/docs/ap-agent-authorization-methodology.md">Source on GitHub</a>
+        </article>
+        <article id="ap-payment-manifest" class="technical-item">
+          <h3>AP scenario manifest</h3>
+          <p>Attack cases, benign controls, material fields, evidence requirements, and safe outcomes for AP reviews.</p>
+          <a href="https://github.com/hugoii/llm-agent-audit/blob/master/pilot/ap_payment_boundary_manifest.json">Source on GitHub</a>
+        </article>
+        <article id="ap-control-experiment" class="technical-item">
+          <h3>Deep payment-control experiment</h3>
+          <p>Post-approval changes, agent handoffs, retry/replay, benign controls, and enforced-vs-advisory behavior.</p>
+          <a href="https://github.com/hugoii/llm-agent-audit/blob/master/docs/ap-l3-l5-control-experiment.md">Source on GitHub</a>
+        </article>
+        <article id="ap-benign-controls" class="technical-item">
+          <h3>AP benign-control library</h3>
+          <p>Normal authorized AP cases that should pass, so the review does not only test attacks.</p>
+          <a href="https://github.com/hugoii/llm-agent-audit/blob/master/pilot/ap_benign_controls.md">Source on GitHub</a>
+        </article>
+        <article id="control-alignment" class="technical-item">
+          <h3>Control alignment</h3>
+          <p>How trace evidence maps to transaction authorization, least privilege, separation of duties, BEC/vendor-fraud risk, and audit logging language.</p>
+          <a href="https://github.com/hugoii/llm-agent-audit/blob/master/docs/control-alignment.md">Source on GitHub</a>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section id="source-layer" class="section alt" aria-labelledby="source-title">
+    <div class="section-inner">
+      <div class="section-head">
+        <p class="section-kicker">Source layer</p>
+        <h2 id="source-title">Where the audit trail lives.</h2>
+        <p class="lead">These links are intentionally external or source-facing. They are for reviewers who want to inspect code, raw summaries, archived reports, or exact files after reading the station-owned explanation.</p>
+      </div>
+      <div class="source-grid">
+        <a class="source-card" href="https://github.com/hugoii/llm-agent-audit">
+          <b>Open harness</b>
+          <span>Trace runner, scoring code, schemas, and examples.</span>
+        </a>
+        <a class="source-card" href="https://github.com/hugoii/llm-agent-audit/tree/master/docs/runs/v1.5">
+          <b>Raw run summaries</b>
+          <span>Per-model public v1.5 summary files.</span>
+        </a>
+        <a class="source-card" href="https://doi.org/10.5281/zenodo.20585658">
+          <b>Zenodo DOI</b>
+          <span>Archived technical report and reproducibility package.</span>
+        </a>
+        <a class="source-card" href="../trust.html">
+          <b>Trust boundary</b>
+          <span>Trace handling, retention, and data-processing defaults.</span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="cta-title">
+    <div class="section-inner">
+      <div class="cta-panel">
+        <div>
+          <h2 id="cta-title">Need this evidence for your workflow?</h2>
+          <p>Send one product, one high-impact action surface, and one safe trace path if available. ActionBoundary will reply with three first scenarios.</p>
+        </div>
+        <a class="button primary" href="mailto:jiahao@actionboundary.dev?subject=3%20scenarios%20for%20our%20agent">Send 3 details</a>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="footer-inner">
+    <span>ActionBoundary by JZ Software Consulting. Agent Authorization Review.</span>
+    <span><a href="../index.html">Home</a> | <a href="../why.html">About</a> | <a href="./">Evidence</a> | <a href="../trust.html">Trust</a> | <a href="https://github.com/hugoii/llm-agent-audit">GitHub</a> | <a href="mailto:jiahao@actionboundary.dev">jiahao@actionboundary.dev</a></span>
+  </div>
+</footer>
+<script>
+  (function () {
+    var nav = document.querySelector('.site-nav');
+    var hero = document.querySelector('.hero');
+    if (!nav || !hero) {
+      return;
+    }
+    var ticking = false;
+    var updateNavGlass = function () {
+      var navBottom = nav.getBoundingClientRect().bottom;
+      var heroBottom = hero.getBoundingClientRect().bottom;
+      nav.classList.toggle('is-over-light', heroBottom <= navBottom + 10);
+      ticking = false;
+    };
+    updateNavGlass();
+    window.addEventListener('scroll', function () {
+      if (!ticking) {
+        ticking = true;
+        window.requestAnimationFrame(updateNavGlass);
+      }
+    }, { passive: true });
+    window.addEventListener('resize', updateNavGlass);
+  })();
+</script>
+</body>
+</html>

@@ -256,6 +256,12 @@
       visibility 160ms var(--ease-out-quint);
   }
 
+  .about-menu .nav-dropdown-panel {
+    left: auto;
+    right: -16px;
+    width: min(360px, calc(100vw - 32px));
+  }
+
   .nav-dropdown:hover .nav-dropdown-panel,
   .nav-dropdown:focus-within .nav-dropdown-panel {
     opacity: 1;
@@ -1038,7 +1044,21 @@
       <a href="index.html#pilot">Pilot</a>
       <a href="trust.html">Trust</a>
       <a href="index.html#intake">Start</a>
-      <a href="why.html">About</a>
+      <div class="nav-dropdown about-menu">
+        <a class="nav-dropdown-trigger" href="why.html" aria-haspopup="true">
+          About <span aria-hidden="true">&#9662;</span>
+        </a>
+        <div class="nav-dropdown-panel" aria-label="About ActionBoundary">
+          <a class="nav-path nav-path-featured" href="why.html">
+            <strong>Philosophy</strong>
+            <span>Why ActionBoundary exists and where the review boundary comes from.</span>
+          </a>
+          <a class="nav-path" href="evidence/">
+            <strong>Evidence Library</strong>
+            <span>Case notes, method notes, readiness checks, and source artifacts.</span>
+          </a>
+        </div>
+      </div>
       <a href="index.html#faq">FAQ</a>
       <a class="nav-cta" href="mailto:jiahao@actionboundary.dev?subject=3%20scenarios%20for%20our%20agent">Get 3 scenarios</a>
     </div>
@@ -1230,7 +1250,7 @@
 <footer>
   <div class="footer-inner">
     <span>ActionBoundary by JZ Software Consulting. Agent Authorization Review.</span>
-    <span><a href="index.html">Home</a> | <a href="why.html">About</a> | <a href="https://github.com/hugoii/llm-agent-audit">GitHub</a> | <a href="mailto:jiahao@actionboundary.dev">jiahao@actionboundary.dev</a></span>
+    <span><a href="index.html">Home</a> | <a href="why.html">About</a> | <a href="evidence/">Evidence</a> | <a href="https://github.com/hugoii/llm-agent-audit">GitHub</a> | <a href="mailto:jiahao@actionboundary.dev">jiahao@actionboundary.dev</a></span>
   </div>
 </footer>
 <script>
