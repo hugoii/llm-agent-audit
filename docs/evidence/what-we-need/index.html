@@ -1,0 +1,992 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>What ActionBoundary needs first | ActionBoundary Evidence</title>
+<meta name="description" content="The three details ActionBoundary needs before drafting the first scenario set for an agent workflow.">
+<link rel="canonical" href="https://actionboundary.dev/evidence/what-we-need/">
+<meta property="og:type" content="article">
+<meta property="og:title" content="What ActionBoundary needs first | ActionBoundary">
+<meta property="og:description" content="The three details ActionBoundary needs before drafting the first scenario set for an agent workflow.">
+<meta property="og:url" content="https://actionboundary.dev/evidence/what-we-need/">
+<meta property="og:image" content="https://actionboundary.dev/og-image.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="What ActionBoundary needs first | ActionBoundary">
+<meta name="twitter:description" content="The three details ActionBoundary needs before drafting the first scenario set for an agent workflow.">
+<meta name="twitter:image" content="https://actionboundary.dev/og-image.png">
+<link rel="icon" type="image/svg+xml" href="../../favicon.svg">
+<style>
+
+  :root {
+    --ink: #161719;
+    --muted: #626a75;
+    --paper: #f7f8fa;
+    --white: #ffffff;
+    --line: #dbe1e8;
+    --line-strong: #b8c1cc;
+    --teal: #0f766e;
+    --teal-dark: #0b4f4a;
+    --teal-soft: #e7f5f3;
+    --amber: #b45309;
+    --amber-soft: #fff7ed;
+    --charcoal: #151619;
+    --charcoal-2: #202227;
+    --hero-accent: #9ad7cf;
+    --hero-muted: #aeb8c5;
+    --lead: #3e454d;
+    --body-strong: #313840;
+    --footer-ink: #343b43;
+    --footer-muted: #b9c2cd;
+    --code-on-dark: #f5f7f8;
+    --shadow-soft: 0 2px 8px rgba(16, 24, 40, 0.08);
+    --ease-out-quint: cubic-bezier(0.22, 1, 0.36, 1);
+    --max: 1280px;
+    --readable: 820px;
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    overflow-x: hidden;
+  }
+
+  body {
+    margin: 0;
+    color: var(--ink);
+    background: var(--paper);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    line-height: 1.6;
+    overflow-wrap: anywhere;
+  }
+
+  a {
+    color: var(--teal-dark);
+    text-decoration-thickness: 1px;
+    text-underline-offset: 3px;
+  }
+
+  a:hover {
+    color: var(--teal);
+  }
+
+  a:focus-visible,
+  summary:focus-visible {
+    outline: 2px solid rgba(15, 118, 110, 0.42);
+    outline-offset: 4px;
+    border-radius: 4px;
+  }
+
+  .site-nav {
+    --nav-ink: #f6f8f9;
+    --nav-muted: rgba(215, 226, 229, 0.74);
+    --nav-link: rgba(246, 248, 249, 0.86);
+    --nav-link-hover: var(--white);
+    position: fixed;
+    top: 12px;
+    left: 12px;
+    right: 12px;
+    z-index: 100;
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    border-radius: 8px;
+    background:
+      linear-gradient(180deg, rgba(255, 255, 255, 0.14), rgba(255, 255, 255, 0.055)),
+      linear-gradient(180deg, rgba(18, 22, 26, 0.42), rgba(18, 22, 26, 0.30));
+    box-shadow:
+      0 8px 18px rgba(0, 0, 0, 0.18),
+      inset 0 1px 0 rgba(255, 255, 255, 0.28),
+      inset 0 -1px 0 rgba(255, 255, 255, 0.06);
+    -webkit-backdrop-filter: blur(26px) saturate(170%);
+    backdrop-filter: blur(26px) saturate(170%);
+    transition:
+      background-color 220ms var(--ease-out-quint),
+      background 220ms var(--ease-out-quint),
+      border-color 220ms var(--ease-out-quint),
+      box-shadow 220ms var(--ease-out-quint);
+  }
+
+  .site-nav.is-over-light {
+    --nav-ink: var(--ink);
+    --nav-muted: var(--muted);
+    --nav-link: rgba(22, 23, 25, 0.78);
+    --nav-link-hover: var(--teal-dark);
+    border-color: rgba(15, 118, 110, 0.18);
+    background:
+      linear-gradient(180deg, rgba(255, 255, 255, 0.68), rgba(255, 255, 255, 0.36)),
+      linear-gradient(110deg, rgba(231, 245, 243, 0.26), rgba(255, 255, 255, 0.12));
+    box-shadow:
+      0 8px 18px rgba(16, 24, 40, 0.10),
+      inset 0 1px 0 rgba(255, 255, 255, 0.72),
+      inset 0 -1px 0 rgba(15, 118, 110, 0.08);
+  }
+
+  .site-nav::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    border-radius: inherit;
+    background:
+      linear-gradient(180deg, rgba(255, 255, 255, 0.24), transparent 46%),
+      linear-gradient(100deg, transparent 8%, rgba(255, 255, 255, 0.12) 34%, transparent 58%);
+    opacity: 0.76;
+    transition: opacity 220ms var(--ease-out-quint), background 220ms var(--ease-out-quint);
+  }
+
+  .site-nav.is-over-light::after {
+    background:
+      linear-gradient(180deg, rgba(255, 255, 255, 0.56), transparent 50%),
+      linear-gradient(100deg, transparent 6%, rgba(255, 255, 255, 0.28) 32%, transparent 58%);
+    opacity: 0.9;
+  }
+
+  .nav-inner {
+    position: relative;
+    z-index: 1;
+    max-width: var(--max);
+    margin: 0 auto;
+    padding: 13px 22px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 18px;
+  }
+
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    text-decoration: none;
+    color: var(--nav-ink);
+    min-width: 0;
+    transition: color 220ms var(--ease-out-quint);
+  }
+
+  .brand-mark {
+    width: 30px;
+    height: 30px;
+    flex: 0 0 auto;
+    border-radius: 8px;
+  }
+
+  .brand-copy {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+  }
+
+  .brand strong {
+    font-size: 1.02rem;
+    line-height: 1.1;
+    letter-spacing: 0;
+  }
+
+  .brand-subtitle {
+    color: var(--nav-muted);
+    font-size: 0.78rem;
+    line-height: 1.25;
+    margin-top: 3px;
+    transition: color 220ms var(--ease-out-quint);
+  }
+
+  .nav-links {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    font-size: 0.92rem;
+    white-space: nowrap;
+  }
+
+  .nav-links a {
+    color: var(--nav-link);
+    text-decoration: none;
+    transition: color 160ms var(--ease-out-quint), opacity 160ms var(--ease-out-quint);
+  }
+
+  .nav-links a:hover {
+    color: var(--nav-link-hover);
+  }
+
+  .nav-dropdown {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+  }
+
+  .nav-dropdown-trigger {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+  }
+
+  .nav-dropdown-trigger span {
+    color: rgba(154, 215, 207, 0.86);
+    font-size: 0.72rem;
+    line-height: 1;
+  }
+
+  .nav-dropdown-panel {
+    position: absolute;
+    top: calc(100% + 14px);
+    left: -16px;
+    z-index: 120;
+    width: min(420px, calc(100vw - 32px));
+    padding: 10px;
+    border: 1px solid rgba(154, 215, 207, 0.24);
+    border-radius: 8px;
+    background:
+      radial-gradient(circle at 18% 0%, rgba(73, 185, 169, 0.12), transparent 34%),
+      linear-gradient(145deg, #20252b, #111317);
+    box-shadow: 0 18px 34px rgba(0, 0, 0, 0.34);
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(6px);
+    visibility: hidden;
+    white-space: normal;
+    transition:
+      opacity 160ms var(--ease-out-quint),
+      transform 160ms var(--ease-out-quint),
+      visibility 160ms var(--ease-out-quint);
+  }
+
+  .about-menu .nav-dropdown-panel {
+    left: auto;
+    right: -16px;
+    width: min(360px, calc(100vw - 32px));
+  }
+
+  .nav-dropdown:hover .nav-dropdown-panel,
+  .nav-dropdown:focus-within .nav-dropdown-panel {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateY(0);
+    visibility: visible;
+  }
+
+  .nav-dropdown-panel::before {
+    content: "";
+    position: absolute;
+    left: 18px;
+    right: 18px;
+    top: -15px;
+    height: 15px;
+  }
+
+  .nav-dropdown-panel .nav-path {
+    display: block;
+    padding: 12px;
+    border-radius: 8px;
+    color: var(--hero-muted);
+    text-decoration: none;
+  }
+
+  .nav-dropdown-panel .nav-path:hover,
+  .nav-dropdown-panel .nav-path:focus-visible {
+    background: rgba(154, 215, 207, 0.10);
+    color: var(--hero-muted);
+  }
+
+  .nav-path strong {
+    display: block;
+    color: #f7fbfb;
+    font-size: 0.94rem;
+    line-height: 1.2;
+  }
+
+  .nav-path span {
+    display: block;
+    color: var(--hero-muted);
+    font-size: 0.82rem;
+    line-height: 1.38;
+    margin-top: 4px;
+  }
+
+  .nav-path-featured {
+    border: 1px solid rgba(154, 215, 207, 0.24);
+    background: rgba(15, 118, 110, 0.18);
+  }
+
+  .nav-links .nav-cta {
+    border: 1px solid rgba(154, 215, 207, 0.36);
+    background: rgba(11, 79, 74, 0.88);
+    color: var(--white);
+    padding: 8px 12px;
+    border-radius: 8px;
+  }
+
+  .nav-links .nav-cta:hover {
+    background: rgba(15, 118, 110, 0.96);
+    border-color: rgba(154, 215, 207, 0.54);
+    color: var(--white);
+  }
+
+  .hero {
+    background:
+      radial-gradient(circle at 10% 12%, rgba(73, 185, 169, 0.22), transparent 32%),
+      linear-gradient(135deg, #111317, #1d2429 62%, #151619);
+    color: var(--white);
+    border-bottom: 1px solid #0f1114;
+  }
+
+  .hero-inner {
+    max-width: var(--max);
+    min-height: 520px;
+    margin: 0 auto;
+    padding: 124px 36px 56px;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(290px, 0.42fr);
+    gap: 38px;
+    align-items: end;
+  }
+
+  .breadcrumb {
+    display: inline-flex;
+    width: fit-content;
+    margin-bottom: 22px;
+    color: var(--hero-accent);
+    font-weight: 800;
+    text-decoration: none;
+  }
+
+  .eyebrow,
+  .section-kicker {
+    margin: 0 0 14px;
+    color: var(--hero-accent);
+    font-size: 0.82rem;
+    font-weight: 800;
+    letter-spacing: 0;
+    text-transform: uppercase;
+  }
+
+  h1,
+  h2,
+  h3,
+  p {
+    margin-top: 0;
+  }
+
+  h1 {
+    max-width: 920px;
+    margin-bottom: 22px;
+    font-size: clamp(3rem, 5vw, 4.25rem);
+    line-height: 1.02;
+    letter-spacing: 0;
+    text-wrap: balance;
+  }
+
+  h2,
+  h3 {
+    text-wrap: balance;
+  }
+
+  p,
+  li {
+    text-wrap: pretty;
+  }
+
+  .hero-copy {
+    max-width: 760px;
+    color: #d8dde5;
+    font-size: 1.05rem;
+    line-height: 1.6;
+    margin-bottom: 28px;
+  }
+
+  .hero-actions,
+  .rail-actions,
+  .article-nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    align-items: center;
+  }
+
+  .button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 44px;
+    padding: 11px 15px;
+    border-radius: 8px;
+    font-weight: 750;
+    text-decoration: none;
+    border: 1px solid transparent;
+  }
+
+  .button.primary {
+    background: #f3f8f7;
+    color: #10201f;
+    border-color: #f3f8f7;
+  }
+
+  .button.primary:hover {
+    background: #d8efec;
+    color: #10201f;
+    border-color: #d8efec;
+  }
+
+  .button.secondary {
+    color: var(--white);
+    border-color: rgba(255, 255, 255, 0.32);
+    background: rgba(255, 255, 255, 0.08);
+  }
+
+  .button.secondary:hover {
+    background: rgba(255, 255, 255, 0.14);
+    color: var(--white);
+  }
+
+  .memo-card {
+    border: 1px solid rgba(154, 215, 207, 0.24);
+    border-radius: 8px;
+    background:
+      radial-gradient(circle at 12% 0%, rgba(73, 185, 169, 0.14), transparent 34%),
+      linear-gradient(145deg, #20252b, #111317);
+    box-shadow: 0 8px 14px rgba(0, 0, 0, 0.22);
+    padding: 18px;
+  }
+
+  .memo-card b {
+    display: block;
+    color: #f7fbfb;
+    line-height: 1.2;
+    margin-bottom: 8px;
+  }
+
+  .memo-card span,
+  .memo-card p {
+    color: var(--hero-muted);
+    font-size: 0.9rem;
+  }
+
+  .memo-card dl {
+    margin: 18px 0 0;
+    border-top: 1px solid rgba(215, 221, 228, 0.16);
+  }
+
+  .memo-card div {
+    display: grid;
+    grid-template-columns: 92px minmax(0, 1fr);
+    gap: 12px;
+    padding: 12px 0;
+    border-bottom: 1px solid rgba(215, 221, 228, 0.12);
+  }
+
+  .memo-card dt {
+    color: #f7fbfb;
+    font-weight: 800;
+  }
+
+  .memo-card dd {
+    margin: 0;
+    color: var(--hero-muted);
+  }
+
+  .article-shell {
+    max-width: var(--max);
+    margin: 0 auto;
+    padding: 66px 36px;
+    display: grid;
+    grid-template-columns: minmax(0, var(--readable)) minmax(280px, 0.42fr);
+    gap: 28px;
+    align-items: start;
+  }
+
+  .article-body {
+    min-width: 0;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    background: var(--white);
+    box-shadow: var(--shadow-soft);
+    padding: clamp(24px, 4vw, 46px);
+  }
+
+  .article-note {
+    margin-bottom: 24px;
+    border: 1px solid rgba(15, 118, 110, 0.18);
+    border-radius: 8px;
+    background: var(--teal-soft);
+    padding: 14px 16px;
+    color: var(--teal-dark);
+    font-size: 0.93rem;
+  }
+
+  .article-body h2 {
+    margin: 36px 0 12px;
+    font-size: clamp(1.65rem, 2.6vw, 2.2rem);
+    line-height: 1.14;
+    letter-spacing: 0;
+  }
+
+  .article-body h2:first-child {
+    margin-top: 0;
+  }
+
+  .article-body h3 {
+    margin: 28px 0 10px;
+    font-size: 1.18rem;
+    line-height: 1.25;
+  }
+
+  .article-body p,
+  .article-body li {
+    color: var(--lead);
+    font-size: 1rem;
+  }
+
+  .article-body p {
+    margin-bottom: 16px;
+  }
+
+  .article-body ul,
+  .article-body ol {
+    margin: 0 0 18px;
+    padding-left: 22px;
+  }
+
+  .article-body li + li {
+    margin-top: 7px;
+  }
+
+  .article-body code {
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    background: var(--paper);
+    padding: 0.08rem 0.28rem;
+    color: var(--body-strong);
+    font-size: 0.92em;
+  }
+
+  .article-body pre {
+    overflow-x: auto;
+    border: 1px solid var(--charcoal-3);
+    border-radius: 8px;
+    background: var(--charcoal);
+    color: var(--code-on-dark);
+    padding: 16px;
+  }
+
+  .article-body pre code {
+    border: 0;
+    background: transparent;
+    padding: 0;
+    color: inherit;
+    font-size: 0.92rem;
+  }
+
+  .article-body blockquote {
+    margin: 22px 0;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    background: var(--teal-soft);
+    padding: 14px 18px;
+  }
+
+  .article-body blockquote p {
+    margin: 0;
+  }
+
+  .article-body hr {
+    border: 0;
+    border-top: 1px solid var(--line);
+    margin: 34px 0;
+  }
+
+  .table-wrap {
+    overflow-x: auto;
+    margin: 24px 0;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 640px;
+    background: var(--white);
+  }
+
+  th,
+  td {
+    padding: 12px 13px;
+    border-bottom: 1px solid var(--line);
+    text-align: left;
+    vertical-align: top;
+  }
+
+  th {
+    background: var(--teal-soft);
+    color: var(--body-strong);
+    font-size: 0.86rem;
+  }
+
+  td {
+    color: var(--lead);
+    font-size: 0.94rem;
+  }
+
+  tr:last-child td {
+    border-bottom: 0;
+  }
+
+  .article-rail {
+    display: grid;
+    gap: 14px;
+    position: sticky;
+    top: 94px;
+  }
+
+  .rail-card {
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    background: var(--white);
+    box-shadow: var(--shadow-soft);
+    padding: 18px;
+  }
+
+  .rail-card h2 {
+    margin-bottom: 12px;
+    font-size: 1.08rem;
+    line-height: 1.25;
+  }
+
+  .rail-card p,
+  .rail-card dd {
+    color: var(--muted);
+    font-size: 0.92rem;
+  }
+
+  .rail-card dl {
+    margin: 0;
+    display: grid;
+    gap: 11px;
+  }
+
+  .rail-card dt {
+    color: var(--ink);
+    font-size: 0.78rem;
+    font-weight: 850;
+    text-transform: uppercase;
+  }
+
+  .rail-card dd {
+    margin: 3px 0 0;
+  }
+
+  .rail-actions a {
+    display: inline-flex;
+    width: fit-content;
+    min-height: 36px;
+    align-items: center;
+    border: 1px solid var(--line-strong);
+    border-radius: 8px;
+    padding: 7px 10px;
+    background: var(--white);
+    color: var(--teal-dark);
+    font-size: 0.86rem;
+    font-weight: 800;
+    text-decoration: none;
+  }
+
+  .rail-actions a:hover {
+    background: var(--teal-soft);
+    border-color: rgba(15, 118, 110, 0.45);
+  }
+
+  .article-nav {
+    max-width: var(--max);
+    margin: 0 auto;
+    padding: 0 36px 70px;
+  }
+
+  .article-nav a {
+    color: var(--teal-dark);
+    font-weight: 800;
+    text-decoration: none;
+  }
+
+  footer {
+    padding: 34px 36px;
+    color: var(--footer-muted);
+    background: var(--footer-ink);
+  }
+
+  .footer-inner {
+    max-width: var(--max);
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    gap: 18px;
+    flex-wrap: wrap;
+    font-size: 0.9rem;
+  }
+
+  footer a {
+    color: var(--white);
+  }
+
+  @media (max-width: 1040px) {
+    .nav-links {
+      gap: 12px;
+      font-size: 0.88rem;
+    }
+
+    .hero-inner,
+    .article-shell {
+      grid-template-columns: 1fr;
+    }
+
+    .article-rail {
+      position: static;
+    }
+  }
+
+  @media (max-width: 760px) {
+    .site-nav {
+      left: 8px;
+      right: 8px;
+      top: 8px;
+      overflow: hidden;
+      max-width: calc(100vw - 16px);
+    }
+
+    .nav-inner {
+      padding: 10px 12px;
+      align-items: center;
+      flex-direction: row;
+      gap: 12px;
+    }
+
+    .nav-links {
+      display: none;
+    }
+
+    .brand-subtitle {
+      display: none;
+    }
+
+    .hero-inner {
+      min-height: 0;
+      padding: 112px 22px 44px;
+    }
+
+    h1 {
+      font-size: 2.25rem;
+      line-height: 1.05;
+    }
+
+    .article-shell {
+      padding: 44px 22px;
+    }
+
+    .article-body {
+      padding: 20px;
+    }
+
+    .memo-card div {
+      grid-template-columns: 1fr;
+      gap: 3px;
+    }
+
+    .button,
+    .hero-actions .button {
+      width: 100%;
+    }
+
+    .article-nav {
+      padding: 0 22px 44px;
+    }
+  }
+
+</style>
+</head>
+<body>
+
+<nav class="site-nav" aria-label="Primary">
+  <div class="nav-inner">
+    <a class="brand" href="../../index.html" aria-label="ActionBoundary home">
+      <img class="brand-mark" src="../../assets/actionboundary-mark.svg" alt="" width="30" height="30" aria-hidden="true">
+      <span class="brand-copy">
+        <strong>ActionBoundary</strong>
+        <span class="brand-subtitle">Agent Authorization Review</span>
+      </span>
+    </a>
+    <div class="nav-links" aria-label="Site links">
+      <div class="nav-dropdown">
+        <a class="nav-dropdown-trigger" href="../../index.html#what" aria-haspopup="true">
+          What we test <span aria-hidden="true">&#9662;</span>
+        </a>
+        <div class="nav-dropdown-panel" aria-label="Review paths">
+          <a class="nav-path nav-path-featured" href="../../payment-authorization-review/">
+            <strong>AP / payment authorization</strong>
+            <span>User, approval, vendor-bank, terminal outcome.</span>
+          </a>
+          <a class="nav-path" href="../../index.html#intake">
+            <strong>Record changes / ERP writes</strong>
+            <span>Source-of-truth authority for business state changes.</span>
+          </a>
+          <a class="nav-path" href="../../index.html#intake">
+            <strong>Data export / access grants</strong>
+            <span>Actor, scope, tenant, and destination checks.</span>
+          </a>
+          <a class="nav-path" href="../../index.html#intake">
+            <strong>Support, scheduling, operations</strong>
+            <span>Agent handoffs where authority can drift.</span>
+          </a>
+        </div>
+      </div>
+      <a href="../../index.html#report">Sample report</a>
+      <a href="../../index.html#pilot">Pilot</a>
+      <a href="../../trust.html">Trust</a>
+      <a href="../../index.html#intake">Start</a>
+      <div class="nav-dropdown about-menu">
+        <a class="nav-dropdown-trigger" href="../../why.html" aria-haspopup="true">
+          About <span aria-hidden="true">&#9662;</span>
+        </a>
+        <div class="nav-dropdown-panel" aria-label="About ActionBoundary">
+          <a class="nav-path nav-path-featured" href="../../why.html">
+            <strong>Philosophy</strong>
+            <span>Why ActionBoundary exists and where the review boundary comes from.</span>
+          </a>
+          <a class="nav-path" href="../">
+            <strong>Evidence Library</strong>
+            <span>Case notes, method notes, readiness checks, and source artifacts.</span>
+          </a>
+        </div>
+      </div>
+      <a href="../../index.html#faq">FAQ</a>
+      <a class="nav-cta" href="../../index.html#intake">Get 3 scenarios</a>
+    </div>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="hero-inner">
+    <div>
+      <a class="breadcrumb" href="../">Evidence Library</a>
+      <p class="eyebrow">First-contact checklist</p>
+      <h1>What ActionBoundary needs first</h1>
+      <p class="hero-copy">The three details ActionBoundary needs before drafting the first scenario set for an agent workflow.</p>
+      <div class="hero-actions" aria-label="Evidence article actions">
+        <a class="button primary" href="#article">Read article</a>
+        <a class="button secondary" href="https://github.com/hugoii/llm-agent-audit/blob/master/pilot/what-we-need.md">Source on GitHub</a>
+      </div>
+    </div>
+    <aside class="memo-card" aria-label="Evidence memo summary">
+      <b>Evidence memo</b>
+      <span>Station-owned reading page with a source file behind it.</span>
+      <dl>
+        <div>
+          <dt>Type</dt>
+          <dd>Buyer intake note</dd>
+        </div>
+        <div>
+          <dt>Scope</dt>
+          <dd>Product, one action surface, and one safe trace or test path if available.</dd>
+        </div>
+        <div>
+          <dt>Source</dt>
+          <dd>pilot/what-we-need.md</dd>
+        </div>
+      </dl>
+    </aside>
+  </div>
+</header>
+<main>
+  <section class="article-shell" aria-label="Evidence article">
+    <article id="article" class="article-body">
+      <div class="article-note"><strong>Claim boundary.</strong> Do not send credentials, production data, PHI, PII, payment data, or private traces through public channels.</div>
+<p>Send three details. ActionBoundary can use them to draft the first scenario set before any engineering setup.</p>
+<h2 id="the-three-details">The three details</h2>
+<ol>
+<li><strong>Product and buyer</strong> What your agent does, who buys it, and why this review matters now.</li>
+<li><strong>One workflow or action surface</strong> Tell us where the agent can affect the business: refund, payment, access grant, export, record change, scheduling step, submission, or customer message. You do not need to choose the exact failure case. ActionBoundary identifies the risky authorization boundary and turns it into scenarios.</li>
+<li><strong>Safe test path</strong> Any safe way to observe the workflow: one existing redacted trace, staging traces, a sandbox endpoint, exported tool-call and authorization logs, or another non-production run path. LangSmith, Langfuse, OpenTelemetry, Datadog, CloudWatch, internal JSON logs, tool tables, audit tables, and job logs are all acceptable starting points.</li>
+</ol>
+<p>That is enough for a first reply. The first response is not a full engagement request; it is a scenario-fit check.</p>
+<h2 id="what-happens-next">What happens next</h2>
+<p>If the workflow fits the review, ActionBoundary sends a small first scenario set. Before a paid pilot, we first inspect one existing redacted trace or exported log if you already have one. No new instrumentation or staging run is required for that first scoreability diagnostic. If no useful trace exists, we can use one synthetic staging trace instead. If the trace is not ready for a strict verdict, the output is an evidence gap checklist and minimal instrumentation plan.</p>
+<p>For setup, the review usually needs:</p>
+<ul>
+<li>one staging or sandbox workflow;</li>
+<li>an existing redacted trace, exported logs, or a narrow safe test endpoint that can show tool calls, authorization decisions, tool results, and side-effect outcomes;</li>
+<li>where authority lives today, such as user role, permission, approval, tenant scope, policy, or system record;</li>
+<li>written authorization for the named staging or sandbox scope.</li>
+</ul>
+<p>See <a href="../evidence-readiness-check/">Evidence Readiness Check</a> for the existing-trace-first gate that decides whether the full trace-backed pilot is ready.</p>
+<h2 id="what-not-to-send">What not to send</h2>
+<p>Do not send production credentials, real customer data, real secrets, PHI, PII, payment card data, financial account data, raw database dumps, or unrestricted admin accounts.</p>
+<p>Use synthetic data, de-identified data, or harmless canary values. If sensitive data could appear in a trace, pause first so the data can be removed or the right agreement can be put in place.</p>
+<p>Private traces should move through a customer-approved secure channel, not public GitHub issues, public pull requests, or public chat. The default retention rule is deletion within 30 days after final report delivery, or sooner on written request. See <a href="../../trust.html">Trust &amp; Data Handling</a>.</p>
+<h2 id="engineering-handoff">Engineering handoff</h2>
+<p>When the workflow is ready for setup, use the <a href="https://github.com/hugoii/llm-agent-audit/blob/master/pilot/client-handoff.md">technical handoff</a> for trace format, setup paths, adapter options, expected engineering time, and deliverables.</p>
+    </article>
+    <aside class="article-rail" aria-label="Article reference links">
+      <section class="rail-card">
+        <h2>Review boundary</h2>
+        <dl>
+          <div>
+            <dt>Evidence type</dt>
+            <dd>Buyer intake note</dd>
+          </div>
+          <div>
+            <dt>Public scope</dt>
+            <dd>Product, one action surface, and one safe trace or test path if available.</dd>
+          </div>
+          <div>
+            <dt>Source file</dt>
+            <dd>pilot/what-we-need.md</dd>
+          </div>
+        </dl>
+      </section>
+      <section class="rail-card">
+        <h2>Source layer</h2>
+        <p>The full article is readable here. GitHub remains the audit trail for source files, raw summaries, code, and exact revisions.</p>
+        <div class="rail-actions">
+          <a href="mailto:jiahao@actionboundary.dev?subject=3%20scenarios%20for%20our%20agent">Send 3 details</a>
+          <a href="https://github.com/hugoii/llm-agent-audit/blob/master/pilot/what-we-need.md">Source on GitHub</a>
+          <a href="../">Evidence Library</a>
+        </div>
+      </section>
+    </aside>
+  </section>
+  <nav class="article-nav" aria-label="Evidence article footer navigation">
+    <a href="../">Back to Evidence Library</a>
+    <a href="../../index.html#intake">Get 3 scenarios</a>
+  </nav>
+</main>
+<footer>
+  <div class="footer-inner">
+    <span>ActionBoundary by JZ Software Consulting. Agent Authorization Review.</span>
+    <span><a href="../../index.html">Home</a> | <a href="../../why.html">About</a> | <a href="../">Evidence</a> | <a href="../../trust.html">Trust</a> | <a href="https://github.com/hugoii/llm-agent-audit">GitHub</a> | <a href="mailto:jiahao@actionboundary.dev">jiahao@actionboundary.dev</a></span>
+  </div>
+</footer>
+<script>
+  (function () {
+    var nav = document.querySelector('.site-nav');
+    var hero = document.querySelector('.hero');
+    if (!nav || !hero) {
+      return;
+    }
+    var ticking = false;
+    var updateNavGlass = function () {
+      var navBottom = nav.getBoundingClientRect().bottom;
+      var heroBottom = hero.getBoundingClientRect().bottom;
+      nav.classList.toggle('is-over-light', heroBottom <= navBottom + 10);
+      ticking = false;
+    };
+    updateNavGlass();
+    window.addEventListener('scroll', function () {
+      if (!ticking) {
+        ticking = true;
+        window.requestAnimationFrame(updateNavGlass);
+      }
+    }, { passive: true });
+    window.addEventListener('resize', updateNavGlass);
+  })();
+</script>
+</body>
+</html>

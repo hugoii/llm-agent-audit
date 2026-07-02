@@ -287,14 +287,14 @@
     display: block;
     padding: 12px;
     border-radius: 8px;
-    color: #c5ced8;
+    color: var(--hero-muted);
     text-decoration: none;
   }
 
   .nav-dropdown-panel .nav-path:hover,
   .nav-dropdown-panel .nav-path:focus-visible {
     background: rgba(154, 215, 207, 0.10);
-    color: #c5ced8;
+    color: var(--hero-muted);
   }
 
   .nav-path strong {
@@ -306,7 +306,7 @@
 
   .nav-path span {
     display: block;
-    color: #c5ced8;
+    color: var(--hero-muted);
     font-size: 0.82rem;
     line-height: 1.38;
     margin-top: 4px;
@@ -982,12 +982,12 @@
         <article class="library-card">
           <b>AP payment authorization</b>
           <p>Why invoice approval, current user authority, vendor-bank source of truth, and final side effect are separate evidence fields.</p>
-          <a href="#ap-payment-case">Read the case note</a>
+          <a href="ap-payment-approval/">Read the case note</a>
         </article>
         <article class="library-card">
           <b>Trace readiness</b>
           <p>How one redacted trace becomes either a scoreable review input or a missing-evidence map.</p>
-          <a href="#readiness-check">Read the readiness check</a>
+          <a href="evidence-readiness-check/">Read the readiness check</a>
         </article>
       </div>
     </div>
@@ -1020,6 +1020,7 @@
                 <li>Then inspect the source note if a reviewer wants the full public writeup.</li>
               </ul>
               <div class="source-actions">
+                <a href="ap-payment-approval/">Read full article</a>
                 <a href="../payment-authorization-review/">AP review page</a>
                 <a href="https://github.com/hugoii/llm-agent-audit/blob/master/docs/payment-approval-is-not-user-authorization.md">Source on GitHub</a>
               </div>
@@ -1046,6 +1047,7 @@
                 <li>Method note explains pass, fail, and benign-control rules.</li>
               </ul>
               <div class="source-actions">
+                <a href="multi-turn-authorization-drift/">Read full article</a>
                 <a href="#multi-turn-method">Read method below</a>
                 <a href="https://github.com/hugoii/llm-agent-audit/blob/master/docs/multi-turn-authorization-drift-case-note.md">Source on GitHub</a>
               </div>
@@ -1072,6 +1074,7 @@
                 <li>Raw summaries and technical report remain source artifacts.</li>
               </ul>
               <div class="source-actions">
+                <a href="model-choice-authorization-layer/">Read full article</a>
                 <a href="#source-layer">Raw summaries</a>
                 <a href="https://github.com/hugoii/llm-agent-audit/blob/master/docs/model-choice-is-not-an-authorization-layer.md">Source on GitHub</a>
               </div>
@@ -1169,6 +1172,7 @@
                 <li>Best for teams that already have traces but do not know whether they are review-grade.</li>
               </ul>
               <div class="source-actions">
+                <a href="evidence-readiness-check/">Read full article</a>
                 <a href="../index.html#pilot">Pilot scope</a>
                 <a href="https://github.com/hugoii/llm-agent-audit/blob/master/pilot/evidence-readiness-check.md">Source on GitHub</a>
               </div>
@@ -1196,6 +1200,7 @@
                 <li>No public issues or public PRs for private traces.</li>
               </ul>
               <div class="source-actions">
+                <a href="what-we-need/">Read full article</a>
                 <a href="mailto:jiahao@actionboundary.dev?subject=3%20scenarios%20for%20our%20agent">Send 3 details</a>
                 <a href="https://github.com/hugoii/llm-agent-audit/blob/master/pilot/what-we-need.md">Source on GitHub</a>
               </div>

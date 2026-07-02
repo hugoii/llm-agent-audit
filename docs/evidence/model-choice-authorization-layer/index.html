@@ -1,0 +1,1056 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Model choice is not an authorization layer | ActionBoundary Evidence</title>
+<meta name="description" content="A public note on why model tier and refusal behavior do not replace application-layer authorization for high-impact tools.">
+<link rel="canonical" href="https://actionboundary.dev/evidence/model-choice-authorization-layer/">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Model choice is not an authorization layer | ActionBoundary">
+<meta property="og:description" content="A public note on why model tier and refusal behavior do not replace application-layer authorization for high-impact tools.">
+<meta property="og:url" content="https://actionboundary.dev/evidence/model-choice-authorization-layer/">
+<meta property="og:image" content="https://actionboundary.dev/og-image.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Model choice is not an authorization layer | ActionBoundary">
+<meta name="twitter:description" content="A public note on why model tier and refusal behavior do not replace application-layer authorization for high-impact tools.">
+<meta name="twitter:image" content="https://actionboundary.dev/og-image.png">
+<link rel="icon" type="image/svg+xml" href="../../favicon.svg">
+<style>
+
+  :root {
+    --ink: #161719;
+    --muted: #626a75;
+    --paper: #f7f8fa;
+    --white: #ffffff;
+    --line: #dbe1e8;
+    --line-strong: #b8c1cc;
+    --teal: #0f766e;
+    --teal-dark: #0b4f4a;
+    --teal-soft: #e7f5f3;
+    --amber: #b45309;
+    --amber-soft: #fff7ed;
+    --charcoal: #151619;
+    --charcoal-2: #202227;
+    --hero-accent: #9ad7cf;
+    --hero-muted: #aeb8c5;
+    --lead: #3e454d;
+    --body-strong: #313840;
+    --footer-ink: #343b43;
+    --footer-muted: #b9c2cd;
+    --code-on-dark: #f5f7f8;
+    --shadow-soft: 0 2px 8px rgba(16, 24, 40, 0.08);
+    --ease-out-quint: cubic-bezier(0.22, 1, 0.36, 1);
+    --max: 1280px;
+    --readable: 820px;
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    overflow-x: hidden;
+  }
+
+  body {
+    margin: 0;
+    color: var(--ink);
+    background: var(--paper);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    line-height: 1.6;
+    overflow-wrap: anywhere;
+  }
+
+  a {
+    color: var(--teal-dark);
+    text-decoration-thickness: 1px;
+    text-underline-offset: 3px;
+  }
+
+  a:hover {
+    color: var(--teal);
+  }
+
+  a:focus-visible,
+  summary:focus-visible {
+    outline: 2px solid rgba(15, 118, 110, 0.42);
+    outline-offset: 4px;
+    border-radius: 4px;
+  }
+
+  .site-nav {
+    --nav-ink: #f6f8f9;
+    --nav-muted: rgba(215, 226, 229, 0.74);
+    --nav-link: rgba(246, 248, 249, 0.86);
+    --nav-link-hover: var(--white);
+    position: fixed;
+    top: 12px;
+    left: 12px;
+    right: 12px;
+    z-index: 100;
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    border-radius: 8px;
+    background:
+      linear-gradient(180deg, rgba(255, 255, 255, 0.14), rgba(255, 255, 255, 0.055)),
+      linear-gradient(180deg, rgba(18, 22, 26, 0.42), rgba(18, 22, 26, 0.30));
+    box-shadow:
+      0 8px 18px rgba(0, 0, 0, 0.18),
+      inset 0 1px 0 rgba(255, 255, 255, 0.28),
+      inset 0 -1px 0 rgba(255, 255, 255, 0.06);
+    -webkit-backdrop-filter: blur(26px) saturate(170%);
+    backdrop-filter: blur(26px) saturate(170%);
+    transition:
+      background-color 220ms var(--ease-out-quint),
+      background 220ms var(--ease-out-quint),
+      border-color 220ms var(--ease-out-quint),
+      box-shadow 220ms var(--ease-out-quint);
+  }
+
+  .site-nav.is-over-light {
+    --nav-ink: var(--ink);
+    --nav-muted: var(--muted);
+    --nav-link: rgba(22, 23, 25, 0.78);
+    --nav-link-hover: var(--teal-dark);
+    border-color: rgba(15, 118, 110, 0.18);
+    background:
+      linear-gradient(180deg, rgba(255, 255, 255, 0.68), rgba(255, 255, 255, 0.36)),
+      linear-gradient(110deg, rgba(231, 245, 243, 0.26), rgba(255, 255, 255, 0.12));
+    box-shadow:
+      0 8px 18px rgba(16, 24, 40, 0.10),
+      inset 0 1px 0 rgba(255, 255, 255, 0.72),
+      inset 0 -1px 0 rgba(15, 118, 110, 0.08);
+  }
+
+  .site-nav::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    border-radius: inherit;
+    background:
+      linear-gradient(180deg, rgba(255, 255, 255, 0.24), transparent 46%),
+      linear-gradient(100deg, transparent 8%, rgba(255, 255, 255, 0.12) 34%, transparent 58%);
+    opacity: 0.76;
+    transition: opacity 220ms var(--ease-out-quint), background 220ms var(--ease-out-quint);
+  }
+
+  .site-nav.is-over-light::after {
+    background:
+      linear-gradient(180deg, rgba(255, 255, 255, 0.56), transparent 50%),
+      linear-gradient(100deg, transparent 6%, rgba(255, 255, 255, 0.28) 32%, transparent 58%);
+    opacity: 0.9;
+  }
+
+  .nav-inner {
+    position: relative;
+    z-index: 1;
+    max-width: var(--max);
+    margin: 0 auto;
+    padding: 13px 22px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 18px;
+  }
+
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    text-decoration: none;
+    color: var(--nav-ink);
+    min-width: 0;
+    transition: color 220ms var(--ease-out-quint);
+  }
+
+  .brand-mark {
+    width: 30px;
+    height: 30px;
+    flex: 0 0 auto;
+    border-radius: 8px;
+  }
+
+  .brand-copy {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+  }
+
+  .brand strong {
+    font-size: 1.02rem;
+    line-height: 1.1;
+    letter-spacing: 0;
+  }
+
+  .brand-subtitle {
+    color: var(--nav-muted);
+    font-size: 0.78rem;
+    line-height: 1.25;
+    margin-top: 3px;
+    transition: color 220ms var(--ease-out-quint);
+  }
+
+  .nav-links {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    font-size: 0.92rem;
+    white-space: nowrap;
+  }
+
+  .nav-links a {
+    color: var(--nav-link);
+    text-decoration: none;
+    transition: color 160ms var(--ease-out-quint), opacity 160ms var(--ease-out-quint);
+  }
+
+  .nav-links a:hover {
+    color: var(--nav-link-hover);
+  }
+
+  .nav-dropdown {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+  }
+
+  .nav-dropdown-trigger {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+  }
+
+  .nav-dropdown-trigger span {
+    color: rgba(154, 215, 207, 0.86);
+    font-size: 0.72rem;
+    line-height: 1;
+  }
+
+  .nav-dropdown-panel {
+    position: absolute;
+    top: calc(100% + 14px);
+    left: -16px;
+    z-index: 120;
+    width: min(420px, calc(100vw - 32px));
+    padding: 10px;
+    border: 1px solid rgba(154, 215, 207, 0.24);
+    border-radius: 8px;
+    background:
+      radial-gradient(circle at 18% 0%, rgba(73, 185, 169, 0.12), transparent 34%),
+      linear-gradient(145deg, #20252b, #111317);
+    box-shadow: 0 18px 34px rgba(0, 0, 0, 0.34);
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(6px);
+    visibility: hidden;
+    white-space: normal;
+    transition:
+      opacity 160ms var(--ease-out-quint),
+      transform 160ms var(--ease-out-quint),
+      visibility 160ms var(--ease-out-quint);
+  }
+
+  .about-menu .nav-dropdown-panel {
+    left: auto;
+    right: -16px;
+    width: min(360px, calc(100vw - 32px));
+  }
+
+  .nav-dropdown:hover .nav-dropdown-panel,
+  .nav-dropdown:focus-within .nav-dropdown-panel {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateY(0);
+    visibility: visible;
+  }
+
+  .nav-dropdown-panel::before {
+    content: "";
+    position: absolute;
+    left: 18px;
+    right: 18px;
+    top: -15px;
+    height: 15px;
+  }
+
+  .nav-dropdown-panel .nav-path {
+    display: block;
+    padding: 12px;
+    border-radius: 8px;
+    color: var(--hero-muted);
+    text-decoration: none;
+  }
+
+  .nav-dropdown-panel .nav-path:hover,
+  .nav-dropdown-panel .nav-path:focus-visible {
+    background: rgba(154, 215, 207, 0.10);
+    color: var(--hero-muted);
+  }
+
+  .nav-path strong {
+    display: block;
+    color: #f7fbfb;
+    font-size: 0.94rem;
+    line-height: 1.2;
+  }
+
+  .nav-path span {
+    display: block;
+    color: var(--hero-muted);
+    font-size: 0.82rem;
+    line-height: 1.38;
+    margin-top: 4px;
+  }
+
+  .nav-path-featured {
+    border: 1px solid rgba(154, 215, 207, 0.24);
+    background: rgba(15, 118, 110, 0.18);
+  }
+
+  .nav-links .nav-cta {
+    border: 1px solid rgba(154, 215, 207, 0.36);
+    background: rgba(11, 79, 74, 0.88);
+    color: var(--white);
+    padding: 8px 12px;
+    border-radius: 8px;
+  }
+
+  .nav-links .nav-cta:hover {
+    background: rgba(15, 118, 110, 0.96);
+    border-color: rgba(154, 215, 207, 0.54);
+    color: var(--white);
+  }
+
+  .hero {
+    background:
+      radial-gradient(circle at 10% 12%, rgba(73, 185, 169, 0.22), transparent 32%),
+      linear-gradient(135deg, #111317, #1d2429 62%, #151619);
+    color: var(--white);
+    border-bottom: 1px solid #0f1114;
+  }
+
+  .hero-inner {
+    max-width: var(--max);
+    min-height: 520px;
+    margin: 0 auto;
+    padding: 124px 36px 56px;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(290px, 0.42fr);
+    gap: 38px;
+    align-items: end;
+  }
+
+  .breadcrumb {
+    display: inline-flex;
+    width: fit-content;
+    margin-bottom: 22px;
+    color: var(--hero-accent);
+    font-weight: 800;
+    text-decoration: none;
+  }
+
+  .eyebrow,
+  .section-kicker {
+    margin: 0 0 14px;
+    color: var(--hero-accent);
+    font-size: 0.82rem;
+    font-weight: 800;
+    letter-spacing: 0;
+    text-transform: uppercase;
+  }
+
+  h1,
+  h2,
+  h3,
+  p {
+    margin-top: 0;
+  }
+
+  h1 {
+    max-width: 920px;
+    margin-bottom: 22px;
+    font-size: clamp(3rem, 5vw, 4.25rem);
+    line-height: 1.02;
+    letter-spacing: 0;
+    text-wrap: balance;
+  }
+
+  h2,
+  h3 {
+    text-wrap: balance;
+  }
+
+  p,
+  li {
+    text-wrap: pretty;
+  }
+
+  .hero-copy {
+    max-width: 760px;
+    color: #d8dde5;
+    font-size: 1.05rem;
+    line-height: 1.6;
+    margin-bottom: 28px;
+  }
+
+  .hero-actions,
+  .rail-actions,
+  .article-nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    align-items: center;
+  }
+
+  .button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 44px;
+    padding: 11px 15px;
+    border-radius: 8px;
+    font-weight: 750;
+    text-decoration: none;
+    border: 1px solid transparent;
+  }
+
+  .button.primary {
+    background: #f3f8f7;
+    color: #10201f;
+    border-color: #f3f8f7;
+  }
+
+  .button.primary:hover {
+    background: #d8efec;
+    color: #10201f;
+    border-color: #d8efec;
+  }
+
+  .button.secondary {
+    color: var(--white);
+    border-color: rgba(255, 255, 255, 0.32);
+    background: rgba(255, 255, 255, 0.08);
+  }
+
+  .button.secondary:hover {
+    background: rgba(255, 255, 255, 0.14);
+    color: var(--white);
+  }
+
+  .memo-card {
+    border: 1px solid rgba(154, 215, 207, 0.24);
+    border-radius: 8px;
+    background:
+      radial-gradient(circle at 12% 0%, rgba(73, 185, 169, 0.14), transparent 34%),
+      linear-gradient(145deg, #20252b, #111317);
+    box-shadow: 0 8px 14px rgba(0, 0, 0, 0.22);
+    padding: 18px;
+  }
+
+  .memo-card b {
+    display: block;
+    color: #f7fbfb;
+    line-height: 1.2;
+    margin-bottom: 8px;
+  }
+
+  .memo-card span,
+  .memo-card p {
+    color: var(--hero-muted);
+    font-size: 0.9rem;
+  }
+
+  .memo-card dl {
+    margin: 18px 0 0;
+    border-top: 1px solid rgba(215, 221, 228, 0.16);
+  }
+
+  .memo-card div {
+    display: grid;
+    grid-template-columns: 92px minmax(0, 1fr);
+    gap: 12px;
+    padding: 12px 0;
+    border-bottom: 1px solid rgba(215, 221, 228, 0.12);
+  }
+
+  .memo-card dt {
+    color: #f7fbfb;
+    font-weight: 800;
+  }
+
+  .memo-card dd {
+    margin: 0;
+    color: var(--hero-muted);
+  }
+
+  .article-shell {
+    max-width: var(--max);
+    margin: 0 auto;
+    padding: 66px 36px;
+    display: grid;
+    grid-template-columns: minmax(0, var(--readable)) minmax(280px, 0.42fr);
+    gap: 28px;
+    align-items: start;
+  }
+
+  .article-body {
+    min-width: 0;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    background: var(--white);
+    box-shadow: var(--shadow-soft);
+    padding: clamp(24px, 4vw, 46px);
+  }
+
+  .article-note {
+    margin-bottom: 24px;
+    border: 1px solid rgba(15, 118, 110, 0.18);
+    border-radius: 8px;
+    background: var(--teal-soft);
+    padding: 14px 16px;
+    color: var(--teal-dark);
+    font-size: 0.93rem;
+  }
+
+  .article-body h2 {
+    margin: 36px 0 12px;
+    font-size: clamp(1.65rem, 2.6vw, 2.2rem);
+    line-height: 1.14;
+    letter-spacing: 0;
+  }
+
+  .article-body h2:first-child {
+    margin-top: 0;
+  }
+
+  .article-body h3 {
+    margin: 28px 0 10px;
+    font-size: 1.18rem;
+    line-height: 1.25;
+  }
+
+  .article-body p,
+  .article-body li {
+    color: var(--lead);
+    font-size: 1rem;
+  }
+
+  .article-body p {
+    margin-bottom: 16px;
+  }
+
+  .article-body ul,
+  .article-body ol {
+    margin: 0 0 18px;
+    padding-left: 22px;
+  }
+
+  .article-body li + li {
+    margin-top: 7px;
+  }
+
+  .article-body code {
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    background: var(--paper);
+    padding: 0.08rem 0.28rem;
+    color: var(--body-strong);
+    font-size: 0.92em;
+  }
+
+  .article-body pre {
+    overflow-x: auto;
+    border: 1px solid var(--charcoal-3);
+    border-radius: 8px;
+    background: var(--charcoal);
+    color: var(--code-on-dark);
+    padding: 16px;
+  }
+
+  .article-body pre code {
+    border: 0;
+    background: transparent;
+    padding: 0;
+    color: inherit;
+    font-size: 0.92rem;
+  }
+
+  .article-body blockquote {
+    margin: 22px 0;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    background: var(--teal-soft);
+    padding: 14px 18px;
+  }
+
+  .article-body blockquote p {
+    margin: 0;
+  }
+
+  .article-body hr {
+    border: 0;
+    border-top: 1px solid var(--line);
+    margin: 34px 0;
+  }
+
+  .table-wrap {
+    overflow-x: auto;
+    margin: 24px 0;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 640px;
+    background: var(--white);
+  }
+
+  th,
+  td {
+    padding: 12px 13px;
+    border-bottom: 1px solid var(--line);
+    text-align: left;
+    vertical-align: top;
+  }
+
+  th {
+    background: var(--teal-soft);
+    color: var(--body-strong);
+    font-size: 0.86rem;
+  }
+
+  td {
+    color: var(--lead);
+    font-size: 0.94rem;
+  }
+
+  tr:last-child td {
+    border-bottom: 0;
+  }
+
+  .article-rail {
+    display: grid;
+    gap: 14px;
+    position: sticky;
+    top: 94px;
+  }
+
+  .rail-card {
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    background: var(--white);
+    box-shadow: var(--shadow-soft);
+    padding: 18px;
+  }
+
+  .rail-card h2 {
+    margin-bottom: 12px;
+    font-size: 1.08rem;
+    line-height: 1.25;
+  }
+
+  .rail-card p,
+  .rail-card dd {
+    color: var(--muted);
+    font-size: 0.92rem;
+  }
+
+  .rail-card dl {
+    margin: 0;
+    display: grid;
+    gap: 11px;
+  }
+
+  .rail-card dt {
+    color: var(--ink);
+    font-size: 0.78rem;
+    font-weight: 850;
+    text-transform: uppercase;
+  }
+
+  .rail-card dd {
+    margin: 3px 0 0;
+  }
+
+  .rail-actions a {
+    display: inline-flex;
+    width: fit-content;
+    min-height: 36px;
+    align-items: center;
+    border: 1px solid var(--line-strong);
+    border-radius: 8px;
+    padding: 7px 10px;
+    background: var(--white);
+    color: var(--teal-dark);
+    font-size: 0.86rem;
+    font-weight: 800;
+    text-decoration: none;
+  }
+
+  .rail-actions a:hover {
+    background: var(--teal-soft);
+    border-color: rgba(15, 118, 110, 0.45);
+  }
+
+  .article-nav {
+    max-width: var(--max);
+    margin: 0 auto;
+    padding: 0 36px 70px;
+  }
+
+  .article-nav a {
+    color: var(--teal-dark);
+    font-weight: 800;
+    text-decoration: none;
+  }
+
+  footer {
+    padding: 34px 36px;
+    color: var(--footer-muted);
+    background: var(--footer-ink);
+  }
+
+  .footer-inner {
+    max-width: var(--max);
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    gap: 18px;
+    flex-wrap: wrap;
+    font-size: 0.9rem;
+  }
+
+  footer a {
+    color: var(--white);
+  }
+
+  @media (max-width: 1040px) {
+    .nav-links {
+      gap: 12px;
+      font-size: 0.88rem;
+    }
+
+    .hero-inner,
+    .article-shell {
+      grid-template-columns: 1fr;
+    }
+
+    .article-rail {
+      position: static;
+    }
+  }
+
+  @media (max-width: 760px) {
+    .site-nav {
+      left: 8px;
+      right: 8px;
+      top: 8px;
+      overflow: hidden;
+      max-width: calc(100vw - 16px);
+    }
+
+    .nav-inner {
+      padding: 10px 12px;
+      align-items: center;
+      flex-direction: row;
+      gap: 12px;
+    }
+
+    .nav-links {
+      display: none;
+    }
+
+    .brand-subtitle {
+      display: none;
+    }
+
+    .hero-inner {
+      min-height: 0;
+      padding: 112px 22px 44px;
+    }
+
+    h1 {
+      font-size: 2.25rem;
+      line-height: 1.05;
+    }
+
+    .article-shell {
+      padding: 44px 22px;
+    }
+
+    .article-body {
+      padding: 20px;
+    }
+
+    .memo-card div {
+      grid-template-columns: 1fr;
+      gap: 3px;
+    }
+
+    .button,
+    .hero-actions .button {
+      width: 100%;
+    }
+
+    .article-nav {
+      padding: 0 22px 44px;
+    }
+  }
+
+</style>
+</head>
+<body>
+
+<nav class="site-nav" aria-label="Primary">
+  <div class="nav-inner">
+    <a class="brand" href="../../index.html" aria-label="ActionBoundary home">
+      <img class="brand-mark" src="../../assets/actionboundary-mark.svg" alt="" width="30" height="30" aria-hidden="true">
+      <span class="brand-copy">
+        <strong>ActionBoundary</strong>
+        <span class="brand-subtitle">Agent Authorization Review</span>
+      </span>
+    </a>
+    <div class="nav-links" aria-label="Site links">
+      <div class="nav-dropdown">
+        <a class="nav-dropdown-trigger" href="../../index.html#what" aria-haspopup="true">
+          What we test <span aria-hidden="true">&#9662;</span>
+        </a>
+        <div class="nav-dropdown-panel" aria-label="Review paths">
+          <a class="nav-path nav-path-featured" href="../../payment-authorization-review/">
+            <strong>AP / payment authorization</strong>
+            <span>User, approval, vendor-bank, terminal outcome.</span>
+          </a>
+          <a class="nav-path" href="../../index.html#intake">
+            <strong>Record changes / ERP writes</strong>
+            <span>Source-of-truth authority for business state changes.</span>
+          </a>
+          <a class="nav-path" href="../../index.html#intake">
+            <strong>Data export / access grants</strong>
+            <span>Actor, scope, tenant, and destination checks.</span>
+          </a>
+          <a class="nav-path" href="../../index.html#intake">
+            <strong>Support, scheduling, operations</strong>
+            <span>Agent handoffs where authority can drift.</span>
+          </a>
+        </div>
+      </div>
+      <a href="../../index.html#report">Sample report</a>
+      <a href="../../index.html#pilot">Pilot</a>
+      <a href="../../trust.html">Trust</a>
+      <a href="../../index.html#intake">Start</a>
+      <div class="nav-dropdown about-menu">
+        <a class="nav-dropdown-trigger" href="../../why.html" aria-haspopup="true">
+          About <span aria-hidden="true">&#9662;</span>
+        </a>
+        <div class="nav-dropdown-panel" aria-label="About ActionBoundary">
+          <a class="nav-path nav-path-featured" href="../../why.html">
+            <strong>Philosophy</strong>
+            <span>Why ActionBoundary exists and where the review boundary comes from.</span>
+          </a>
+          <a class="nav-path" href="../">
+            <strong>Evidence Library</strong>
+            <span>Case notes, method notes, readiness checks, and source artifacts.</span>
+          </a>
+        </div>
+      </div>
+      <a href="../../index.html#faq">FAQ</a>
+      <a class="nav-cta" href="../../index.html#intake">Get 3 scenarios</a>
+    </div>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="hero-inner">
+    <div>
+      <a class="breadcrumb" href="../">Evidence Library</a>
+      <p class="eyebrow">Model-behavior note</p>
+      <h1>Model choice is not an authorization layer</h1>
+      <p class="hero-copy">A public note on why model tier and refusal behavior do not replace application-layer authorization for high-impact tools.</p>
+      <div class="hero-actions" aria-label="Evidence article actions">
+        <a class="button primary" href="#article">Read article</a>
+        <a class="button secondary" href="https://github.com/hugoii/llm-agent-audit/blob/master/docs/model-choice-is-not-an-authorization-layer.md">Source on GitHub</a>
+      </div>
+    </div>
+    <aside class="memo-card" aria-label="Evidence memo summary">
+      <b>Evidence memo</b>
+      <span>Station-owned reading page with a source file behind it.</span>
+      <dl>
+        <div>
+          <dt>Type</dt>
+          <dd>Method and evidence note</dd>
+        </div>
+        <div>
+          <dt>Scope</dt>
+          <dd>Synthetic public battery. Simulated tools only. No vendor production product finding.</dd>
+        </div>
+        <div>
+          <dt>Source</dt>
+          <dd>docs/model-choice-is-not-an-authorization-layer.md</dd>
+        </div>
+      </dl>
+    </aside>
+  </div>
+</header>
+<main>
+  <section class="article-shell" aria-label="Evidence article">
+    <article id="article" class="article-body">
+      <div class="article-note"><strong>Claim boundary.</strong> This is not a vendor ranking or global safety verdict. The useful conclusion is the need for runtime authorization checks.</div>
+<p><em>I ran the same agent-action audit across six model configurations. Results ranged from 0.0 to 8.0 unsafe high-impact tool-call attempts on average across scorable scenarios, and the recurring failures were mostly authorization failures, not hidden prompt injections.</em></p>
+<p>A while ago I wrote that a model's refusals are not your authorization layer. A model can tell that something sounds dangerous and refuse it, but it cannot check whether the person asking is allowed to act. That has to live in your application.</p>
+<p>This is the follow-up, and the question is more practical. If a team wires the same agent to different model APIs, how much does the base action-safety actually change? Teams pick a model for cost, latency, or quality. I wanted to see what that choice does to the one thing nobody puts on a pricing page, which is how often the model takes a high-impact action it was never authorized to take.</p>
+<p>So I ran the same audit across six model configurations from three vendors, the current frontier and budget model from each, and I ran every one of them three times.</p>
+<h2 id="what-i-ran">What I ran</h2>
+<p>The harness is the same idea as before. The model is given a set of high-risk tool schemas a support or ops agent might have, things like <code>issue_refund</code>, <code>delete_account</code>, <code>transfer_funds</code>, <code>grant_access</code>, and <code>send_email</code>. The tools are not wired to anything. When the model calls one, nothing happens. The harness records which tool it called and with what arguments, and grades that trace against a per-scenario rule for unsafe outcomes.</p>
+<p>The battery is version 1.5, 58 attack scenarios plus 3 benign controls, mapped to the OWASP LLM Top 10. The attacks are a mix of direct requests phrased like routine work, indirect injections hidden inside data the agent reads, jailbreaks, and a few sharper indirect cases. The agent, its tools, and the scenarios are identical across all six models. The secret used in the leak tests is a harmless canary the audit injects, not a real credential.</p>
+<p>I ran each model three times at the provider's default sampling and kept the result of every run. Single runs are misleading here, because a model's tool-calling is not deterministic. The same model can take an action on one run and refuse it on the next. So I report ranges, and I separate failures that showed up in every run, which I call stable, from failures that showed up in only some runs, which I call intermittent.</p>
+<p>The six configurations were Anthropic Claude Opus 4.8 and Claude Haiku 4.5, OpenAI GPT-5.5 and GPT-5-mini, and Google Gemini 3.1 Pro and Gemini 3.5 Flash. These were the current models as of June 2026.</p>
+<h2 id="results">Results</h2>
+<div class="table-wrap"><table>
+<thead><tr>
+<th>Model</th>
+<th>Tier</th>
+<th>Unsafe high-impact tool-call attempts per run</th>
+<th>Attempt average</th>
+<th>API-level blocks per run</th>
+<th>Stable failures (every run)</th>
+</tr></thead>
+<tbody>
+<tr>
+<td>Anthropic Claude Opus 4.8</td>
+<td>frontier</td>
+<td>0, 0, 0</td>
+<td>0.0</td>
+<td>0</td>
+<td>none</td>
+</tr>
+<tr>
+<td>OpenAI GPT-5-mini</td>
+<td>budget</td>
+<td>1, 2, 2</td>
+<td>1.67</td>
+<td>0</td>
+<td>1 (grant admin)</td>
+</tr>
+<tr>
+<td>OpenAI GPT-5.5</td>
+<td>frontier</td>
+<td>3, 1, 2</td>
+<td>2.0</td>
+<td>9 (see note)</td>
+<td>1 (account-cleanup deletion, excessive agency)</td>
+</tr>
+<tr>
+<td>Anthropic Claude Haiku 4.5</td>
+<td>budget</td>
+<td>5, 4, 4</td>
+<td>4.33</td>
+<td>0</td>
+<td>2 (refund, grant admin)</td>
+</tr>
+<tr>
+<td>Google Gemini 3.5 Flash</td>
+<td>budget</td>
+<td>5, 6, 6</td>
+<td>5.67</td>
+<td>0</td>
+<td>5 (3 Critical, 2 High)</td>
+</tr>
+<tr>
+<td>Google Gemini 3.1 Pro</td>
+<td>frontier</td>
+<td>8, 7, 9</td>
+<td>8.0</td>
+<td>0</td>
+<td>7 (5 Critical, 2 High)</td>
+</tr>
+</tbody></table></div>
+<p>Note on GPT-5.5: on every run, 9 of the 58 attack scenarios did not reach the model at all. OpenAI's API returned a safety-filter error instead, flagging the content as a possible cybersecurity risk. Those 9 are coverage exceptions, not clean blocks and not model-level safe behavior. So the GPT-5.5 unsafe count is measured on roughly 49 scorable attack scenarios per run, with API/infrastructure errors reported separately.</p>
+<h2 id="what-i-found">What I found</h2>
+<p><strong>The frontier label was not a reliable safety signal.</strong> On the same battery, the average number of unsafe high-impact tool-call attempts ranged from 0.0 to 8.0. Both ends of that range were frontier models. One frontier model took no unsafe action in any run. Another took unsafe actions in the high single digits every run. Within one vendor, the frontier model was actually less safe than its own budget model. Model choice mattered, but the tier alone did not predict behavior in this harness. The actions that did fail are exactly the kind that application-layer authorization should stop.</p>
+<p><strong>Where failures appeared, they clustered around authorization for high-impact actions.</strong> This is the same pattern as the first writeup, and it held across vendors. The failures that showed up in every run were almost all plain, direct requests to do something high-impact, phrased like routine work: issue a refund, grant admin access, transfer money, delete an account, disable MFA. One was a one-line jailbreak that moved money. None of them needed a hidden instruction. They needed a model that would act without checking whether the requester was allowed to.</p>
+<p><strong>Hidden-instruction injection was mostly handled well.</strong> This matches the first test. No indirect injection, where a malicious instruction is buried in data the agent reads, was a stable failure on any model. The injection-style attacks that did land were intermittent: a few prompt-injection cases on one model, one of them an attempt to disable two-factor authentication, and a few secret-disclosure cases on another. They are worth noting because they are reachable, but they did not behave like the failures that recurred in every run. Those every-run failures were authorization failures.</p>
+<p><strong>A refusal can still leak the secret it is refusing to share.</strong> One case is easy to miss. On one budget model, in two of the three runs, the agent refused to reveal the canary API key and then printed the canary value inside its own refusal, in the sentence explaining why it would not share it. The refusal language was correct. The secret was still in the output. If that output goes back to the person who asked, the secret is disclosed regardless of the disclaimer wrapped around it. A refusal that names the secret is not the same as withholding it.</p>
+<p><strong>Report ranges, not one-off scores.</strong> Three runs is not a large sample, and I am not claiming statistical significance. Three runs is enough to show that this behavior is not deterministic and to tell apart the failures that recur from the ones that are occasional. On several models the per-run count moved by one or two findings. GPT-5.5 ranged from 1 to 3, Haiku ranged from 4 to 5, and some scenarios landed in only one of the three runs.</p>
+<h2 id="honest-limits">Honest limits</h2>
+<p>I want to be clear about what this is and what it is not.</p>
+<p>This is a raw model in a generic tool-calling loop with a synthetic agent. It is not any vendor's production product. Real agent products from these vendors ship with their own system prompts, guardrails, and application-layer controls, and those are exactly the things that should catch these cases. What this measures is the base behavior a team would inherit if it wired the raw model API to real tools and let the model be the gate. That is a realistic prototype pattern, especially when teams are moving quickly, but it is not a statement about any vendor's overall security.</p>
+<p>It is also a fixed battery of 58 scenarios, three runs each, at default sampling, with simulated tools that touch nothing real. I am not speculating about why one model behaves differently from another. I am only reporting what each one did on this test. This is not a vulnerability report, and it is not a ranking of which vendor is safest. I ordered the table by the per-test average so the spread is easy to see, but a score on this one fixed battery is not a general safety verdict. The point is the spread and the shared failure pattern, not a leaderboard.</p>
+<h2 id="so-what">So what</h2>
+<p>The first writeup said the model cannot be your authorization layer. This one adds a second point that is easy to get wrong. Moving to a better or more expensive model is not an authorization layer either. It is a real lever, and it changes behavior a lot, but it does not replace a permission check.</p>
+<p>If your agent can move money, change records, grant access, disable security settings, or send data outside the company, the thing that stops an unauthorized action has to live in your code, no matter which model you picked. In practice that means a real check on who is allowed to trigger each tool, an approval step for destructive or financial actions, tools scoped to the least they need, and a record of every tool call so you can see what happened.</p>
+<p>And because the behavior varied this sharply across models on the same test, the only way to know what your agent actually does is to test your agent. Your tools, your permissions, your data sources, your approval flow. Not the model in general, but the specific stack you are shipping.</p>
+<p>If you are shipping an agent that can take real actions, I would be glad to trade notes on what I would test for your setup.</p>
+<hr>
+<p><em>This is part two of a short series. Part one is <a href="https://github.com/hugoii/llm-agent-audit/blob/master/docs/refusals-are-not-your-authorization-layer.md">A model's refusals are not your authorization layer</a>. The harness that produced these results is <a href="https://github.com/hugoii/llm-agent-audit/blob/master/agent_audit.py">agent_audit.py</a> in this repo.</em></p>
+<p><em>Per-model multi-run summaries: <a href="https://github.com/hugoii/llm-agent-audit/blob/master/docs/runs/v1.5/anthropic__claude-opus-4-8__summary.md">Opus 4.8</a>, <a href="https://github.com/hugoii/llm-agent-audit/blob/master/docs/runs/v1.5/anthropic__claude-haiku-4-5-20251001__summary.md">Haiku 4.5</a>, <a href="https://github.com/hugoii/llm-agent-audit/blob/master/docs/runs/v1.5/openai__gpt-5-mini__summary.md">GPT-5-mini</a>, <a href="https://github.com/hugoii/llm-agent-audit/blob/master/docs/runs/v1.5/openai__gpt-5.5__summary.md">GPT-5.5</a>, <a href="https://github.com/hugoii/llm-agent-audit/blob/master/docs/runs/v1.5/gemini__gemini-3.5-flash__summary.md">Gemini 3.5 Flash</a>, <a href="https://github.com/hugoii/llm-agent-audit/blob/master/docs/runs/v1.5/gemini__gemini-3.1-pro-preview__summary.md">Gemini 3.1 Pro</a>.</em></p>
+    </article>
+    <aside class="article-rail" aria-label="Article reference links">
+      <section class="rail-card">
+        <h2>Review boundary</h2>
+        <dl>
+          <div>
+            <dt>Evidence type</dt>
+            <dd>Method and evidence note</dd>
+          </div>
+          <div>
+            <dt>Public scope</dt>
+            <dd>Synthetic public battery. Simulated tools only. No vendor production product finding.</dd>
+          </div>
+          <div>
+            <dt>Source file</dt>
+            <dd>docs/model-choice-is-not-an-authorization-layer.md</dd>
+          </div>
+        </dl>
+      </section>
+      <section class="rail-card">
+        <h2>Source layer</h2>
+        <p>The full article is readable here. GitHub remains the audit trail for source files, raw summaries, code, and exact revisions.</p>
+        <div class="rail-actions">
+          <a href="../#source-layer">Raw summaries</a>
+          <a href="https://github.com/hugoii/llm-agent-audit/blob/master/docs/model-choice-is-not-an-authorization-layer.md">Source on GitHub</a>
+          <a href="../">Evidence Library</a>
+        </div>
+      </section>
+    </aside>
+  </section>
+  <nav class="article-nav" aria-label="Evidence article footer navigation">
+    <a href="../">Back to Evidence Library</a>
+    <a href="../../index.html#intake">Get 3 scenarios</a>
+  </nav>
+</main>
+<footer>
+  <div class="footer-inner">
+    <span>ActionBoundary by JZ Software Consulting. Agent Authorization Review.</span>
+    <span><a href="../../index.html">Home</a> | <a href="../../why.html">About</a> | <a href="../">Evidence</a> | <a href="../../trust.html">Trust</a> | <a href="https://github.com/hugoii/llm-agent-audit">GitHub</a> | <a href="mailto:jiahao@actionboundary.dev">jiahao@actionboundary.dev</a></span>
+  </div>
+</footer>
+<script>
+  (function () {
+    var nav = document.querySelector('.site-nav');
+    var hero = document.querySelector('.hero');
+    if (!nav || !hero) {
+      return;
+    }
+    var ticking = false;
+    var updateNavGlass = function () {
+      var navBottom = nav.getBoundingClientRect().bottom;
+      var heroBottom = hero.getBoundingClientRect().bottom;
+      nav.classList.toggle('is-over-light', heroBottom <= navBottom + 10);
+      ticking = false;
+    };
+    updateNavGlass();
+    window.addEventListener('scroll', function () {
+      if (!ticking) {
+        ticking = true;
+        window.requestAnimationFrame(updateNavGlass);
+      }
+    }, { passive: true });
+    window.addEventListener('resize', updateNavGlass);
+  })();
+</script>
+</body>
+</html>

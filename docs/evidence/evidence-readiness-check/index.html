@@ -1,0 +1,1099 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Evidence Readiness Check | ActionBoundary Evidence</title>
+<meta name="description" content="A pre-pilot gate for deciding whether one existing redacted trace can support a defensible authorization verdict.">
+<link rel="canonical" href="https://actionboundary.dev/evidence/evidence-readiness-check/">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Evidence Readiness Check | ActionBoundary">
+<meta property="og:description" content="A pre-pilot gate for deciding whether one existing redacted trace can support a defensible authorization verdict.">
+<meta property="og:url" content="https://actionboundary.dev/evidence/evidence-readiness-check/">
+<meta property="og:image" content="https://actionboundary.dev/og-image.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Evidence Readiness Check | ActionBoundary">
+<meta name="twitter:description" content="A pre-pilot gate for deciding whether one existing redacted trace can support a defensible authorization verdict.">
+<meta name="twitter:image" content="https://actionboundary.dev/og-image.png">
+<link rel="icon" type="image/svg+xml" href="../../favicon.svg">
+<style>
+
+  :root {
+    --ink: #161719;
+    --muted: #626a75;
+    --paper: #f7f8fa;
+    --white: #ffffff;
+    --line: #dbe1e8;
+    --line-strong: #b8c1cc;
+    --teal: #0f766e;
+    --teal-dark: #0b4f4a;
+    --teal-soft: #e7f5f3;
+    --amber: #b45309;
+    --amber-soft: #fff7ed;
+    --charcoal: #151619;
+    --charcoal-2: #202227;
+    --hero-accent: #9ad7cf;
+    --hero-muted: #aeb8c5;
+    --lead: #3e454d;
+    --body-strong: #313840;
+    --footer-ink: #343b43;
+    --footer-muted: #b9c2cd;
+    --code-on-dark: #f5f7f8;
+    --shadow-soft: 0 2px 8px rgba(16, 24, 40, 0.08);
+    --ease-out-quint: cubic-bezier(0.22, 1, 0.36, 1);
+    --max: 1280px;
+    --readable: 820px;
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    overflow-x: hidden;
+  }
+
+  body {
+    margin: 0;
+    color: var(--ink);
+    background: var(--paper);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    line-height: 1.6;
+    overflow-wrap: anywhere;
+  }
+
+  a {
+    color: var(--teal-dark);
+    text-decoration-thickness: 1px;
+    text-underline-offset: 3px;
+  }
+
+  a:hover {
+    color: var(--teal);
+  }
+
+  a:focus-visible,
+  summary:focus-visible {
+    outline: 2px solid rgba(15, 118, 110, 0.42);
+    outline-offset: 4px;
+    border-radius: 4px;
+  }
+
+  .site-nav {
+    --nav-ink: #f6f8f9;
+    --nav-muted: rgba(215, 226, 229, 0.74);
+    --nav-link: rgba(246, 248, 249, 0.86);
+    --nav-link-hover: var(--white);
+    position: fixed;
+    top: 12px;
+    left: 12px;
+    right: 12px;
+    z-index: 100;
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    border-radius: 8px;
+    background:
+      linear-gradient(180deg, rgba(255, 255, 255, 0.14), rgba(255, 255, 255, 0.055)),
+      linear-gradient(180deg, rgba(18, 22, 26, 0.42), rgba(18, 22, 26, 0.30));
+    box-shadow:
+      0 8px 18px rgba(0, 0, 0, 0.18),
+      inset 0 1px 0 rgba(255, 255, 255, 0.28),
+      inset 0 -1px 0 rgba(255, 255, 255, 0.06);
+    -webkit-backdrop-filter: blur(26px) saturate(170%);
+    backdrop-filter: blur(26px) saturate(170%);
+    transition:
+      background-color 220ms var(--ease-out-quint),
+      background 220ms var(--ease-out-quint),
+      border-color 220ms var(--ease-out-quint),
+      box-shadow 220ms var(--ease-out-quint);
+  }
+
+  .site-nav.is-over-light {
+    --nav-ink: var(--ink);
+    --nav-muted: var(--muted);
+    --nav-link: rgba(22, 23, 25, 0.78);
+    --nav-link-hover: var(--teal-dark);
+    border-color: rgba(15, 118, 110, 0.18);
+    background:
+      linear-gradient(180deg, rgba(255, 255, 255, 0.68), rgba(255, 255, 255, 0.36)),
+      linear-gradient(110deg, rgba(231, 245, 243, 0.26), rgba(255, 255, 255, 0.12));
+    box-shadow:
+      0 8px 18px rgba(16, 24, 40, 0.10),
+      inset 0 1px 0 rgba(255, 255, 255, 0.72),
+      inset 0 -1px 0 rgba(15, 118, 110, 0.08);
+  }
+
+  .site-nav::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    border-radius: inherit;
+    background:
+      linear-gradient(180deg, rgba(255, 255, 255, 0.24), transparent 46%),
+      linear-gradient(100deg, transparent 8%, rgba(255, 255, 255, 0.12) 34%, transparent 58%);
+    opacity: 0.76;
+    transition: opacity 220ms var(--ease-out-quint), background 220ms var(--ease-out-quint);
+  }
+
+  .site-nav.is-over-light::after {
+    background:
+      linear-gradient(180deg, rgba(255, 255, 255, 0.56), transparent 50%),
+      linear-gradient(100deg, transparent 6%, rgba(255, 255, 255, 0.28) 32%, transparent 58%);
+    opacity: 0.9;
+  }
+
+  .nav-inner {
+    position: relative;
+    z-index: 1;
+    max-width: var(--max);
+    margin: 0 auto;
+    padding: 13px 22px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 18px;
+  }
+
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    text-decoration: none;
+    color: var(--nav-ink);
+    min-width: 0;
+    transition: color 220ms var(--ease-out-quint);
+  }
+
+  .brand-mark {
+    width: 30px;
+    height: 30px;
+    flex: 0 0 auto;
+    border-radius: 8px;
+  }
+
+  .brand-copy {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+  }
+
+  .brand strong {
+    font-size: 1.02rem;
+    line-height: 1.1;
+    letter-spacing: 0;
+  }
+
+  .brand-subtitle {
+    color: var(--nav-muted);
+    font-size: 0.78rem;
+    line-height: 1.25;
+    margin-top: 3px;
+    transition: color 220ms var(--ease-out-quint);
+  }
+
+  .nav-links {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    font-size: 0.92rem;
+    white-space: nowrap;
+  }
+
+  .nav-links a {
+    color: var(--nav-link);
+    text-decoration: none;
+    transition: color 160ms var(--ease-out-quint), opacity 160ms var(--ease-out-quint);
+  }
+
+  .nav-links a:hover {
+    color: var(--nav-link-hover);
+  }
+
+  .nav-dropdown {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+  }
+
+  .nav-dropdown-trigger {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+  }
+
+  .nav-dropdown-trigger span {
+    color: rgba(154, 215, 207, 0.86);
+    font-size: 0.72rem;
+    line-height: 1;
+  }
+
+  .nav-dropdown-panel {
+    position: absolute;
+    top: calc(100% + 14px);
+    left: -16px;
+    z-index: 120;
+    width: min(420px, calc(100vw - 32px));
+    padding: 10px;
+    border: 1px solid rgba(154, 215, 207, 0.24);
+    border-radius: 8px;
+    background:
+      radial-gradient(circle at 18% 0%, rgba(73, 185, 169, 0.12), transparent 34%),
+      linear-gradient(145deg, #20252b, #111317);
+    box-shadow: 0 18px 34px rgba(0, 0, 0, 0.34);
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(6px);
+    visibility: hidden;
+    white-space: normal;
+    transition:
+      opacity 160ms var(--ease-out-quint),
+      transform 160ms var(--ease-out-quint),
+      visibility 160ms var(--ease-out-quint);
+  }
+
+  .about-menu .nav-dropdown-panel {
+    left: auto;
+    right: -16px;
+    width: min(360px, calc(100vw - 32px));
+  }
+
+  .nav-dropdown:hover .nav-dropdown-panel,
+  .nav-dropdown:focus-within .nav-dropdown-panel {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateY(0);
+    visibility: visible;
+  }
+
+  .nav-dropdown-panel::before {
+    content: "";
+    position: absolute;
+    left: 18px;
+    right: 18px;
+    top: -15px;
+    height: 15px;
+  }
+
+  .nav-dropdown-panel .nav-path {
+    display: block;
+    padding: 12px;
+    border-radius: 8px;
+    color: var(--hero-muted);
+    text-decoration: none;
+  }
+
+  .nav-dropdown-panel .nav-path:hover,
+  .nav-dropdown-panel .nav-path:focus-visible {
+    background: rgba(154, 215, 207, 0.10);
+    color: var(--hero-muted);
+  }
+
+  .nav-path strong {
+    display: block;
+    color: #f7fbfb;
+    font-size: 0.94rem;
+    line-height: 1.2;
+  }
+
+  .nav-path span {
+    display: block;
+    color: var(--hero-muted);
+    font-size: 0.82rem;
+    line-height: 1.38;
+    margin-top: 4px;
+  }
+
+  .nav-path-featured {
+    border: 1px solid rgba(154, 215, 207, 0.24);
+    background: rgba(15, 118, 110, 0.18);
+  }
+
+  .nav-links .nav-cta {
+    border: 1px solid rgba(154, 215, 207, 0.36);
+    background: rgba(11, 79, 74, 0.88);
+    color: var(--white);
+    padding: 8px 12px;
+    border-radius: 8px;
+  }
+
+  .nav-links .nav-cta:hover {
+    background: rgba(15, 118, 110, 0.96);
+    border-color: rgba(154, 215, 207, 0.54);
+    color: var(--white);
+  }
+
+  .hero {
+    background:
+      radial-gradient(circle at 10% 12%, rgba(73, 185, 169, 0.22), transparent 32%),
+      linear-gradient(135deg, #111317, #1d2429 62%, #151619);
+    color: var(--white);
+    border-bottom: 1px solid #0f1114;
+  }
+
+  .hero-inner {
+    max-width: var(--max);
+    min-height: 520px;
+    margin: 0 auto;
+    padding: 124px 36px 56px;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(290px, 0.42fr);
+    gap: 38px;
+    align-items: end;
+  }
+
+  .breadcrumb {
+    display: inline-flex;
+    width: fit-content;
+    margin-bottom: 22px;
+    color: var(--hero-accent);
+    font-weight: 800;
+    text-decoration: none;
+  }
+
+  .eyebrow,
+  .section-kicker {
+    margin: 0 0 14px;
+    color: var(--hero-accent);
+    font-size: 0.82rem;
+    font-weight: 800;
+    letter-spacing: 0;
+    text-transform: uppercase;
+  }
+
+  h1,
+  h2,
+  h3,
+  p {
+    margin-top: 0;
+  }
+
+  h1 {
+    max-width: 920px;
+    margin-bottom: 22px;
+    font-size: clamp(3rem, 5vw, 4.25rem);
+    line-height: 1.02;
+    letter-spacing: 0;
+    text-wrap: balance;
+  }
+
+  h2,
+  h3 {
+    text-wrap: balance;
+  }
+
+  p,
+  li {
+    text-wrap: pretty;
+  }
+
+  .hero-copy {
+    max-width: 760px;
+    color: #d8dde5;
+    font-size: 1.05rem;
+    line-height: 1.6;
+    margin-bottom: 28px;
+  }
+
+  .hero-actions,
+  .rail-actions,
+  .article-nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    align-items: center;
+  }
+
+  .button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 44px;
+    padding: 11px 15px;
+    border-radius: 8px;
+    font-weight: 750;
+    text-decoration: none;
+    border: 1px solid transparent;
+  }
+
+  .button.primary {
+    background: #f3f8f7;
+    color: #10201f;
+    border-color: #f3f8f7;
+  }
+
+  .button.primary:hover {
+    background: #d8efec;
+    color: #10201f;
+    border-color: #d8efec;
+  }
+
+  .button.secondary {
+    color: var(--white);
+    border-color: rgba(255, 255, 255, 0.32);
+    background: rgba(255, 255, 255, 0.08);
+  }
+
+  .button.secondary:hover {
+    background: rgba(255, 255, 255, 0.14);
+    color: var(--white);
+  }
+
+  .memo-card {
+    border: 1px solid rgba(154, 215, 207, 0.24);
+    border-radius: 8px;
+    background:
+      radial-gradient(circle at 12% 0%, rgba(73, 185, 169, 0.14), transparent 34%),
+      linear-gradient(145deg, #20252b, #111317);
+    box-shadow: 0 8px 14px rgba(0, 0, 0, 0.22);
+    padding: 18px;
+  }
+
+  .memo-card b {
+    display: block;
+    color: #f7fbfb;
+    line-height: 1.2;
+    margin-bottom: 8px;
+  }
+
+  .memo-card span,
+  .memo-card p {
+    color: var(--hero-muted);
+    font-size: 0.9rem;
+  }
+
+  .memo-card dl {
+    margin: 18px 0 0;
+    border-top: 1px solid rgba(215, 221, 228, 0.16);
+  }
+
+  .memo-card div {
+    display: grid;
+    grid-template-columns: 92px minmax(0, 1fr);
+    gap: 12px;
+    padding: 12px 0;
+    border-bottom: 1px solid rgba(215, 221, 228, 0.12);
+  }
+
+  .memo-card dt {
+    color: #f7fbfb;
+    font-weight: 800;
+  }
+
+  .memo-card dd {
+    margin: 0;
+    color: var(--hero-muted);
+  }
+
+  .article-shell {
+    max-width: var(--max);
+    margin: 0 auto;
+    padding: 66px 36px;
+    display: grid;
+    grid-template-columns: minmax(0, var(--readable)) minmax(280px, 0.42fr);
+    gap: 28px;
+    align-items: start;
+  }
+
+  .article-body {
+    min-width: 0;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    background: var(--white);
+    box-shadow: var(--shadow-soft);
+    padding: clamp(24px, 4vw, 46px);
+  }
+
+  .article-note {
+    margin-bottom: 24px;
+    border: 1px solid rgba(15, 118, 110, 0.18);
+    border-radius: 8px;
+    background: var(--teal-soft);
+    padding: 14px 16px;
+    color: var(--teal-dark);
+    font-size: 0.93rem;
+  }
+
+  .article-body h2 {
+    margin: 36px 0 12px;
+    font-size: clamp(1.65rem, 2.6vw, 2.2rem);
+    line-height: 1.14;
+    letter-spacing: 0;
+  }
+
+  .article-body h2:first-child {
+    margin-top: 0;
+  }
+
+  .article-body h3 {
+    margin: 28px 0 10px;
+    font-size: 1.18rem;
+    line-height: 1.25;
+  }
+
+  .article-body p,
+  .article-body li {
+    color: var(--lead);
+    font-size: 1rem;
+  }
+
+  .article-body p {
+    margin-bottom: 16px;
+  }
+
+  .article-body ul,
+  .article-body ol {
+    margin: 0 0 18px;
+    padding-left: 22px;
+  }
+
+  .article-body li + li {
+    margin-top: 7px;
+  }
+
+  .article-body code {
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    background: var(--paper);
+    padding: 0.08rem 0.28rem;
+    color: var(--body-strong);
+    font-size: 0.92em;
+  }
+
+  .article-body pre {
+    overflow-x: auto;
+    border: 1px solid var(--charcoal-3);
+    border-radius: 8px;
+    background: var(--charcoal);
+    color: var(--code-on-dark);
+    padding: 16px;
+  }
+
+  .article-body pre code {
+    border: 0;
+    background: transparent;
+    padding: 0;
+    color: inherit;
+    font-size: 0.92rem;
+  }
+
+  .article-body blockquote {
+    margin: 22px 0;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    background: var(--teal-soft);
+    padding: 14px 18px;
+  }
+
+  .article-body blockquote p {
+    margin: 0;
+  }
+
+  .article-body hr {
+    border: 0;
+    border-top: 1px solid var(--line);
+    margin: 34px 0;
+  }
+
+  .table-wrap {
+    overflow-x: auto;
+    margin: 24px 0;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 640px;
+    background: var(--white);
+  }
+
+  th,
+  td {
+    padding: 12px 13px;
+    border-bottom: 1px solid var(--line);
+    text-align: left;
+    vertical-align: top;
+  }
+
+  th {
+    background: var(--teal-soft);
+    color: var(--body-strong);
+    font-size: 0.86rem;
+  }
+
+  td {
+    color: var(--lead);
+    font-size: 0.94rem;
+  }
+
+  tr:last-child td {
+    border-bottom: 0;
+  }
+
+  .article-rail {
+    display: grid;
+    gap: 14px;
+    position: sticky;
+    top: 94px;
+  }
+
+  .rail-card {
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    background: var(--white);
+    box-shadow: var(--shadow-soft);
+    padding: 18px;
+  }
+
+  .rail-card h2 {
+    margin-bottom: 12px;
+    font-size: 1.08rem;
+    line-height: 1.25;
+  }
+
+  .rail-card p,
+  .rail-card dd {
+    color: var(--muted);
+    font-size: 0.92rem;
+  }
+
+  .rail-card dl {
+    margin: 0;
+    display: grid;
+    gap: 11px;
+  }
+
+  .rail-card dt {
+    color: var(--ink);
+    font-size: 0.78rem;
+    font-weight: 850;
+    text-transform: uppercase;
+  }
+
+  .rail-card dd {
+    margin: 3px 0 0;
+  }
+
+  .rail-actions a {
+    display: inline-flex;
+    width: fit-content;
+    min-height: 36px;
+    align-items: center;
+    border: 1px solid var(--line-strong);
+    border-radius: 8px;
+    padding: 7px 10px;
+    background: var(--white);
+    color: var(--teal-dark);
+    font-size: 0.86rem;
+    font-weight: 800;
+    text-decoration: none;
+  }
+
+  .rail-actions a:hover {
+    background: var(--teal-soft);
+    border-color: rgba(15, 118, 110, 0.45);
+  }
+
+  .article-nav {
+    max-width: var(--max);
+    margin: 0 auto;
+    padding: 0 36px 70px;
+  }
+
+  .article-nav a {
+    color: var(--teal-dark);
+    font-weight: 800;
+    text-decoration: none;
+  }
+
+  footer {
+    padding: 34px 36px;
+    color: var(--footer-muted);
+    background: var(--footer-ink);
+  }
+
+  .footer-inner {
+    max-width: var(--max);
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    gap: 18px;
+    flex-wrap: wrap;
+    font-size: 0.9rem;
+  }
+
+  footer a {
+    color: var(--white);
+  }
+
+  @media (max-width: 1040px) {
+    .nav-links {
+      gap: 12px;
+      font-size: 0.88rem;
+    }
+
+    .hero-inner,
+    .article-shell {
+      grid-template-columns: 1fr;
+    }
+
+    .article-rail {
+      position: static;
+    }
+  }
+
+  @media (max-width: 760px) {
+    .site-nav {
+      left: 8px;
+      right: 8px;
+      top: 8px;
+      overflow: hidden;
+      max-width: calc(100vw - 16px);
+    }
+
+    .nav-inner {
+      padding: 10px 12px;
+      align-items: center;
+      flex-direction: row;
+      gap: 12px;
+    }
+
+    .nav-links {
+      display: none;
+    }
+
+    .brand-subtitle {
+      display: none;
+    }
+
+    .hero-inner {
+      min-height: 0;
+      padding: 112px 22px 44px;
+    }
+
+    h1 {
+      font-size: 2.25rem;
+      line-height: 1.05;
+    }
+
+    .article-shell {
+      padding: 44px 22px;
+    }
+
+    .article-body {
+      padding: 20px;
+    }
+
+    .memo-card div {
+      grid-template-columns: 1fr;
+      gap: 3px;
+    }
+
+    .button,
+    .hero-actions .button {
+      width: 100%;
+    }
+
+    .article-nav {
+      padding: 0 22px 44px;
+    }
+  }
+
+</style>
+</head>
+<body>
+
+<nav class="site-nav" aria-label="Primary">
+  <div class="nav-inner">
+    <a class="brand" href="../../index.html" aria-label="ActionBoundary home">
+      <img class="brand-mark" src="../../assets/actionboundary-mark.svg" alt="" width="30" height="30" aria-hidden="true">
+      <span class="brand-copy">
+        <strong>ActionBoundary</strong>
+        <span class="brand-subtitle">Agent Authorization Review</span>
+      </span>
+    </a>
+    <div class="nav-links" aria-label="Site links">
+      <div class="nav-dropdown">
+        <a class="nav-dropdown-trigger" href="../../index.html#what" aria-haspopup="true">
+          What we test <span aria-hidden="true">&#9662;</span>
+        </a>
+        <div class="nav-dropdown-panel" aria-label="Review paths">
+          <a class="nav-path nav-path-featured" href="../../payment-authorization-review/">
+            <strong>AP / payment authorization</strong>
+            <span>User, approval, vendor-bank, terminal outcome.</span>
+          </a>
+          <a class="nav-path" href="../../index.html#intake">
+            <strong>Record changes / ERP writes</strong>
+            <span>Source-of-truth authority for business state changes.</span>
+          </a>
+          <a class="nav-path" href="../../index.html#intake">
+            <strong>Data export / access grants</strong>
+            <span>Actor, scope, tenant, and destination checks.</span>
+          </a>
+          <a class="nav-path" href="../../index.html#intake">
+            <strong>Support, scheduling, operations</strong>
+            <span>Agent handoffs where authority can drift.</span>
+          </a>
+        </div>
+      </div>
+      <a href="../../index.html#report">Sample report</a>
+      <a href="../../index.html#pilot">Pilot</a>
+      <a href="../../trust.html">Trust</a>
+      <a href="../../index.html#intake">Start</a>
+      <div class="nav-dropdown about-menu">
+        <a class="nav-dropdown-trigger" href="../../why.html" aria-haspopup="true">
+          About <span aria-hidden="true">&#9662;</span>
+        </a>
+        <div class="nav-dropdown-panel" aria-label="About ActionBoundary">
+          <a class="nav-path nav-path-featured" href="../../why.html">
+            <strong>Philosophy</strong>
+            <span>Why ActionBoundary exists and where the review boundary comes from.</span>
+          </a>
+          <a class="nav-path" href="../">
+            <strong>Evidence Library</strong>
+            <span>Case notes, method notes, readiness checks, and source artifacts.</span>
+          </a>
+        </div>
+      </div>
+      <a href="../../index.html#faq">FAQ</a>
+      <a class="nav-cta" href="../../index.html#intake">Get 3 scenarios</a>
+    </div>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="hero-inner">
+    <div>
+      <a class="breadcrumb" href="../">Evidence Library</a>
+      <p class="eyebrow">Customer readiness</p>
+      <h1>Evidence Readiness Check</h1>
+      <p class="hero-copy">A pre-pilot gate for deciding whether one existing redacted trace can support a defensible authorization verdict.</p>
+      <div class="hero-actions" aria-label="Evidence article actions">
+        <a class="button primary" href="#article">Read article</a>
+        <a class="button secondary" href="https://github.com/hugoii/llm-agent-audit/blob/master/pilot/evidence-readiness-check.md">Source on GitHub</a>
+      </div>
+    </div>
+    <aside class="memo-card" aria-label="Evidence memo summary">
+      <b>Evidence memo</b>
+      <span>Station-owned reading page with a source file behind it.</span>
+      <dl>
+        <div>
+          <dt>Type</dt>
+          <dd>Pre-pilot diagnostic</dd>
+        </div>
+        <div>
+          <dt>Scope</dt>
+          <dd>Existing redacted trace, exported log, or one synthetic staging run.</dd>
+        </div>
+        <div>
+          <dt>Source</dt>
+          <dd>pilot/evidence-readiness-check.md</dd>
+        </div>
+      </dl>
+    </aside>
+  </div>
+</header>
+<main>
+  <section class="article-shell" aria-label="Evidence article">
+    <article id="article" class="article-body">
+      <div class="article-note"><strong>Claim boundary.</strong> This is not a full authorization review or security assessment. It decides whether the evidence is scoreable.</div>
+<p>Before a full Agent Authorization Review, ActionBoundary can check whether one existing redacted trace or exported log is scoreable.</p>
+<p>This is a small pre-pilot gate. It uses evidence the team already has whenever possible: LangSmith, Langfuse, OpenTelemetry, Datadog, CloudWatch, internal JSON logs, tool invocation tables, audit tables, or payment job logs. No new instrumentation and no new staging run are required for the first diagnostic.</p>
+<p>If there is no existing trace, or the trace is not representative, the same check can use one synthetic staging run.</p>
+<h2 id="goal">Goal</h2>
+<p>Decide whether one high-impact agent action can support a trace-backed authorization verdict.</p>
+<p>The check does not decide that the system is safe. It decides whether the trace can prove what happened well enough to run the full pilot.</p>
+<h2 id="input">Input</h2>
+<p>Preferred input:</p>
+<ul>
+<li>one existing redacted trace, exported log, or structured table for a high-impact action.</li>
+</ul>
+<p>Acceptable sources include LangSmith, Langfuse, OpenTelemetry/OTLP, Datadog, Honeycomb, New Relic, CloudWatch, internal JSON logs, tool invocation tables, approval audit tables, payment job logs, webhook logs, or sandbox ledger events.</p>
+<p>The trace can come from an ordinary development, staging, demo, or sandbox run. It does not need to be a new test scenario for the first diagnostic.</p>
+<p>If no useful existing trace is available, use one synthetic staging run for a high-impact action, such as:</p>
+<ul>
+<li>schedule a payment;</li>
+<li>submit or release a payment batch;</li>
+<li>update vendor remittance details;</li>
+<li>issue a refund;</li>
+<li>grant access;</li>
+<li>export customer or vendor data;</li>
+<li>submit a regulated or customer-visible record.</li>
+</ul>
+<p>Use synthetic, redacted, de-identified, or harmless canary data. Do not send production credentials, real secrets, unrestricted admin accounts, raw customer data, payment card data, financial account data, PHI, or PII.</p>
+<h2 id="what-actionboundary-checks">What ActionBoundary Checks</h2>
+<p>The readiness check looks for runtime evidence that can be correlated to the same action:</p>
+<ul>
+<li>acting identity or service account;</li>
+<li>target resource, such as invoice, vendor, tenant, account, or record;</li>
+<li>authorization source, approval lookup, policy decision, or permission check;</li>
+<li>tool decision;</li>
+<li>tool result;</li>
+<li>business, ledger, sandbox, or audit-log outcome;</li>
+<li>trace ID, correlation ID, event IDs, or timestamps.</li>
+</ul>
+<p>Scenario setup is useful context, but it does not count as runtime evidence.</p>
+<h2 id="output">Output</h2>
+<p>The result is one of three readiness levels:</p>
+<div class="table-wrap"><table>
+<thead><tr>
+<th>Result</th>
+<th>Meaning</th>
+<th>Next step</th>
+</tr></thead>
+<tbody>
+<tr>
+<td><code>READY</code></td>
+<td>Actor, target, authorization, tool result, and outcome are observable.</td>
+<td>Proceed to the trace-backed pilot.</td>
+</tr>
+<tr>
+<td><code>PARTIALLY_READY</code></td>
+<td>Some runtime evidence is visible, but a strict verdict would still be incomplete.</td>
+<td>Add the smallest missing instrumentation, then rerun one trace.</td>
+</tr>
+<tr>
+<td><code>NOT_READY</code></td>
+<td>The workflow is not yet observable enough for trace-backed scoring.</td>
+<td>Do a scenario sketch, tool-surface review, or staging evidence plan first.</td>
+</tr>
+</tbody></table></div>
+<h2 id="engagement-ladder">Engagement Ladder</h2>
+<p>Readiness is a path, not a rejection. Different teams can start at different levels:</p>
+<div class="table-wrap"><table>
+<thead><tr>
+<th>Level</th>
+<th>What the team has</th>
+<th>Appropriate engagement</th>
+<th>Output</th>
+</tr></thead>
+<tbody>
+<tr>
+<td>0</td>
+<td>Product and workflow description only</td>
+<td>Scenario design review</td>
+<td>3 scenarios plus the evidence map a buyer would expect</td>
+</tr>
+<tr>
+<td>1</td>
+<td>Existing redacted trace, but authorization or outcome evidence is incomplete</td>
+<td>Existing trace diagnostic</td>
+<td>Scoreability result, missing evidence, and smallest next instrumentation point</td>
+</tr>
+<tr>
+<td>2</td>
+<td>Tool calls and partial authorization evidence, but one synthetic run is needed</td>
+<td>Synthetic readiness check</td>
+<td>Go/no-go for the full pilot plus instrumentation plan</td>
+</tr>
+<tr>
+<td>3</td>
+<td>Actor, target, authorization source, tool result, and outcome are visible</td>
+<td>Full trace-backed pilot</td>
+<td>Scenario report, strict verdicts, fixes, and retest</td>
+</tr>
+</tbody></table></div>
+<p>Only Level 3 supports a full trace-backed authorization verdict. Lower levels still produce useful buyer-readiness work without pretending the system has passed or failed.</p>
+<h2 id="example-finding">Example Finding</h2>
+<pre><code class="language-text">PARTIALLY_READY
+
+Observed:
+- tool calls
+- tool results
+- target invoice ID
+
+Missing:
+- acting principal or service account
+- approval lookup source
+- final sandbox ledger outcome
+
+Strict verdict today:
+INCONCLUSIVE
+
+Recommended instrumentation:
+1. Emit actor_id and tenant_id at the tool gateway.
+2. Log approval lookup source, approval_id, and decision reason.
+3. Emit payment_intent_id or business_action_key for retries.
+4. Record final sandbox ledger outcome.</code></pre>
+<h2 id="what-this-is-not">What This Is Not</h2>
+<p>The readiness check is not a full authorization review, penetration test, compliance certification, SOC report, or production security assessment.</p>
+<p>It is a buyer-readiness artifact: it tells the team whether they can produce the runtime evidence an enterprise security reviewer will expect for one high-impact agent action.</p>
+<h2 id="when-to-use-it">When To Use It</h2>
+<p>Use this before the full pilot when:</p>
+<ul>
+<li>an existing trace or log may already show enough to diagnose scoreability;</li>
+<li>staging exists, but logging may be incomplete;</li>
+<li>tool calls are visible, but authorization decisions are not structured;</li>
+<li>side effects are created asynchronously through jobs, webhooks, or ledgers;</li>
+<li>the team is not sure whether current traces separate scenario setup from runtime evidence;</li>
+<li>a customer is likely to ask how the agent proves that money movement, data export, access grant, or record change was authorized.</li>
+</ul>
+    </article>
+    <aside class="article-rail" aria-label="Article reference links">
+      <section class="rail-card">
+        <h2>Review boundary</h2>
+        <dl>
+          <div>
+            <dt>Evidence type</dt>
+            <dd>Pre-pilot diagnostic</dd>
+          </div>
+          <div>
+            <dt>Public scope</dt>
+            <dd>Existing redacted trace, exported log, or one synthetic staging run.</dd>
+          </div>
+          <div>
+            <dt>Source file</dt>
+            <dd>pilot/evidence-readiness-check.md</dd>
+          </div>
+        </dl>
+      </section>
+      <section class="rail-card">
+        <h2>Source layer</h2>
+        <p>The full article is readable here. GitHub remains the audit trail for source files, raw summaries, code, and exact revisions.</p>
+        <div class="rail-actions">
+          <a href="../../index.html#pilot">Pilot scope</a>
+          <a href="https://github.com/hugoii/llm-agent-audit/blob/master/pilot/evidence-readiness-check.md">Source on GitHub</a>
+          <a href="../">Evidence Library</a>
+        </div>
+      </section>
+    </aside>
+  </section>
+  <nav class="article-nav" aria-label="Evidence article footer navigation">
+    <a href="../">Back to Evidence Library</a>
+    <a href="../../index.html#intake">Get 3 scenarios</a>
+  </nav>
+</main>
+<footer>
+  <div class="footer-inner">
+    <span>ActionBoundary by JZ Software Consulting. Agent Authorization Review.</span>
+    <span><a href="../../index.html">Home</a> | <a href="../../why.html">About</a> | <a href="../">Evidence</a> | <a href="../../trust.html">Trust</a> | <a href="https://github.com/hugoii/llm-agent-audit">GitHub</a> | <a href="mailto:jiahao@actionboundary.dev">jiahao@actionboundary.dev</a></span>
+  </div>
+</footer>
+<script>
+  (function () {
+    var nav = document.querySelector('.site-nav');
+    var hero = document.querySelector('.hero');
+    if (!nav || !hero) {
+      return;
+    }
+    var ticking = false;
+    var updateNavGlass = function () {
+      var navBottom = nav.getBoundingClientRect().bottom;
+      var heroBottom = hero.getBoundingClientRect().bottom;
+      nav.classList.toggle('is-over-light', heroBottom <= navBottom + 10);
+      ticking = false;
+    };
+    updateNavGlass();
+    window.addEventListener('scroll', function () {
+      if (!ticking) {
+        ticking = true;
+        window.requestAnimationFrame(updateNavGlass);
+      }
+    }, { passive: true });
+    window.addEventListener('resize', updateNavGlass);
+  })();
+</script>
+</body>
+</html>
