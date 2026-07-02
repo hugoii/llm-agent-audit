@@ -2915,6 +2915,19 @@
     color: var(--body-strong);
   }
 
+  .report-pass-note {
+    margin: 18px 0 0;
+    padding: 13px 14px;
+    border: 1px solid rgba(15, 118, 110, 0.22);
+    border-radius: 8px;
+    background: #f4fbfa;
+    color: var(--body-callout);
+  }
+
+  .report-pass-note b {
+    color: var(--teal-dark);
+  }
+
   .check .mark {
     width: 22px;
     height: 22px;
@@ -5961,7 +5974,7 @@
             <button class="sp-mark frontier below edge-right" style="--x: 97%; transition-delay: 680ms" type="button" data-runs="Runs: 8, 7, 9" aria-label="Gemini 3.1 Pro frontier model, 8.0 average unsafe tool-call attempts, runs 8 7 9"><span class="sp-pt"></span><span class="sp-label"><b>Gemini 3.1 Pro</b> <small>8.0 avg</small></span></button>
           </div>
         </div>
-        <p class="model-takeaway"><b>Takeaway:</b> Use the strongest model you can. Still enforce authorization at the tool layer.</p>
+        <p class="model-takeaway"><b>Takeaway:</b> Use the strongest model you can. A passing model battery is useful, but it is not the authorization control a buyer can inspect. The inspectable control is the tool-layer trace.</p>
         <div class="model-receipt-row">
           <span>Live public benchmark: 58 attacks + 3 controls · offline demo: 53 attacks + 3 controls · simulated schemas; no downstream tools, side effects, or tool-result loop · 3 runs per model</span>
           <a href="evidence/model-choice-authorization-layer/">Read cross-model note</a>
@@ -6022,6 +6035,7 @@
       <div>
         <h2>A buyer-ready evidence report,<br>built from your staging traces.</h2>
         <p class="lead">A real report uses your agent, your tools, your staging traces, and workflow-specific authorization rules. The public sample shows the shape of the evidence package.</p>
+        <p class="report-pass-note"><b>If your gate already holds, that is still useful.</b> The output becomes a buyer-readable PASS evidence pack, not a bug report: actor, target, authorization source, tool result, and side-effect outcome.</p>
         <div class="checklist" aria-label="Report contents">
           <div class="check"><span class="mark">&#10003;</span><span>Executive summary for founders and security reviewers</span></div>
           <div class="check"><span class="mark">&#10003;</span><span>Scenario matrix with benign controls and strict verdicts</span></div>
@@ -6237,6 +6251,10 @@
       <details class="faq-item">
         <summary>Can we share the report with a customer or investor?</summary>
         <p>Yes, if your team approves sharing it. The report is written to be useful in customer security review, procurement, or investor diligence: scope, method, scenario matrix, trace-backed findings, limits, fixes, and retest results are separated clearly. It does not claim your whole system is secure.</p>
+      </details>
+      <details class="faq-item">
+        <summary>What if we already have authorization gates?</summary>
+        <p>Good. Then the review is not trying to replace your gate or look for a bug first. It checks whether that gate produces buyer-readable PASS, BLOCKED, or INCONCLUSIVE evidence for the actor, target, authorization source, tool result, and side-effect outcome.</p>
       </details>
       <details class="faq-item">
         <summary>How much work is this for our team, and can it be async?</summary>
