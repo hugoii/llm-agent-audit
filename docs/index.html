@@ -1292,6 +1292,41 @@
     padding-bottom: 58px;
   }
 
+  .inspectable-control-banner {
+    display: grid;
+    grid-template-columns: minmax(250px, 0.92fr) minmax(0, 1.08fr);
+    gap: 18px;
+    align-items: center;
+    margin: 0 0 22px;
+    padding: 15px 18px;
+    border: 1px solid rgba(15, 118, 110, 0.22);
+    border-radius: 8px;
+    background:
+      linear-gradient(135deg, rgba(231, 245, 243, 0.82), rgba(255, 255, 255, 0.9)),
+      var(--white);
+    color: var(--body-callout);
+  }
+
+  .inspectable-control-banner b {
+    display: block;
+    color: var(--ink);
+    font-size: clamp(1.02rem, 1.28vw, 1.18rem);
+    line-height: 1.28;
+    text-wrap: balance;
+  }
+
+  .inspectable-control-banner span {
+    color: var(--body-callout);
+  }
+
+  .inspectable-control-banner .banner-kicker {
+    display: block;
+    margin-bottom: 4px;
+    color: var(--teal-dark);
+    font-size: 0.82rem;
+    font-weight: 800;
+  }
+
   .finding-layout {
     display: grid;
     grid-template-columns: 0.86fr 1.14fr;
@@ -4368,6 +4403,11 @@
       max-width: 24ch;
     }
 
+    .inspectable-control-banner {
+      grid-template-columns: 1fr;
+      gap: 8px;
+    }
+
     .split,
     .finding-layout,
     .ap-inner,
@@ -5734,6 +5774,10 @@
 
 <main>
   <section id="finding" class="section finding-section" aria-label="Payment workflow finding">
+    <aside class="inspectable-control-banner" aria-label="Inspectable authorization control">
+      <b>&quot;We use a strong model&quot; is not an inspectable control.</b>
+      <span><span class="banner-kicker">Buyer review evidence</span>Authorization has to be enforced, and evidenced, at the tool layer.</span>
+    </aside>
     <div class="finding-layout">
       <div>
         <p class="case-label">The boundary we test</p>
