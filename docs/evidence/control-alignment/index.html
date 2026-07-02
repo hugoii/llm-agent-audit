@@ -3,17 +3,17 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>What ActionBoundary needs first | ActionBoundary Evidence</title>
-<meta name="description" content="The three details ActionBoundary needs before drafting the first scenario set for an agent workflow.">
-<link rel="canonical" href="https://actionboundary.dev/evidence/what-we-need/">
+<title>ActionBoundary Control Alignment | ActionBoundary Evidence</title>
+<meta name="description" content="A public map from trace-backed authorization evidence to common AI-agent and AP/payment-control language.">
+<link rel="canonical" href="https://actionboundary.dev/evidence/control-alignment/">
 <meta property="og:type" content="article">
-<meta property="og:title" content="What ActionBoundary needs first | ActionBoundary">
-<meta property="og:description" content="The three details ActionBoundary needs before drafting the first scenario set for an agent workflow.">
-<meta property="og:url" content="https://actionboundary.dev/evidence/what-we-need/">
+<meta property="og:title" content="ActionBoundary Control Alignment | ActionBoundary">
+<meta property="og:description" content="A public map from trace-backed authorization evidence to common AI-agent and AP/payment-control language.">
+<meta property="og:url" content="https://actionboundary.dev/evidence/control-alignment/">
 <meta property="og:image" content="https://actionboundary.dev/og-image.png">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="What ActionBoundary needs first | ActionBoundary">
-<meta name="twitter:description" content="The three details ActionBoundary needs before drafting the first scenario set for an agent workflow.">
+<meta name="twitter:title" content="ActionBoundary Control Alignment | ActionBoundary">
+<meta name="twitter:description" content="A public map from trace-backed authorization evidence to common AI-agent and AP/payment-control language.">
 <meta name="twitter:image" content="https://actionboundary.dev/og-image.png">
 <link rel="icon" type="image/svg+xml" href="../../favicon.svg">
 <style>
@@ -867,12 +867,12 @@
   <div class="hero-inner">
     <div>
       <a class="breadcrumb" href="../">Evidence Library</a>
-      <p class="eyebrow">First-contact checklist</p>
-      <h1>What ActionBoundary needs first</h1>
-      <p class="hero-copy">The three details ActionBoundary needs before drafting the first scenario set for an agent workflow.</p>
+      <p class="eyebrow">Review-language map</p>
+      <h1>ActionBoundary Control Alignment</h1>
+      <p class="hero-copy">A public map from trace-backed authorization evidence to common AI-agent and AP/payment-control language.</p>
       <div class="hero-actions" aria-label="Evidence article actions">
         <a class="button primary" href="#article">Read article</a>
-        <a class="button secondary" href="https://github.com/hugoii/llm-agent-audit/blob/master/pilot/what-we-need.md">Source on GitHub</a>
+        <a class="button secondary" href="https://github.com/hugoii/llm-agent-audit/blob/master/docs/control-alignment.md">Source on GitHub</a>
       </div>
     </div>
     <aside class="memo-card" aria-label="Evidence memo summary">
@@ -881,15 +881,15 @@
       <dl>
         <div>
           <dt>Type</dt>
-          <dd>Buyer intake note</dd>
+          <dd>Control-language map</dd>
         </div>
         <div>
           <dt>Scope</dt>
-          <dd>Product, one action surface, and one safe trace or test path if available.</dd>
+          <dd>Reference language for review discussion; no certification, audit opinion, or legal conclusion.</dd>
         </div>
         <div>
           <dt>Source</dt>
-          <dd>pilot/what-we-need.md</dd>
+          <dd>docs/control-alignment.md</dd>
         </div>
       </dl>
     </aside>
@@ -898,31 +898,158 @@
 <main>
   <section class="article-shell" aria-label="Evidence article">
     <article id="article" class="article-body">
-      <div class="article-note"><strong>Claim boundary.</strong> Do not send credentials, production data, PHI, PII, payment data, or private traces through public channels.</div>
-<p>Send three details. ActionBoundary can use them to draft the first scenario set before any engineering setup.</p>
-<h2 id="the-three-details">The three details</h2>
-<ol>
-<li><strong>Product and buyer</strong> What your agent does, who buys it, and why this review matters now.</li>
-<li><strong>One workflow or action surface</strong> Tell us where the agent can affect the business: refund, payment, access grant, export, record change, scheduling step, submission, or customer message. You do not need to choose the exact failure case. ActionBoundary identifies the risky authorization boundary and turns it into scenarios.</li>
-<li><strong>Safe test path</strong> Any safe way to observe the workflow: one existing redacted trace, staging traces, a sandbox endpoint, exported tool-call and authorization logs, or another non-production run path. LangSmith, Langfuse, OpenTelemetry, Datadog, CloudWatch, internal JSON logs, tool tables, audit tables, and job logs are all acceptable starting points.</li>
-</ol>
-<p>That is enough for a first reply. The first response is not a full engagement request; it is a scenario-fit check.</p>
-<h2 id="what-happens-next">What happens next</h2>
-<p>If the workflow fits the review, ActionBoundary sends a small first scenario set. Before a paid pilot, we first inspect one existing redacted trace or exported log if you already have one. No new instrumentation or staging run is required for that first scoreability diagnostic. If no useful trace exists, we can use one synthetic staging trace instead. If the trace is not ready for a strict verdict, the output is an evidence gap checklist and minimal instrumentation plan.</p>
-<p>For setup, the review usually needs:</p>
+      <div class="article-note"><strong>Claim boundary.</strong> This page helps reviewers understand the evidence fields. It does not claim compliance certification or audit approval.</div>
+<p>This page maps ActionBoundary's trace-backed review fields to common security, AI-agent, and AP/payment-control language.</p>
+<p>It is not a compliance certification, audit opinion, SOC report, PCI assessment, or legal conclusion. Trace evidence drives the verdict. The references below support review language and control discussion only.</p>
+<h2 id="why-this-exists">Why This Exists</h2>
+<p>ActionBoundary scenarios are not arbitrary AI prompts. They test whether a high-impact agent action is bound to trusted, current, scope-matching authorization evidence.</p>
+<p>For AP/payment workflows, that means the review asks familiar control questions:</p>
 <ul>
-<li>one staging or sandbox workflow;</li>
-<li>an existing redacted trace, exported logs, or a narrow safe test endpoint that can show tool calls, authorization decisions, tool results, and side-effect outcomes;</li>
-<li>where authority lives today, such as user role, permission, approval, tenant scope, policy, or system record;</li>
-<li>written authorization for the named staging or sandbox scope.</li>
+<li>Who actually caused the payment action?</li>
+<li>Did the current actor have payment authority?</li>
+<li>Did the approval cover the vendor, amount, currency, destination, tenant, and timing?</li>
+<li>Did bank details come from a trusted vendor master or approved bank-change workflow?</li>
+<li>Did the tool or application layer enforce authorization outside the model?</li>
+<li>What business side effect actually happened?</li>
+<li>Can the trace prove the answer with audit-quality event IDs, timestamps, and source-of-truth evidence?</li>
 </ul>
-<p>See <a href="../evidence-readiness-check/">Evidence Readiness Check</a> for the existing-trace-first gate that decides whether the full trace-backed pilot is ready.</p>
-<h2 id="what-not-to-send">What not to send</h2>
-<p>Do not send production credentials, real customer data, real secrets, PHI, PII, payment card data, financial account data, raw database dumps, or unrestricted admin accounts.</p>
-<p>Use synthetic data, de-identified data, or harmless canary values. If sensitive data could appear in a trace, pause first so the data can be removed or the right agreement can be put in place.</p>
-<p>Private traces should move through a customer-approved secure channel, not public GitHub issues, public pull requests, or public chat. The default retention rule is deletion within 30 days after final report delivery, or sooner on written request. See <a href="../../trust.html">Trust &amp; Data Handling</a>.</p>
-<h2 id="engineering-handoff">Engineering handoff</h2>
-<p>When the workflow is ready for setup, use the <a href="../technical-handoff/">technical handoff</a> for trace format, setup paths, adapter options, expected engineering time, and deliverables.</p>
+<p>The model may propose work. The application or tool layer must authorize the transaction.</p>
+<h2 id="control-map">Control Map</h2>
+<div class="table-wrap"><table>
+<thead><tr>
+<th>ActionBoundary check</th>
+<th>Real-world control question</th>
+<th>Common review language</th>
+<th>Required trace evidence</th>
+</tr></thead>
+<tbody>
+<tr>
+<td>Observed actor / principal</td>
+<td>Who caused the high-impact action?</td>
+<td>NIST SP 800-53 AC-3 Access Enforcement and AC-6 Least Privilege</td>
+<td><code>observed_actor</code>, principal or service account ID, role, tenant, permissions, timestamp, evidence source</td>
+</tr>
+<tr>
+<td>Payment approval scope</td>
+<td>Did the approval cover vendor, amount, currency, destination, entity, tenant, and timing?</td>
+<td>OWASP Transaction Authorization; COSO internal control language</td>
+<td>Approval lookup, policy version, source-of-truth approval record, scope match, parameter coverage</td>
+</tr>
+<tr>
+<td>Invoice approval is not payment authority</td>
+<td>Is execution authority separate from invoice approval?</td>
+<td>NIST SP 800-53 AC-5 Separation of Duties; COSO control activities</td>
+<td>Actor permission, approval evidence, payment-tool authorization decision, denial or approval reason</td>
+</tr>
+<tr>
+<td>Vendor-bank source of truth</td>
+<td>Did payment destination come from the vendor master or an approved bank-change workflow?</td>
+<td>FBI Business Email Compromise guidance; GFOA Electronic Vendor Fraud guidance</td>
+<td>Vendor master record, bank-change approval, requested account source, trusted account source, out-of-band verification when available</td>
+</tr>
+<tr>
+<td>Tool-layer enforcement</td>
+<td>Did the application or tool enforce authorization outside the model response?</td>
+<td>OWASP AI Agent Security; OWASP Transaction Authorization; NIST AC-3</td>
+<td>Policy decision, allowed or denied status, tool result, reason, source system, event ID</td>
+</tr>
+<tr>
+<td>Side effect / outcome</td>
+<td>What actually changed?</td>
+<td>NIST SP 800-53 AU-12 Audit Record Generation; payment-control audit evidence</td>
+<td>Sandbox ledger event, job status, payment lifecycle status, production-side-effect flag, real-payment-rail flag, trace ID</td>
+</tr>
+<tr>
+<td>Retry / duplicate payment</td>
+<td>Did one business action create at most one payment side effect?</td>
+<td>Idempotency, audit logging, fraud-monitoring review language</td>
+<td><code>business_action_key</code>, idempotency key, prior payment lookup, duplicate-denied status, existing-result-returned status</td>
+</tr>
+<tr>
+<td>Benign controls</td>
+<td>Does normal AP automation still work when authorization is valid?</td>
+<td>COSO monitoring and control-effectiveness language</td>
+<td>Authorized actor, matching approval, trusted destination, allowed tool result, expected terminal state</td>
+</tr>
+<tr>
+<td>Missing or conflicting evidence</td>
+<td>Can a reviewer tell whether the boundary held?</td>
+<td>Auditability and evidence-readiness language</td>
+<td>Missing-evidence list, unknown terminal state, conflicting policy/tool/outcome records, instrumentation gap</td>
+</tr>
+</tbody></table></div>
+<h2 id="how-to-use-this-mapping">How To Use This Mapping</h2>
+<p>Use this page to explain why the review asks for actor, approval, destination, tool result, and business-outcome evidence.</p>
+<p>Do not use it to imply:</p>
+<ul>
+<li>COSO compliance;</li>
+<li>NIST compliance;</li>
+<li>PCI readiness;</li>
+<li>SOC 2 readiness;</li>
+<li>NACHA compliance;</li>
+<li>financial-grade certification;</li>
+<li>audit approval;</li>
+<li>legal conclusion.</li>
+</ul>
+<p>Safer language:</p>
+<ul>
+<li>aligned to common review language;</li>
+<li>mapped for control discussion;</li>
+<li>fixed-scope authorization-boundary review;</li>
+<li>trace evidence drives the verdict;</li>
+<li>useful before customer security review, procurement review, or finance-control review.</li>
+</ul>
+<h2 id="ap-payment-examples">AP/Payment Examples</h2>
+<div class="table-wrap"><table>
+<thead><tr>
+<th>Scenario</th>
+<th>Control principle</th>
+<th>What ActionBoundary verifies</th>
+</tr></thead>
+<tbody>
+<tr>
+<td>Vendor email or invoice PDF requests a bank-account change</td>
+<td>Email and PDF content are business context, not bank authority</td>
+<td>Whether destination came from vendor master or an approved bank-change workflow</td>
+</tr>
+<tr>
+<td>Invoice is approved, but actor lacks payment authority</td>
+<td>Approval state and execution authority are separate controls</td>
+<td>Whether the current user or service account had payment execution permission</td>
+</tr>
+<tr>
+<td>Approval reference is stale, copied, or carried through a handoff</td>
+<td>Transaction authorization must be current and source-of-truth backed</td>
+<td>Whether the payment tool performed its own approval lookup at action time</td>
+</tr>
+<tr>
+<td>Payment is scheduled, routed, released, or reversed</td>
+<td>The terminal business effect matters more than the status label</td>
+<td>Whether the trace maps raw lifecycle status to a strict terminal state</td>
+</tr>
+<tr>
+<td>Retry or webhook replay repeats a payment action</td>
+<td>One business action should not create duplicate payment effects</td>
+<td>Whether idempotency or duplicate controls denied the replay or returned the existing result</td>
+</tr>
+<tr>
+<td>Trace lacks side-effect evidence</td>
+<td>Missing terminal evidence is not a pass</td>
+<td>Whether the report should mark the action <code>INCONCLUSIVE</code> or return an evidence-readiness gap</td>
+</tr>
+</tbody></table></div>
+<h2 id="reference-layer">Reference Layer</h2>
+<p>These references are used as review-language support. They do not replace the customer's own control framework, auditor, assessor, legal counsel, or compliance program.</p>
+<ul>
+<li><a href="https://cheatsheetseries.owasp.org/cheatsheets/AI_Agent_Security_Cheat_Sheet.html">OWASP AI Agent Security Cheat Sheet</a></li>
+<li><a href="https://cheatsheetseries.owasp.org/cheatsheets/Transaction_Authorization_Cheat_Sheet.html">OWASP Transaction Authorization Cheat Sheet</a></li>
+<li><a href="https://www.nist.gov/itl/ai-risk-management-framework">NIST AI Risk Management Framework</a></li>
+<li><a href="https://csrc.nist.gov/pubs/sp/800/53/r5/upd1/final">NIST SP 800-53 Rev. 5</a></li>
+<li><a href="https://www.coso.org/guidance-on-ic">COSO Internal Control - Integrated Framework</a></li>
+<li><a href="https://www.fbi.gov/how-we-can-help-you/scams-and-safety/common-frauds-and-scams/business-email-compromise">FBI Business Email Compromise</a></li>
+<li><a href="https://www.gfoa.org/materials/electronic-vendor-fraud">GFOA Electronic Vendor Fraud</a></li>
+</ul>
+<p>Where payment-card environments are specifically in scope, PCI DSS access-control and logging concepts may be relevant, but ActionBoundary is not a PCI assessment. Use the <a href="https://www.pcisecuritystandards.org/document_library/">PCI Security Standards Council document library</a> for current PCI materials.</p>
     </article>
     <aside class="article-rail" aria-label="Article reference links">
       <section class="rail-card">
@@ -930,15 +1057,15 @@
         <dl>
           <div>
             <dt>Evidence type</dt>
-            <dd>Buyer intake note</dd>
+            <dd>Control-language map</dd>
           </div>
           <div>
             <dt>Public scope</dt>
-            <dd>Product, one action surface, and one safe trace or test path if available.</dd>
+            <dd>Reference language for review discussion; no certification, audit opinion, or legal conclusion.</dd>
           </div>
           <div>
             <dt>Source file</dt>
-            <dd>pilot/what-we-need.md</dd>
+            <dd>docs/control-alignment.md</dd>
           </div>
         </dl>
       </section>
@@ -946,8 +1073,8 @@
         <h2>Source layer</h2>
         <p>The full article is readable here. GitHub remains the audit trail for source files, raw summaries, code, and exact revisions.</p>
         <div class="rail-actions">
-          <a href="mailto:jiahao@actionboundary.dev?subject=3%20scenarios%20for%20our%20agent">Send 3 details</a>
-          <a href="https://github.com/hugoii/llm-agent-audit/blob/master/pilot/what-we-need.md">Source on GitHub</a>
+          <a href="../../trust.html">Trust boundary</a>
+          <a href="https://github.com/hugoii/llm-agent-audit/blob/master/docs/control-alignment.md">Source on GitHub</a>
           <a href="../">Evidence Library</a>
         </div>
       </section>

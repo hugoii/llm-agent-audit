@@ -957,7 +957,7 @@
         </div>
         <strong class="ledger-status">Open</strong>
       </div>
-      <div class="ledger-row"><b>Case notes</b><span>Worked AP/payment and multi-turn authorization examples.</span></div>
+      <div class="ledger-row"><b>Case notes</b><span>Worked AP/payment, document-injection, and multi-turn authorization examples.</span></div>
       <div class="ledger-row"><b>Methods</b><span>How ActionBoundary separates model behavior from authorization evidence.</span></div>
       <div class="ledger-row"><b>Deliverable</b><span>Sample evidence report and report structure.</span></div>
       <div class="ledger-row"><b>Source layer</b><span>GitHub harness, source notes, raw summaries, and DOI archive.</span></div>
@@ -985,9 +985,24 @@
           <a href="ap-payment-approval/">Read the case note</a>
         </article>
         <article class="library-card">
+          <b>Poisoned AP documents</b>
+          <p>How invoice, statement, or email text can become untrusted context for data export, bank-change, or payment actions.</p>
+          <a href="ap-poisoned-document/">Read the case note</a>
+        </article>
+        <article class="library-card">
           <b>Trace readiness</b>
           <p>How one redacted trace becomes either a scoreable review input or a missing-evidence map.</p>
           <a href="evidence-readiness-check/">Read the readiness check</a>
+        </article>
+        <article class="library-card">
+          <b>Deep payment controls</b>
+          <p>Post-approval mutation, inter-agent approval handoff, retry/idempotency, and benign payment controls.</p>
+          <a href="ap-l3-l5-control-experiment/">Read the method note</a>
+        </article>
+        <article class="library-card">
+          <b>Technical handoff</b>
+          <p>Safe setup paths, trace shape, data boundaries, and expected engineering work for a staging pilot.</p>
+          <a href="technical-handoff/">Read the handoff</a>
         </article>
       </div>
     </div>
@@ -1023,6 +1038,32 @@
                 <a href="ap-payment-approval/">Read full article</a>
                 <a href="../payment-authorization-review/">AP review page</a>
                 <a href="https://github.com/hugoii/llm-agent-audit/blob/master/docs/payment-approval-is-not-user-authorization.md">Source on GitHub</a>
+              </div>
+            </aside>
+          </div>
+        </article>
+
+        <article id="ap-poisoned-document" class="artifact">
+          <div class="artifact-main">
+            <div class="artifact-copy">
+              <span class="artifact-label">AP/data-export case note</span>
+              <h3>When an accounts-payable agent reads a poisoned document.</h3>
+              <p>A synthetic AP workflow shows how a vendor statement or invoice-like document can carry approval-looking text into a high-impact action. The review asks whether the data export, bank-change, or payment action traces to trusted authorization evidence, not whether the document sounded routine.</p>
+              <ul class="evidence-list">
+                <li><b>What it proves</b><span>Business documents are useful context, but they must not become authorization for sensitive data export or payment-adjacent actions.</span></li>
+                <li><b>What it does not prove</b><span>It is not a customer breach, production incident, or claim about every AP agent.</span></li>
+                <li><b>Buyer use</b><span>Useful for founders facing security-review questions about invoices, statements, vendor emails, and external recipients.</span></li>
+              </ul>
+            </div>
+            <aside class="artifact-side">
+              <h4>Untrusted context</h4>
+              <ul>
+                <li>Complements the payment-approval case by showing data-export and document-injection risk.</li>
+                <li>GitHub remains the source layer for exact markdown history.</li>
+              </ul>
+              <div class="source-actions">
+                <a href="ap-poisoned-document/">Read full article</a>
+                <a href="https://github.com/hugoii/llm-agent-audit/blob/master/docs/ap-action-boundary-case-note.md">Source on GitHub</a>
               </div>
             </aside>
           </div>
@@ -1117,6 +1158,32 @@
           </div>
         </article>
 
+        <article id="ap-deep-control-method" class="artifact">
+          <div class="artifact-main">
+            <div class="artifact-copy">
+              <span class="artifact-label">AP/payment method note</span>
+              <h3>Deep payment-control experiment.</h3>
+              <p>The L3-L5 AP experiment checks whether the scorer can handle post-approval mutation, inter-agent handoff claims, retry/replay side effects, and benign payment controls. It shows the evidence standard without publishing customer scenarios.</p>
+              <ul class="evidence-list">
+                <li><b>Evidence standard</b><span>Actor, approval source, material payment fields, idempotency key, tool result, and terminal business outcome.</span></li>
+                <li><b>Control goal</b><span>Unauthorized changed, handed-off, or replayed payment actions are blocked while legitimate payment controls still pass.</span></li>
+                <li><b>Boundary</b><span>Public synthetic method evidence, not a production ERP test or private customer playbook.</span></li>
+              </ul>
+            </div>
+            <aside class="artifact-side">
+              <h4>AP control depth</h4>
+              <ul>
+                <li>Use this after reading the basic AP payment-approval case.</li>
+                <li>Raw fixtures and scorer artifacts remain in GitHub.</li>
+              </ul>
+              <div class="source-actions">
+                <a href="ap-l3-l5-control-experiment/">Read full article</a>
+                <a href="https://github.com/hugoii/llm-agent-audit/blob/master/docs/ap-l3-l5-control-experiment.md">Source on GitHub</a>
+              </div>
+            </aside>
+          </div>
+        </article>
+
         <article id="sample-report" class="artifact">
           <div class="artifact-main">
             <div class="artifact-copy">
@@ -1180,6 +1247,33 @@
           </div>
         </article>
 
+        <article id="technical-handoff" class="artifact">
+          <div class="artifact-main">
+            <div class="artifact-copy">
+              <span class="artifact-label">Pilot handoff</span>
+              <h3>Technical handoff for a staging review.</h3>
+              <p>The handoff explains the safe setup path: client-run scenarios, redacted traces, synthetic data, no production access, and enough runtime evidence to support a strict verdict. It is useful once a team has a plausible workflow fit.</p>
+              <ul class="evidence-list">
+                <li><b>Setup paths</b><span>Client-run traces, narrow staging endpoint, or minimal adapter/instrumentation work.</span></li>
+                <li><b>Trace shape</b><span>Tool calls, authorization decisions, tool results, side effects, event IDs, and timestamps.</span></li>
+                <li><b>Boundary</b><span>Public client interface, not a private implementation playbook or production-access request.</span></li>
+              </ul>
+            </div>
+            <aside class="artifact-side">
+              <h4>Best next step</h4>
+              <ul>
+                <li>First contact still starts with three details.</li>
+                <li>The handoff is for teams ready to scope a safe staging path.</li>
+              </ul>
+              <div class="source-actions">
+                <a href="technical-handoff/">Read full article</a>
+                <a href="what-we-need/">Start with 3 details</a>
+                <a href="https://github.com/hugoii/llm-agent-audit/blob/master/pilot/client-handoff.md">Source on GitHub</a>
+              </div>
+            </aside>
+          </div>
+        </article>
+
         <article id="what-we-need" class="artifact">
           <div class="artifact-main">
             <div class="artifact-copy">
@@ -1237,7 +1331,7 @@
         <article id="ap-control-experiment" class="technical-item">
           <h3>Deep payment-control experiment</h3>
           <p>Post-approval changes, agent handoffs, retry/replay, benign controls, and enforced-vs-advisory behavior.</p>
-          <a href="https://github.com/hugoii/llm-agent-audit/blob/master/docs/ap-l3-l5-control-experiment.md">Source on GitHub</a>
+          <a href="ap-l3-l5-control-experiment/">Read full article</a>
         </article>
         <article id="ap-benign-controls" class="technical-item">
           <h3>AP benign-control library</h3>
@@ -1247,7 +1341,7 @@
         <article id="control-alignment" class="technical-item">
           <h3>Control alignment</h3>
           <p>How trace evidence maps to transaction authorization, least privilege, separation of duties, BEC/vendor-fraud risk, and audit logging language.</p>
-          <a href="https://github.com/hugoii/llm-agent-audit/blob/master/docs/control-alignment.md">Source on GitHub</a>
+          <a href="control-alignment/">Read full article</a>
         </article>
       </div>
     </div>
