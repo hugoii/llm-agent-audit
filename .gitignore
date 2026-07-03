@@ -12,54 +12,15 @@ __pycache__/
 .impeccable/
 _codex_backups/
 tmp/
+private/
 
-# INTERNAL go-to-market docs - keep these OUT of the public repo
-DESIGN.md
-PRODUCT.md
-infra-runbook.md
-launch-kit.md
-OFFER.md
-OUTREACH.md
-PUBLISH.md
-BUYER-ONEPAGER.md
-TARGETS.md
-outreach-drafts.md
-outreach-playbook.md
-outreach-tracker.md
-prospects-research.md
-pilot_runbook.md
-*_scenario_pack.md
-objection-handling.md
-sow-template.md
-security-data-contracting.md
-session-review-*.md
-POSITIONING.md
-competitive-matrix.md
-interview-outreach-template.md
-website-copy-v2.md
-bounty-research/
-
-# V2 multi-turn (private while in development; publish a polished version later if desired)
-pilot/trace_example_*
-pilot/trace_schema_v2.json
-pilot/sample_report_*
-pilot/v2_minimal_validation_brief.md
-pilot/private-evidence-brief.md
-pilot/objection-handling.md
-pilot/ap_l4_beginner_runbook.zh.md
-pilot/high_fidelity_customer_harness_plan.md
-
-# generated real-model runs (re-create with run_real.py; keep out of the public repo)
-real_report.md
-real_report_*.md
+# Generated artifacts
 /runs/
-pilot/ap_l4_customer_harness_runs.json
-pilot/ap_l4_customer_harness_summary.md
-pilot/*_offline_runs.json
-pilot/*_offline_summary.md
-pilot/*_real-model-*_runs.json
-pilot/*_real-model-*_summary.md
+real_report*.md
+pilot/*_runs.json
+pilot/*_summary.md
+pilot/*_verdict.json
 
-# retired chatbot-only demo (superseded by the agent auditor)
-audit.py
-report.md
+# Local reports
+*.local.md
+*.local.json
