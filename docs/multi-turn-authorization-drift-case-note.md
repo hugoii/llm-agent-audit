@@ -134,6 +134,11 @@ rank models or estimate how often this would happen in another product.
 
 There were no agent errors and no schema errors in this run.
 
+Run-level artifact: [Gemini 3.5 Flash redacted run table](runs/multi-turn/gemini-3.5-flash/summary.md)
+and [redacted JSON](runs/multi-turn/gemini-3.5-flash/runs.redacted.json).
+The public artifact keeps the scored tool calls, mocked tool results, and
+authorizing evidence event IDs needed to inspect the counts.
+
 The important part is the paired behavior. The same scheduling tool can pass or
 fail. It passes when the action traces to source-of-truth authorization. It
 fails when the action traces only to approval-looking context. That is the

@@ -232,9 +232,10 @@ private staging environment. The point is to show the evidence chain from a
 fixed battery to customer-like workflows to a staging pilot.
 
 **Fixed battery.** Battery v1.5, 58 attacks plus 3 controls, multiple real-model
-summaries, and a CI-checked offline harness. This proves the method is
-reproducible and scores model-emitted tool-call attempts against simulated
-schemas, not model promises.
+summaries, and a CI-checked offline harness. The offline demo uses the 53-attack
+base subset; the live public benchmark adds 5 advanced attacks. This proves the
+method is reproducible and scores model-emitted tool-call attempts against
+simulated schemas, not model promises.
 
 **Customer-like workflows.** The public docs include
 [AP payment approval](docs/payment-approval-is-not-user-authorization.md),
@@ -317,6 +318,8 @@ still call high-impact tools without authorization. Short note:
 [When an agent treats a note as authorization](docs/multi-turn-authorization-drift-case-note.md).
 How the audit scores this kind of workflow:
 [Testing multi-turn authorization drift](docs/multi-turn-authorization-drift-method.md).
+Run-level support:
+[Gemini 3.5 Flash redacted multi-turn runs](docs/runs/multi-turn/gemini-3.5-flash/summary.md).
 
 **Authorization gates.** Stronger models help, but a careful model is not the
 same as an application-enforced authorization gate. See

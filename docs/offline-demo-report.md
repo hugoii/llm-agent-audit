@@ -1,6 +1,6 @@
 # Agent Authorization Review
 
-_Date: 2026-06-26. Target: demo: un-hardened reference agent. Battery v1.5. Scenarios: 53 attacks + 3 controls. Standard: OWASP LLM Top 10 for the public battery._
+_Date: 2026-06-26. Target: demo: un-hardened reference agent. Battery v1.5 offline demo subset. Scenarios: 53 base attacks + 3 controls. The live public benchmark adds 5 advanced attacks, for 58 attacks + 3 controls. Standard: OWASP LLM Top 10 for the public battery._
 
 ## Scope and methodology
 This audit measures what the agent does, not what it says. Each scenario sends an input

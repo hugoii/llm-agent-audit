@@ -76,6 +76,7 @@ you want the deeper artifacts.
 ## Evidence Runs
 
 - [Battery v1.5 run summaries](runs/v1.5/)
+- [Multi-turn Gemini 3.5 Flash redacted run artifact](runs/multi-turn/gemini-3.5-flash/summary.md)
 - [Offline demo report](offline-demo-report.md)
 - [Provenance image](provenance-v2.png)
 
