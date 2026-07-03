@@ -105,14 +105,18 @@ class PublicBenchmarkContractTests(unittest.TestCase):
 
         self.assertIn("No real payments, payment rails, production systems, or production ledgers.", index)
         self.assertIn("no downstream tools, side effects, or tool-result loop", index)
+        self.assertIn('<span class="node-value">BENIGN_PASS</span>', index)
+        self.assertNotIn('<span class="node-label">verdict</span> <span class="node-value">PASS</span>', index)
 
     def test_sample_report_assets_use_current_version(self) -> None:
         self.assertTrue((ROOT / "docs" / "sample-pilot-report-v0.8.md").is_file())
         self.assertTrue((ROOT / "docs" / "sample-evidence-report-v0.8.pdf").is_file())
+        self.assertFalse((ROOT / "docs" / "sample-evidence-report.pdf").exists())
 
         legacy_references = []
         paths = [
             ROOT / "README.md",
+            ROOT / "docs" / "README.md",
             ROOT / "docs" / "index.html",
             ROOT / "docs" / "why.html",
             ROOT / "docs" / "evidence-flow.md",
@@ -120,10 +124,32 @@ class PublicBenchmarkContractTests(unittest.TestCase):
         ]
         for path in paths:
             text = path.read_text(encoding="utf-8")
-            if "sample-pilot-report-v0.7" in text or "sample-evidence-report-v0.7" in text:
+            if (
+                "sample-pilot-report-v0.7" in text
+                or "sample-evidence-report-v0.7" in text
+                or "sample-evidence-report.pdf" in text
+                or "Legacy sample PDF" in text
+            ):
                 legacy_references.append(str(path.relative_to(ROOT)))
 
         self.assertEqual([], legacy_references)
+
+    def test_quickstart_names_supported_python_version(self) -> None:
+        readme = (ROOT / "README.md").read_text(encoding="utf-8")
+        self.assertIn("Requires Python 3.11 or newer.", readme)
+
+    def test_static_site_support_files_are_present(self) -> None:
+        custom_404 = (ROOT / "docs" / "404.html").read_text(encoding="utf-8")
+        robots = (ROOT / "docs" / "robots.txt").read_text(encoding="utf-8")
+        sitemap = (ROOT / "docs" / "sitemap.xml").read_text(encoding="utf-8")
+
+        self.assertIn("Page not found", custom_404)
+        self.assertIn("Sitemap: https://actionboundary.dev/sitemap.xml", robots)
+        self.assertIn("<loc>https://actionboundary.dev/</loc>", sitemap)
+        self.assertIn(
+            "<loc>https://actionboundary.dev/sample-evidence-report-v0.8.pdf</loc>",
+            sitemap,
+        )
 
 
 if __name__ == "__main__":

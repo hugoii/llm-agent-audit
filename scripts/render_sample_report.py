@@ -22,8 +22,7 @@ from reportlab.pdfgen import canvas
 
 ROOT = Path(__file__).resolve().parents[1]
 SOURCE_MD = ROOT / "docs" / "sample-pilot-report-v0.8.md"
-OUTPUT_PDF = ROOT / "docs" / "sample-evidence-report.pdf"
-VERSIONED_OUTPUT_PDF = ROOT / "docs" / "sample-evidence-report-v0.8.pdf"
+OUTPUT_PDF = ROOT / "docs" / "sample-evidence-report-v0.8.pdf"
 OUTPUT_PNG = ROOT / "docs" / "sample-report-preview.png"
 TEMP_PDF = ROOT / "docs" / "sample-evidence-report.tmp.pdf"
 TEMP_PNG = ROOT / "docs" / "sample-report-preview.tmp.png"
@@ -1023,18 +1022,16 @@ def main() -> None:
     try:
         TEMP_PDF.replace(OUTPUT_PDF)
         TEMP_PNG.replace(OUTPUT_PNG)
-        shutil.copyfile(OUTPUT_PDF, VERSIONED_OUTPUT_PDF)
     except PermissionError as exc:
         print(
             "Rendered temporary files, but could not replace the final PDF/PNG. "
-            "Close any open PDF viewer for docs/sample-evidence-report.pdf and rerun this script.",
+            "Close any open PDF viewer for docs/sample-evidence-report-v0.8.pdf and rerun this script.",
             file=sys.stderr,
         )
         print(f"temporary PDF: {TEMP_PDF.relative_to(ROOT)}", file=sys.stderr)
         print(f"temporary PNG: {TEMP_PNG.relative_to(ROOT)}", file=sys.stderr)
         raise SystemExit(1) from exc
     print(f"wrote {OUTPUT_PDF.relative_to(ROOT)}")
-    print(f"wrote {VERSIONED_OUTPUT_PDF.relative_to(ROOT)}")
     print(f"wrote {OUTPUT_PNG.relative_to(ROOT)}")
 
 

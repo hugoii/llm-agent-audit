@@ -81,6 +81,8 @@ change an account. The review tests whether that text becomes an action.
 
 Validate and score a redacted AP/payment trace against a machine-readable scenario pack:
 
+Requires Python 3.11 or newer.
+
 ```bash
 python -m venv .venv
 # macOS/Linux: source .venv/bin/activate

@@ -36,7 +36,6 @@ you want the deeper artifacts.
 
 - [Sample evidence report source](sample-pilot-report-v0.8.md)
 - [Sample evidence report PDF](sample-evidence-report-v0.8.pdf)
-- [Legacy sample PDF](sample-evidence-report.pdf)
 - [Offline demo report](offline-demo-report.md)
 
 ## AP And Payment Authorization
@@ -88,5 +87,6 @@ path:
 - [Home page](index.html)
 - [Trust page](trust.html)
 - [Why page](why.html)
+- [Brand assets](assets/README.md)
 - [Payment authorization review page](payment-authorization-review/)
 - [Site assets](assets/)
