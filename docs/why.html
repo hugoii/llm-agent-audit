@@ -769,6 +769,21 @@
     box-shadow: var(--shadow-soft);
   }
 
+  .cta-mail-note {
+    margin: 16px 0 0;
+    color: var(--muted);
+    font-size: 0.92rem;
+  }
+
+  .cta-mail-note code {
+    padding: 2px 7px;
+    border: 1px solid var(--line-strong);
+    border-radius: 6px;
+    background: var(--paper);
+    color: var(--ink);
+    font-size: 0.86rem;
+  }
+
   footer {
     background: var(--charcoal);
     color: #b9c2cd;
@@ -890,16 +905,8 @@
     }
 
     .nav-cta {
-      display: none;
-      padding: 7px 9px;
-      min-width: 54px;
-      font-size: 0;
-      white-space: nowrap;
-    }
-
-    .nav-cta::after {
-      content: "Start";
-      font-size: 0.82rem;
+      padding: 7px 10px;
+      font-size: 0.86rem;
     }
 
     .hero {
@@ -1249,13 +1256,14 @@
         <a class="button primary" href="mailto:jiahao@actionboundary.dev?subject=3%20scenarios%20for%20our%20agent">Get 3 scenarios</a>
         <a class="button outline" href="index.html#pilot">View pilot scope</a>
       </div>
+      <p class="cta-mail-note">Or email <code>jiahao@actionboundary.dev</code> directly, or use the <a href="index.html#intake">async intake form</a>. Reply within 1 business day: 3 scenarios or a straight no.</p>
     </div>
   </section>
 </main>
 
 <footer>
   <div class="footer-inner">
-    <span>ActionBoundary by JZ Software Consulting. Agent Authorization Review.</span>
+    <span>ActionBoundary by JZ Software Consulting. Reviews performed and signed by Jiahao Zhang.</span>
     <span><a href="index.html">Home</a> | <a href="evidence/">Evidence</a> | <a href="https://github.com/hugoii/llm-agent-audit">GitHub</a> | <a href="https://doi.org/10.5281/zenodo.20585658">Zenodo DOI</a> | <a href="mailto:jiahao@actionboundary.dev">jiahao@actionboundary.dev</a></span>
   </div>
 </footer>

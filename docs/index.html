@@ -856,7 +856,8 @@
   }
 
   .evidence-receipt {
-    flex: 0 0 min(100%, 420px);
+    flex: 0 1 auto;
+    max-width: 100%;
     display: inline-flex;
     align-items: center;
     justify-content: flex-start;
@@ -1178,6 +1179,16 @@
     color: var(--hero-muted);
     font-size: 0.76rem;
     line-height: 1.45;
+  }
+
+  .evidence-consequence-note {
+    position: relative;
+    z-index: 1;
+    margin: 14px 0 0;
+    max-width: 62ch;
+    color: rgba(241, 246, 247, 0.86);
+    font-size: 0.9rem;
+    line-height: 1.55;
   }
 
   .trace-arrow {
@@ -3490,6 +3501,163 @@
     margin-top: 2px;
   }
 
+  .reply-sla {
+    margin: 14px 0 0;
+    color: var(--teal-dark);
+    font-size: 0.94rem;
+    font-weight: 700;
+  }
+
+  .intake-contact {
+    margin-top: 24px;
+    background: var(--white);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: var(--shadow-soft);
+  }
+
+  .intake-contact-head b {
+    display: block;
+    color: var(--ink);
+    font-size: 1.02rem;
+  }
+
+  .intake-contact-head span {
+    display: block;
+    margin-top: 2px;
+    color: var(--muted);
+    font-size: 0.92rem;
+  }
+
+  .email-copy-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px;
+    margin-top: 14px;
+  }
+
+  .email-copy-row code {
+    padding: 8px 12px;
+    border: 1px solid var(--line-strong);
+    border-radius: 8px;
+    background: var(--paper);
+    color: var(--ink);
+    font-size: 0.94rem;
+  }
+
+  .copy-email {
+    min-height: 36px;
+    padding: 6px 12px;
+    border: 1px solid var(--line-strong);
+    border-radius: 8px;
+    background: var(--white);
+    color: var(--ink);
+    font: inherit;
+    font-size: 0.88rem;
+    font-weight: 750;
+    cursor: pointer;
+  }
+
+  .copy-email:hover {
+    border-color: rgba(15, 118, 110, 0.44);
+    color: var(--teal-dark);
+  }
+
+  .copy-email.copied {
+    border-color: rgba(15, 118, 110, 0.44);
+    background: var(--teal-soft);
+    color: var(--teal-dark);
+  }
+
+  .intake-form {
+    margin-top: 18px;
+    display: grid;
+    gap: 12px;
+  }
+
+  .intake-form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+
+  .intake-form label {
+    display: grid;
+    gap: 5px;
+  }
+
+  .intake-form label > span {
+    color: var(--ink);
+    font-size: 0.88rem;
+    font-weight: 750;
+  }
+
+  .intake-form input,
+  .intake-form textarea {
+    width: 100%;
+    padding: 9px 12px;
+    border: 1px solid var(--line-strong);
+    border-radius: 8px;
+    background: var(--white);
+    color: var(--ink);
+    font: inherit;
+    font-size: 0.96rem;
+  }
+
+  .intake-form input:focus-visible,
+  .intake-form textarea:focus-visible {
+    outline: 2px solid rgba(15, 118, 110, 0.42);
+    outline-offset: 1px;
+  }
+
+  .intake-form textarea {
+    resize: vertical;
+  }
+
+  .honey-field {
+    position: absolute !important;
+    left: -9999px !important;
+    width: 1px;
+    height: 1px;
+    opacity: 0;
+  }
+
+  .intake-form-foot {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .intake-form-foot .button {
+    font: inherit;
+    font-weight: 800;
+    cursor: pointer;
+  }
+
+  .form-status {
+    color: var(--muted);
+    font-size: 0.9rem;
+  }
+
+  .form-status.ok {
+    color: var(--teal-dark);
+    font-weight: 700;
+  }
+
+  .form-status.err {
+    color: #991b1b;
+    font-weight: 700;
+  }
+
+  @media (max-width: 640px) {
+    .intake-form-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
   .faq {
     display: grid;
     gap: 10px;
@@ -3664,7 +3832,7 @@
     width: 64px;
     height: 64px;
     border-radius: 8px;
-    object-fit: contain;
+    object-fit: cover;
     background: var(--charcoal);
     border: 1px solid rgba(15, 118, 110, 0.26);
   }
@@ -4668,12 +4836,13 @@
       display: none;
     }
 
-    .nav-links {
+    .nav-dropdown {
       display: none;
     }
 
-    .nav-dropdown {
-      display: none;
+    .nav-links .nav-cta {
+      padding: 7px 10px;
+      font-size: 0.86rem;
     }
 
     .hero-inner {
@@ -5793,7 +5962,7 @@
     <div class="trace-scene" data-demo aria-label="Mini evidence demo: authorization boundary trace">
       <div class="scene-label">
         <span class="demo-title">
-          <span class="demo-kicker">Evidence excerpt / AP payment authorization local sandbox</span>
+          <span class="demo-kicker">Evidence excerpt / AP payment experiment &middot; local sandbox</span>
           <strong>Same tool call. Different authority.</strong>
           <span class="demo-subtitle">Independent evidence, not another gate.</span>
         </span>
@@ -5818,6 +5987,7 @@
           </div>
         </div>
       </div>
+      <p class="evidence-consequence-note">This is the trace your first enterprise security review will ask for. If your answer is &quot;the model refused in testing,&quot; that is the finding they write down.</p>
       <p class="evidence-boundary-note">Synthetic staging run. No production systems, payment rails, or customer data.</p>
     </div>
   </div>
@@ -5883,7 +6053,7 @@
         <div class="run-summary">
           <div class="run-summary-head">
             <b>The gate changed, not the model.</b>
-            <span>AP-L4-3 &middot; 4 model APIs &middot; 5 runs per mode.</span>
+            <span>AP payment experiment AP-L4-3 &middot; 4 model APIs &middot; 5 runs per mode.</span>
           </div>
           <div class="dot-table" role="table" aria-label="Per-model advisory and enforced outcomes, five runs each">
             <div class="dot-head" role="row">
@@ -6047,7 +6217,7 @@
             <b>Same scenarios, different outcomes</b>
             <span>Average unsafe high-impact tool-call attempts per run.</span>
           </span>
-          <span class="model-panel-meta">6 configs<br>3 runs each</span>
+          <span class="model-panel-meta">Cross-model battery v1.5<br>6 configs &middot; 3 runs each</span>
         </div>
         <div class="spectrum" aria-label="Average unsafe high-impact tool-call attempts per run across six model APIs, 0.0 to 8.0 of 58">
           <div class="spectrum-top">
@@ -6071,7 +6241,7 @@
         </div>
         <p class="model-takeaway"><b>Takeaway:</b> Use the strongest model you can. A passing model battery is useful, but it is not the authorization control a buyer can inspect. The inspectable control is the tool-layer trace.</p>
         <div class="model-receipt-row">
-          <span>Live public benchmark: 58 attacks + 3 controls · offline demo: 53 attacks + 3 controls · simulated schemas; no downstream tools, side effects, or tool-result loop · 3 runs per model</span>
+          <span>Cross-model battery v1.5: the live benchmark runs 58 attacks + 3 benign controls; the keyless offline demo runs a 53-attack subset of the same battery. Simulated schemas; no downstream tools, side effects, or tool-result loop. 3 runs per model.</span>
           <a href="evidence/model-choice-authorization-layer/">Read cross-model note</a>
         </div>
         <ul class="sr-only">
@@ -6180,9 +6350,10 @@
             <span>from</span>
           </div>
           <div class="offer-path-copy">
-            <span class="offer-path-label">Limited early pricing</span>
+            <span class="offer-path-label">Founding rate &middot; first 3 teams</span>
             <h3>Founding design-partner review</h3>
             <p>We start by identifying 2 to 3 candidate high-impact action paths, then select one representative path for a narrow but deep staging review.</p>
+            <small>Rises as slots fill; the method stays the same.</small>
           </div>
         </div>
       </div>
@@ -6320,6 +6491,7 @@
           <a class="button primary" href="mailto:jiahao@actionboundary.dev?subject=3%20scenarios%20for%20our%20agent">Send the 3 details</a>
           <a class="button outline" href="evidence/what-we-need/">See what we need</a>
         </div>
+        <p class="reply-sla">Reply within 1 business day: 3 first scenarios for your workflow, or a straight no.</p>
       </div>
       <div class="intake-panel">
         <h3>What to include</h3>
@@ -6329,6 +6501,31 @@
           <li><span class="num">3</span><span><b>Safe test path</b> <span>Any safe way to observe the workflow: staging traces, a sandbox endpoint, exported tool-call and authorization logs, or another non-production path that can be correlated to the acting identity and sandbox outcome.</span></span></li>
         </ol>
       </div>
+    </div>
+    <div class="intake-contact" id="contact">
+      <div class="intake-contact-head">
+        <b>No mail client on this machine? Same three details, two other paths.</b>
+        <span>Copy the address, or send the form below. Both reach the same reviewer inbox.</span>
+      </div>
+      <div class="email-copy-row">
+        <code>jiahao@actionboundary.dev</code>
+        <button class="copy-email" type="button" data-copy="jiahao@actionboundary.dev">Copy address</button>
+      </div>
+      <form class="intake-form" action="https://formsubmit.co/jiahao@actionboundary.dev" method="POST">
+        <input type="hidden" name="_subject" value="3 scenarios for our agent (site form)">
+        <input type="hidden" name="_template" value="box">
+        <input type="text" name="_honey" class="honey-field" tabindex="-1" autocomplete="off" aria-hidden="true">
+        <div class="intake-form-grid">
+          <label><span>Work email</span><input type="email" name="email" required autocomplete="email" placeholder="you@company.com"></label>
+          <label><span>Product and buyer</span><input type="text" name="product_and_buyer" required placeholder="What the agent does and who buys it"></label>
+        </div>
+        <label><span>One workflow or action surface</span><textarea name="workflow_or_action_surface" rows="3" required placeholder="Where the agent can affect the business: payments, records, access grants, exports."></textarea></label>
+        <label><span>Safe test path (optional)</span><textarea name="safe_test_path" rows="2" placeholder="Staging traces, sandbox endpoint, exported logs, or none yet."></textarea></label>
+        <div class="intake-form-foot">
+          <button class="button primary" type="submit">Send the 3 details</button>
+          <span class="form-status" role="status" aria-live="polite"></span>
+        </div>
+      </form>
     </div>
   </section>
 
@@ -6358,6 +6555,10 @@
       <details class="faq-item">
         <summary>How long does a pilot take?</summary>
         <p>The fixed-scope pilot is designed for about one week after the staging path and traces are available. If the scope is clear, the first 3 scenarios can be drafted before setup, and one same-workflow retest is included after fixes.</p>
+      </details>
+      <details class="faq-item">
+        <summary>Why is founding pricing so far below market?</summary>
+        <p>Published rates for comparable AI red-team assessments start around $16,000. The review method here is public, versioned, and archived: battery v1.5, sample report v0.8, and a <a href="https://doi.org/10.5281/zenodo.20585658">Zenodo DOI</a>. What is early is the client list, not the method. The first three teams get the founding rate in exchange for a candid reference or an anonymized case study, if the work earns it. The rate rises as those slots fill.</p>
       </details>
       <details class="faq-item">
         <summary>What do you need from us?</summary>
@@ -6413,8 +6614,8 @@
           </div>
         </div>
         <div class="why-founder">
-          <img src="assets/actionboundary-mark.svg" alt="ActionBoundary review mark" width="64" height="64">
-          <span><b>Operated by JZ Software Consulting.</b> Repeatable scenario design, trace scoring, authorization analysis, reporting, and retest.</span>
+          <img src="headshot.jpg" alt="Jiahao Zhang, founder and lead reviewer" width="64" height="64" loading="lazy">
+          <span><b>Led and signed by Jiahao Zhang.</b> Operated by JZ Software Consulting. Repeatable scenario design, trace scoring, authorization analysis, reporting, and retest.</span>
         </div>
       </article>
     </div>
@@ -6423,8 +6624,8 @@
 
 <footer>
   <div class="footer-inner">
-    <span>ActionBoundary by JZ Software Consulting. Agent Authorization Review.</span>
-    <span><a href="why.html">About</a> | <a href="evidence/">Evidence</a> | <a href="trust.html">Trust</a> | <a href="https://github.com/hugoii/llm-agent-audit">GitHub</a> | <a href="https://doi.org/10.5281/zenodo.20585658">Zenodo DOI</a> | <a href="mailto:jiahao@actionboundary.dev">jiahao@actionboundary.dev</a></span>
+    <span>ActionBoundary by JZ Software Consulting. Reviews performed and signed by <a href="why.html">Jiahao Zhang</a>.</span>
+    <span><a href="why.html">About</a> | <a href="evidence/">Evidence</a> | <a href="trust.html">Trust</a> | <a href="https://github.com/hugoii/llm-agent-audit">GitHub</a> | <a href="https://www.linkedin.com/in/jiahao-zhang-12999b319">LinkedIn</a> | <a href="https://doi.org/10.5281/zenodo.20585658">Zenodo DOI</a> | <a href="mailto:jiahao@actionboundary.dev">jiahao@actionboundary.dev</a></span>
   </div>
 </footer>
 <script>
@@ -6449,6 +6650,65 @@
       }
     }, { passive: true });
     window.addEventListener('resize', updateNavGlass);
+  })();
+
+  (function () {
+    document.querySelectorAll('.copy-email').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        var value = btn.getAttribute('data-copy');
+        var done = function () {
+          btn.classList.add('copied');
+          btn.textContent = 'Copied';
+          window.setTimeout(function () {
+            btn.classList.remove('copied');
+            btn.textContent = 'Copy address';
+          }, 1800);
+        };
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(value).then(done, done);
+        } else {
+          var tmp = document.createElement('textarea');
+          tmp.value = value;
+          document.body.appendChild(tmp);
+          tmp.select();
+          document.execCommand('copy');
+          document.body.removeChild(tmp);
+          done();
+        }
+      });
+    });
+
+    var form = document.querySelector('.intake-form');
+    if (!form) {
+      return;
+    }
+    var status = form.querySelector('.form-status');
+    form.addEventListener('submit', function (event) {
+      event.preventDefault();
+      var button = form.querySelector('button[type="submit"]');
+      button.disabled = true;
+      status.className = 'form-status';
+      status.textContent = 'Sending...';
+      fetch('https://formsubmit.co/ajax/jiahao@actionboundary.dev', {
+        method: 'POST',
+        headers: { 'Accept': 'application/json' },
+        body: new FormData(form)
+      }).then(function (res) {
+        if (!res.ok) {
+          throw new Error('send failed');
+        }
+        return res.json();
+      }).then(function () {
+        form.reset();
+        status.className = 'form-status ok';
+        status.textContent = 'Sent. You will hear back within 1 business day.';
+      }).catch(function () {
+        status.className = 'form-status err';
+        status.textContent = 'Could not send. Please email jiahao@actionboundary.dev instead.';
+      }).then(function () {
+        button.disabled = false;
+      });
+    });
   })();
 
   (function () {

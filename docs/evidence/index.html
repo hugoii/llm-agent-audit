@@ -829,8 +829,17 @@
       gap: 12px;
     }
 
-    .nav-links {
+    .nav-links a:not(.nav-cta) {
       display: none;
+    }
+
+    .nav-dropdown {
+      display: none;
+    }
+
+    .nav-links .nav-cta {
+      padding: 7px 10px;
+      font-size: 0.86rem;
     }
 
     .brand-subtitle {
@@ -943,7 +952,7 @@
     <div>
       <p class="eyebrow">Evidence Library</p>
       <h1>Public proof, separated from source code.</h1>
-      <p class="hero-copy">This is the station-owned reading layer for ActionBoundary: case notes, method notes, readiness checks, and sample deliverables. GitHub stays available as the source layer, but buyers can understand the evidence here first.</p>
+      <p class="hero-copy">This is where a buyer reads the evidence in plain language: case notes, method notes, readiness checks, and sample deliverables. GitHub stays available as the source layer for every number.</p>
       <div class="hero-actions" aria-label="Evidence library shortcuts">
         <a class="button primary" href="#worked-examples">Read case notes</a>
         <a class="button secondary" href="#customer-readiness">Prepare a trace</a>
@@ -976,32 +985,32 @@
       <div class="library-grid">
         <article class="library-card">
           <b>Sample evidence report</b>
-          <p>Report structure, evidence register, findings, fixes, and retest plan for a synthetic AP workflow.</p>
+          <p>The full deliverable, rendered: executive summary, evidence register, findings, fixes, and retest plan for a synthetic AP workflow, in 9 pages.</p>
           <a href="#sample-report">Read the report structure</a>
         </article>
         <article class="library-card">
           <b>AP payment authorization</b>
-          <p>Why invoice approval, current user authority, vendor-bank source of truth, and final side effect are separate evidence fields.</p>
+          <p>A real invoice approval still does not prove the current actor may schedule payment. One synthetic payment, walked from approval record to tool call to verdict.</p>
           <a href="ap-payment-approval/">Read the case note</a>
         </article>
         <article class="library-card">
           <b>Poisoned AP documents</b>
-          <p>How invoice, statement, or email text can become untrusted context for data export, bank-change, or payment actions.</p>
+          <p>An invoice-looking document asks the agent to export data and change bank details. The review checks whether a trusted record, or just the document, authorized the action.</p>
           <a href="ap-poisoned-document/">Read the case note</a>
         </article>
         <article class="library-card">
           <b>Trace readiness</b>
-          <p>How one redacted trace becomes either a scoreable review input or a missing-evidence map.</p>
+          <p>Four readiness levels, 0 to 3: how one redacted trace becomes either a scoreable review input or a missing-evidence map.</p>
           <a href="evidence-readiness-check/">Read the readiness check</a>
         </article>
         <article class="library-card">
           <b>Deep payment controls</b>
-          <p>Post-approval mutation, inter-agent approval handoff, retry/idempotency, and benign payment controls.</p>
+          <p>Post-approval edits, handoff claims, and retry/replay, graded on 12 scored runs: 3 EXPLOITED, 3 BLOCKED, 4 BENIGN_PASS, 2 INCONCLUSIVE.</p>
           <a href="ap-l3-l5-control-experiment/">Read the method note</a>
         </article>
         <article class="library-card">
           <b>Technical handoff</b>
-          <p>Safe setup paths, trace shape, data boundaries, and expected engineering work for a staging pilot.</p>
+          <p>Safe setup paths, trace shape, and data boundaries. Most teams spend about 1 to 3 hours; a small adapter adds at most a day.</p>
           <a href="technical-handoff/">Read the handoff</a>
         </article>
       </div>
@@ -1113,7 +1122,7 @@
             <aside class="artifact-side">
               <h4>Reproducibility</h4>
               <ul>
-                <li>Public summary is station-readable here.</li>
+                <li>Public summary is readable here in plain language.</li>
                 <li>Raw summaries and technical report remain source artifacts.</li>
               </ul>
               <div class="source-actions">
@@ -1354,7 +1363,7 @@
       <div class="section-head">
         <p class="section-kicker">Source layer</p>
         <h2 id="source-title">Where the audit trail lives.</h2>
-        <p class="lead">These links are intentionally external or source-facing. They are for reviewers who want to inspect code, raw summaries, archived reports, or exact files after reading the station-owned explanation.</p>
+        <p class="lead">These links are intentionally external or source-facing. They are for reviewers who want to inspect code, raw summaries, archived reports, or exact files after reading the plain-language pages above.</p>
       </div>
       <div class="source-grid">
         <a class="source-card" href="https://github.com/hugoii/llm-agent-audit">
@@ -1396,7 +1405,7 @@
 
 <footer>
   <div class="footer-inner">
-    <span>ActionBoundary by JZ Software Consulting. Agent Authorization Review.</span>
+    <span>ActionBoundary by JZ Software Consulting. Reviews performed and signed by <a href="../why.html">Jiahao Zhang</a>.</span>
     <span><a href="../index.html">Home</a> | <a href="../why.html">About</a> | <a href="./">Evidence</a> | <a href="../trust.html">Trust</a> | <a href="https://github.com/hugoii/llm-agent-audit">GitHub</a> | <a href="mailto:jiahao@actionboundary.dev">jiahao@actionboundary.dev</a></span>
   </div>
 </footer>

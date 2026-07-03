@@ -1170,8 +1170,17 @@ STYLE = """
       gap: 12px;
     }
 
-    .nav-links {
+    .nav-links a:not(.nav-cta) {
       display: none;
+    }
+
+    .nav-dropdown {
+      display: none;
+    }
+
+    .nav-links .nav-cta {
+      padding: 7px 10px;
+      font-size: 0.86rem;
     }
 
     .brand-subtitle {
@@ -1318,7 +1327,7 @@ def render_page(article: dict[str, str]) -> str:
 </main>
 <footer>
   <div class="footer-inner">
-    <span>ActionBoundary by JZ Software Consulting. Agent Authorization Review.</span>
+    <span>ActionBoundary by JZ Software Consulting. Reviews performed and signed by <a href="../../why.html">Jiahao Zhang</a>.</span>
     <span><a href="../../index.html">Home</a> | <a href="../../why.html">About</a> | <a href="../">Evidence</a> | <a href="../../trust.html">Trust</a> | <a href="https://github.com/hugoii/llm-agent-audit">GitHub</a> | <a href="mailto:jiahao@actionboundary.dev">jiahao@actionboundary.dev</a></span>
   </div>
 </footer>

@@ -510,6 +510,69 @@
     list-style: none;
   }
 
+  .price-strip {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px 18px;
+    margin-top: 18px;
+    padding: 12px 16px;
+    border: 1px solid rgba(154, 215, 207, 0.28);
+    border-radius: 8px;
+    background: rgba(154, 215, 207, 0.08);
+    max-width: 720px;
+  }
+
+  .price-strip span {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 7px;
+  }
+
+  .price-strip b {
+    color: #ffffff;
+    font-size: 1.02rem;
+  }
+
+  .price-strip small {
+    color: rgba(215, 226, 229, 0.78);
+    font-size: 0.84rem;
+  }
+
+  .price-strip a {
+    margin-left: auto;
+    color: #d8f2ee;
+    font-size: 0.88rem;
+    font-weight: 750;
+  }
+
+  .reply-note {
+    margin: 12px 0 0;
+    max-width: 720px;
+    color: rgba(215, 226, 229, 0.74);
+    font-size: 0.86rem;
+    line-height: 1.5;
+  }
+
+  .reply-note code {
+    padding: 2px 7px;
+    border: 1px solid rgba(154, 215, 207, 0.3);
+    border-radius: 6px;
+    background: rgba(154, 215, 207, 0.1);
+    color: #e9f4f2;
+    font-size: 0.84rem;
+  }
+
+  .reply-note a {
+    color: #d8f2ee;
+  }
+
+  @media (max-width: 640px) {
+    .price-strip a {
+      margin-left: 0;
+    }
+  }
+
   .trust-strip li {
     display: inline-flex;
     align-items: center;
@@ -1876,6 +1939,12 @@
           <span>No real customer data</span>
         </li>
       </ul>
+      <div class="price-strip" aria-label="Engagement pricing">
+        <span><b>$350</b> <small>existing-trace diagnostic, credited toward a pilot</small></span>
+        <span><b>from $1,500</b> <small>founding rate, first 3 teams, about one week</small></span>
+        <a href="/#pilot">Full pilot scope</a>
+      </div>
+      <p class="reply-note">Prefer async? Email <code>jiahao@actionboundary.dev</code> or use the <a href="/#intake">intake form</a>. Reply within 1 business day: 3 scenarios or a straight no.</p>
     </div>
     <aside class="trace-receipt" aria-label="AP payment authorization evidence receipt">
       <div class="receipt-head">
@@ -2292,7 +2361,7 @@
 
 <footer>
   <div class="footer-inner">
-    <span>ActionBoundary by JZ Software Consulting. Staging-only Agent Authorization Review.</span>
+    <span>ActionBoundary by JZ Software Consulting. Reviews performed and signed by <a href="/why.html">Jiahao Zhang</a>.</span>
     <span><a href="/">Home</a> | <a href="/why.html">About</a> | <a href="/evidence/">Evidence</a> | <a href="/trust.html">Trust</a> | <a href="/sample-evidence-report-v0.8.pdf">Sample report</a> | <a href="mailto:jiahao@actionboundary.dev">jiahao@actionboundary.dev</a></span>
   </div>
 </footer>
