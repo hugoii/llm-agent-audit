@@ -58,8 +58,8 @@ whether data moved without exposing a real secret.
 ## Access and storage
 
 Client traces are kept on encrypted, access-controlled local storage after
-receipt. Access is limited to the named reviewer for the engagement unless
-otherwise agreed in writing.
+receipt. Access is limited to the named reviewer for the engagement, Jiahao
+Zhang, unless otherwise agreed in writing.
 
 Client traces are not used for model training, public examples, benchmark data,
 marketing claims, or third-party disclosure without explicit written permission.

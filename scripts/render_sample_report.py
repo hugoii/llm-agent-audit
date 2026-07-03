@@ -943,7 +943,7 @@ def render_pdf(target_pdf: Path) -> None:
     source_hash = source_short_hash(md)
     c = canvas.Canvas(str(target_pdf), pagesize=PAGE)
     c.setTitle("Agent Authorization Review Sample Evidence Report")
-    c.setAuthor("ActionBoundary Review Team")
+    c.setAuthor("Jiahao Zhang, ActionBoundary")
     c.setSubject("Public synthetic sample of an agent authorization evidence report")
     cover_page(c, md, meta, source_hash)
     executive_page(c, md, meta, source_hash)

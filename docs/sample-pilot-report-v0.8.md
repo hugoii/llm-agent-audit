@@ -2,7 +2,7 @@
 
 | Field | Value |
 |---|---|
-| Prepared by | ActionBoundary Review Team |
+| Prepared by | Jiahao Zhang, ActionBoundary |
 | Prepared for | Acme AP team, synthetic sample |
 | Target system | Acme accounts-payable agent |
 | Workflow reviewed | Invoice intake, vendor remittance, payment scheduling, vendor data export |
@@ -509,8 +509,8 @@ incident response planning, or compliance attestation.
 
 ---
 
-Prepared by ActionBoundary Review Team
+Prepared and signed by Jiahao Zhang, ActionBoundary
 Operated by JZ Software Consulting, Boston MA
-Named reviewers and roles are included in client reports.
+Client reports name the signing reviewer and any supporting roles.
 actionboundary.dev
 github.com/hugoii/llm-agent-audit

@@ -689,7 +689,7 @@
     display: grid;
     grid-template-columns: 112px 1fr;
     gap: 22px;
-    align-items: center;
+    align-items: start;
     max-width: 980px;
     background: var(--white);
     border: 1px solid var(--line);
@@ -702,9 +702,21 @@
     width: 112px;
     height: 112px;
     border-radius: 8px;
-    object-fit: contain;
+    object-fit: cover;
     background: var(--charcoal);
     border: 1px solid rgba(15, 118, 110, 0.26);
+  }
+
+  .operator h3 {
+    margin-bottom: 4px;
+    font-size: 1.3rem;
+    letter-spacing: -0.015em;
+  }
+
+  .operator p.operator-role {
+    color: var(--muted);
+    font-size: 0.94rem;
+    margin-bottom: 12px;
   }
 
   .operator p {
@@ -1103,6 +1115,7 @@
         <div class="trace-row"><span>Lens</span><span>How software traces, incentives, and handoffs are read together.</span></div>
         <div class="trace-row"><span>Method</span><span>How a review stays bounded, repeatable, and evidence-backed.</span></div>
         <div class="trace-row"><span>Claims</span><span>What ActionBoundary will and will not say from the evidence.</span></div>
+        <div class="trace-row"><span>Reviewer</span><span>Led and signed by Jiahao Zhang, based in Boston.</span></div>
       </div>
     </aside>
   </div>
@@ -1178,11 +1191,11 @@
   <section class="section">
     <div class="section-inner">
       <h2>Company-run. Method-driven. Human-accountable.</h2>
-      <p class="lead">ActionBoundary is operated by JZ Software Consulting as a focused review practice, not an anonymous scanner, not a crowdsourced red-team marketplace, and not a generic AI safety lab.</p>
+      <p class="lead">ActionBoundary is a focused review practice operated by JZ Software Consulting and led by Jiahao Zhang, who performs and signs every review. Not an anonymous scanner, not a crowdsourced red-team marketplace, and not a generic AI safety lab.</p>
       <div class="accountability-grid">
         <article class="accountability-item">
           <h3>Company-run means accountable.</h3>
-          <p>Each engagement has a defined action boundary, a staging-only evidence path, a written claim boundary, and named reviewer roles in the client report.</p>
+          <p>Each engagement has a defined action boundary, a staging-only evidence path, a written claim boundary, and a named signing reviewer on every client report.</p>
         </article>
         <article class="accountability-item">
           <h3>Method-driven means repeatable.</h3>
@@ -1197,10 +1210,12 @@
         <span>Retest</span>
       </div>
       <div class="operator">
-        <img src="assets/actionboundary-mark.svg" alt="ActionBoundary review mark" width="112" height="112">
+        <img src="headshot.jpg" alt="Jiahao Zhang, founder and lead reviewer of ActionBoundary" width="112" height="112" loading="lazy">
         <div>
-          <p>The public repo shows the method. Client pilots apply it to private staging workflows, client tools, redacted traces, and customer authorization sources.</p>
-          <p>Prepared by ActionBoundary Review Team. Contact ActionBoundary at <a href="mailto:jiahao@actionboundary.dev">jiahao@actionboundary.dev</a>.</p>
+          <h3>Jiahao Zhang</h3>
+          <p class="operator-role">Founder and lead reviewer, Boston. MS in CS, Northeastern University. <a href="https://github.com/hugoii">GitHub</a> / <a href="https://www.linkedin.com/in/jiahao-zhang-12999b319">LinkedIn</a></p>
+          <p>Jiahao builds and publishes the open harness behind every review, and every client report is performed and signed by him. The team behind the evidence packs combines computer science with economics, finance, and management training, so findings are written twice: as reproducible traces for engineers, and in the control language buyers and reviewers recognize.</p>
+          <p>The public repo shows the method. Client pilots apply it to private staging workflows, client tools, redacted traces, and customer authorization sources. Contact Jiahao at <a href="mailto:jiahao@actionboundary.dev">jiahao@actionboundary.dev</a>.</p>
           <div class="link-row">
             <a class="button outline" href="evidence/">Open evidence library</a>
             <a class="button outline" href="sample-evidence-report-v0.8.pdf">View sample report</a>

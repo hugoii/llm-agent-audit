@@ -461,9 +461,8 @@ application-layer fixes, and one retest. See the
 
 ---
 
-Prepared by ActionBoundary Review Team. Operated by JZ Software Consulting.
-Named reviewers and roles are included in client reports. Staging-only, no
-production access.
+Reviews are performed and signed by Jiahao Zhang. Operated by JZ Software
+Consulting, Boston MA. Staging-only, no production access.
 
 **Start here:**
 [Service page](https://actionboundary.dev/) |
