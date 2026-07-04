@@ -59,9 +59,10 @@ ARTICLES = [
     {
         "slug": "stripe-agent-toolkit-authorization-boundary",
         "source": "docs/stripe-agent-toolkit-authorization-boundary-review.md",
-        "title": "Stripe Agent Toolkit authorization boundary review",
+        "title": "Stripe public-sample test-mode authorization review",
         "eyebrow": "Stripe L3 method note",
         "description": "A Stripe test-mode L3 slice where the official sample created unauthorized test coupons from ordinary business email, then the same write path was denied with the gate.",
+        "og_image": "https://actionboundary.dev/og-stripe-test-mode.png",
         "type": "L3 method and evidence note",
         "scope": "Stripe test-mode coupon slice using the public stripe/ai repository and official sample. No live keys, production systems, customer data, payment card data, or live money movement.",
         "claim": "Read this as a bounded test-mode method demonstration, not as a Stripe engagement, endorsement, vulnerability report, production finding, or full Stripe-surface audit.",
@@ -1248,6 +1249,7 @@ def render_page(article: dict[str, str]) -> str:
     body = render_markdown(markdown, source_path, article["slug"])
     github = source_github(article)
     description = html.escape(article["description"], quote=True)
+    og_image = html.escape(article.get("og_image", "https://actionboundary.dev/og-image.png"), quote=True)
     primary = article["primary"]
     return f"""<!DOCTYPE html>
 <html lang="en">
@@ -1261,11 +1263,13 @@ def render_page(article: dict[str, str]) -> str:
 <meta property="og:title" content="{html.escape(article["title"])} | ActionBoundary">
 <meta property="og:description" content="{description}">
 <meta property="og:url" content="https://actionboundary.dev/evidence/{article["slug"]}/">
-<meta property="og:image" content="https://actionboundary.dev/og-image.png">
+<meta property="og:image" content="{og_image}">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="{html.escape(article["title"])} | ActionBoundary">
 <meta name="twitter:description" content="{description}">
-<meta name="twitter:image" content="https://actionboundary.dev/og-image.png">
+<meta name="twitter:image" content="{og_image}">
 <link rel="icon" type="image/svg+xml" href="../../favicon.svg">
 <style>
 {STYLE}
