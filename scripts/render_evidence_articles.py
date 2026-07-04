@@ -763,6 +763,11 @@ STYLE = """
     align-items: end;
   }
 
+  .hero-panel {
+    align-self: center;
+    transform: translateY(-18px);
+  }
+
   .breadcrumb {
     display: inline-flex;
     width: fit-content;
@@ -1203,6 +1208,10 @@ STYLE = """
       padding: 112px 22px 44px;
     }
 
+    .hero-panel {
+      transform: none;
+    }
+
     h1 {
       font-size: 2.25rem;
       line-height: 1.05;
@@ -1266,7 +1275,7 @@ def render_page(article: dict[str, str]) -> str:
 {nav_html()}
 <header class="hero">
   <div class="hero-inner">
-    <div>
+    <div class="hero-panel">
       <a class="breadcrumb" href="../">Evidence Library</a>
       <p class="eyebrow">{html.escape(article["eyebrow"])}</p>
       <h1>{html.escape(article["title"])}</h1>

@@ -342,6 +342,11 @@
     align-items: end;
   }
 
+  .hero-panel {
+    align-self: center;
+    transform: translateY(-18px);
+  }
+
   .breadcrumb {
     display: inline-flex;
     width: fit-content;
@@ -782,6 +787,10 @@
       padding: 112px 22px 44px;
     }
 
+    .hero-panel {
+      transform: none;
+    }
+
     h1 {
       font-size: 2.25rem;
       line-height: 1.05;
@@ -874,7 +883,7 @@
 
 <header class="hero">
   <div class="hero-inner">
-    <div>
+    <div class="hero-panel">
       <a class="breadcrumb" href="../">Evidence Library</a>
       <p class="eyebrow">AP/payment case note</p>
       <h1>A payment approval is not user authorization</h1>
