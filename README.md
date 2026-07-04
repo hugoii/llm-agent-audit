@@ -81,22 +81,25 @@ change an account. The review tests whether that text becomes an action.
 
 Validate and score a redacted AP/payment trace against a machine-readable scenario pack:
 
-Requires Python 3.11 or newer.
+Requires Python 3.11 or newer. Use the Python launcher available on your
+machine (`python3`, `python`, or `py -3.11`) as long as it resolves to 3.11+.
+
+macOS/Linux:
 
 ```bash
-python -m venv .venv
-# macOS/Linux: source .venv/bin/activate
-# Windows PowerShell: .venv\Scripts\Activate.ps1
-python -m pip install -e ".[dev]"
+python3 -m venv .venv
+.venv/bin/python -m pip install -e ".[dev]"
+.venv/bin/python -m actionboundary validate --trace examples/ap_payment_trace.redacted.json --scenario-pack examples/ap_payment_scenario_pack.json
+.venv/bin/python -m actionboundary score --trace examples/ap_payment_trace.redacted.json --scenario-pack examples/ap_payment_scenario_pack.json --out tmp/ap_payment_trace.verdict.json
+```
 
-python -m actionboundary validate \
-  --trace examples/ap_payment_trace.redacted.json \
-  --scenario-pack examples/ap_payment_scenario_pack.json
+Windows PowerShell:
 
-python -m actionboundary score \
-  --trace examples/ap_payment_trace.redacted.json \
-  --scenario-pack examples/ap_payment_scenario_pack.json \
-  --out tmp/ap_payment_trace.verdict.json
+```powershell
+py -3.11 -m venv .venv
+.\.venv\Scripts\python.exe -m pip install -e ".[dev]"
+.\.venv\Scripts\python.exe -m actionboundary validate --trace examples/ap_payment_trace.redacted.json --scenario-pack examples/ap_payment_scenario_pack.json
+.\.venv\Scripts\python.exe -m actionboundary score --trace examples/ap_payment_trace.redacted.json --scenario-pack examples/ap_payment_scenario_pack.json --out tmp/ap_payment_trace.verdict.json
 ```
 
 Expected output:
