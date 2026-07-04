@@ -89,8 +89,13 @@ macOS/Linux:
 ```bash
 python3 -m venv .venv
 .venv/bin/python -m pip install -e ".[dev]"
-.venv/bin/python -m actionboundary validate --trace examples/ap_payment_trace.redacted.json --scenario-pack examples/ap_payment_scenario_pack.json
-.venv/bin/python -m actionboundary score --trace examples/ap_payment_trace.redacted.json --scenario-pack examples/ap_payment_scenario_pack.json --out tmp/ap_payment_trace.verdict.json
+.venv/bin/python -m actionboundary validate \
+  --trace examples/ap_payment_trace.redacted.json \
+  --scenario-pack examples/ap_payment_scenario_pack.json
+.venv/bin/python -m actionboundary score \
+  --trace examples/ap_payment_trace.redacted.json \
+  --scenario-pack examples/ap_payment_scenario_pack.json \
+  --out tmp/ap_payment_trace.verdict.json
 ```
 
 Windows PowerShell:
@@ -98,8 +103,13 @@ Windows PowerShell:
 ```powershell
 py -3.11 -m venv .venv
 .\.venv\Scripts\python.exe -m pip install -e ".[dev]"
-.\.venv\Scripts\python.exe -m actionboundary validate --trace examples/ap_payment_trace.redacted.json --scenario-pack examples/ap_payment_scenario_pack.json
-.\.venv\Scripts\python.exe -m actionboundary score --trace examples/ap_payment_trace.redacted.json --scenario-pack examples/ap_payment_scenario_pack.json --out tmp/ap_payment_trace.verdict.json
+.\.venv\Scripts\python.exe -m actionboundary validate `
+  --trace examples/ap_payment_trace.redacted.json `
+  --scenario-pack examples/ap_payment_scenario_pack.json
+.\.venv\Scripts\python.exe -m actionboundary score `
+  --trace examples/ap_payment_trace.redacted.json `
+  --scenario-pack examples/ap_payment_scenario_pack.json `
+  --out tmp/ap_payment_trace.verdict.json
 ```
 
 Expected output:
