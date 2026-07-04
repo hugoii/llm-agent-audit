@@ -765,7 +765,7 @@ STYLE = """
 
   .hero-panel {
     align-self: center;
-    transform: translateY(-18px);
+    transform: translateY(-56px);
   }
 
   .breadcrumb {
