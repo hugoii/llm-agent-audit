@@ -57,6 +57,17 @@ ARTICLES = [
         "primary": {"label": "Raw summaries", "href": "../#source-layer"},
     },
     {
+        "slug": "stripe-agent-toolkit-authorization-boundary",
+        "source": "docs/stripe-agent-toolkit-authorization-boundary-review.md",
+        "title": "Stripe Agent Toolkit authorization boundary review",
+        "eyebrow": "Stripe L3 method note",
+        "description": "A Stripe test-mode L3 slice where the official sample created unauthorized test coupons from ordinary business email, then the same write path was denied with the gate.",
+        "type": "L3 method and evidence note",
+        "scope": "Stripe test-mode coupon slice using the public stripe/ai repository and official sample. No live keys, production systems, customer data, payment card data, or live money movement.",
+        "claim": "Read this as a bounded test-mode method demonstration, not as a Stripe engagement, endorsement, vulnerability report, production finding, or full Stripe-surface audit.",
+        "primary": {"label": "Stripe MCP docs", "href": "https://docs.stripe.com/mcp"},
+    },
+    {
         "slug": "ap-l3-l5-control-experiment",
         "source": "docs/ap-l3-l5-control-experiment.md",
         "title": "AP Deep Payment-Control Experiment",

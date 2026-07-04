@@ -994,6 +994,11 @@
           <a href="ap-payment-approval/">Read the case note</a>
         </article>
         <article class="library-card">
+          <b>Stripe Agent Toolkit boundary</b>
+          <p>A Stripe test-mode L3 slice: the official sample created unauthorized test coupons from ordinary business email; the same write path was denied with the gate, while the authorized control still passed.</p>
+          <a href="stripe-agent-toolkit-authorization-boundary/">Read the Stripe note</a>
+        </article>
+        <article class="library-card">
           <b>Poisoned AP documents</b>
           <p>An invoice-looking document asks the agent to export data and change bank details. The review checks whether a trusted record, or just the document, authorized the action.</p>
           <a href="ap-poisoned-document/">Read the case note</a>
@@ -1129,6 +1134,33 @@
                 <a href="model-choice-authorization-layer/">Read full article</a>
                 <a href="#source-layer">Raw summaries</a>
                 <a href="https://github.com/hugoii/llm-agent-audit/blob/master/docs/model-choice-is-not-an-authorization-layer.md">Source on GitHub</a>
+              </div>
+            </aside>
+          </div>
+        </article>
+
+        <article id="stripe-agent-toolkit-note" class="artifact">
+          <div class="artifact-main">
+            <div class="artifact-copy">
+              <span class="artifact-label">Stripe L3 method note</span>
+              <h3>Stripe Agent Toolkit authorization boundary review.</h3>
+              <p>A public-source review plus Stripe test-mode coupon run maps Stripe MCP, the official customer-support sample, restricted keys, and per-action authorization evidence into buyer-readable traces. It does not claim a Stripe finding; it shows what trace evidence an agent builder would need for high-impact Stripe writes.</p>
+              <ul class="evidence-list">
+                <li><b>What it proves</b><span>The official sample path can create unauthorized Stripe test-mode coupon objects from ordinary untrusted business email without a tool-layer gate, while the same write path is denied with the gate and authorized controls still pass.</span></li>
+                <li><b>What it does not prove</b><span>It is not a Stripe engagement, endorsement, production vulnerability report, customer trace, or claim about Stripe's private MCP systems.</span></li>
+                <li><b>Buyer use</b><span>Useful for teams wiring agents to refunds, invoices, payment links, subscriptions, disputes, connected accounts, or agentic commerce rails.</span></li>
+              </ul>
+            </div>
+            <aside class="artifact-side">
+              <h4>L3 test-mode slice</h4>
+              <ul>
+                <li>Based on public Stripe docs, public stripe/ai code, official sample code, third-party issue metadata, and local Stripe test-mode traces.</li>
+                <li>No live keys, production systems, customer data, payment card data, or live money movement.</li>
+              </ul>
+              <div class="source-actions">
+                <a href="stripe-agent-toolkit-authorization-boundary/">Read full article</a>
+                <a href="https://github.com/hugoii/llm-agent-audit/blob/master/docs/stripe-agent-toolkit-authorization-boundary-review.md">Source on GitHub</a>
+                <a href="https://github.com/stripe/ai/tree/main/tools/python/examples/openai/customer_support">Official sample</a>
               </div>
             </aside>
           </div>

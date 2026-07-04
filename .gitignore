@@ -14,12 +14,18 @@ _codex_backups/
 tmp/
 private/
 
+# Secrets (never commit real keys; .env.template stays tracked)
+.env
+
 # Generated artifacts
 /runs/
 real_report*.md
 pilot/*_runs.json
 pilot/*_summary.md
 pilot/*_verdict.json
+pilot/stripe_customer_support/out/submission_*.json
+pilot/stripe_customer_support/out/verdict_*.md
+pilot/stripe_customer_support/out/legacy/
 
 # Local reports
 *.local.md
