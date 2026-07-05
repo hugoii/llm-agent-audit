@@ -149,10 +149,11 @@ level evidence.
 | [Restricted API keys](https://docs.stripe.com/keys/restricted-api-keys) | RAKs assign resource permissions and are recommended for AI agents. | RAKs are necessary least-privilege controls, not full business authorization receipts. |
 | [Shared payment tokens](https://docs.stripe.com/agentic-commerce/concepts/shared-payment-tokens?agent-seller=agent) | SPTs support scoped payment credentials with limits such as amount, currency, expiration, seller profile, revocation, and webhook states. | Useful future evidence surface; this slice did not run an SPT workflow. |
 | [Machine payments](https://docs.stripe.com/payments/machine) | Stripe supports machine-to-machine payments for programmatic agent flows. | Reinforces that agentic payment authorization is a live product surface. |
+| [Stripe Issuing for agents](https://docs.stripe.com/issuing/agents) | Stripe supports virtual cards for agents with spend controls, merchant category controls, real-time authorization decisioning, and transaction visibility. | Important adjacent control surface; this coupon/API-write slice does not test card-spend flows or claim Stripe lacks agent-spending controls generally. |
 | [stripe/ai](https://github.com/stripe/ai) | The public repo contains Stripe AI tooling, including Agent Toolkit and MCP-related packages. | Public code surface only; private server controls are out of scope. |
 | [Official customer-support example](https://github.com/stripe/ai/tree/main/tools/python/examples/openai/customer_support) | The sample reads inbound email, sends email bodies to an OpenAI agent, and attaches Stripe Agent Toolkit tools. | This is a sample app, not evidence about Stripe production support systems. |
 | [stripe/ai issue #356](https://github.com/stripe/ai/issues/356) | A public third-party issue names spend limits, merchant allowlists, human approval, and audit trail as governance questions for Stripe agent payments. | Useful public problem signal, not official Stripe validation. |
-| [stripe/ai issue #453](https://github.com/stripe/ai/issues/453) and [#454](https://github.com/stripe/ai/issues/454) | Public third-party proposals discuss agent identity, per-tool authorization, and receipt-required guards. | Useful ecosystem signals only; not Stripe roadmap or adoption evidence. |
+| [stripe/ai PR #453](https://github.com/stripe/ai/pull/453) and [issue #454](https://github.com/stripe/ai/issues/454) | Public third-party proposals discuss agent identity, per-tool authorization, and receipt-required guards. | Useful ecosystem signals only; not Stripe roadmap or adoption evidence. |
 
 ## Official customer-support sample
 
@@ -239,9 +240,13 @@ If critical facts are missing, the strict verdict is `INCONCLUSIVE`, not safe.
 
 This note does not claim that Stripe Agent Toolkit or Stripe MCP is unsafe. It
 does not inspect Stripe's private MCP server implementation. It does not claim
-that issue `#356`, `#453`, or `#454` is a Stripe roadmap item or official
-admission. It does not prove production exploitability. It does not claim that
-all models will behave the same way on all Stripe workflows.
+that issue `#356`, PR `#453`, or issue `#454` is a Stripe roadmap item or
+official admission. It does not claim that Stripe lacks agent authorization
+controls generally; Stripe Issuing for agents is an adjacent official control
+surface for agent card spending, while this slice covers Agent Toolkit/MCP
+coupon writes through the Stripe API. It does not prove production
+exploitability. It does not claim that all models will behave the same way on
+all Stripe workflows.
 
 The useful conclusion is smaller and stronger: any team wiring agents to Stripe
 write tools needs trace-backed authorization evidence above capability control

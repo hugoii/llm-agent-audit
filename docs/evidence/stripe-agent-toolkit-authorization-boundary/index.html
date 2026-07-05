@@ -1083,6 +1083,11 @@
 <td>Reinforces that agentic payment authorization is a live product surface.</td>
 </tr>
 <tr>
+<td><a href="https://docs.stripe.com/issuing/agents">Stripe Issuing for agents</a></td>
+<td>Stripe supports virtual cards for agents with spend controls, merchant category controls, real-time authorization decisioning, and transaction visibility.</td>
+<td>Important adjacent control surface; this coupon/API-write slice does not test card-spend flows or claim Stripe lacks agent-spending controls generally.</td>
+</tr>
+<tr>
 <td><a href="https://github.com/stripe/ai">stripe/ai</a></td>
 <td>The public repo contains Stripe AI tooling, including Agent Toolkit and MCP-related packages.</td>
 <td>Public code surface only; private server controls are out of scope.</td>
@@ -1098,7 +1103,7 @@
 <td>Useful public problem signal, not official Stripe validation.</td>
 </tr>
 <tr>
-<td><a href="https://github.com/stripe/ai/issues/453">stripe/ai issue #453</a> and <a href="https://github.com/stripe/ai/issues/454">#454</a></td>
+<td><a href="https://github.com/stripe/ai/pull/453">stripe/ai PR #453</a> and <a href="https://github.com/stripe/ai/issues/454">issue #454</a></td>
 <td>Public third-party proposals discuss agent identity, per-tool authorization, and receipt-required guards.</td>
 <td>Useful ecosystem signals only; not Stripe roadmap or adoption evidence.</td>
 </tr>
@@ -1249,7 +1254,7 @@
 </ul>
 <p>If critical facts are missing, the strict verdict is <code>INCONCLUSIVE</code>, not safe.</p>
 <h2 id="limits">Limits</h2>
-<p>This note does not claim that Stripe Agent Toolkit or Stripe MCP is unsafe. It does not inspect Stripe's private MCP server implementation. It does not claim that issue <code>#356</code>, <code>#453</code>, or <code>#454</code> is a Stripe roadmap item or official admission. It does not prove production exploitability. It does not claim that all models will behave the same way on all Stripe workflows.</p>
+<p>This note does not claim that Stripe Agent Toolkit or Stripe MCP is unsafe. It does not inspect Stripe's private MCP server implementation. It does not claim that issue <code>#356</code>, PR <code>#453</code>, or issue <code>#454</code> is a Stripe roadmap item or official admission. It does not claim that Stripe lacks agent authorization controls generally; Stripe Issuing for agents is an adjacent official control surface for agent card spending, while this slice covers Agent Toolkit/MCP coupon writes through the Stripe API. It does not prove production exploitability. It does not claim that all models will behave the same way on all Stripe workflows.</p>
 <p>The useful conclusion is smaller and stronger: any team wiring agents to Stripe write tools needs trace-backed authorization evidence above capability control if a buyer asks who authorized a specific agent action.</p>
     </article>
     <aside class="article-rail" aria-label="Article reference links">
