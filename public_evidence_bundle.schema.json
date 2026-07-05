@@ -1,0 +1,111 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://actionboundary.dev/schemas/public_evidence_bundle.schema.json",
+  "title": "ActionBoundary public evidence bundle schema",
+  "description": "CI-produced manifest for a downloadable, attested public evidence bundle.",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "generated_at_utc",
+    "git_sha",
+    "evidence_manifest_path",
+    "ci",
+    "attestation",
+    "files"
+  ],
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "const": "public-evidence-bundle-1.0"
+    },
+    "generated_at_utc": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "git_sha": {
+      "type": "string"
+    },
+    "evidence_manifest_path": {
+      "type": "string",
+      "minLength": 1
+    },
+    "ci": {
+      "type": "object",
+      "required": [
+        "provider",
+        "repository",
+        "ref",
+        "workflow",
+        "run_id",
+        "run_attempt"
+      ],
+      "properties": {
+        "provider": {
+          "type": "string",
+          "const": "github-actions"
+        },
+        "repository": {
+          "type": "string"
+        },
+        "ref": {
+          "type": "string"
+        },
+        "workflow": {
+          "type": "string"
+        },
+        "run_id": {
+          "type": "string"
+        },
+        "run_attempt": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    },
+    "attestation": {
+      "type": "object",
+      "required": [
+        "subject_path",
+        "verify_command"
+      ],
+      "properties": {
+        "subject_path": {
+          "type": "string",
+          "minLength": 1
+        },
+        "verify_command": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "additionalProperties": false
+    },
+    "files": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "path",
+          "sha256",
+          "bytes"
+        ],
+        "properties": {
+          "path": {
+            "type": "string",
+            "minLength": 1
+          },
+          "sha256": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$"
+          },
+          "bytes": {
+            "type": "integer",
+            "minimum": 0
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false
+}

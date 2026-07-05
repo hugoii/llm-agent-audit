@@ -1,0 +1,47 @@
+{
+  "schema_version": "customer-execution-attestation-1.0",
+  "engagement_id": "eng-acme-ap-sample",
+  "customer": {
+    "name": "Acme Co",
+    "environment_owner": "Acme AP engineering"
+  },
+  "scenario_pack_sha256": "cf07703444b66b59aca5f53b5fd791354c7ffa38294656892f5481675e2cbe3a",
+  "trace_sha256": "6860b908468d86c374f733f2e08662f25d5470a4fff9b6f289204495c17e171b",
+  "execution": {
+    "environment_id": "staging-ap-sandbox",
+    "environment_type": "staging",
+    "agent_under_test": "invoice-processing agent",
+    "agent_version": "sample-agent-0.1",
+    "build_sha": "sample-build-sha",
+    "policy_version": "ap-policy-2026-06-sample",
+    "started_at_utc": "2026-06-25T14:00:00Z",
+    "ended_at_utc": "2026-06-25T14:11:00Z"
+  },
+  "log_export": {
+    "source_system": "staging observability export",
+    "exported_at_utc": "2026-06-25T14:15:00Z",
+    "export_query_or_filter": "trace_id starts with trace-ap-pay-1-001",
+    "export_artifact_name": "sample_flexible_client_trace.json",
+    "export_artifact_sha256": "6860b908468d86c374f733f2e08662f25d5470a4fff9b6f289204495c17e171b"
+  },
+  "custody": {
+    "storage_system": "customer-controlled evidence bucket",
+    "storage_uri": "s3://acme-security-evidence/actionboundary/eng-acme-ap-sample/",
+    "stored_at_utc": "2026-06-25T14:18:00Z",
+    "mutability": "append_only",
+    "retention_until_utc": "2027-06-25T14:18:00Z",
+    "access_control_owner": "Acme security engineering",
+    "release_artifact_url": "https://github.com/hugoii/llm-agent-audit/actions/runs/sample",
+    "attestation_url": "https://github.com/hugoii/llm-agent-audit/attestations/sample"
+  },
+  "attested_by": {
+    "name": "Customer technical owner",
+    "role": "Engineering manager",
+    "attested_at_utc": "2026-06-25T14:20:00Z",
+    "signature": "sample-placeholder-not-a-cryptographic-signature"
+  },
+  "limitations": [
+    "Synthetic sample only.",
+    "This statement does not independently attest to logs outside the exported staging trace window."
+  ]
+}

@@ -19,6 +19,7 @@ without the right user authority and approval evidence.
 [Service page](https://actionboundary.dev/) |
 [Engineer quickstart](#engineer-quickstart) |
 [Sample report](docs/sample-pilot-report-v0.8.md) |
+[Verify evidence](VERIFY-EVIDENCE.md) |
 [Trust & data handling](TRUST.md)
 
 **Want 3 scenarios for your agent?**
@@ -163,6 +164,8 @@ The repository uses separate version numbers for separate review surfaces:
 | Sample report template | `v0.8` | Public synthetic AP report source and rendered PDF sample. |
 | Pilot verdict contract | `pilot-verdict-1.1` | Machine-readable scored verdict schema used by the CLI and pilot tests. |
 | Evidence manifest contract | `evidence-manifest-1.0` | Machine-verifiable bundle linking trace, scenario pack, verdict, report, policy version, and evidence completeness. |
+| Public evidence bundle | `public-evidence-bundle-1.0` | CI-built zip with checksums, GitHub Actions provenance metadata, and artifact attestation. |
+| Customer execution attestation | `customer-execution-attestation-1.0` | Customer-side statement for execution environment, exported logs, trace hash, and custody metadata. |
 
 These versions do not move in lockstep. A benchmark release can update public
 proof assets without implying a stable `1.x` Python package API, and a report
@@ -175,7 +178,10 @@ The public CI badge tracks the
 `master`, that workflow installs the package with developer dependencies, runs
 the offline audit harness, checks the generated report, runs the public unit
 tests, validates and scores the AP example trace, runs pilot verdict tests, and
-runs the AP L4 local harness.
+runs the AP L4 local harness. The separate
+[public evidence bundle workflow](.github/workflows/public-evidence-bundle.yml)
+builds a downloadable zip, records internal checksums and CI run metadata, and
+uses GitHub artifact attestation for the zip subject.
 
 The reproducible path is intentionally small:
 
@@ -183,6 +189,8 @@ The reproducible path is intentionally small:
 - `make validate` runs JSON Schema validation and scoring for the AP example.
 - `python -m actionboundary validate --evidence-manifest tmp/actionboundary-evidence-manifest.json`
   rechecks the generated evidence bundle after scoring.
+- `python -m actionboundary validate --evidence-root . --evidence-manifest tmp/public-evidence/actionboundary-evidence-manifest.json`
+  rechecks a downloaded public evidence bundle from its unzipped root.
 - `python -m unittest discover -s tests -p "test_*.py"` runs the public
   contract/readability tests.
 - `python -m unittest discover -s pilot/tests -p "test_*.py"` runs the pilot
@@ -214,6 +222,8 @@ rules.</sub></p>
   receive, with findings, trace evidence, severity, fixes, and retest rules.
 - **[Rendered PDF sample](docs/sample-evidence-report-v0.8.pdf)**: a polished
   report-style preview generated from the public sample report source.
+- **[Verify evidence](VERIFY-EVIDENCE.md)**: how to verify the CI-built public
+  evidence bundle, hashes, and GitHub artifact attestation.
 - **[Evidence flow](docs/evidence-flow.md)**: how runtime evidence becomes a
   finding, verdict, fix, and retest rule.
 - **[Technical evidence directory](docs/README.md)**: grouped paths for sample
@@ -247,6 +257,12 @@ checks that path in CI.
 [rendered PDF sample](docs/sample-evidence-report-v0.8.pdf) is generated from
 [docs/sample-pilot-report-v0.8.md](docs/sample-pilot-report-v0.8.md), not a
 standalone marketing mockup.
+
+**Public evidence bundle.** The
+[Public evidence bundle workflow](.github/workflows/public-evidence-bundle.yml)
+builds the public AP/payment example into a zip with `SHA256SUMS`,
+`PUBLIC-EVIDENCE-BUNDLE.json`, `evidence-manifest-1.0`, and GitHub artifact
+attestation. Verification steps are in [VERIFY-EVIDENCE.md](VERIFY-EVIDENCE.md).
 
 **Client pilot.** The public battery illustrates the method; a client pilot
 replaces generic scenarios with your staging tools, authorization sources, and
@@ -287,6 +303,8 @@ questions.
 [trace](normalized_trace.schema.json), [scenario pack](scenario_pack.schema.json),
 [verdict](verdict.schema.json), and
 [evidence manifest](evidence_manifest.schema.json) schemas,
+[public evidence bundle](public_evidence_bundle.schema.json),
+[customer execution attestation](pilot/customer_execution_attestation.schema.json),
 [adapter handoff](pilot/client-handoff.md), and selected workflow-specific
 scenarios. A founding design-partner review starts by identifying 2 to 3
 candidate high-impact action paths, then reviews one representative staging

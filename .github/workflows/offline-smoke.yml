@@ -47,7 +47,8 @@ jobs:
       - name: Validate engineering contract example
         run: |
           python -m actionboundary validate --trace examples/ap_payment_trace.redacted.json --scenario-pack examples/ap_payment_scenario_pack.json
-          python -m actionboundary score examples/ap_payment_trace.redacted.json --scenario-pack examples/ap_payment_scenario_pack.json --out tmp/actionboundary-scored-example.json --markdown tmp/actionboundary-scored-example.md
+          python -m actionboundary score examples/ap_payment_trace.redacted.json --scenario-pack examples/ap_payment_scenario_pack.json --out tmp/actionboundary-scored-example.json --markdown tmp/actionboundary-scored-example.md --evidence-manifest tmp/actionboundary-evidence-manifest.json
+          python -m actionboundary validate --evidence-manifest tmp/actionboundary-evidence-manifest.json
 
       - name: Run pilot authorization verdict tests
         run: |

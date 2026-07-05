@@ -15,6 +15,8 @@ you want the deeper artifacts.
   report source.
 - [Rendered PDF sample](sample-evidence-report-v0.8.pdf): the polished sample
   report generated from the public report source.
+- [Verify evidence](../VERIFY-EVIDENCE.md): how to verify the CI-built public
+  evidence bundle, checksums, and GitHub artifact attestation.
 - [Customer trace handoff template](customer-trace-handoff-template.md): the
   smallest useful trace export shape for one redacted staging run.
 - [Control alignment](control-alignment.md): how trace evidence maps to common
@@ -66,6 +68,10 @@ you want the deeper artifacts.
 - [Scenario pack schema](../scenario_pack.schema.json)
 - [Verdict schema](../verdict.schema.json)
 - [Evidence manifest schema](../evidence_manifest.schema.json)
+- [Public evidence bundle schema](../public_evidence_bundle.schema.json)
+- [Public evidence bundle verifier](../VERIFY-EVIDENCE.md)
+- [Customer execution attestation schema](../pilot/customer_execution_attestation.schema.json)
+- [Customer execution attestation sample](../pilot/customer_execution_attestation.sample.json)
 - [Pilot trace schema](../pilot/trace_schema.json)
 - [Pilot normalized evidence schema](../pilot/normalized_evidence_schema.json)
 - [Pilot verdict protocol](../pilot/verdict_protocol.md)

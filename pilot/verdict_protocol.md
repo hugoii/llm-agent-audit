@@ -75,6 +75,30 @@ This is provenance, not a trust shortcut. It proves the report was scored from
 the named artifacts and policy version; it does not prove client-side logs were
 complete unless the client execution environment also preserves those logs.
 
+## Customer execution attestation
+
+When the customer runs scenarios in a customer-controlled staging environment,
+the final evidence packet should include
+`customer_execution_attestation.schema.json` alongside the trace, scored
+verdict, Markdown or PDF report, and evidence manifest.
+
+The execution attestation records:
+
+- who controlled the environment;
+- the scenario pack hash and exported trace hash;
+- the staging environment, agent version, build SHA, and policy version;
+- the log source, export time, export query or filter, and exported artifact
+  name;
+- custody metadata for where the trace and report were retained, including
+  storage system, storage URI, mutability, retention window, and access-control
+  owner;
+- the customer technical owner who attested to the execution facts.
+
+For a high-trust review, store the trace, report, evidence manifest, and
+execution attestation in customer-controlled append-only or write-once storage.
+ActionBoundary can then independently score the provided artifacts without
+claiming direct control over the customer's full internal log history.
+
 ## Setup is not runtime evidence
 
 Scenario setup describes the intended fixture:

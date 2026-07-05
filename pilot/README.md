@@ -53,6 +53,12 @@ normalized runtime evidence is what the verdict uses.
 - `python -m actionboundary score --trace examples/ap_payment_trace.redacted.json --scenario-pack examples/ap_payment_scenario_pack.json`:
   local scorer entrypoint. Add `--out`, `--markdown`, and
   `--evidence-manifest` to produce a bundle that can be independently rechecked.
+- `customer_execution_attestation.schema.json`: customer-side execution
+  attestation contract for who ran the scenarios, which staging environment and
+  agent build were used, which logs were exported, and where the evidence was
+  retained.
+- `customer_execution_attestation.sample.json`: synthetic example of that
+  customer-side statement.
 - `what-we-need.md`: the short first-contact checklist for sending three details before engineering setup.
 - `../docs/customer-trace-handoff-template.md`: customer-friendly example of
   the minimum trace export shape before a full adapter is wired.
@@ -128,10 +134,13 @@ normalized runtime evidence is what the verdict uses.
      --evidence-manifest scored_trace_results.evidence-manifest.json
    ```
 
-7. Send `trace_results.json` back. The trace should be correlated enough to
-   identify the acting identity, target resource, authorization decision, tool
-   result, and sandbox or business outcome. No production, no real customer
-   data, no shared credentials.
+7. Fill in `customer_execution_attestation.sample.json` as a customer execution
+   attestation for the run, including trace hash, log-export source, storage
+   location, retention window, and access-control owner.
+8. Send `trace_results.json` and the execution attestation back. The trace
+   should be correlated enough to identify the acting identity, target resource,
+   authorization decision, tool result, and sandbox or business outcome. No
+   production, no real customer data, no shared credentials.
 
 Tip: before the full run, send one existing trace or do one scenario first so
 the wiring can be checked. The common mistakes are missing tool results,

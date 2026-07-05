@@ -1,0 +1,77 @@
+name: Public evidence bundle
+
+on:
+  push:
+    branches: [master]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  id-token: write
+  attestations: write
+
+jobs:
+  build-public-evidence-bundle:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install package and validation dependencies
+        run: |
+          python -m pip install -e ".[dev]"
+
+      - name: Generate scored example and evidence manifest
+        run: |
+          mkdir -p tmp/public-evidence
+          python -m actionboundary validate \
+            --trace examples/ap_payment_trace.redacted.json \
+            --scenario-pack examples/ap_payment_scenario_pack.json
+          python -m actionboundary score \
+            examples/ap_payment_trace.redacted.json \
+            --scenario-pack examples/ap_payment_scenario_pack.json \
+            --out tmp/public-evidence/actionboundary-scored-example.json \
+            --markdown tmp/public-evidence/actionboundary-scored-example.md \
+            --evidence-manifest tmp/public-evidence/actionboundary-evidence-manifest.json
+          python -m actionboundary validate \
+            --evidence-manifest tmp/public-evidence/actionboundary-evidence-manifest.json
+
+      - name: Build public evidence bundle
+        run: |
+          python scripts/build_public_evidence_bundle.py \
+            --generated-dir tmp/public-evidence \
+            --output-dir tmp/actionboundary-public-evidence-bundle \
+            --zip tmp/actionboundary-public-evidence-bundle.zip \
+            --git-sha "${GITHUB_SHA}" \
+            --github-repository "${GITHUB_REPOSITORY}" \
+            --github-ref "${GITHUB_REF}" \
+            --github-workflow "${GITHUB_WORKFLOW}" \
+            --github-run-id "${GITHUB_RUN_ID}" \
+            --github-run-attempt "${GITHUB_RUN_ATTEMPT}"
+
+      - name: Upload public evidence bundle
+        id: upload-public-evidence-bundle
+        uses: actions/upload-artifact@v7
+        with:
+          name: actionboundary-public-evidence-bundle
+          path: tmp/actionboundary-public-evidence-bundle.zip
+          if-no-files-found: error
+          retention-days: 90
+          archive: false
+
+      - name: Print public evidence bundle digest
+        run: |
+          echo "artifact-url=${{ steps.upload-public-evidence-bundle.outputs.artifact-url }}"
+          echo "artifact-digest=${{ steps.upload-public-evidence-bundle.outputs.artifact-digest }}"
+
+      - name: Generate artifact attestation
+        uses: actions/attest@v4
+        with:
+          subject-path: tmp/actionboundary-public-evidence-bundle.zip

@@ -6,6 +6,9 @@ import subprocess
 import sys
 import tempfile
 import unittest
+import zipfile
+
+from jsonschema import Draft202012Validator
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -18,8 +21,14 @@ class ActionBoundaryCliTests(unittest.TestCase):
             "scenario_pack.schema.json",
             "verdict.schema.json",
             "evidence_manifest.schema.json",
+            "public_evidence_bundle.schema.json",
+            ".github/workflows/public-evidence-bundle.yml",
+            "VERIFY-EVIDENCE.md",
             "examples/ap_payment_trace.redacted.json",
             "examples/ap_payment_scenario_pack.json",
+            "pilot/customer_execution_attestation.schema.json",
+            "pilot/customer_execution_attestation.sample.json",
+            "scripts/build_public_evidence_bundle.py",
             "Makefile",
             "pyproject.toml",
         ):
@@ -160,6 +169,121 @@ class ActionBoundaryCliTests(unittest.TestCase):
             )
             self.assertEqual(0, validate.returncode, validate.stderr)
             self.assertIn("ActionBoundary evidence-manifest checks: OK", validate.stdout)
+
+    def test_public_evidence_bundle_builder_outputs_verifiable_bundle(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            tmp_dir = Path(tmp)
+            generated_dir = tmp_dir / "public-evidence"
+            bundle_dir = tmp_dir / "bundle"
+            zip_path = tmp_dir / "actionboundary-public-evidence-bundle.zip"
+            generated_dir.mkdir()
+
+            score = subprocess.run(
+                [
+                    sys.executable,
+                    "-m",
+                    "actionboundary",
+                    "score",
+                    "examples/ap_payment_trace.redacted.json",
+                    "--scenario-pack",
+                    "examples/ap_payment_scenario_pack.json",
+                    "--out",
+                    str(generated_dir / "actionboundary-scored-example.json"),
+                    "--markdown",
+                    str(generated_dir / "actionboundary-scored-example.md"),
+                    "--evidence-manifest",
+                    str(generated_dir / "actionboundary-evidence-manifest.json"),
+                ],
+                cwd=ROOT,
+                text=True,
+                capture_output=True,
+                check=False,
+            )
+            self.assertEqual(0, score.returncode, score.stderr)
+
+            build = subprocess.run(
+                [
+                    sys.executable,
+                    "scripts/build_public_evidence_bundle.py",
+                    "--generated-dir",
+                    str(generated_dir),
+                    "--output-dir",
+                    str(bundle_dir),
+                    "--zip",
+                    str(zip_path),
+                    "--git-sha",
+                    "test-sha",
+                    "--github-repository",
+                    "hugoii/llm-agent-audit",
+                    "--github-ref",
+                    "refs/heads/master",
+                    "--github-workflow",
+                    "Public evidence bundle",
+                    "--github-run-id",
+                    "12345",
+                    "--github-run-attempt",
+                    "1",
+                ],
+                cwd=ROOT,
+                text=True,
+                capture_output=True,
+                check=False,
+            )
+            self.assertEqual(0, build.returncode, build.stderr)
+            self.assertTrue(zip_path.is_file())
+            self.assertTrue((bundle_dir / "SHA256SUMS").is_file())
+            self.assertTrue((bundle_dir / "PUBLIC-EVIDENCE-BUNDLE.json").is_file())
+            self.assertTrue((bundle_dir / "tmp/public-evidence/actionboundary-evidence-manifest.json").is_file())
+            self.assertTrue((bundle_dir / "VERIFY-EVIDENCE.md").is_file())
+
+            bundle_manifest = json.loads((bundle_dir / "PUBLIC-EVIDENCE-BUNDLE.json").read_text(encoding="utf-8"))
+            bundle_schema = json.loads((ROOT / "public_evidence_bundle.schema.json").read_text(encoding="utf-8"))
+            bundle_errors = sorted(
+                Draft202012Validator(bundle_schema).iter_errors(bundle_manifest),
+                key=lambda item: tuple(item.absolute_path),
+            )
+            self.assertEqual([], [error.message for error in bundle_errors])
+            self.assertEqual("public-evidence-bundle-1.0", bundle_manifest["schema_version"])
+            self.assertEqual("test-sha", bundle_manifest["git_sha"])
+            self.assertEqual(
+                "tmp/public-evidence/actionboundary-evidence-manifest.json",
+                bundle_manifest["evidence_manifest_path"],
+            )
+            self.assertEqual("12345", bundle_manifest["ci"]["run_id"])
+
+            with zipfile.ZipFile(zip_path) as archive:
+                names = set(archive.namelist())
+            self.assertIn("SHA256SUMS", names)
+            self.assertIn("PUBLIC-EVIDENCE-BUNDLE.json", names)
+            self.assertIn("tmp/public-evidence/actionboundary-evidence-manifest.json", names)
+
+            validate = subprocess.run(
+                [
+                    sys.executable,
+                    "-m",
+                    "actionboundary",
+                    "validate",
+                    "--evidence-root",
+                    str(bundle_dir),
+                    "--evidence-manifest",
+                    str(bundle_dir / "tmp/public-evidence/actionboundary-evidence-manifest.json"),
+                ],
+                cwd=ROOT,
+                text=True,
+                capture_output=True,
+                check=False,
+            )
+            self.assertEqual(0, validate.returncode, validate.stderr)
+            self.assertIn("ActionBoundary evidence-manifest checks: OK", validate.stdout)
+
+    def test_customer_execution_attestation_sample_matches_schema(self) -> None:
+        schema = json.loads((ROOT / "pilot/customer_execution_attestation.schema.json").read_text(encoding="utf-8"))
+        sample = json.loads((ROOT / "pilot/customer_execution_attestation.sample.json").read_text(encoding="utf-8"))
+        errors = sorted(
+            Draft202012Validator(schema).iter_errors(sample),
+            key=lambda item: tuple(item.absolute_path),
+        )
+        self.assertEqual([], [error.message for error in errors])
 
     def test_validate_rejects_scenario_pack_hash_mismatch(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:

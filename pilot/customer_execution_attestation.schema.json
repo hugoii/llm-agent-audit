@@ -1,0 +1,217 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://actionboundary.dev/schemas/customer_execution_attestation.schema.json",
+  "title": "ActionBoundary customer execution attestation schema",
+  "description": "Customer-side statement linking a scenario pack to a staging execution environment and exported trace artifact.",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "engagement_id",
+    "customer",
+    "scenario_pack_sha256",
+    "trace_sha256",
+    "execution",
+    "log_export",
+    "custody",
+    "attested_by"
+  ],
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "const": "customer-execution-attestation-1.0"
+    },
+    "engagement_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "customer": {
+      "type": "object",
+      "required": [
+        "name",
+        "environment_owner"
+      ],
+      "properties": {
+        "name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "environment_owner": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "additionalProperties": true
+    },
+    "scenario_pack_sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "trace_sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "execution": {
+      "type": "object",
+      "required": [
+        "environment_id",
+        "environment_type",
+        "agent_under_test",
+        "agent_version",
+        "build_sha",
+        "started_at_utc",
+        "ended_at_utc"
+      ],
+      "properties": {
+        "environment_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "environment_type": {
+          "type": "string",
+          "enum": [
+            "staging",
+            "sandbox",
+            "local_synthetic_harness"
+          ]
+        },
+        "agent_under_test": {
+          "type": "string",
+          "minLength": 1
+        },
+        "agent_version": {
+          "type": "string",
+          "minLength": 1
+        },
+        "build_sha": {
+          "type": "string",
+          "minLength": 1
+        },
+        "policy_version": {
+          "type": "string"
+        },
+        "started_at_utc": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "ended_at_utc": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "additionalProperties": true
+    },
+    "log_export": {
+      "type": "object",
+      "required": [
+        "source_system",
+        "exported_at_utc",
+        "export_query_or_filter",
+        "export_artifact_name"
+      ],
+      "properties": {
+        "source_system": {
+          "type": "string",
+          "minLength": 1
+        },
+        "exported_at_utc": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "export_query_or_filter": {
+          "type": "string",
+          "minLength": 1
+        },
+        "export_artifact_name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "export_artifact_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        }
+      },
+      "additionalProperties": true
+    },
+    "custody": {
+      "type": "object",
+      "required": [
+        "storage_system",
+        "storage_uri",
+        "stored_at_utc",
+        "mutability",
+        "access_control_owner"
+      ],
+      "properties": {
+        "storage_system": {
+          "type": "string",
+          "minLength": 1
+        },
+        "storage_uri": {
+          "type": "string",
+          "minLength": 1
+        },
+        "stored_at_utc": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "mutability": {
+          "type": "string",
+          "enum": [
+            "write_once_locked",
+            "append_only",
+            "retained_mutable",
+            "not_attested"
+          ]
+        },
+        "retention_until_utc": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "access_control_owner": {
+          "type": "string",
+          "minLength": 1
+        },
+        "release_artifact_url": {
+          "type": "string"
+        },
+        "attestation_url": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": true
+    },
+    "attested_by": {
+      "type": "object",
+      "required": [
+        "name",
+        "role",
+        "attested_at_utc"
+      ],
+      "properties": {
+        "name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "role": {
+          "type": "string",
+          "minLength": 1
+        },
+        "attested_at_utc": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "signature": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": true
+    },
+    "limitations": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "additionalProperties": false
+}

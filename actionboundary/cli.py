@@ -297,9 +297,10 @@ def cmd_validate(args: argparse.Namespace) -> int:
             f"JSON Schema: {error}"
             for error in json_schema_errors(evidence_manifest, "evidence-manifest")
         )
+        evidence_root = Path(args.evidence_root) if args.evidence_root else repo_root()
         errors.extend(
             f"evidence-manifest: {error}"
-            for error in validate_evidence_manifest(evidence_manifest, base_dir=repo_root())
+            for error in validate_evidence_manifest(evidence_manifest, base_dir=evidence_root)
         )
 
     scored = None
@@ -405,6 +406,10 @@ def build_parser() -> argparse.ArgumentParser:
     validate.add_argument("--scenario-pack", help="Scenario pack manifest JSON")
     validate.add_argument("--verdict", help="Scored verdict JSON")
     validate.add_argument("--evidence-manifest", help="Machine-verifiable evidence manifest JSON")
+    validate.add_argument(
+        "--evidence-root",
+        help="Base directory for relative artifact paths recorded in --evidence-manifest",
+    )
     validate.set_defaults(func=cmd_validate)
 
     score = subcommands.add_parser("score", help="Score a trace against an optional scenario pack")
