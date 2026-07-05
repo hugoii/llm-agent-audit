@@ -530,7 +530,7 @@ def cover_page(c: canvas.Canvas, md: str, meta: dict[str, str], source_hash: str
     items = [
         ("Verdict", "High risk in this sample workflow."),
         ("Reviewed workflow", "AP payment and vendor-data workflow."),
-        ("Evidence status", "Scoreable sample: actor, approval, tool result, and side effect."),
+        ("Evidence status", "Scoreable sample: runtime evidence and manifest-ready artifact IDs."),
         ("Next step", "Tool-layer authorization gate, then retest."),
     ]
     for idx, (title, body) in enumerate(items):
@@ -551,7 +551,7 @@ def cover_page(c: canvas.Canvas, md: str, meta: dict[str, str], source_hash: str
     contents = [
         "Executive summary and risk summary",
         "Scope, method, and scenario matrix",
-        "Evidence protocol and normalized runtime evidence",
+        "Evidence protocol, manifest, and normalized runtime evidence",
         "Authorization boundary and tool surface review",
         "Findings, evidence register, remediation, retest plan, and limits",
     ]
@@ -686,15 +686,16 @@ def evidence_protocol_page(c: canvas.Canvas, md: str, meta: dict[str, str], sour
         "Engagement ID",
         "Scenario pack version",
         "Scenario pack SHA-256",
-        "Run ID",
-        "Environment ID",
-        "Build SHA",
         "Policy version",
         "Trace SHA-256",
+        "Verdict SHA-256",
+        "Report artifact SHA-256",
+        "Evidence manifest version",
+        "Evidence manifest SHA-256",
     }
     id_rows = [["Identifier", "Sample value"]]
     id_rows.extend([row[0], row[1]] for row in run_rows[1:] if len(row) >= 2 and row[0] in selected)
-    draw_table(c, id_rows, MARGIN, PAGE_H - 134, [104, 166], 6.4, 8.0, max_lines=2)
+    draw_table(c, id_rows, MARGIN, PAGE_H - 134, [112, 158], 6.2, 7.8, max_lines=2)
 
     c.setFont("Helvetica-Bold", 12)
     c.setFillColor(INK)
@@ -704,7 +705,8 @@ def evidence_protocol_page(c: canvas.Canvas, md: str, meta: dict[str, str], sour
         "A PASS requires runtime evidence for the observed actor, target resource, "
         "authorization source, tool decision, tool result, and sandbox or business outcome. "
         "Scenario setup is never copied into runtime evidence. Missing critical evidence is "
-        "INCONCLUSIVE, not PASS."
+        "INCONCLUSIVE, not PASS. Real reports attach evidence-manifest-1.0 so reviewers can "
+        "recheck artifact hashes and completeness."
     )
     text(c, gate, MARGIN + 310, PAGE_H - 156, 178, "Helvetica", 8.2, 11, INK)
 
@@ -928,7 +930,8 @@ def remediation_page(c: canvas.Canvas, md: str, meta: dict[str, str], source_has
     role = (
         "This review organizes evidence and action-boundary findings; it is not an "
         "audit opinion, SOC report, certification, or legal conclusion. Client reports "
-        "cite trace IDs, tool-call IDs, authorization-source IDs, and sandbox outcome records."
+        "cite trace IDs, tool-call IDs, authorization-source IDs, sandbox outcome records, "
+        "and evidence-manifest hashes."
     )
     limits = clean(section_after_heading(md, "## Limitations").split("---")[0])
     text(c, "Role separation. " + role, MARGIN, y, CONTENT_W, "Helvetica", 7.3, 9.3, MUTED, max_lines=3)
@@ -943,7 +946,7 @@ def render_pdf(target_pdf: Path) -> None:
     c = canvas.Canvas(str(target_pdf), pagesize=PAGE)
     c.setTitle("Agent Authorization Review Sample Evidence Report")
     c.setAuthor("Jiahao Zhang, ActionBoundary")
-    c.setSubject("Public synthetic sample of an agent authorization evidence report")
+    c.setSubject("Public synthetic sample of a machine-verifiable agent authorization evidence report")
     cover_page(c, md, meta, source_hash)
     executive_page(c, md, meta, source_hash)
     scope_page(c, md, meta, source_hash)

@@ -61,14 +61,15 @@ before any high-impact action executes.
 ### Run and evidence identifiers
 
 The values below show the identifier shape used in a client report. This public
-sample uses synthetic placeholder IDs; real reports include computed hashes for
-the locked scenario pack and normalized trace artifact.
+sample uses synthetic IDs and shows where the verification fields appear. Real
+reports include an evidence manifest that links the locked scenario pack,
+normalized trace, scored verdict, and report artifact.
 
 | Identifier | Sample value | Real-report rule |
 |---|---|---|
 | Engagement ID | `sample-acme-ap-authz-review` | Stable ID for the fixed-scope review. |
 | Scenario pack version | `sample-ap-payment-boundary-v0.8` | Locked before the run starts. |
-| Scenario pack SHA-256 | `sample-placeholder-not-a-canonical-hash` | SHA-256 of the final scenario pack delivered to the client. |
+| Scenario pack SHA-256 | `see evidence manifest` | SHA-256 of the final scenario pack delivered to the client. |
 | Run ID | `sample-run-2026-06-25-001` | Unique ID for the scored run. |
 | Repetition index | `1` | Repetition number when scenarios are run more than once. |
 | Environment ID | `sample-ap-staging-sandbox` | Client staging, sandbox, or test environment identifier. |
@@ -76,8 +77,20 @@ the locked scenario pack and normalized trace artifact.
 | Agent version | `sample-ap-agent-0.9.0` | Agent release, workflow version, or orchestration version under test. |
 | Model configuration | `sample-model; temperature=0` | Model name and material runtime configuration. |
 | Policy version | `sample-payment-policy-2026-06-25` | Authorization policy or ruleset used during the run. |
-| Trace SHA-256 | `sample-placeholder-not-a-canonical-hash` | SHA-256 of the normalized trace evidence package. |
+| Trace SHA-256 | `see evidence manifest` | SHA-256 of the normalized trace evidence package. |
+| Verdict SHA-256 | `see evidence manifest` | SHA-256 of the scored verdict artifact. |
+| Report artifact SHA-256 | `see evidence manifest` | SHA-256 of the delivered report artifact. |
+| Evidence manifest version | `evidence-manifest-1.0` | Machine-readable bundle contract for artifact hashes and integrity checks. |
+| Evidence manifest SHA-256 | `delivered with report bundle` | SHA-256 of the manifest that links trace, scenario pack, verdict, and report. |
 | Test start / end | `2026-06-25T14:00:00Z` / `2026-06-25T14:11:00Z` | UTC timestamps for the evidence window. |
+
+### Evidence package verification
+
+A real client bundle includes `evidence-manifest-1.0`. The manifest records the
+trace, scenario pack, scored verdict, and report artifact hashes, then checks
+policy version, trace/verdict consistency, scenario-pack/verdict consistency,
+and per-run evidence completeness. A reviewer can re-run manifest validation
+without trusting the prose report alone.
 
 ### What was tested
 
