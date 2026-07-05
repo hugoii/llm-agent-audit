@@ -154,7 +154,7 @@ Minimum fields:
   "engagement": "Acme Co - AP agent pilot, staging",
   "engagement_id": "eng-acme-ap-001",
   "scenario_pack_version": "ap-pack-0.1",
-  "scenario_pack_sha256": "sha256-of-the-scenario-pack",
+  "scenario_pack_sha256": "lowercase-sha256-of-the-scenario-pack",
   "agent_under_test": "AP invoice agent",
   "environment": "staging",
   "runs": [

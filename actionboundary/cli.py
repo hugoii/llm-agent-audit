@@ -12,6 +12,14 @@ from jsonschema import Draft202012Validator
 from jsonschema.exceptions import SchemaError
 
 from .authorization_score import apply_manifest_defaults, has_trace, manifest_scenarios, markdown_summary, score_submission
+from .provenance import (
+    build_evidence_manifest,
+    iter_declared_trace_hashes,
+    is_sha256,
+    scenario_pack_sha256 as compute_scenario_pack_sha256,
+    trace_submission_sha256,
+    validate_evidence_manifest,
+)
 
 
 FINAL_STATUSES = {
@@ -36,6 +44,7 @@ SCHEMA_FILES = {
     "trace": "normalized_trace.schema.json",
     "scenario-pack": "scenario_pack.schema.json",
     "verdict": "verdict.schema.json",
+    "evidence-manifest": "evidence_manifest.schema.json",
 }
 
 
@@ -158,6 +167,13 @@ def validate_verdict(scored: dict[str, Any]) -> list[str]:
         errors.append("verdict schema_version must be pilot-verdict-1.1")
     if not isinstance(scored.get("counts"), dict):
         errors.append("verdict counts object is required")
+    for field in ("scenario_pack_sha256", "trace_sha256"):
+        value = scored.get(field)
+        if value is not None and (not isinstance(value, str) or not is_sha256(value)):
+            errors.append(f"verdict {field} must be a lowercase sha256 hex digest")
+    policy_version = scored.get("policy_version")
+    if policy_version is not None and policy_version != scored.get("schema_version"):
+        errors.append("verdict policy_version must match schema_version")
     runs = scored.get("runs")
     if not isinstance(runs, list):
         errors.append("verdict runs[] is required")
@@ -173,6 +189,51 @@ def validate_verdict(scored: dict[str, Any]) -> list[str]:
         overall = verdict.get("overall")
         if overall not in FINAL_STATUSES:
             errors.append(f"verdict runs[{index}].verdict.overall has unknown status: {overall!r}")
+        if verdict.get("system_authorization_boundary") == "PASS" and verdict.get("missing_evidence"):
+            errors.append(f"verdict runs[{index}] declares PASS with missing evidence")
+    return errors
+
+
+def validate_trace_integrity(trace: dict[str, Any], manifest: dict[str, Any] | None = None) -> list[str]:
+    errors: list[str] = []
+    observed_trace_hash = trace_submission_sha256(trace)
+    for declared in sorted(set(iter_declared_trace_hashes(trace))):
+        if declared != observed_trace_hash:
+            errors.append(
+                "trace trace_sha256 mismatch: "
+                f"expected {observed_trace_hash}, observed {declared}"
+            )
+    if manifest is not None:
+        observed_pack_hash = compute_scenario_pack_sha256(manifest)
+        declared_pack_hash = trace.get("scenario_pack_sha256")
+        if declared_pack_hash and declared_pack_hash != observed_pack_hash:
+            errors.append(
+                "trace scenario_pack_sha256 mismatch: "
+                f"expected {observed_pack_hash}, observed {declared_pack_hash}"
+            )
+    return errors
+
+
+def validate_verdict_integrity(
+    verdict: dict[str, Any],
+    trace: dict[str, Any] | None = None,
+    manifest: dict[str, Any] | None = None,
+) -> list[str]:
+    errors: list[str] = []
+    if trace is not None:
+        observed_trace_hash = trace_submission_sha256(trace)
+        if verdict.get("trace_sha256") != observed_trace_hash:
+            errors.append(
+                "verdict trace_sha256 mismatch: "
+                f"expected {observed_trace_hash}, observed {verdict.get('trace_sha256')}"
+            )
+    if manifest is not None:
+        observed_pack_hash = compute_scenario_pack_sha256(manifest)
+        if verdict.get("scenario_pack_sha256") != observed_pack_hash:
+            errors.append(
+                "verdict scenario_pack_sha256 mismatch: "
+                f"expected {observed_pack_hash}, observed {verdict.get('scenario_pack_sha256')}"
+            )
     return errors
 
 
@@ -213,22 +274,42 @@ def cmd_validate(args: argparse.Namespace) -> int:
     trace = load_json(args.trace) if args.trace else None
     manifest = load_manifest(args.scenario_pack)
     verdict = load_json(args.verdict) if args.verdict else None
+    evidence_manifest = load_json(args.evidence_manifest) if args.evidence_manifest else None
 
-    if trace is None and manifest is None and verdict is None:
-        errors.append("provide --trace, --scenario-pack, or --verdict")
+    if trace is None and manifest is None and verdict is None and evidence_manifest is None:
+        errors.append("provide --trace, --scenario-pack, --verdict, or --evidence-manifest")
     if trace is not None:
         errors.extend(f"JSON Schema: {error}" for error in json_schema_errors(trace, "trace"))
         errors.extend(f"trace: {error}" for error in validate_trace_submission(trace, manifest))
+        errors.extend(f"trace integrity: {error}" for error in validate_trace_integrity(trace, manifest))
     if manifest is not None:
         errors.extend(f"JSON Schema: {error}" for error in json_schema_errors(manifest, "scenario-pack"))
         errors.extend(f"scenario-pack: {error}" for error in validate_scenario_pack(manifest))
     if verdict is not None:
         errors.extend(f"JSON Schema: {error}" for error in json_schema_errors(verdict, "verdict"))
         errors.extend(f"verdict: {error}" for error in validate_verdict(verdict))
+        errors.extend(
+            f"verdict integrity: {error}"
+            for error in validate_verdict_integrity(verdict, trace, manifest)
+        )
+    if evidence_manifest is not None:
+        errors.extend(
+            f"JSON Schema: {error}"
+            for error in json_schema_errors(evidence_manifest, "evidence-manifest")
+        )
+        errors.extend(
+            f"evidence-manifest: {error}"
+            for error in validate_evidence_manifest(evidence_manifest, base_dir=repo_root())
+        )
 
     scored = None
     if not errors and trace is not None:
-        scored = score_submission(trace, manifest)
+        scored = score_submission(
+            trace,
+            manifest,
+            trace_sha256=trace_submission_sha256(trace),
+            scenario_pack_sha256=compute_scenario_pack_sha256(manifest) if manifest is not None else None,
+        )
         errors.extend(f"scored verdict JSON Schema: {error}" for error in json_schema_errors(scored, "verdict"))
         errors.extend(f"scored verdict: {error}" for error in validate_verdict(scored))
 
@@ -245,6 +326,8 @@ def cmd_validate(args: argparse.Namespace) -> int:
         print("ActionBoundary scenario-pack checks: OK")
     elif verdict is not None:
         print("ActionBoundary verdict checks: OK")
+    elif evidence_manifest is not None:
+        print("ActionBoundary evidence-manifest checks: OK")
     else:
         print("ActionBoundary checks: OK")
     return 0
@@ -254,10 +337,13 @@ def cmd_score(args: argparse.Namespace) -> int:
     trace_path = args.trace or args.trace_path
     if not trace_path:
         raise ValueError("score requires --trace or TRACE")
+    if args.evidence_manifest and not args.out:
+        raise ValueError("score --evidence-manifest requires --out so the verdict artifact can be hashed")
     trace = load_json(trace_path)
     manifest = load_manifest(args.scenario_pack)
     errors = [f"JSON Schema: {error}" for error in json_schema_errors(trace, "trace")]
     errors.extend(f"trace: {error}" for error in validate_trace_submission(trace, manifest))
+    errors.extend(f"trace integrity: {error}" for error in validate_trace_integrity(trace, manifest))
     if manifest is not None:
         errors.extend(f"JSON Schema: {error}" for error in json_schema_errors(manifest, "scenario-pack"))
         errors.extend(f"scenario-pack: {error}" for error in validate_scenario_pack(manifest))
@@ -266,7 +352,12 @@ def cmd_score(args: argparse.Namespace) -> int:
         print(format_errors(errors), file=sys.stderr)
         return 1
 
-    scored = score_submission(trace, manifest)
+    scored = score_submission(
+        trace,
+        manifest,
+        trace_sha256=trace_submission_sha256(trace),
+        scenario_pack_sha256=compute_scenario_pack_sha256(manifest) if manifest is not None else None,
+    )
     verdict_errors = json_schema_errors(scored, "verdict")
     verdict_errors.extend(validate_verdict(scored))
     if verdict_errors:
@@ -280,8 +371,28 @@ def cmd_score(args: argparse.Namespace) -> int:
         print(json.dumps(scored, indent=2, sort_keys=True))
     if args.markdown:
         write_text(args.markdown, markdown_summary(scored))
+    if args.evidence_manifest:
+        evidence_manifest = build_evidence_manifest(
+            trace_path=trace_path,
+            trace=trace,
+            scenario_pack_path=args.scenario_pack,
+            scenario_pack=manifest,
+            verdict_path=args.out,
+            verdict=scored,
+            markdown_path=args.markdown,
+            root=repo_root(),
+        )
+        manifest_errors = json_schema_errors(evidence_manifest, "evidence-manifest")
+        manifest_errors.extend(validate_evidence_manifest(evidence_manifest, base_dir=repo_root()))
+        if manifest_errors:
+            print("Evidence manifest generation produced an invalid manifest:", file=sys.stderr)
+            print(format_errors(manifest_errors), file=sys.stderr)
+            return 1
+        write_json(args.evidence_manifest, evidence_manifest)
     if args.out:
         print_score_summary(scored, args.out, args.markdown)
+        if args.evidence_manifest:
+            print(f"Evidence manifest: {args.evidence_manifest}")
     return 0
 
 
@@ -293,6 +404,7 @@ def build_parser() -> argparse.ArgumentParser:
     validate.add_argument("--trace", help="Trace submission JSON")
     validate.add_argument("--scenario-pack", help="Scenario pack manifest JSON")
     validate.add_argument("--verdict", help="Scored verdict JSON")
+    validate.add_argument("--evidence-manifest", help="Machine-verifiable evidence manifest JSON")
     validate.set_defaults(func=cmd_validate)
 
     score = subcommands.add_parser("score", help="Score a trace against an optional scenario pack")
@@ -301,6 +413,7 @@ def build_parser() -> argparse.ArgumentParser:
     score.add_argument("--scenario-pack", help="Scenario pack manifest JSON")
     score.add_argument("--out", help="Write scored verdict JSON to this path")
     score.add_argument("--markdown", help="Write Markdown summary to this path")
+    score.add_argument("--evidence-manifest", help="Write machine-verifiable evidence manifest JSON")
     score.set_defaults(func=cmd_score)
     return parser
 

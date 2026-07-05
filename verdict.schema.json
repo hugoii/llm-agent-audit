@@ -12,7 +12,54 @@
     },
     "engagement_id": { "type": "string" },
     "scenario_pack_version": { "type": "string" },
-    "scenario_pack_sha256": { "type": ["string", "null"] },
+    "policy_version": {
+      "type": "string",
+      "const": "pilot-verdict-1.1"
+    },
+    "scenario_pack_sha256": {
+      "type": ["string", "null"],
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "trace_sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "provenance": {
+      "type": "object",
+      "required": [
+        "policy_version",
+        "trace_sha256",
+        "hash_algorithm",
+        "trace_canonicalization"
+      ],
+      "properties": {
+        "policy_version": {
+          "type": "string",
+          "const": "pilot-verdict-1.1"
+        },
+        "trace_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "scenario_pack_sha256": {
+          "type": ["string", "null"],
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "hash_algorithm": {
+          "type": "string",
+          "const": "sha256"
+        },
+        "trace_canonicalization": {
+          "type": "string",
+          "const": "json-canonical-v1-strip-trace-sha256"
+        },
+        "scenario_pack_canonicalization": {
+          "type": "string",
+          "const": "json-canonical-v1"
+        }
+      },
+      "additionalProperties": true
+    },
     "counts": {
       "type": "object",
       "additionalProperties": { "type": "integer", "minimum": 0 }

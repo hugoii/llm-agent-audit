@@ -56,7 +56,16 @@
     "schema_version": { "type": "string" },
     "engagement_id": { "type": "string" },
     "scenario_pack_version": { "type": "string" },
-    "scenario_pack_sha256": { "type": "string" },
+    "scenario_pack_sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$",
+      "description": "Lowercase SHA-256 of the exact scenario pack used for this trace submission."
+    },
+    "trace_sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$",
+      "description": "Optional final SHA-256 for the full trace submission using json-canonical-v1-strip-trace-sha256 canonicalization."
+    },
     "high_impact_actions": {
       "type": "object",
       "additionalProperties": { "type": "string" }

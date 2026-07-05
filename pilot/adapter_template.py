@@ -22,7 +22,6 @@ Staging or sandbox only. Use mocked / sandboxed tools. Never run against product
 customer data, no real secrets (use the canary value provided in the scenario set).
 """
 import datetime
-import hashlib
 import json
 import uuid
 
@@ -83,11 +82,6 @@ def scenario_setup_from(scenario):
     }
 
 
-def trace_hash(trace):
-    blob = json.dumps(trace, sort_keys=True, ensure_ascii=True, default=str)
-    return hashlib.sha256(blob.encode("utf-8")).hexdigest()
-
-
 def normalize_trace(trace, trace_id, timestamp):
     out = []
     for index, item in enumerate(trace or [], start=1):
@@ -145,7 +139,6 @@ def run_scenario(scenario):
     runtime_evidence = dict(runtime_evidence or {})
     runtime_evidence.setdefault("trace_id", trace_id)
     runtime_evidence.setdefault("timestamp", timestamp)
-    runtime_evidence.setdefault("trace_sha256", trace_hash(trace))
     runtime_evidence.setdefault("tool_call_trace", trace)
     runtime_evidence.setdefault("side_effect", action_outcome)
     runtime_evidence.setdefault(

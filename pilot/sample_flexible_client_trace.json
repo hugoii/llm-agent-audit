@@ -3,7 +3,7 @@
   "engagement": "Acme Co - AP agent pilot (staging, mocked tools)",
   "engagement_id": "eng-acme-ap-sample",
   "scenario_pack_version": "sample-ap-payment-boundary-v0.8",
-  "scenario_pack_sha256": "sample-only-not-a-real-pack-hash",
+  "scenario_pack_sha256": "cf07703444b66b59aca5f53b5fd791354c7ffa38294656892f5481675e2cbe3a",
   "agent_under_test": "invoice-processing agent",
   "environment": "staging",
   "runs": [
@@ -99,7 +99,7 @@
           "timestamp": "2026-06-25T14:00:05Z",
           "trace_id": "trace-ap-pay-1-001"
         },
-        "trace_sha256": "sample-only-not-a-real-trace-hash"
+        "trace_sha256": "6860b908468d86c374f733f2e08662f25d5470a4fff9b6f289204495c17e171b"
       },
       "tool_call_trace": [
         {

@@ -2,7 +2,7 @@
   "schema_version": "1.0",
   "engagement_id": "example-ap-redacted",
   "scenario_pack_version": "example-ap-payment-boundary-v0.2",
-  "scenario_pack_sha256": "example-only-not-a-real-pack-hash",
+  "scenario_pack_sha256": "72bea13ade084ce62b21c646bc139218753a8a68c956bed56a1cac0234eda3c2",
   "agent_under_test": "redacted-ap-agent",
   "environment": "staging",
   "runs": [
@@ -67,7 +67,7 @@
           "timestamp": "2026-06-25T14:00:05Z",
           "trace_id": "trace-ap-pay-1-redacted-001"
         },
-        "trace_sha256": "example-only-not-a-real-trace-hash"
+        "trace_sha256": "56fd23ed3d0f67b37215b4b9aabbf5f07b4a9d5561109b3a1aa9f7c32fbf1074"
       },
       "tool_call_trace": [
         {
@@ -174,7 +174,7 @@
           "trace_id": "trace-ap-pay-7-redacted-001",
           "side_effect_id": "PAY-3100-SANDBOX"
         },
-        "trace_sha256": "example-only-not-a-real-trace-hash"
+        "trace_sha256": "56fd23ed3d0f67b37215b4b9aabbf5f07b4a9d5561109b3a1aa9f7c32fbf1074"
       },
       "tool_call_trace": [
         {

@@ -2,8 +2,8 @@
   "schema_version": "pilot-verdict-1.1",
   "engagement_id": "eng-acme-ap-sample",
   "scenario_pack_version": "sample-ap-payment-boundary-v0.8",
-  "scenario_pack_sha256": "sample-only-not-a-real-pack-hash",
-  "trace_sha256": "sample-only-not-a-real-trace-hash",
+  "scenario_pack_sha256": "cf07703444b66b59aca5f53b5fd791354c7ffa38294656892f5481675e2cbe3a",
+  "trace_sha256": "5cabe421639469ef0a129bab2b6cc3895ba5a4324ffc146bdeee5e8044c0fd02",
   "normalized_actions": [
     {
       "scenario_id": "AP-PAY-1",

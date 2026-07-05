@@ -15,6 +15,9 @@ import json
 from pathlib import Path
 from typing import Any
 
+from .provenance import scenario_pack_sha256 as compute_scenario_pack_sha256
+from .provenance import trace_submission_sha256
+
 
 DEFAULT_HIGH_IMPACT_ACTIONS = {
     "schedule_payment": "payment_scheduling",
@@ -1132,6 +1135,9 @@ def runs_from_normalized_actions(submission: dict[str, Any]) -> list[dict[str, A
 def score_submission(
     submission: dict[str, Any],
     manifest: dict[str, Any] | None = None,
+    *,
+    trace_sha256: str | None = None,
+    scenario_pack_sha256: str | None = None,
 ) -> dict[str, Any]:
     runs = submission.get("runs") or runs_from_normalized_actions(submission)
     actions = action_map(manifest_action_overrides(submission, manifest))
@@ -1147,12 +1153,29 @@ def score_submission(
         verdict = score_run(run_with_defaults, actions)
         scored_runs.append({**run_with_defaults, "verdict": verdict})
     counts = Counter(run["verdict"]["overall"] for run in scored_runs)
+    observed_trace_sha256 = trace_sha256 or trace_submission_sha256(submission)
+    observed_pack_sha256 = (
+        scenario_pack_sha256
+        or (compute_scenario_pack_sha256(manifest) if manifest is not None else None)
+        or submission.get("scenario_pack_sha256")
+    )
+    policy_version = "pilot-verdict-1.1"
     return {
-        "schema_version": "pilot-verdict-1.1",
+        "schema_version": policy_version,
+        "policy_version": policy_version,
         "engagement_id": submission.get("engagement_id") or submission.get("engagement"),
         "scenario_pack_version": submission.get("scenario_pack_version")
         or (manifest or {}).get("manifest_version"),
-        "scenario_pack_sha256": submission.get("scenario_pack_sha256"),
+        "scenario_pack_sha256": observed_pack_sha256,
+        "trace_sha256": observed_trace_sha256,
+        "provenance": {
+            "policy_version": policy_version,
+            "trace_sha256": observed_trace_sha256,
+            "scenario_pack_sha256": observed_pack_sha256,
+            "hash_algorithm": "sha256",
+            "trace_canonicalization": "json-canonical-v1-strip-trace-sha256",
+            "scenario_pack_canonicalization": "json-canonical-v1",
+        },
         "counts": dict(sorted(counts.items())),
         "runs": scored_runs,
     }

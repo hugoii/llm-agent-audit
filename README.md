@@ -95,7 +95,9 @@ python3 -m venv .venv
 .venv/bin/python -m actionboundary score \
   --trace examples/ap_payment_trace.redacted.json \
   --scenario-pack examples/ap_payment_scenario_pack.json \
-  --out tmp/ap_payment_trace.verdict.json
+  --out tmp/ap_payment_trace.verdict.json \
+  --markdown tmp/ap_payment_trace.verdict.md \
+  --evidence-manifest tmp/ap_payment_trace.evidence-manifest.json
 ```
 
 Windows PowerShell:
@@ -109,7 +111,9 @@ py -3.11 -m venv .venv
 .\.venv\Scripts\python.exe -m actionboundary score `
   --trace examples/ap_payment_trace.redacted.json `
   --scenario-pack examples/ap_payment_scenario_pack.json `
-  --out tmp/ap_payment_trace.verdict.json
+  --out tmp/ap_payment_trace.verdict.json `
+  --markdown tmp/ap_payment_trace.verdict.md `
+  --evidence-manifest tmp/ap_payment_trace.evidence-manifest.json
 ```
 
 Expected output:
@@ -125,6 +129,8 @@ BENIGN_PASS: 1
 BENIGN_REGRESSION: 0
 INCONCLUSIVE: 0
 Report: tmp/ap_payment_trace.verdict.json
+Markdown: tmp/ap_payment_trace.verdict.md
+Evidence manifest: tmp/ap_payment_trace.evidence-manifest.json
 ```
 
 Or, on systems with `make`, run the local validation bundle:
@@ -133,13 +139,16 @@ Or, on systems with `make`, run the local validation bundle:
 make validate
 ```
 
-If `make` is unavailable, run the four commands shown in the `validate` target in [Makefile](Makefile).
+If `make` is unavailable, run the commands shown in the `validate` target in [Makefile](Makefile).
 
 The contract files are [normalized_trace.schema.json](normalized_trace.schema.json),
 [scenario_pack.schema.json](scenario_pack.schema.json), and
-[verdict.schema.json](verdict.schema.json). The CLI runs Draft 2020-12 JSON
-Schema validation first, then ActionBoundary-specific scoreability checks. New
-trace adapters should emit canonical `observed_actor`; legacy
+[verdict.schema.json](verdict.schema.json). A scored bundle can also include an
+[evidence manifest](evidence_manifest.schema.json) that hashes the trace,
+scenario pack, verdict, and Markdown report and checks policy/version,
+trace/verdict, and evidence-completeness consistency. The CLI runs Draft
+2020-12 JSON Schema validation first, then ActionBoundary-specific scoreability
+checks. New trace adapters should emit canonical `observed_actor`; legacy
 `observed_principal` inputs are normalized as an adapter alias.
 
 ## Versioning model
@@ -153,6 +162,7 @@ The repository uses separate version numbers for separate review surfaces:
 | Python package / CLI | `0.1.0` | Local validation and scoring package installed from `pyproject.toml`. |
 | Sample report template | `v0.8` | Public synthetic AP report source and rendered PDF sample. |
 | Pilot verdict contract | `pilot-verdict-1.1` | Machine-readable scored verdict schema used by the CLI and pilot tests. |
+| Evidence manifest contract | `evidence-manifest-1.0` | Machine-verifiable bundle linking trace, scenario pack, verdict, report, policy version, and evidence completeness. |
 
 These versions do not move in lockstep. A benchmark release can update public
 proof assets without implying a stable `1.x` Python package API, and a report
@@ -171,6 +181,8 @@ The reproducible path is intentionally small:
 
 - `python agent_audit.py` regenerates the offline demo report with no API key.
 - `make validate` runs JSON Schema validation and scoring for the AP example.
+- `python -m actionboundary validate --evidence-manifest tmp/actionboundary-evidence-manifest.json`
+  rechecks the generated evidence bundle after scoring.
 - `python -m unittest discover -s tests -p "test_*.py"` runs the public
   contract/readability tests.
 - `python -m unittest discover -s pilot/tests -p "test_*.py"` runs the pilot
@@ -273,7 +285,8 @@ questions.
 [sample report](docs/sample-pilot-report-v0.8.md),
 [evidence flow](docs/evidence-flow.md), root-level
 [trace](normalized_trace.schema.json), [scenario pack](scenario_pack.schema.json),
-and [verdict](verdict.schema.json) schemas,
+[verdict](verdict.schema.json), and
+[evidence manifest](evidence_manifest.schema.json) schemas,
 [adapter handoff](pilot/client-handoff.md), and selected workflow-specific
 scenarios. A founding design-partner review starts by identifying 2 to 3
 candidate high-impact action paths, then reviews one representative staging

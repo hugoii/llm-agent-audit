@@ -25,7 +25,8 @@
     },
     "scenario_pack_sha256": {
       "type": "string",
-      "description": "SHA-256 of the exact scenario pack the client ran, when available."
+      "pattern": "^[0-9a-f]{64}$",
+      "description": "Lowercase SHA-256 of the exact scenario pack the client ran, when available."
     },
     "high_impact_actions": {
       "type": "object",
@@ -263,7 +264,9 @@
           }
         },
         "trace_sha256": {
-          "type": "string"
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$",
+          "description": "Final full-submission trace hash, not a per-event or per-tool-call hash."
         },
         "evidence_note": {
           "type": "string"

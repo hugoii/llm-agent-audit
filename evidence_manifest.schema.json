@@ -1,0 +1,255 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://actionboundary.dev/schemas/evidence_manifest.schema.json",
+  "title": "ActionBoundary evidence manifest schema",
+  "description": "Machine-verifiable bundle linking trace, scenario pack, verdict, and report artifacts.",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "generated_at_utc",
+    "policy_version",
+    "artifacts",
+    "integrity",
+    "evidence_completeness",
+    "runs"
+  ],
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "const": "evidence-manifest-1.0"
+    },
+    "generated_at_utc": {
+      "type": "string",
+      "minLength": 1
+    },
+    "policy_version": {
+      "type": "string",
+      "minLength": 1
+    },
+    "artifacts": {
+      "type": "object",
+      "required": [
+        "trace",
+        "verdict"
+      ],
+      "properties": {
+        "trace": {
+          "$ref": "#/$defs/artifact"
+        },
+        "scenario_pack": {
+          "$ref": "#/$defs/artifact"
+        },
+        "verdict": {
+          "$ref": "#/$defs/artifact"
+        },
+        "markdown_report": {
+          "$ref": "#/$defs/artifact"
+        }
+      },
+      "additionalProperties": false
+    },
+    "integrity": {
+      "type": "object",
+      "required": [
+        "complete",
+        "checks"
+      ],
+      "properties": {
+        "complete": {
+          "type": "boolean"
+        },
+        "checks": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/integrity_check"
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "evidence_completeness": {
+      "type": "object",
+      "required": [
+        "all_runs_complete",
+        "complete_runs",
+        "incomplete_runs",
+        "missing_evidence_by_run"
+      ],
+      "properties": {
+        "all_runs_complete": {
+          "type": "boolean"
+        },
+        "complete_runs": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "incomplete_runs": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "missing_evidence_by_run": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/missing_evidence_run"
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "runs": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/run_summary"
+      }
+    }
+  },
+  "additionalProperties": true,
+  "$defs": {
+    "sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "artifact": {
+      "type": "object",
+      "required": [
+        "kind",
+        "path",
+        "hash_algorithm",
+        "canonicalization",
+        "sha256"
+      ],
+      "properties": {
+        "kind": {
+          "type": "string",
+          "enum": [
+            "trace",
+            "scenario_pack",
+            "verdict",
+            "markdown_report",
+            "pdf_report",
+            "other"
+          ]
+        },
+        "path": {
+          "type": "string",
+          "minLength": 1
+        },
+        "hash_algorithm": {
+          "type": "string",
+          "const": "sha256"
+        },
+        "canonicalization": {
+          "type": "string",
+          "enum": [
+            "json-canonical-v1",
+            "json-canonical-v1-strip-trace-sha256",
+            "raw-bytes-v1"
+          ]
+        },
+        "sha256": {
+          "$ref": "#/$defs/sha256"
+        }
+      },
+      "additionalProperties": true
+    },
+    "integrity_check": {
+      "type": "object",
+      "required": [
+        "name",
+        "status"
+      ],
+      "properties": {
+        "name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "PASS",
+            "FAIL",
+            "WARN"
+          ]
+        },
+        "expected": {
+          "type": "string"
+        },
+        "observed": {
+          "type": "string"
+        },
+        "reason": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": true
+    },
+    "run_summary": {
+      "type": "object",
+      "required": [
+        "scenario_id",
+        "verdict",
+        "evidence_complete",
+        "missing_evidence"
+      ],
+      "properties": {
+        "scenario_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "run_id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "trace_id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "verdict": {
+          "type": "string"
+        },
+        "evidence_complete": {
+          "type": "boolean"
+        },
+        "missing_evidence": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "additionalProperties": true
+    },
+    "missing_evidence_run": {
+      "type": "object",
+      "required": [
+        "scenario_id",
+        "run_id",
+        "missing_evidence"
+      ],
+      "properties": {
+        "scenario_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "run_id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "missing_evidence": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "additionalProperties": true
+    }
+  }
+}

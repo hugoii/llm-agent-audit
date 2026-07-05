@@ -65,6 +65,7 @@ you want the deeper artifacts.
 - [Trace submission schema](../normalized_trace.schema.json)
 - [Scenario pack schema](../scenario_pack.schema.json)
 - [Verdict schema](../verdict.schema.json)
+- [Evidence manifest schema](../evidence_manifest.schema.json)
 - [Pilot trace schema](../pilot/trace_schema.json)
 - [Pilot normalized evidence schema](../pilot/normalized_evidence_schema.json)
 - [Pilot verdict protocol](../pilot/verdict_protocol.md)

@@ -43,13 +43,16 @@ normalized runtime evidence is what the verdict uses.
     `runs[]` traces or strict `normalized_actions[]` evidence.
   - `scenario_pack.schema.json`: machine-readable scenario oracle contract.
   - `verdict.schema.json`: scored verdict output contract.
+  - `evidence_manifest.schema.json`: machine-verifiable bundle contract linking
+    trace, scenario pack, verdict, report, policy version, and completeness.
   - `examples/ap_payment_trace.redacted.json` and
     `examples/ap_payment_scenario_pack.json`: a small AP/payment example that
     can be validated and scored locally.
 - `python -m actionboundary validate --trace examples/ap_payment_trace.redacted.json --scenario-pack examples/ap_payment_scenario_pack.json`:
   local engineering-contract check.
 - `python -m actionboundary score --trace examples/ap_payment_trace.redacted.json --scenario-pack examples/ap_payment_scenario_pack.json`:
-  local scorer entrypoint.
+  local scorer entrypoint. Add `--out`, `--markdown`, and
+  `--evidence-manifest` to produce a bundle that can be independently rechecked.
 - `what-we-need.md`: the short first-contact checklist for sending three details before engineering setup.
 - `../docs/customer-trace-handoff-template.md`: customer-friendly example of
   the minimum trace export shape before a full adapter is wired.
@@ -113,10 +116,19 @@ normalized runtime evidence is what the verdict uses.
    python -m actionboundary score \
      --trace trace_results.json \
      --scenario-pack pilot/ap_payment_boundary_manifest.json \
-     --out scored_trace_results.json
+     --out scored_trace_results.json \
+     --markdown scored_trace_results.md \
+     --evidence-manifest scored_trace_results.evidence-manifest.json
    ```
 
-6. Send `trace_results.json` back. The trace should be correlated enough to
+6. Recheck the generated bundle if you produced one:
+
+   ```bash
+   python -m actionboundary validate \
+     --evidence-manifest scored_trace_results.evidence-manifest.json
+   ```
+
+7. Send `trace_results.json` back. The trace should be correlated enough to
    identify the acting identity, target resource, authorization decision, tool
    result, and sandbox or business outcome. No production, no real customer
    data, no shared credentials.

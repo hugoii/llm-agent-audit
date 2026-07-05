@@ -19,10 +19,13 @@
       "type": "string"
     },
     "scenario_pack_sha256": {
-      "type": "string"
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
     },
     "trace_sha256": {
-      "type": "string"
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$",
+      "description": "Final full-submission trace hash, not a per-event or per-tool-call hash."
     },
     "normalized_actions": {
       "type": "array",

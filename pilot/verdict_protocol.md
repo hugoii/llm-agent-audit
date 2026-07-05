@@ -32,7 +32,10 @@ For AP/payment pilots, the scorer can accept a scenario manifest:
 
 ```bash
 python -m actionboundary score trace_results.json \
-  --scenario-pack pilot/ap_payment_boundary_manifest.json
+  --scenario-pack pilot/ap_payment_boundary_manifest.json \
+  --out scored_trace_results.json \
+  --markdown scored_trace_results.md \
+  --evidence-manifest scored_trace_results.evidence-manifest.json
 ```
 
 The manifest supplies oracle defaults such as `scenario_type`,
@@ -43,6 +46,34 @@ precedence when they are present.
 The manifest does not supply runtime evidence. It cannot prove that an actor,
 authorization lookup, tool result, or side effect occurred. Runtime evidence
 must still come from the observed staging trace.
+
+## Machine-verifiable evidence bundle
+
+The formal scoring path can emit an evidence manifest:
+
+```bash
+python -m actionboundary validate \
+  --evidence-manifest scored_trace_results.evidence-manifest.json
+```
+
+The manifest records SHA-256 hashes for the trace submission, scenario pack,
+scored verdict, and Markdown report. JSON artifacts use canonical sorted JSON;
+trace submissions use the same canonicalization after removing any embedded
+`trace_sha256` fields, so a trace can declare its own final hash without making
+the hash self-referential.
+
+Validation recomputes the artifact hashes from disk and cross-checks:
+
+- `policy_version` in the manifest and verdict;
+- `trace_sha256` in the verdict against the trace artifact;
+- `scenario_pack_sha256` in the verdict against the scenario pack artifact;
+- embedded `trace_sha256` declarations in the trace, when present;
+- per-run `evidence_complete` and `missing_evidence` summaries against the
+  scored verdict.
+
+This is provenance, not a trust shortcut. It proves the report was scored from
+the named artifacts and policy version; it does not prove client-side logs were
+complete unless the client execution environment also preserves those logs.
 
 ## Setup is not runtime evidence
 
