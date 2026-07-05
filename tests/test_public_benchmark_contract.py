@@ -108,6 +108,48 @@ class PublicBenchmarkContractTests(unittest.TestCase):
         self.assertIn('<span class="node-value">BENIGN_PASS</span>', index)
         self.assertNotIn('<span class="node-label">verdict</span> <span class="node-value">PASS</span>', index)
 
+    def test_cross_model_public_surfaces_are_not_model_leaderboards(self) -> None:
+        homepage = (ROOT / "docs" / "index.html").read_text(encoding="utf-8")
+        section_start = homepage.index('<section id="model-spread"')
+        section_end = homepage.index('<section class="section workflow-section">', section_start)
+        homepage_model_section = homepage[section_start:section_end]
+        article = (ROOT / "docs" / "model-choice-is-not-an-authorization-layer.md").read_text(
+            encoding="utf-8"
+        )
+        rendered_article = (
+            ROOT / "docs" / "evidence" / "model-choice-authorization-layer" / "index.html"
+        ).read_text(encoding="utf-8")
+        run_status = (ROOT / "docs" / "runs" / "v1.5" / "README.md").read_text(encoding="utf-8")
+
+        self.assertIn("summary-level, not a leaderboard", homepage_model_section)
+        self.assertIn("Sampled API configuration A", homepage_model_section)
+        self.assertIn("## Evidence status", article)
+        self.assertIn("not redacted per-run transcripts", article)
+        self.assertIn("model manifest", run_status)
+        self.assertIn("redacted per-run artifacts", run_status)
+        self.assertIn("Evidence status", rendered_article)
+
+        public_surfaces = [homepage_model_section, article, rendered_article]
+        banned_public_phrases = [
+            "current models as of",
+            "frontier model",
+            "budget model",
+            "Claude Opus 4.8",
+            "Claude Haiku 4.5",
+            "GPT-5.5",
+            "GPT-5-mini",
+            "Gemini 3.1 Pro",
+            "Gemini 3.5 Flash",
+        ]
+        offenders = []
+        for phrase in banned_public_phrases:
+            lowered = phrase.lower()
+            for idx, surface in enumerate(public_surfaces):
+                if lowered in surface.lower():
+                    offenders.append((idx, phrase))
+
+        self.assertEqual([], offenders)
+
     def test_sample_report_assets_use_current_version(self) -> None:
         self.assertTrue((ROOT / "docs" / "sample-pilot-report-v0.8.md").is_file())
         self.assertTrue((ROOT / "docs" / "sample-evidence-report-v0.8.pdf").is_file())

@@ -78,7 +78,7 @@ The model can help assemble the request. The application has to decide whether t
 ## Honest limits
 
 - This is a worked demonstration of the method, not a benchmark and not a safety ranking of any model.
-- I used a current low-cost, OpenAI-compatible tool-calling model, because cost-sensitive teams actually wire models like this into agent prototypes. The choice of model affects how often the failure shows up, not whether the method works. In my [public cross-vendor study](model-choice-is-not-an-authorization-layer.md), frontier models from three major vendors also called high-impact tools without authorization, so this is not an artifact of one weak model.
+- I used a low-cost, OpenAI-compatible tool-calling path because cost-sensitive teams actually wire models like this into agent prototypes. The choice of model affects how often the failure shows up, not whether the method works. The [public model-behavior note](model-choice-is-not-an-authorization-layer.md) shows the same narrower lesson on a fixed synthetic battery: model choice changes behavior, but the authorization gate still has to live outside the model.
 - The workflow and tools are synthetic. No production system, no real customer data, and no real secrets were involved.
 - The result is intermittent and the sample is small. Treat it as evidence that the failure happens and can be measured, not as a rate.
 - This is not a production vulnerability report about a vendor, model, or framework.

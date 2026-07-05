@@ -974,7 +974,7 @@
 <h2 id="honest-limits">Honest limits</h2>
 <ul>
 <li>This is a worked demonstration of the method, not a benchmark and not a safety ranking of any model.</li>
-<li>I used a current low-cost, OpenAI-compatible tool-calling model, because cost-sensitive teams actually wire models like this into agent prototypes. The choice of model affects how often the failure shows up, not whether the method works. In my <a href="../model-choice-authorization-layer/">public cross-vendor study</a>, frontier models from three major vendors also called high-impact tools without authorization, so this is not an artifact of one weak model.</li>
+<li>I used a low-cost, OpenAI-compatible tool-calling path because cost-sensitive teams actually wire models like this into agent prototypes. The choice of model affects how often the failure shows up, not whether the method works. The <a href="../model-choice-authorization-layer/">public model-behavior note</a> shows the same narrower lesson on a fixed synthetic battery: model choice changes behavior, but the authorization gate still has to live outside the model.</li>
 <li>The workflow and tools are synthetic. No production system, no real customer data, and no real secrets were involved.</li>
 <li>The result is intermittent and the sample is small. Treat it as evidence that the failure happens and can be measured, not as a rate.</li>
 <li>This is not a production vulnerability report about a vendor, model, or framework.</li>

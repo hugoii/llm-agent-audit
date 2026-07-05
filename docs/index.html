@@ -6775,23 +6775,23 @@
     <div class="model-evidence-shell">
       <div class="model-evidence-intro">
         <div class="model-evidence-copy">
-          <p class="case-label">Common buyer question</p>
-          <h2 id="model-spread-title">Do stronger models remove the need for authorization?</h2>
-          <p class="lead">Better models reduced some unsafe calls. They still did not prove the user was authorized.</p>
+          <p class="case-label">Supporting method note</p>
+          <h2 id="model-spread-title">Model choice is not an authorization control.</h2>
+          <p class="lead">A fixed synthetic battery showed different attempted tool-call behavior. It still did not prove the user was authorized.</p>
         </div>
       </div>
       <article class="model-spread-panel" aria-label="Cross-model public scenario set result">
         <div class="model-panel-head">
           <span class="model-panel-title">
             <b>Same scenarios, different outcomes</b>
-            <span>Average unsafe high-impact tool-call attempts per run.</span>
+            <span>Summary-level spread in attempted high-impact tool calls.</span>
           </span>
-          <span class="model-panel-meta">Cross-model battery v1.5<br>6 configs &middot; 3 runs each</span>
+          <span class="model-panel-meta">Battery v1.5 method note<br>6 sampled API configs &middot; 3 runs each</span>
         </div>
-        <div class="spectrum" aria-label="Average unsafe high-impact tool-call attempts per run across six model APIs, 0.0 to 8.0 of 58">
+        <div class="spectrum" aria-label="Summary-level spread of unsafe high-impact tool-call attempts per run across six sampled API configurations">
           <div class="spectrum-top">
             <span class="spectrum-axislabel">Unsafe high-impact tool-call attempts per run</span>
-            <span class="spectrum-legend"><span class="lg frontier"></span>frontier <span class="lg budget"></span>budget</span>
+            <span class="spectrum-legend">summary-level, not a leaderboard</span>
           </div>
           <div class="spectrum-ticks" aria-hidden="true">
             <span class="scale-safe"><b>0</b> <small class="spectrum-badge">No unsafe calls</small></span>
@@ -6800,26 +6800,26 @@
           </div>
           <div class="spectrum-track">
             <span class="spectrum-line" aria-hidden="true"></span>
-            <button class="sp-mark frontier above edge-left" style="--x: 3%; transition-delay: 200ms" type="button" data-runs="Runs: 0, 0, 0" aria-label="Claude Opus 4.8 frontier model, 0.0 average unsafe tool-call attempts, runs 0 0 0"><span class="sp-pt"></span><span class="sp-label"><b>Claude Opus 4.8</b> <small>0.0 avg</small></span></button>
-            <button class="sp-mark budget below" style="--x: 23%; transition-delay: 320ms" type="button" data-runs="Runs: 1, 2, 2" aria-label="GPT-5-mini budget model, 1.7 average unsafe tool-call attempts, runs 1 2 2"><span class="sp-pt"></span><span class="sp-label"><b>GPT-5-mini</b> <small>1.7 avg</small></span></button>
-            <button class="sp-mark frontier above" style="--x: 26.5%; transition-delay: 340ms" type="button" data-runs="Runs: 3, 1, 2; API-level block note applies" aria-label="GPT-5.5 frontier model, 2.0 average unsafe tool-call attempts, runs 3 1 2, API-level block note applies"><span class="sp-pt"></span><span class="sp-label"><b>GPT-5.5</b> <small>2.0 avg</small></span></button>
-            <button class="sp-mark budget below" style="--x: 53.5%; transition-delay: 470ms" type="button" data-runs="Runs: 5, 4, 4" aria-label="Claude Haiku 4.5 budget model, 4.3 average unsafe tool-call attempts, runs 5 4 4"><span class="sp-pt"></span><span class="sp-label"><b>Claude Haiku 4.5</b> <small>4.3 avg</small></span></button>
-            <button class="sp-mark budget above" style="--x: 70%; transition-delay: 550ms" type="button" data-runs="Runs: 5, 6, 6" aria-label="Gemini 3.5 Flash budget model, 5.7 average unsafe tool-call attempts, runs 5 6 6"><span class="sp-pt"></span><span class="sp-label"><b>Gemini 3.5 Flash</b> <small>5.7 avg</small></span></button>
-            <button class="sp-mark frontier below edge-right" style="--x: 97%; transition-delay: 680ms" type="button" data-runs="Runs: 8, 7, 9" aria-label="Gemini 3.1 Pro frontier model, 8.0 average unsafe tool-call attempts, runs 8 7 9"><span class="sp-pt"></span><span class="sp-label"><b>Gemini 3.1 Pro</b> <small>8.0 avg</small></span></button>
+            <button class="sp-mark frontier above edge-left" style="--x: 3%; transition-delay: 200ms" type="button" data-runs="Runs: 0, 0, 0" aria-label="Sampled API configuration A, 0.0 average unsafe tool-call attempts, runs 0 0 0"><span class="sp-pt"></span><span class="sp-label"><b>Config A</b> <small>0.0 avg</small></span></button>
+            <button class="sp-mark budget below" style="--x: 23%; transition-delay: 320ms" type="button" data-runs="Runs: 1, 2, 2" aria-label="Sampled API configuration B, 1.7 average unsafe tool-call attempts, runs 1 2 2"><span class="sp-pt"></span><span class="sp-label"><b>Config B</b> <small>1.7 avg</small></span></button>
+            <button class="sp-mark frontier above" style="--x: 26.5%; transition-delay: 340ms" type="button" data-runs="Runs: 3, 1, 2; API-level coverage note applies" aria-label="Sampled API configuration C, 2.0 average unsafe tool-call attempts, runs 3 1 2, API-level coverage note applies"><span class="sp-pt"></span><span class="sp-label"><b>Config C</b> <small>2.0 avg</small></span></button>
+            <button class="sp-mark budget below" style="--x: 53.5%; transition-delay: 470ms" type="button" data-runs="Runs: 5, 4, 4" aria-label="Sampled API configuration D, 4.3 average unsafe tool-call attempts, runs 5 4 4"><span class="sp-pt"></span><span class="sp-label"><b>Config D</b> <small>4.3 avg</small></span></button>
+            <button class="sp-mark budget above" style="--x: 70%; transition-delay: 550ms" type="button" data-runs="Runs: 5, 6, 6" aria-label="Sampled API configuration E, 5.7 average unsafe tool-call attempts, runs 5 6 6"><span class="sp-pt"></span><span class="sp-label"><b>Config E</b> <small>5.7 avg</small></span></button>
+            <button class="sp-mark frontier below edge-right" style="--x: 97%; transition-delay: 680ms" type="button" data-runs="Runs: 8, 7, 9" aria-label="Sampled API configuration F, 8.0 average unsafe tool-call attempts, runs 8 7 9"><span class="sp-pt"></span><span class="sp-label"><b>Config F</b> <small>8.0 avg</small></span></button>
           </div>
         </div>
-        <p class="model-takeaway"><b>Takeaway:</b> Use the strongest model you can. A passing model battery is useful, but it is not the authorization control a buyer can inspect. The inspectable control is the tool-layer trace.</p>
+        <p class="model-takeaway"><b>Takeaway:</b> Model choice is a behavior lever, not a buyer-inspectable permission check. The inspectable control is the tool-layer trace: actor, target, authorization source, tool result, and outcome.</p>
         <div class="model-receipt-row">
-          <span>Cross-model battery v1.5: the live benchmark runs 58 attacks + 3 benign controls; the keyless offline demo runs a 53-attack subset of the same battery. Simulated schemas; no downstream tools, side effects, or tool-result loop. 3 runs per model.</span>
-          <a href="evidence/model-choice-authorization-layer/">Read cross-model note</a>
+          <span>Battery v1.5 method note: 58 attacks + 3 benign controls, simulated schemas, no downstream tools, side effects, or tool-result loop. Public artifacts are summary-level until a manifest and redacted per-run traces are published.</span>
+          <a href="evidence/model-choice-authorization-layer/">Read method note</a>
         </div>
         <ul class="sr-only">
-          <li>Claude Opus 4.8, frontier, unsafe tool-call attempts per run: 0, 0, 0, average 0.0.</li>
-          <li>GPT-5-mini, budget, unsafe tool-call attempts per run: 1, 2, 2, average 1.7.</li>
-          <li>GPT-5.5, frontier, unsafe tool-call attempts per run: 3, 1, 2, average 2.0; 9 scenarios were API-level blocks before the model acted.</li>
-          <li>Claude Haiku 4.5, budget, unsafe tool-call attempts per run: 5, 4, 4, average 4.3.</li>
-          <li>Gemini 3.5 Flash, budget, unsafe tool-call attempts per run: 5, 6, 6, average 5.7.</li>
-          <li>Gemini 3.1 Pro, frontier, unsafe tool-call attempts per run: 8, 7, 9, average 8.0.</li>
+          <li>Sampled API configuration A, unsafe tool-call attempts per run: 0, 0, 0, average 0.0.</li>
+          <li>Sampled API configuration B, unsafe tool-call attempts per run: 1, 2, 2, average 1.7.</li>
+          <li>Sampled API configuration C, unsafe tool-call attempts per run: 3, 1, 2, average 2.0; 9 scenarios were API-level coverage exceptions before the model acted.</li>
+          <li>Sampled API configuration D, unsafe tool-call attempts per run: 5, 4, 4, average 4.3.</li>
+          <li>Sampled API configuration E, unsafe tool-call attempts per run: 5, 6, 6, average 5.7.</li>
+          <li>Sampled API configuration F, unsafe tool-call attempts per run: 8, 7, 9, average 8.0.</li>
         </ul>
       </article>
     </div>

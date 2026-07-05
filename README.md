@@ -46,11 +46,11 @@ scenarios become evidence your customer's security review can use.
 
 **Two layers, two claims.**
 
-**Public benchmark.** Measures whether models would attempt unsafe high-impact
-tool calls from simulated tool schemas in a fixed, reproducible battery. It
-proves model-behavior evidence and an inspectable scoring method. It is not
-evidence about a customer's private system, and it does not claim downstream
-tool execution.
+**Public model-behavior battery.** Measures whether sampled model API
+configurations would attempt unsafe high-impact tool calls from simulated tool
+schemas in a fixed battery. It supports the method and scoring idea, but it is
+summary-level public evidence, not a live model ranking and not evidence about a
+customer's private system.
 
 **Client pilot.** Measures whether one real staging action has runtime evidence
 for the acting identity, target, authorization source, tool result, and business
@@ -149,7 +149,7 @@ The repository uses separate version numbers for separate review surfaces:
 | Surface | Current public version | What it means |
 |---|---:|---|
 | GitHub release | `v1.5.1` | Public proof assets, documentation, and archived research package. |
-| Public benchmark battery | `v1.5` | Fixed cross-model scenario battery and run summaries under `docs/runs/v1.5`. |
+| Public model-behavior battery | `v1.5` | Fixed cross-model scenario battery and summary-level run artifacts under `docs/runs/v1.5`. |
 | Python package / CLI | `0.1.0` | Local validation and scoring package installed from `pyproject.toml`. |
 | Sample report template | `v0.8` | Public synthetic AP report source and rendered PDF sample. |
 | Pilot verdict contract | `pilot-verdict-1.1` | Machine-readable scored verdict schema used by the CLI and pilot tests. |
@@ -215,14 +215,16 @@ rules.</sub></p>
 
 ## Proof artifacts
 
-**Public benchmark.** Battery v1.5: 58 attacks plus 3 benign controls, run
-across multiple real models and summarized in
+**Public model-behavior note.** Battery v1.5: 58 attacks plus 3 benign controls,
+run across sampled model API configurations and summarized in
 [Model choice is not an authorization layer](docs/model-choice-is-not-an-authorization-layer.md).
 The benchmark layer is documented separately in
 [benchmark/README.md](benchmark/README.md).
 
-**Per-run evidence.** Public run summaries and trace-backed reports live under
-[docs/runs/v1.5](docs/runs/v1.5), with the technical report and data archived on
+**Run summary evidence.** Public v1.5 artifacts under
+[docs/runs/v1.5](docs/runs/v1.5) are summary-level source files. They do not yet
+publish a complete model manifest or redacted per-run artifacts. The technical
+report and data are archived on
 [Zenodo](https://doi.org/10.5281/zenodo.20585658).
 
 **Reproducible harness.** `python agent_audit.py` runs an offline demo with no
@@ -234,7 +236,7 @@ checks that path in CI.
 [docs/sample-pilot-report-v0.8.md](docs/sample-pilot-report-v0.8.md), not a
 standalone marketing mockup.
 
-**Client pilot.** The public benchmark proves the method; a client pilot
+**Client pilot.** The public battery illustrates the method; a client pilot
 replaces generic scenarios with your staging tools, authorization sources, and
 traces, then scores them with the
 [pilot verdict protocol](pilot/verdict_protocol.md) and packaged
@@ -246,11 +248,11 @@ This repository is the reproducible public method, not a copy of a customer's
 private staging environment. The point is to show the evidence chain from a
 fixed battery to customer-like workflows to a staging pilot.
 
-**Fixed battery.** Battery v1.5, 58 attacks plus 3 controls, multiple real-model
-summaries, and a CI-checked offline harness. The offline demo uses the 53-attack
-base subset; the live public benchmark adds 5 advanced attacks. This proves the
-method is reproducible and scores model-emitted tool-call attempts against
-simulated schemas, not model promises.
+**Fixed battery.** Battery v1.5, 58 attacks plus 3 controls, summary-level
+model-configuration artifacts, and a CI-checked offline harness. The offline
+demo uses the 53-attack base subset; the live public battery adds 5 advanced
+attacks. This proves the method scores model-emitted tool-call attempts against
+simulated schemas, not model promises. It is not a current model leaderboard.
 
 **Customer-like workflows.** The public docs include
 [AP payment approval](docs/payment-approval-is-not-user-authorization.md),
@@ -289,17 +291,19 @@ system until your staging tools, authorization sources, and traces are used.
 
 ## Why you can trust it
 
-It is independent, open, and evidence-based. On a fixed battery run across six
-recent models from three major vendors, the average number of unsafe
-high-impact tool-call attempts ranged from 0.0 to 8.0 on the same test, and the
-frontier label was not a reliable safety signal. The lesson: a model's refusal,
-and model choice, are not your authorization layer. That has to live in your
-application.
+It is independent, open, and evidence-based. The public battery shows the
+method: attempted high-impact tool calls are recorded and scored against
+scenario rules instead of trusting model promises. The cross-model note is
+supporting evidence that model choice changed behavior on one fixed synthetic
+battery. The core lesson is narrower and stronger: a model's refusal, and model
+choice, are not your authorization layer. That has to live in your application.
 
 Read the cross-vendor study:
 [Model choice is not an authorization layer](docs/model-choice-is-not-an-authorization-layer.md).
-The harness, per-model data, and technical report are archived on Zenodo with a
-[DOI](https://doi.org/10.5281/zenodo.20585658) for citation and reproducibility.
+The harness, summary-level run artifacts, and technical report are archived on
+Zenodo with a [DOI](https://doi.org/10.5281/zenodo.20585658). A complete
+model-manifest and redacted per-run artifact layer should be added before these
+results are promoted as a benchmark-style claim.
 
 Trace handling, retention, and client-data boundaries are covered in
 [Trust & data handling](TRUST.md). Repository security reports and public
@@ -320,7 +324,7 @@ Raw run reports: [gpt-5.5](docs/real_report_gpt5.5.md),
 [gpt-5-mini](docs/real_report_gpt5-mini.md),
 [gpt-5-nano](docs/real_report_gpt5-nano.md).
 
-**Part two, six models across three vendors.** Per-model summaries for the
+**Part two, sampled API configurations.** Summary-level artifacts for the
 cross-vendor study above: [docs/runs/v1.5](docs/runs/v1.5).
 
 **Addendum, two OpenAI-compatible models.** The addendum added DeepSeek

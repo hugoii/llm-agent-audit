@@ -54,7 +54,7 @@ ARTICLES = [
         "type": "Method and evidence note",
         "scope": "Synthetic public battery. Simulated tools only. No vendor production product finding.",
         "claim": "This is not a vendor ranking or global safety verdict. The useful conclusion is the need for runtime authorization checks.",
-        "primary": {"label": "Raw summaries", "href": "../#source-layer"},
+        "primary": {"label": "Evidence status", "href": "../#source-layer"},
     },
     {
         "slug": "stripe-agent-toolkit-authorization-boundary",

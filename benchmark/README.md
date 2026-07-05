@@ -1,6 +1,6 @@
-# Public benchmark layer
+# Public model-behavior battery layer
 
-This layer is the public, reproducible model-behavior battery.
+This layer is the public model-behavior battery.
 
 It answers a narrow question:
 
@@ -24,12 +24,15 @@ reviewed independently:
 - `providers/`: provider-specific live API adapters.
 - `scoring.py`: per-scenario forbidden-outcome judge and status helpers.
 - `report.py`: Markdown report generation.
-- `docs/runs/v1.5/`: public per-model summaries.
+- `docs/runs/v1.5/`: public summary-level per-configuration artifacts.
 - `docs/model-choice-is-not-an-authorization-layer.md`: public cross-model
   writeup.
 
 The public benchmark is useful evidence that model behavior varies and that
-model choice is not an authorization layer. It is not the customer pilot scorer.
+model choice is not an authorization layer. The current public v1.5 artifacts
+are summary-level; do not promote them as a live model ranking or audit-grade
+per-run provenance package until a manifest and redacted per-run artifacts are
+published. This layer is not the customer pilot scorer.
 
 ## Result statuses
 

@@ -1,6 +1,6 @@
 # Two more OpenAI-compatible models, same authorization question
 
-*This is a small addendum to the six-model cross-vendor run, not a new benchmark. I added two OpenAI-compatible models that teams might consider for cost-sensitive agent workloads. The result did not change the main lesson: model choice changes behavior, but it does not replace an application-level authorization gate.*
+*This is a small summary-level addendum to the six-configuration cross-vendor run, not a new benchmark or current-model ranking. I added two OpenAI-compatible model paths that teams might consider for cost-sensitive agent workloads. The result did not change the main lesson: model choice changes behavior, but it does not replace an application-level authorization gate.*
 
 After the six-model run, I wanted to check one narrower question.
 
@@ -14,6 +14,8 @@ I added two models:
 - Qwen `qwen/qwen3.7-plus`, through OpenRouter's OpenAI-compatible API.
 
 I am not treating these as representatives of a country, vendor class, or safety tier. I picked them because OpenAI-compatible endpoints are easy to swap into agent prototypes, and cost-sensitive teams may plausibly consider them.
+
+The same provenance boundary applies here as in the main note: the public files are summary-level artifacts. They do not yet include a complete model manifest or redacted per-run trace artifacts.
 
 ## Results
 
@@ -54,6 +56,8 @@ This addendum is small on purpose.
 
 It does not make a broad claim about DeepSeek, Qwen, OpenRouter, or any production agent built with them. These are raw model calls in a generic tool-calling loop, with simulated tools and a fixed synthetic battery.
 
+It also does not add the provenance layer that would be required for a benchmark-style public claim: exact provider model IDs, run timestamps, sampling parameters, scenario/tool-schema hashes, redacted per-run artifacts, and artifact checksums.
+
 It is also not a ranking. The earlier six-model run ranged from 0.0 to 8.0 unsafe high-impact tool-call attempts on average. These two additional runs landed at 11.67 and 7.0 on the same battery. That spread is interesting, but I would not turn it into "model X is safer than model Y" as a general statement. Change the prompt, tools, policy, wrappers, sampling, or provider-side filters, and the behavior can move.
 
 The right claim is narrower:
@@ -78,4 +82,4 @@ That is the part I would test in a pilot. Not the model in the abstract, but the
 
 ---
 
-*This is an addendum to [Model choice is not an authorization layer](model-choice-is-not-an-authorization-layer.md). Per-model summaries: [DeepSeek v4 flash](runs/v1.5/deepseek__deepseek-v4-flash__summary.md), [Qwen qwen3.7 plus](runs/v1.5/qwen__qwen-qwen3.7-plus__summary.md).*
+*This is an addendum to [Model choice is not an authorization layer](model-choice-is-not-an-authorization-layer.md). Summary-level artifacts: [Battery v1.5 run summaries](runs/v1.5/README.md).*

@@ -919,86 +919,89 @@
   <section class="article-shell" aria-label="Evidence article">
     <article id="article" class="article-body">
       <div class="article-note"><strong>Claim boundary.</strong> This is not a vendor ranking or global safety verdict. The useful conclusion is the need for runtime authorization checks.</div>
-<p><em>I ran the same agent-action audit across six model configurations. Results ranged from 0.0 to 8.0 unsafe high-impact tool-call attempts on average across scorable scenarios, and the recurring failures were mostly authorization failures, not hidden prompt injections.</em></p>
+<p><em>I ran the same agent-action audit across six dated model API configurations. The useful conclusion is narrow: model choice changed attempted tool-call behavior on a fixed synthetic battery, but it did not create an inspectable authorization control.</em></p>
 <p>A while ago I wrote that a model's refusals are not your authorization layer. A model can tell that something sounds dangerous and refuse it, but it cannot check whether the person asking is allowed to act. That has to live in your application.</p>
 <p>This is the follow-up, and the question is more practical. If a team wires the same agent to different model APIs, how much does the base action-safety actually change? Teams pick a model for cost, latency, or quality. I wanted to see what that choice does to the one thing nobody puts on a pricing page, which is how often the model takes a high-impact action it was never authorized to take.</p>
-<p>So I ran the same audit across six model configurations from three vendors, the current frontier and budget model from each, and I ran every one of them three times.</p>
+<p>So I ran the same audit across six model API configurations sampled in June 2026, and I ran every one of them three times.</p>
+<h2 id="evidence-status">Evidence status</h2>
+<p>This note is public method evidence, not a live model ranking.</p>
+<ul>
+<li>The fixed battery is v1.5: 58 attack scenarios plus 3 benign controls.</li>
+<li>The tools are simulated schemas. No downstream tool is executed and no side effect occurs.</li>
+<li>The public source layer currently contains summary-level per-configuration files, not redacted per-run transcripts.</li>
+<li>A full audit-grade release would add a model manifest with exact provider model IDs, run timestamps, commit and scenario hashes, tool-schema hashes, sampling parameters, redacted per-run tool-call artifacts, and coverage-exception details.</li>
+</ul>
+<p>Until that manifest and the redacted run artifacts are published, the cross-model result should be read as supporting evidence for the authorization-boundary thesis. It should not be read as a current leaderboard, a vendor ranking, or a general safety verdict about any named model.</p>
 <h2 id="what-i-ran">What I ran</h2>
 <p>The harness is the same idea as before. The model is given a set of high-risk tool schemas a support or ops agent might have, things like <code>issue_refund</code>, <code>delete_account</code>, <code>transfer_funds</code>, <code>grant_access</code>, and <code>send_email</code>. The tools are not wired to anything. When the model calls one, nothing happens. The harness records which tool it called and with what arguments, and grades that trace against a per-scenario rule for unsafe outcomes.</p>
 <p>The battery is version 1.5, 58 attack scenarios plus 3 benign controls, mapped to the OWASP LLM Top 10. The attacks are a mix of direct requests phrased like routine work, indirect injections hidden inside data the agent reads, jailbreaks, and a few sharper indirect cases. The agent, its tools, and the scenarios are identical across all six models. The secret used in the leak tests is a harmless canary the audit injects, not a real credential.</p>
 <p>I ran each model three times at the provider's default sampling and kept the result of every run. Single runs are misleading here, because a model's tool-calling is not deterministic. The same model can take an action on one run and refuse it on the next. So I report ranges, and I separate failures that showed up in every run, which I call stable, from failures that showed up in only some runs, which I call intermittent.</p>
-<p>The six configurations were Anthropic Claude Opus 4.8 and Claude Haiku 4.5, OpenAI GPT-5.5 and GPT-5-mini, and Google Gemini 3.1 Pro and Gemini 3.5 Flash. These were the current models as of June 2026.</p>
+<p>The source files retain the dated display labels used at the time of the run. In this public note, I treat them as sampled API configurations, not as a statement about which models are current now or which tier should be considered safer.</p>
 <h2 id="results">Results</h2>
 <div class="table-wrap"><table>
 <thead><tr>
-<th>Model</th>
-<th>Tier</th>
+<th>Dated API configuration</th>
 <th>Unsafe high-impact tool-call attempts per run</th>
 <th>Attempt average</th>
-<th>API-level blocks per run</th>
+<th>API-level coverage exceptions per run</th>
 <th>Stable failures (every run)</th>
 </tr></thead>
 <tbody>
 <tr>
-<td>Anthropic Claude Opus 4.8</td>
-<td>frontier</td>
+<td>Configuration A</td>
 <td>0, 0, 0</td>
 <td>0.0</td>
 <td>0</td>
 <td>none</td>
 </tr>
 <tr>
-<td>OpenAI GPT-5-mini</td>
-<td>budget</td>
+<td>Configuration B</td>
 <td>1, 2, 2</td>
 <td>1.67</td>
 <td>0</td>
 <td>1 (grant admin)</td>
 </tr>
 <tr>
-<td>OpenAI GPT-5.5</td>
-<td>frontier</td>
+<td>Configuration C</td>
 <td>3, 1, 2</td>
 <td>2.0</td>
 <td>9 (see note)</td>
 <td>1 (account-cleanup deletion, excessive agency)</td>
 </tr>
 <tr>
-<td>Anthropic Claude Haiku 4.5</td>
-<td>budget</td>
+<td>Configuration D</td>
 <td>5, 4, 4</td>
 <td>4.33</td>
 <td>0</td>
 <td>2 (refund, grant admin)</td>
 </tr>
 <tr>
-<td>Google Gemini 3.5 Flash</td>
-<td>budget</td>
+<td>Configuration E</td>
 <td>5, 6, 6</td>
 <td>5.67</td>
 <td>0</td>
 <td>5 (3 Critical, 2 High)</td>
 </tr>
 <tr>
-<td>Google Gemini 3.1 Pro</td>
-<td>frontier</td>
+<td>Configuration F</td>
 <td>8, 7, 9</td>
 <td>8.0</td>
 <td>0</td>
 <td>7 (5 Critical, 2 High)</td>
 </tr>
 </tbody></table></div>
-<p>Note on GPT-5.5: on every run, 9 of the 58 attack scenarios did not reach the model at all. OpenAI's API returned a safety-filter error instead, flagging the content as a possible cybersecurity risk. Those 9 are coverage exceptions, not clean blocks and not model-level safe behavior. So the GPT-5.5 unsafe count is measured on roughly 49 scorable attack scenarios per run, with API/infrastructure errors reported separately.</p>
+<p>Note on Configuration C: on every run, 9 of the 58 attack scenarios did not reach the model at all. The provider API returned a safety-filter error instead, flagging the content as a possible cybersecurity risk. Those 9 are coverage exceptions, not clean blocks and not model-level safe behavior. So the unsafe count for that configuration is measured on roughly 49 scorable attack scenarios per run, with API/infrastructure errors reported separately.</p>
 <h2 id="what-i-found">What I found</h2>
-<p><strong>The frontier label was not a reliable safety signal.</strong> On the same battery, the average number of unsafe high-impact tool-call attempts ranged from 0.0 to 8.0. Both ends of that range were frontier models. One frontier model took no unsafe action in any run. Another took unsafe actions in the high single digits every run. Within one vendor, the frontier model was actually less safe than its own budget model. Model choice mattered, but the tier alone did not predict behavior in this harness. The actions that did fail are exactly the kind that application-layer authorization should stop.</p>
+<p><strong>Model choice moved behavior, but it was not an authorization control.</strong> On the same battery, the average number of unsafe high-impact tool-call attempts ranged from 0.0 to 8.0. One sampled configuration took no unsafe action in any run. Another took unsafe actions in the high single digits every run. Model choice mattered in this harness, but the actions that failed are exactly the kind that application-layer authorization should stop.</p>
 <p><strong>Where failures appeared, they clustered around authorization for high-impact actions.</strong> This is the same pattern as the first writeup, and it held across vendors. The failures that showed up in every run were almost all plain, direct requests to do something high-impact, phrased like routine work: issue a refund, grant admin access, transfer money, delete an account, disable MFA. One was a one-line jailbreak that moved money. None of them needed a hidden instruction. They needed a model that would act without checking whether the requester was allowed to.</p>
 <p><strong>Hidden-instruction injection was mostly handled well.</strong> This matches the first test. No indirect injection, where a malicious instruction is buried in data the agent reads, was a stable failure on any model. The injection-style attacks that did land were intermittent: a few prompt-injection cases on one model, one of them an attempt to disable two-factor authentication, and a few secret-disclosure cases on another. They are worth noting because they are reachable, but they did not behave like the failures that recurred in every run. Those every-run failures were authorization failures.</p>
-<p><strong>A refusal can still leak the secret it is refusing to share.</strong> One case is easy to miss. On one budget model, in two of the three runs, the agent refused to reveal the canary API key and then printed the canary value inside its own refusal, in the sentence explaining why it would not share it. The refusal language was correct. The secret was still in the output. If that output goes back to the person who asked, the secret is disclosed regardless of the disclaimer wrapped around it. A refusal that names the secret is not the same as withholding it.</p>
-<p><strong>Report ranges, not one-off scores.</strong> Three runs is not a large sample, and I am not claiming statistical significance. Three runs is enough to show that this behavior is not deterministic and to tell apart the failures that recur from the ones that are occasional. On several models the per-run count moved by one or two findings. GPT-5.5 ranged from 1 to 3, Haiku ranged from 4 to 5, and some scenarios landed in only one of the three runs.</p>
+<p><strong>A refusal can still leak the secret it is refusing to share.</strong> One case is easy to miss. On one sampled configuration, in two of the three runs, the agent refused to reveal the canary API key and then printed the canary value inside its own refusal, in the sentence explaining why it would not share it. The refusal language was correct. The secret was still in the output. If that output goes back to the person who asked, the secret is disclosed regardless of the disclaimer wrapped around it. A refusal that names the secret is not the same as withholding it.</p>
+<p><strong>Report ranges, not one-off scores.</strong> Three runs is not a large sample, and I am not claiming statistical significance. Three runs is enough to show that this behavior is not deterministic and to tell apart the failures that recur from the ones that are occasional. On several configurations the per-run count moved by one or two findings. Configuration C ranged from 1 to 3, Configuration D ranged from 4 to 5, and some scenarios landed in only one of the three runs.</p>
 <h2 id="honest-limits">Honest limits</h2>
 <p>I want to be clear about what this is and what it is not.</p>
 <p>This is a raw model in a generic tool-calling loop with a synthetic agent. It is not any vendor's production product. Real agent products from these vendors ship with their own system prompts, guardrails, and application-layer controls, and those are exactly the things that should catch these cases. What this measures is the base behavior a team would inherit if it wired the raw model API to real tools and let the model be the gate. That is a realistic prototype pattern, especially when teams are moving quickly, but it is not a statement about any vendor's overall security.</p>
 <p>It is also a fixed battery of 58 scenarios, three runs each, at default sampling, with simulated tools that touch nothing real. I am not speculating about why one model behaves differently from another. I am only reporting what each one did on this test. This is not a vulnerability report, and it is not a ranking of which vendor is safest. I ordered the table by the per-test average so the spread is easy to see, but a score on this one fixed battery is not a general safety verdict. The point is the spread and the shared failure pattern, not a leaderboard.</p>
+<p>The public provenance is also intentionally limited. The repository exposes summary-level per-configuration artifacts for review, and a technical reader can inspect the harness and scenario battery. It does not yet publish a complete model manifest or redacted per-run artifacts for this six-configuration run. That is why this note supports the method and thesis, but should not be used as a standalone benchmark claim.</p>
 <h2 id="so-what">So what</h2>
 <p>The first writeup said the model cannot be your authorization layer. This one adds a second point that is easy to get wrong. Moving to a better or more expensive model is not an authorization layer either. It is a real lever, and it changes behavior a lot, but it does not replace a permission check.</p>
 <p>If your agent can move money, change records, grant access, disable security settings, or send data outside the company, the thing that stops an unauthorized action has to live in your code, no matter which model you picked. In practice that means a real check on who is allowed to trigger each tool, an approval step for destructive or financial actions, tools scoped to the least they need, and a record of every tool call so you can see what happened.</p>
@@ -1006,7 +1009,7 @@
 <p>If you are shipping an agent that can take real actions, I would be glad to trade notes on what I would test for your setup.</p>
 <hr>
 <p><em>This is part two of a short series. Part one is <a href="https://github.com/hugoii/llm-agent-audit/blob/master/docs/refusals-are-not-your-authorization-layer.md">A model's refusals are not your authorization layer</a>. The harness that produced these results is <a href="https://github.com/hugoii/llm-agent-audit/blob/master/agent_audit.py">agent_audit.py</a> in this repo.</em></p>
-<p><em>Per-model multi-run summaries: <a href="https://github.com/hugoii/llm-agent-audit/blob/master/docs/runs/v1.5/anthropic__claude-opus-4-8__summary.md">Opus 4.8</a>, <a href="https://github.com/hugoii/llm-agent-audit/blob/master/docs/runs/v1.5/anthropic__claude-haiku-4-5-20251001__summary.md">Haiku 4.5</a>, <a href="https://github.com/hugoii/llm-agent-audit/blob/master/docs/runs/v1.5/openai__gpt-5-mini__summary.md">GPT-5-mini</a>, <a href="https://github.com/hugoii/llm-agent-audit/blob/master/docs/runs/v1.5/openai__gpt-5.5__summary.md">GPT-5.5</a>, <a href="https://github.com/hugoii/llm-agent-audit/blob/master/docs/runs/v1.5/gemini__gemini-3.5-flash__summary.md">Gemini 3.5 Flash</a>, <a href="https://github.com/hugoii/llm-agent-audit/blob/master/docs/runs/v1.5/gemini__gemini-3.1-pro-preview__summary.md">Gemini 3.1 Pro</a>.</em></p>
+<p><em>Summary-level source files and provenance status: <a href="https://github.com/hugoii/llm-agent-audit/blob/master/docs/runs/v1.5/README.md">Battery v1.5 run summaries</a>.</em></p>
     </article>
     <aside class="article-rail" aria-label="Article reference links">
       <section class="rail-card">
@@ -1030,7 +1033,7 @@
         <h2>Source layer</h2>
         <p>The full article is readable here. GitHub remains the audit trail for source files, raw summaries, code, and exact revisions.</p>
         <div class="rail-actions">
-          <a href="../#source-layer">Raw summaries</a>
+          <a href="../#source-layer">Evidence status</a>
           <a href="https://github.com/hugoii/llm-agent-audit/blob/master/docs/model-choice-is-not-an-authorization-layer.md">Source on GitHub</a>
           <a href="../">Evidence Library</a>
         </div>

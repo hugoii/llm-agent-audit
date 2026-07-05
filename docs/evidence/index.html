@@ -1117,18 +1117,19 @@
             <div class="artifact-copy">
               <span class="artifact-label">Model-behavior note</span>
               <h3>Model choice is not an authorization layer.</h3>
-              <p>The public cross-model battery shows that different model APIs produce different attempted tool-call behavior on the same simulated high-impact actions. The business conclusion is narrow: model behavior is evidence to inspect, but application-layer authorization still has to enforce the boundary.</p>
+              <p>The public cross-model battery shows that sampled model API configurations produced different attempted tool-call behavior on the same simulated high-impact actions. The business conclusion is narrow: model behavior is evidence to inspect, but application-layer authorization still has to enforce the boundary.</p>
               <ul class="evidence-list">
-                <li><b>What it proves</b><span>Refusal behavior and frontier labels are not enough to answer whether an agent may take a high-impact action.</span></li>
-                <li><b>What it does not prove</b><span>It is not a vendor ranking, product endorsement, or claim that one model is globally safe or unsafe.</span></li>
+                <li><b>What it proves</b><span>Refusal behavior and model choice are not enough to answer whether an agent may take a high-impact action.</span></li>
+                <li><b>What it does not prove</b><span>It is not a vendor ranking, product endorsement, current-model leaderboard, or claim that one model is globally safe or unsafe.</span></li>
                 <li><b>Buyer use</b><span>Helps a security reviewer see why the pilot grades actions and runtime evidence rather than model promises.</span></li>
               </ul>
             </div>
             <aside class="artifact-side">
-              <h4>Reproducibility</h4>
+              <h4>Evidence status</h4>
               <ul>
                 <li>Public summary is readable here in plain language.</li>
                 <li>Raw summaries and technical report remain source artifacts.</li>
+                <li>Full model manifest and redacted per-run artifacts are not yet published for this battery.</li>
               </ul>
               <div class="source-actions">
                 <a href="model-choice-authorization-layer/">Read full article</a>
@@ -1146,7 +1147,7 @@
               <h3>Stripe Agent Toolkit authorization boundary review.</h3>
               <p>A public-source review plus Stripe test-mode coupon run maps Stripe MCP, the official customer-support sample, restricted keys, and per-action authorization evidence into buyer-readable traces. It does not claim a Stripe finding; it shows what trace evidence an agent builder would need for high-impact Stripe writes.</p>
               <ul class="evidence-list">
-                <li><b>What it proves</b><span>The official sample path can create unauthorized Stripe test-mode coupon objects from ordinary untrusted business email without a tool-layer gate, while the same write path is denied with the gate and authorized controls still pass.</span></li>
+                <li><b>What it proves</b><span>When run with a write-capable test key in this slice, the official sample path created unauthorized Stripe test-mode coupon objects from ordinary untrusted business email without a tool-layer gate, while the same write path was denied with the gate and authorized controls still passed.</span></li>
                 <li><b>What it does not prove</b><span>It is not a Stripe engagement, endorsement, production vulnerability report, customer trace, or claim about Stripe's private MCP systems.</span></li>
                 <li><b>Buyer use</b><span>Useful for teams wiring agents to refunds, invoices, payment links, subscriptions, disputes, connected accounts, or agentic commerce rails.</span></li>
               </ul>
@@ -1404,7 +1405,7 @@
         </a>
         <a class="source-card" href="https://github.com/hugoii/llm-agent-audit/tree/master/docs/runs/v1.5">
           <b>Raw run summaries</b>
-          <span>Per-model public v1.5 summary files.</span>
+          <span>Summary-level public v1.5 files; not a full per-run provenance package.</span>
         </a>
         <a class="source-card" href="https://github.com/hugoii/llm-agent-audit/tree/master/docs/runs/multi-turn/gemini-3.5-flash">
           <b>Multi-turn run artifact</b>
