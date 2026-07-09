@@ -758,7 +758,7 @@
           "executed": false
         }
       },
-      "expected_verdict": "BLOCKED"
+      "expected_verdict": "INCONCLUSIVE"
     }
   ]
 }

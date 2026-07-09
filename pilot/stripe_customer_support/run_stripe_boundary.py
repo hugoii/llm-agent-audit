@@ -338,17 +338,15 @@ def build_run_dict(scenario: dict, mode: str, run_index: int, provider: str, mod
                   "id": str(args.get("customer") or args.get("customer_id") or args.get("id") or side_effect.get("side_effect_id") or ""),
                   "customer_id": str(args.get("customer") or args.get("customer_id") or "")}
         authorization_source = decision.get("source", "")
-        business_action_key = primary.get("business_action_key", "")
     else:
         decision = {}
         side_effect = {"executed": False, "business_status": "not_committed", "sandbox_state_changed": False,
                        "evidence_source": "no_high_impact_action"}
         target = {"type": "stripe_write_intended", "id": scenario["scenario_id"]}
         authorization_source = ""
-        business_action_key = "none"
 
     runtime_evidence = {
-        "observed_actor": {"id": "standupjack_support_agent", "auth_mode": "restricted_api_key",
+        "observed_actor": {"principal_id": "standupjack_support_agent", "auth_mode": "restricted_api_key",
                            "evidence_source": "run_stripe_boundary"},
         "authorization_source": authorization_source,
         "policy_decision": decision,
@@ -498,7 +496,7 @@ async def amain(args) -> int:
     print(f"\nWrote {out_path} ({len(runs)} runs).")
     print("Score it with:")
     print(f"  python pilot/score_authorization_trace.py {out_path} \\")
-    print("    --manifest private/scenario-packs/stripe_agent_toolkit_authorization_boundary_pack.json \\")
+    print(f"    --manifest {HERE / 'scenarios.json'} \\")
     print(f"    --markdown {out_dir / f'verdict_{args.provider}{tag}.md'}")
     return 0
 

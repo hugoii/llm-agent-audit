@@ -212,6 +212,8 @@ def evidence_completeness_summary(run_summaries: list[dict[str, Any]]) -> dict[s
     ]
     incomplete = len(missing_by_run)
     return {
+        "scope": "submitted_runs_only",
+        "submitted_runs_complete": incomplete == 0,
         "all_runs_complete": incomplete == 0,
         "complete_runs": len(run_summaries) - incomplete,
         "incomplete_runs": incomplete,
@@ -226,6 +228,7 @@ def expected_integrity_checks(
     verdict: dict[str, Any],
     pack_hash: str = "",
     policy_version: str = "",
+    semantic_match: bool | None = None,
 ) -> list[dict[str, str]]:
     checks = [
         integrity_check(
@@ -261,6 +264,15 @@ def expected_integrity_checks(
                     observed=",".join(declared_trace_hashes),
                 )
             )
+    if semantic_match is not None:
+        checks.append(
+            integrity_check(
+                "verdict_semantically_matches_trace_and_scenario_pack",
+                "PASS" if semantic_match else "FAIL",
+                expected="exact_recomputation_match",
+                observed="match" if semantic_match else "mismatch",
+            )
+        )
     return checks
 
 
@@ -276,6 +288,8 @@ def build_evidence_manifest(
     root: str | Path | None = None,
     generated_at_utc: str | None = None,
 ) -> dict[str, Any]:
+    if scenario_pack_path is None or scenario_pack is None:
+        raise ValueError("an evidence manifest requires an authoritative scenario pack artifact")
     artifacts: dict[str, Any] = {
         "trace": json_artifact_descriptor(
             trace_path,
@@ -291,13 +305,12 @@ def build_evidence_manifest(
             root=root,
         ),
     }
-    if scenario_pack_path is not None and scenario_pack is not None:
-        artifacts["scenario_pack"] = json_artifact_descriptor(
-            scenario_pack_path,
-            scenario_pack,
-            kind="scenario_pack",
-            root=root,
-        )
+    artifacts["scenario_pack"] = json_artifact_descriptor(
+        scenario_pack_path,
+        scenario_pack,
+        kind="scenario_pack",
+        root=root,
+    )
     if markdown_path is not None:
         artifacts["markdown_report"] = raw_artifact_descriptor(
             markdown_path,
@@ -306,12 +319,22 @@ def build_evidence_manifest(
         )
 
     policy_version = str(verdict.get("policy_version") or verdict.get("schema_version") or "")
+    from .authorization_score import score_submission, validate_verdict_matches_recomputed
+
+    recomputed = score_submission(
+        trace,
+        scenario_pack,
+        trace_sha256=artifacts["trace"]["sha256"],
+        scenario_pack_sha256=artifacts["scenario_pack"]["sha256"],
+    )
+    semantic_match = not validate_verdict_matches_recomputed(verdict, recomputed)
     checks = expected_integrity_checks(
         trace=trace,
         trace_hash=artifacts["trace"]["sha256"],
         verdict=verdict,
         pack_hash=artifacts.get("scenario_pack", {}).get("sha256", ""),
         policy_version=policy_version,
+        semantic_match=semantic_match,
     )
 
     run_summaries = []
@@ -330,6 +353,12 @@ def build_evidence_manifest(
             "checks": checks,
         },
         "evidence_completeness": evidence_completeness_summary(run_summaries),
+        "scenario_coverage": verdict.get("scenario_coverage") or {
+            "complete": False,
+            "total_scenarios": 0,
+            "tested_scenarios": len(run_summaries),
+            "untested_scenario_ids": [],
+        },
         "runs": run_summaries,
     }
 
@@ -339,13 +368,13 @@ def validate_evidence_manifest(value: dict[str, Any], *, base_dir: str | Path) -
     artifacts = value.get("artifacts")
     if not isinstance(artifacts, dict):
         return ["evidence manifest artifacts object is required"]
-    for name in ("trace", "verdict"):
+    for name in ("trace", "verdict", "scenario_pack"):
         descriptor = artifacts.get(name)
         if not isinstance(descriptor, dict):
             errors.append(f"evidence manifest artifacts.{name} is required")
             continue
         errors.extend(check_artifact_descriptor(base_dir, descriptor))
-    for name in ("scenario_pack", "markdown_report"):
+    for name in ("markdown_report",):
         descriptor = artifacts.get(name)
         if isinstance(descriptor, dict):
             errors.extend(check_artifact_descriptor(base_dir, descriptor))
@@ -353,8 +382,10 @@ def validate_evidence_manifest(value: dict[str, Any], *, base_dir: str | Path) -
     try:
         trace_path = artifact_path(Path(base_dir), artifacts["trace"])
         verdict_path = artifact_path(Path(base_dir), artifacts["verdict"])
+        pack_path = artifact_path(Path(base_dir), artifacts["scenario_pack"])
         trace = load_json_file(trace_path)
         verdict = load_json_file(verdict_path)
+        scenario_pack = load_json_file(pack_path)
     except Exception as exc:  # pragma: no cover - defensive after descriptor checks
         errors.append(f"artifact could not be loaded for cross-checks: {exc}")
         return errors
@@ -367,14 +398,37 @@ def validate_evidence_manifest(value: dict[str, Any], *, base_dir: str | Path) -
             f"expected {expected_trace_hash}, observed {verdict.get('trace_sha256')}"
         )
 
-    pack_desc = artifacts.get("scenario_pack") if isinstance(artifacts.get("scenario_pack"), dict) else None
-    if pack_desc:
-        expected_pack_hash = str(pack_desc.get("sha256") or "")
-        if verdict.get("scenario_pack_sha256") != expected_pack_hash:
-            errors.append(
-                "evidence manifest verdict scenario_pack_sha256 mismatch: "
-                f"expected {expected_pack_hash}, observed {verdict.get('scenario_pack_sha256')}"
-            )
+    pack_desc = artifacts.get("scenario_pack") if isinstance(artifacts.get("scenario_pack"), dict) else {}
+    expected_pack_hash = str(pack_desc.get("sha256") or "")
+    if verdict.get("scenario_pack_sha256") != expected_pack_hash:
+        errors.append(
+            "evidence manifest verdict scenario_pack_sha256 mismatch: "
+            f"expected {expected_pack_hash}, observed {verdict.get('scenario_pack_sha256')}"
+        )
+
+    # A hash proves artifact identity, not that the verdict is true. Recompute
+    # the complete verdict from the bound trace and authoritative scenario pack.
+    from .authorization_score import score_submission, validate_verdict_matches_recomputed
+
+    try:
+        recomputed = score_submission(
+            trace,
+            scenario_pack,
+            trace_sha256=expected_trace_hash,
+            scenario_pack_sha256=expected_pack_hash,
+        )
+    except ValueError as exc:
+        errors.append(f"evidence manifest semantic recomputation failed: {exc}")
+        recomputed = None
+    semantic_errors = (
+        validate_verdict_matches_recomputed(verdict, recomputed)
+        if recomputed is not None
+        else ["semantic recomputation was unavailable"]
+    )
+    errors.extend(
+        f"evidence manifest semantic verdict: {error}"
+        for error in semantic_errors
+    )
 
     policy_version = str(value.get("policy_version") or "")
     verdict_policy_version = str(verdict.get("policy_version") or verdict.get("schema_version") or "")
@@ -395,8 +449,9 @@ def validate_evidence_manifest(value: dict[str, Any], *, base_dir: str | Path) -
         trace=trace,
         trace_hash=expected_trace_hash,
         verdict=verdict,
-        pack_hash=str(pack_desc.get("sha256") or "") if pack_desc else "",
+        pack_hash=expected_pack_hash,
         policy_version=policy_version,
+        semantic_match=not semantic_errors,
     )
     for expected in expected_checks:
         actual = declared_by_name.get(expected["name"])
@@ -447,6 +502,10 @@ def validate_evidence_manifest(value: dict[str, Any], *, base_dir: str | Path) -
     declared_completeness = value.get("evidence_completeness")
     if declared_completeness != expected_completeness:
         errors.append("evidence manifest evidence_completeness summary mismatch")
+
+    expected_coverage = verdict.get("scenario_coverage")
+    if value.get("scenario_coverage") != expected_coverage:
+        errors.append("evidence manifest scenario_coverage mismatch")
 
     for index, run in enumerate(verdict.get("runs") or [], start=1):
         if not isinstance(run, dict):

@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import argparse
+from collections import Counter
 import json
 from pathlib import Path
 import sys
@@ -11,7 +12,15 @@ from typing import Any
 from jsonschema import Draft202012Validator
 from jsonschema.exceptions import SchemaError
 
-from .authorization_score import apply_manifest_defaults, has_trace, manifest_scenarios, markdown_summary, score_submission
+from .authorization_score import (
+    apply_manifest_defaults,
+    has_trace,
+    manifest_oracle_conflicts,
+    manifest_scenarios,
+    markdown_summary,
+    score_submission,
+    validate_verdict_matches_recomputed,
+)
 from .provenance import (
     build_evidence_manifest,
     iter_declared_trace_hashes,
@@ -109,9 +118,21 @@ def validate_trace_submission(trace: dict[str, Any], manifest: dict[str, Any] | 
                 continue
             if not run.get("scenario_id"):
                 errors.append(f"runs[{index}].scenario_id is required")
+            scenario = scenario_manifest.get(str(run.get("scenario_id") or ""))
+            if manifest is not None and scenario is None:
+                errors.append(
+                    f"runs[{index}].scenario_id is not declared by the scenario pack: "
+                    f"{run.get('scenario_id')!r}"
+                )
+            conflicts = manifest_oracle_conflicts(run, scenario)
+            if conflicts:
+                errors.append(
+                    f"runs[{index}] conflicts with authoritative scenario-pack oracle fields: "
+                    + ", ".join(conflicts)
+                )
             run_with_defaults = apply_manifest_defaults(
                 run,
-                scenario_manifest.get(str(run.get("scenario_id") or "")),
+                scenario,
             )
             if not run_with_defaults.get("expected_authorization"):
                 errors.append(f"runs[{index}].expected_authorization is required")
@@ -155,9 +176,13 @@ def validate_scenario_pack(manifest: dict[str, Any]) -> list[str]:
         elif scenario_id in seen:
             errors.append(f"duplicate scenario_id: {scenario_id}")
         seen.add(scenario_id)
-        for field in ("expected_authorization", "required_runtime_evidence", "allowed_terminal_states"):
+        for field in ("expected_authorization", "allowed_terminal_states"):
             if field not in scenario:
                 errors.append(f"scenarios[{index}].{field} is required")
+        if "required_runtime_evidence" not in scenario and "required_runtime_evidence" not in manifest:
+            errors.append(
+                f"scenarios[{index}].required_runtime_evidence is required when no pack-level default exists"
+            )
     return errors
 
 
@@ -165,7 +190,8 @@ def validate_verdict(scored: dict[str, Any]) -> list[str]:
     errors: list[str] = []
     if scored.get("schema_version") != "pilot-verdict-1.1":
         errors.append("verdict schema_version must be pilot-verdict-1.1")
-    if not isinstance(scored.get("counts"), dict):
+    counts = scored.get("counts")
+    if not isinstance(counts, dict):
         errors.append("verdict counts object is required")
     for field in ("scenario_pack_sha256", "trace_sha256"):
         value = scored.get(field)
@@ -191,6 +217,16 @@ def validate_verdict(scored: dict[str, Any]) -> list[str]:
             errors.append(f"verdict runs[{index}].verdict.overall has unknown status: {overall!r}")
         if verdict.get("system_authorization_boundary") == "PASS" and verdict.get("missing_evidence"):
             errors.append(f"verdict runs[{index}] declares PASS with missing evidence")
+    if isinstance(counts, dict):
+        expected_counts = dict(sorted(Counter(
+            run.get("verdict", {}).get("overall")
+            for run in runs
+            if isinstance(run, dict) and isinstance(run.get("verdict"), dict)
+        ).items()))
+        if counts != expected_counts:
+            errors.append(
+                f"verdict counts mismatch: expected {expected_counts!r}, observed {counts!r}"
+            )
     return errors
 
 
@@ -263,6 +299,12 @@ def print_score_summary(scored: dict[str, Any], report_path: str | None, markdow
     print(f"Scored runs: {len(runs)}")
     for status in SUMMARY_STATUSES:
         print(f"{status}: {counts.get(status, 0)}")
+    coverage = scored.get("scenario_coverage") if isinstance(scored.get("scenario_coverage"), dict) else {}
+    print(
+        "Scenario coverage: "
+        f"{coverage.get('tested_scenarios', 0)}/{coverage.get('total_scenarios', 0)} "
+        f"({'complete' if coverage.get('complete') else 'incomplete'})"
+    )
     if report_path:
         print(f"Report: {report_path}")
     if markdown_path:
@@ -278,6 +320,8 @@ def cmd_validate(args: argparse.Namespace) -> int:
 
     if trace is None and manifest is None and verdict is None and evidence_manifest is None:
         errors.append("provide --trace, --scenario-pack, --verdict, or --evidence-manifest")
+    if trace is not None and manifest is None:
+        errors.append("trace scoring requires --scenario-pack for an independent authoritative oracle")
     if trace is not None:
         errors.extend(f"JSON Schema: {error}" for error in json_schema_errors(trace, "trace"))
         errors.extend(f"trace: {error}" for error in validate_trace_submission(trace, manifest))
@@ -292,6 +336,10 @@ def cmd_validate(args: argparse.Namespace) -> int:
             f"verdict integrity: {error}"
             for error in validate_verdict_integrity(verdict, trace, manifest)
         )
+        if trace is None:
+            errors.append("verdict semantic validation requires --trace")
+        if manifest is None:
+            errors.append("verdict semantic validation requires --scenario-pack")
     if evidence_manifest is not None:
         errors.extend(
             f"JSON Schema: {error}"
@@ -313,6 +361,11 @@ def cmd_validate(args: argparse.Namespace) -> int:
         )
         errors.extend(f"scored verdict JSON Schema: {error}" for error in json_schema_errors(scored, "verdict"))
         errors.extend(f"scored verdict: {error}" for error in validate_verdict(scored))
+        if verdict is not None:
+            errors.extend(
+                f"verdict semantic: {error}"
+                for error in validate_verdict_matches_recomputed(verdict, scored)
+            )
 
     if errors:
         print("Validation failed:", file=sys.stderr)
@@ -323,6 +376,12 @@ def cmd_validate(args: argparse.Namespace) -> int:
     if scored is not None:
         counts = ", ".join(f"{key}={value}" for key, value in sorted(scored.get("counts", {}).items()))
         print(f"ActionBoundary scoreability: OK ({counts or 'no runs'})")
+        coverage = scored.get("scenario_coverage") or {}
+        print(
+            "Scenario coverage: "
+            f"{coverage.get('tested_scenarios', 0)}/{coverage.get('total_scenarios', 0)} "
+            f"({'complete' if coverage.get('complete') else 'incomplete'})"
+        )
     elif manifest is not None and verdict is None:
         print("ActionBoundary scenario-pack checks: OK")
     elif verdict is not None:
@@ -340,8 +399,12 @@ def cmd_score(args: argparse.Namespace) -> int:
         raise ValueError("score requires --trace or TRACE")
     if args.evidence_manifest and not args.out:
         raise ValueError("score --evidence-manifest requires --out so the verdict artifact can be hashed")
+    if args.evidence_manifest and not args.scenario_pack:
+        raise ValueError("score --evidence-manifest requires --scenario-pack for independent oracle binding")
     trace = load_json(trace_path)
     manifest = load_manifest(args.scenario_pack)
+    if manifest is None:
+        raise ValueError("score requires --scenario-pack for an independent authoritative oracle")
     errors = [f"JSON Schema: {error}" for error in json_schema_errors(trace, "trace")]
     errors.extend(f"trace: {error}" for error in validate_trace_submission(trace, manifest))
     errors.extend(f"trace integrity: {error}" for error in validate_trace_integrity(trace, manifest))
@@ -412,10 +475,10 @@ def build_parser() -> argparse.ArgumentParser:
     )
     validate.set_defaults(func=cmd_validate)
 
-    score = subcommands.add_parser("score", help="Score a trace against an optional scenario pack")
+    score = subcommands.add_parser("score", help="Score a trace against an authoritative scenario pack")
     score.add_argument("trace_path", nargs="?", help="Trace submission JSON")
     score.add_argument("--trace", help="Trace submission JSON")
-    score.add_argument("--scenario-pack", help="Scenario pack manifest JSON")
+    score.add_argument("--scenario-pack", required=True, help="Authoritative scenario pack manifest JSON")
     score.add_argument("--out", help="Write scored verdict JSON to this path")
     score.add_argument("--markdown", help="Write Markdown summary to this path")
     score.add_argument("--evidence-manifest", help="Write machine-verifiable evidence manifest JSON")

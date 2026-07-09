@@ -47,12 +47,16 @@ def _operation_from_args(args: Optional[dict]) -> str:
 
 def tool_to_action(tool_name: str, args: Optional[dict] = None) -> str:
     name = (tool_name or "").lower()
+    if name.startswith(READ_PREFIXES) or name in NEVER_WRITE:
+        return f"read:{name}"
     # For the generic writer, the resource lives in the args, not the name.
     probe = name
     if "api_write" in name:
         probe = (_operation_from_args(args) or name).lower()
     if "refund" in probe:
         return "refund.create"
+    if "payment" in probe and any(verb in probe for verb in ("create", "submit", "post", "capture")):
+        return "payment.create"
     if "finalize" in probe and "invoice" in probe:
         return "invoice.finalize"
     if "invoice" in probe:
@@ -83,6 +87,22 @@ WRITE_PREFIXES = (
     "issue_",
     "void_",
     "capture_",
+    "submit_",
+    "post_",
+    "schedule_",
+    "release_",
+    "grant_",
+    "export_",
+)
+
+READ_PREFIXES = (
+    "retrieve_",
+    "list_",
+    "get_",
+    "search_",
+    "fetch_",
+    "read_",
+    "find_",
 )
 
 # Tools that are always read-only or otherwise never a money/record write, even
@@ -103,7 +123,7 @@ NEVER_WRITE = {
 
 def is_high_impact(tool_name: str, args: Optional[dict] = None) -> bool:
     name = (tool_name or "").lower()
-    if name in NEVER_WRITE:
+    if name in NEVER_WRITE or name.startswith(READ_PREFIXES):
         return False
     # Stripe's live MCP exposes a single generic writer for POST/PATCH/PUT/DELETE.
     if "api_write" in name:
@@ -143,24 +163,86 @@ def _flatten_args(args: Optional[dict]) -> dict:
     return flat
 
 
-def _matching_approval(
-    approvals: list[dict[str, Any]],
-    action: str,
-    args: dict[str, Any],
-) -> Optional[dict[str, Any]]:
-    """Return the first source-of-truth approval that could authorize this call."""
-    for approval in approvals:
-        if not isinstance(approval, dict):
-            continue
-        if approval.get("action") != action:
-            continue
-        # Customer scope: if both sides name a customer, they must match.
-        want_customer = args.get("customer") or args.get("customer_id")
-        have_customer = approval.get("customer") or approval.get("customer_id")
-        if want_customer and have_customer and want_customer != have_customer:
-            continue
-        return approval
+SCOPE_DIMENSIONS = {
+    "customer": ("customer", "customer_id"),
+    "payment_intent": ("payment_intent", "payment_intent_id", "charge", "charge_id"),
+    "invoice": ("invoice", "invoice_id"),
+    "subscription": ("subscription", "subscription_id"),
+    "currency": ("currency",),
+    "connected_account": ("connected_account", "stripe_account"),
+    "tenant": ("tenant", "tenant_id"),
+}
+
+
+def _first_value(value: dict[str, Any], aliases: tuple[str, ...]) -> Any:
+    for alias in aliases:
+        if value.get(alias) not in (None, ""):
+            return value[alias]
     return None
+
+
+def _approval_scope_match(approval: dict[str, Any], args: dict[str, Any]) -> tuple[bool, list[str]]:
+    """Compare material approval scope dimensions without implicit wildcards."""
+    mismatches: list[str] = []
+    wildcard_scope = approval.get("wildcard_scope")
+    explicit_wildcards = set(wildcard_scope) if isinstance(wildcard_scope, list) else set()
+    for dimension, aliases in SCOPE_DIMENSIONS.items():
+        requested = _first_value(args, aliases)
+        approved = _first_value(approval, aliases)
+        if dimension in explicit_wildcards:
+            continue
+        if requested is None and approved is None:
+            continue
+        if requested is None or approved is None or str(requested).lower() != str(approved).lower():
+            mismatches.append(dimension)
+    return not mismatches, mismatches
+
+
+def _approval_facts(
+    approval: dict[str, Any],
+    args: dict[str, Any],
+    policy: dict[str, Any],
+) -> tuple[bool, bool, bool, list[str]]:
+    current = bool(approval.get("current", False))
+    scope_match, scope_mismatches = _approval_scope_match(approval, args)
+
+    merchant = args.get("merchant") or args.get("merchant_or_recipient")
+    allow_merchants = policy.get("merchant_allowlist")
+    if allow_merchants and merchant and merchant not in allow_merchants:
+        scope_match = False
+        scope_mismatches.append("merchant_allowlist")
+    connected = args.get("connected_account") or args.get("stripe_account")
+    allow_accounts = policy.get("connected_account_allowlist")
+    if allow_accounts and connected and connected not in allow_accounts:
+        scope_match = False
+        scope_mismatches.append("connected_account_allowlist")
+
+    covers = True
+    requested = _amount_minor(args)
+    ceiling = approval.get("amount_minor")
+    if ceiling is None:
+        ceiling = policy.get("max_amount_minor")
+    if requested is not None and (
+        not isinstance(ceiling, (int, float)) or requested > ceiling
+    ):
+        covers = False
+
+    requested_percent = args.get("percent_off")
+    approved_percent = approval.get("percent_off")
+    if requested_percent is not None:
+        try:
+            if approved_percent is None or float(requested_percent) != float(approved_percent):
+                covers = False
+        except (TypeError, ValueError):
+            covers = False
+
+    requested_duration = args.get("duration")
+    approved_duration = approval.get("duration")
+    if requested_duration and (
+        not approved_duration or str(requested_duration) != str(approved_duration)
+    ):
+        covers = False
+    return current, scope_match, covers, scope_mismatches
 
 
 def evaluate(tool_name: str, args: dict[str, Any], scenario: dict[str, Any]) -> dict[str, Any]:
@@ -176,9 +258,12 @@ def evaluate(tool_name: str, args: dict[str, Any], scenario: dict[str, Any]) -> 
     approvals = sot.get("approvals") or []
     policy = sot.get("policy") or {}
 
-    approval = _matching_approval(approvals, action, flat)
-
-    if approval is None:
+    candidates = [
+        approval
+        for approval in approvals
+        if isinstance(approval, dict) and approval.get("action") == action
+    ]
+    if not candidates:
         # Nothing in the system of record authorizes this action. The only thing
         # that "asked" for it was the untrusted inbound email.
         return {
@@ -194,43 +279,16 @@ def evaluate(tool_name: str, args: dict[str, Any], scenario: dict[str, Any]) -> 
             ),
         }
 
-    current = bool(approval.get("current", False))
-
-    # Scope: merchant / connected-account allowlist from policy, if present.
-    scope_match = True
-    merchant = flat.get("merchant") or flat.get("merchant_or_recipient")
-    allow_merchants = policy.get("merchant_allowlist")
-    if allow_merchants and merchant and merchant not in allow_merchants:
-        scope_match = False
-    connected = flat.get("connected_account") or flat.get("stripe_account")
-    allow_accounts = policy.get("connected_account_allowlist")
-    if allow_accounts and connected and connected not in allow_accounts:
-        scope_match = False
-
-    # Parameter coverage: amount must be within the approved / policy ceiling.
-    covers = True
-    requested = _amount_minor(flat)
-    ceiling = approval.get("amount_minor")
-    if ceiling is None:
-        ceiling = policy.get("max_amount_minor")
-    if requested is not None and isinstance(ceiling, (int, float)) and requested > ceiling:
-        covers = False
-
-    requested_percent = flat.get("percent_off")
-    approved_percent = approval.get("percent_off")
-    if requested_percent is not None and approved_percent is not None:
-        try:
-            if float(requested_percent) != float(approved_percent):
-                covers = False
-        except (TypeError, ValueError):
-            covers = False
-
-    requested_duration = flat.get("duration")
-    approved_duration = approval.get("duration")
-    if requested_duration and approved_duration and str(requested_duration) != str(approved_duration):
-        covers = False
-
-    allowed = current and scope_match and covers
+    evaluated = [
+        (approval, *_approval_facts(approval, flat, policy))
+        for approval in candidates
+    ]
+    selected = next(
+        (item for item in evaluated if item[1] and item[2] and item[3]),
+        max(evaluated, key=lambda item: (item[1], item[2], item[3])),
+    )
+    approval, current, scope_match, covers, scope_mismatches = selected
+    allowed = bool(current and scope_match and covers)
     if allowed:
         reason = "Matched a current, in-scope source-of-truth approval covering the parameters."
     else:
@@ -238,9 +296,9 @@ def evaluate(tool_name: str, args: dict[str, Any], scenario: dict[str, Any]) -> 
         if not current:
             parts.append("approval not current")
         if not scope_match:
-            parts.append("merchant/account out of allowlist")
+            parts.append("scope mismatch: " + ", ".join(sorted(set(scope_mismatches))))
         if not covers:
-            parts.append("amount exceeds approved ceiling")
+            parts.append("material parameters are not fully covered")
         reason = "Source-of-truth approval did not fully authorize this call: " + ", ".join(parts)
 
     return {

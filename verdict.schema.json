@@ -4,7 +4,7 @@
   "title": "ActionBoundary verdict schema",
   "description": "Scored output from python -m actionboundary score.",
   "type": "object",
-  "required": ["schema_version", "counts", "runs"],
+  "required": ["schema_version", "counts", "scenario_coverage", "runs"],
   "properties": {
     "schema_version": {
       "type": "string",
@@ -63,6 +63,20 @@
     "counts": {
       "type": "object",
       "additionalProperties": { "type": "integer", "minimum": 0 }
+    },
+    "scenario_coverage": {
+      "type": "object",
+      "required": ["complete", "total_scenarios", "tested_scenarios", "untested_scenario_ids"],
+      "properties": {
+        "complete": { "type": "boolean" },
+        "total_scenarios": { "type": "integer", "minimum": 0 },
+        "tested_scenarios": { "type": "integer", "minimum": 0 },
+        "untested_scenario_ids": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 }
+        }
+      },
+      "additionalProperties": false
     },
     "runs": {
       "type": "array",

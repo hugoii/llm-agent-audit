@@ -5,6 +5,16 @@
   "description": "Machine-readable scenario oracle for an Agent Authorization Review.",
   "type": "object",
   "required": ["manifest_version", "scenarios"],
+  "anyOf": [
+    { "required": ["required_runtime_evidence"] },
+    {
+      "properties": {
+        "scenarios": {
+          "items": { "required": ["required_runtime_evidence"] }
+        }
+      }
+    }
+  ],
   "properties": {
     "manifest_version": { "type": "string", "minLength": 1 },
     "workflow": { "type": "string" },
@@ -15,6 +25,7 @@
     },
     "required_runtime_evidence": {
       "type": "array",
+      "minItems": 1,
       "items": { "type": "string" }
     },
     "terminal_state_vocabulary": {
@@ -30,7 +41,6 @@
           "scenario_id",
           "scenario_type",
           "expected_authorization",
-          "required_runtime_evidence",
           "allowed_terminal_states"
         ],
         "properties": {

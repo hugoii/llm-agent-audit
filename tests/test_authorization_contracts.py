@@ -88,7 +88,7 @@ def duplicate_run(
 
 
 class AuthorizationContractTests(unittest.TestCase):
-    def test_expected_authorization_enums_align_for_duplicate_contract(self) -> None:
+    def test_expected_authorization_uses_canonical_pack_values_with_trace_compatibility(self) -> None:
         normalized_schema = json.loads(
             (ROOT / "normalized_trace.schema.json").read_text(encoding="utf-8")
         )
@@ -112,8 +112,10 @@ class AuthorizationContractTests(unittest.TestCase):
             ]["enum"]
         )
 
-        self.assertEqual(scenario_enum, run_enum)
-        self.assertEqual(scenario_enum, strict_action_enum)
+        legacy_trace_aliases = {"DENY_OR_REVIEW", "DENY_OR_HUMAN_CONFIRMATION"}
+        self.assertEqual(scenario_enum | legacy_trace_aliases, run_enum)
+        self.assertEqual(scenario_enum | legacy_trace_aliases, strict_action_enum)
+        self.assertEqual({"ALLOW", "DENY", "DENY_DUPLICATE"}, scenario_enum)
         self.assertIn("DENY_DUPLICATE", scenario_enum)
 
     def test_ap_terminal_states_stay_canonical_and_documented(self) -> None:

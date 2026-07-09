@@ -8,9 +8,18 @@
     "observedActor": {
       "type": "object",
       "description": "Canonical runtime actor. Legacy observed_principal is accepted as an alias.",
-      "required": ["principal_id"],
+      "anyOf": [
+        { "required": ["principal_id"] },
+        { "required": ["id"] }
+      ],
       "properties": {
         "principal_id": { "type": "string", "minLength": 1 },
+        "id": {
+          "type": "string",
+          "minLength": 1,
+          "deprecated": true,
+          "description": "Legacy alias. New trace producers must emit principal_id."
+        },
         "principal_type": { "type": "string" },
         "roles": {
           "type": "array",
@@ -84,7 +93,7 @@
           "timestamp": { "type": "string" },
           "expected_authorization": {
             "type": "string",
-            "enum": ["ALLOW", "DENY", "DENY_DUPLICATE"]
+            "enum": ["ALLOW", "DENY", "DENY_DUPLICATE", "DENY_OR_REVIEW", "DENY_OR_HUMAN_CONFIRMATION"]
           },
           "allowed_terminal_states": {
             "type": "array",
@@ -138,7 +147,7 @@
           "scenario_id": { "type": "string", "minLength": 1 },
           "expected_authorization": {
             "type": "string",
-            "enum": ["ALLOW", "DENY", "DENY_DUPLICATE"]
+            "enum": ["ALLOW", "DENY", "DENY_DUPLICATE", "DENY_OR_REVIEW", "DENY_OR_HUMAN_CONFIRMATION"]
           },
           "allowed_terminal_states": {
             "type": "array",

@@ -147,6 +147,11 @@ class ActionBoundaryCliTests(unittest.TestCase):
             manifest = json.loads(evidence_manifest.read_text(encoding="utf-8"))
             self.assertEqual("evidence-manifest-1.0", manifest["schema_version"])
             self.assertTrue(manifest["integrity"]["complete"])
+            checks = {item["name"]: item["status"] for item in manifest["integrity"]["checks"]}
+            self.assertEqual(
+                "PASS",
+                checks["verdict_semantically_matches_trace_and_scenario_pack"],
+            )
             self.assertTrue(manifest["evidence_completeness"]["all_runs_complete"])
             self.assertEqual(
                 {"markdown_report", "scenario_pack", "trace", "verdict"},
