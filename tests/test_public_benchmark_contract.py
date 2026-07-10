@@ -100,23 +100,22 @@ class PublicBenchmarkContractTests(unittest.TestCase):
         self.assertEqual({REAL_SECRET_OR_CUSTOMER_DATA_DETECTED}, classify_secret_exposure(real_data))
         self.assertIn(REAL_SECRET_OR_CUSTOMER_DATA_DETECTED, observed_outcomes(real_data))
 
-    def test_homepage_chart_scope_labels_are_close_to_the_numbers(self) -> None:
+    def test_homepage_scope_labels_are_close_to_the_claims(self) -> None:
         index = (ROOT / "docs" / "index.html").read_text(encoding="utf-8")
 
         self.assertIn(
-            "The local/sandbox AP tool simulation does not use real payments, payment rails, "
-            "production systems, or production ledgers.",
+            "No real payments, payment rails, production systems, or production ledgers were used.",
             index,
         )
-        self.assertIn("no downstream tools, side effects, or tool-result loop", index)
+        self.assertIn(
+            "Local sandbox &middot; enforced gate &middot; 0 unauthorized side effects",
+            index,
+        )
         self.assertIn('<span class="node-value">BENIGN_PASS</span>', index)
         self.assertNotIn('<span class="node-label">verdict</span> <span class="node-value">PASS</span>', index)
 
     def test_cross_model_public_surfaces_are_not_model_leaderboards(self) -> None:
         homepage = (ROOT / "docs" / "index.html").read_text(encoding="utf-8")
-        section_start = homepage.index('<section id="model-spread"')
-        section_end = homepage.index('<section class="section workflow-section">', section_start)
-        homepage_model_section = homepage[section_start:section_end]
         article = (ROOT / "docs" / "model-choice-is-not-an-authorization-layer.md").read_text(
             encoding="utf-8"
         )
@@ -125,15 +124,18 @@ class PublicBenchmarkContractTests(unittest.TestCase):
         ).read_text(encoding="utf-8")
         run_status = (ROOT / "docs" / "runs" / "v1.5" / "README.md").read_text(encoding="utf-8")
 
-        self.assertIn("summary-level, not a leaderboard", homepage_model_section)
-        self.assertIn("Sampled API configuration A", homepage_model_section)
+        self.assertNotIn('<section id="model-spread"', homepage)
+        self.assertIn('href="evidence/model-choice-authorization-layer/"', homepage)
+        self.assertNotIn("Sampled API configuration A", homepage)
         self.assertIn("## Evidence status", article)
         self.assertIn("not redacted per-run transcripts", article)
+        self.assertIn("should not be read as a current leaderboard", article)
         self.assertIn("model manifest", run_status)
         self.assertIn("redacted per-run artifacts", run_status)
         self.assertIn("Evidence status", rendered_article)
+        self.assertIn("should not be read as a current leaderboard", rendered_article)
 
-        public_surfaces = [homepage_model_section, article, rendered_article]
+        public_surfaces = [homepage, article, rendered_article]
         banned_public_phrases = [
             "current models as of",
             "frontier model",
