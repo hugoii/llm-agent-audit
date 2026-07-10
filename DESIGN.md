@@ -21,7 +21,7 @@ colors:
 typography:
   display:
     fontFamily: "-apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica, Arial, sans-serif"
-    fontSize: "clamp(3.1rem, 4.1vw, 4rem)"
+    fontSize: "clamp(3rem, 4vw, 3.9rem)"
     fontWeight: 780
     lineHeight: 0.98
     letterSpacing: "-0.055em"

@@ -144,6 +144,21 @@ class SourceReadabilityTests(unittest.TestCase):
         )
         self.assertIn('window.location.replace("payment-authorization-review/")', html)
 
+    def test_public_pages_use_one_canonical_home_route(self) -> None:
+        """Avoid separate cached copies of / and /index.html."""
+
+        legacy_home = re.compile(
+            r'href="(?:(?:\.\.?/)*)/?index\.html(?:#[^"]*)?"'
+        )
+        offenders: list[str] = []
+
+        for path in (ROOT / "docs").rglob("*.html"):
+            html = path.read_text(encoding="utf-8")
+            if legacy_home.search(html):
+                offenders.append(str(path.relative_to(ROOT)))
+
+        self.assertEqual([], offenders)
+
     def test_public_markdown_entrypoints_are_readable_in_raw_view(self) -> None:
         """Keep buyer/reviewer-facing markdown from becoming one-line walls."""
 
