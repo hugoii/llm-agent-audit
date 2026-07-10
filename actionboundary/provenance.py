@@ -8,6 +8,16 @@ import json
 from pathlib import Path
 from typing import Any
 
+from jsonschema import Draft202012Validator
+
+from .contracts import (
+    CONTRACT_SET_VERSION,
+    CUSTOMER_EXECUTED_PROFILE,
+    EVIDENCE_MANIFEST_SCHEMA_VERSION,
+    EXECUTION_PROFILES,
+    REPOSITORY_SYNTHETIC_PROFILE,
+)
+
 
 HASH_ALGORITHM = "sha256"
 JSON_CANONICALIZATION = "json-canonical-v1"
@@ -276,6 +286,52 @@ def expected_integrity_checks(
     return checks
 
 
+def attestation_integrity_checks(
+    attestation: dict[str, Any],
+    *,
+    trace: dict[str, Any],
+    trace_hash: str,
+    pack_hash: str,
+) -> list[dict[str, str]]:
+    engagement_id = str(trace.get("engagement_id") or "")
+    attested_engagement_id = str(attestation.get("engagement_id") or "")
+    export_hash = str(
+        ((attestation.get("log_export") or {}).get("export_artifact_sha256") or "")
+        if isinstance(attestation.get("log_export"), dict)
+        else ""
+    )
+    checks = [
+        integrity_check(
+            "customer_attestation_trace_hash_matches",
+            "PASS" if attestation.get("trace_sha256") == trace_hash else "FAIL",
+            expected=trace_hash,
+            observed=str(attestation.get("trace_sha256") or ""),
+        ),
+        integrity_check(
+            "customer_attestation_scenario_pack_hash_matches",
+            "PASS" if attestation.get("scenario_pack_sha256") == pack_hash else "FAIL",
+            expected=pack_hash,
+            observed=str(attestation.get("scenario_pack_sha256") or ""),
+        ),
+        integrity_check(
+            "customer_attestation_engagement_matches_trace",
+            "PASS" if engagement_id and attested_engagement_id == engagement_id else "FAIL",
+            expected=engagement_id,
+            observed=attested_engagement_id,
+        ),
+    ]
+    if export_hash:
+        checks.append(
+            integrity_check(
+                "customer_attestation_log_export_hash_matches_trace",
+                "PASS" if export_hash == trace_hash else "FAIL",
+                expected=trace_hash,
+                observed=export_hash,
+            )
+        )
+    return checks
+
+
 def build_evidence_manifest(
     *,
     trace_path: str | Path,
@@ -285,11 +341,27 @@ def build_evidence_manifest(
     scenario_pack_path: str | Path | None = None,
     scenario_pack: dict[str, Any] | None = None,
     markdown_path: str | Path | None = None,
+    pdf_path: str | Path | None = None,
+    execution_profile: str = REPOSITORY_SYNTHETIC_PROFILE,
+    customer_execution_attestation_path: str | Path | None = None,
+    customer_execution_attestation: dict[str, Any] | None = None,
     root: str | Path | None = None,
     generated_at_utc: str | None = None,
 ) -> dict[str, Any]:
     if scenario_pack_path is None or scenario_pack is None:
         raise ValueError("an evidence manifest requires an authoritative scenario pack artifact")
+    if execution_profile not in EXECUTION_PROFILES:
+        raise ValueError(f"unsupported execution profile: {execution_profile}")
+    if execution_profile == CUSTOMER_EXECUTED_PROFILE and (
+        customer_execution_attestation_path is None
+        or customer_execution_attestation is None
+    ):
+        raise ValueError("customer_executed evidence requires a customer execution attestation")
+    if execution_profile == REPOSITORY_SYNTHETIC_PROFILE and (
+        customer_execution_attestation_path is not None
+        or customer_execution_attestation is not None
+    ):
+        raise ValueError("repository_synthetic evidence cannot include a customer execution attestation")
     artifacts: dict[str, Any] = {
         "trace": json_artifact_descriptor(
             trace_path,
@@ -317,6 +389,19 @@ def build_evidence_manifest(
             kind="markdown_report",
             root=root,
         )
+    if pdf_path is not None:
+        artifacts["pdf_report"] = raw_artifact_descriptor(
+            pdf_path,
+            kind="pdf_report",
+            root=root,
+        )
+    if customer_execution_attestation_path is not None and customer_execution_attestation is not None:
+        artifacts["customer_execution_attestation"] = json_artifact_descriptor(
+            customer_execution_attestation_path,
+            customer_execution_attestation,
+            kind="customer_execution_attestation",
+            root=root,
+        )
 
     policy_version = str(verdict.get("policy_version") or verdict.get("schema_version") or "")
     from .authorization_score import score_submission, validate_verdict_matches_recomputed
@@ -336,6 +421,15 @@ def build_evidence_manifest(
         policy_version=policy_version,
         semantic_match=semantic_match,
     )
+    if customer_execution_attestation is not None:
+        checks.extend(
+            attestation_integrity_checks(
+                customer_execution_attestation,
+                trace=trace,
+                trace_hash=artifacts["trace"]["sha256"],
+                pack_hash=artifacts["scenario_pack"]["sha256"],
+            )
+        )
 
     run_summaries = []
     for run in verdict.get("runs") or []:
@@ -344,7 +438,9 @@ def build_evidence_manifest(
         run_summaries.append(run_summary(run))
 
     return {
-        "schema_version": "evidence-manifest-1.0",
+        "schema_version": EVIDENCE_MANIFEST_SCHEMA_VERSION,
+        "contract_set_version": CONTRACT_SET_VERSION,
+        "execution_profile": execution_profile,
         "generated_at_utc": generated_at_utc or utc_now_iso(),
         "policy_version": policy_version,
         "artifacts": artifacts,
@@ -374,7 +470,16 @@ def validate_evidence_manifest(value: dict[str, Any], *, base_dir: str | Path) -
             errors.append(f"evidence manifest artifacts.{name} is required")
             continue
         errors.extend(check_artifact_descriptor(base_dir, descriptor))
-    for name in ("markdown_report",):
+    execution_profile = str(value.get("execution_profile") or "")
+    if execution_profile not in EXECUTION_PROFILES:
+        errors.append(f"unsupported execution profile: {execution_profile}")
+    attestation_desc = artifacts.get("customer_execution_attestation")
+    if execution_profile == CUSTOMER_EXECUTED_PROFILE and not isinstance(attestation_desc, dict):
+        errors.append("customer_executed evidence manifest requires artifacts.customer_execution_attestation")
+    if execution_profile == REPOSITORY_SYNTHETIC_PROFILE and isinstance(attestation_desc, dict):
+        errors.append("repository_synthetic evidence manifest cannot bind a customer execution attestation")
+
+    for name in ("markdown_report", "pdf_report", "customer_execution_attestation"):
         descriptor = artifacts.get(name)
         if isinstance(descriptor, dict):
             errors.extend(check_artifact_descriptor(base_dir, descriptor))
@@ -389,6 +494,24 @@ def validate_evidence_manifest(value: dict[str, Any], *, base_dir: str | Path) -
     except Exception as exc:  # pragma: no cover - defensive after descriptor checks
         errors.append(f"artifact could not be loaded for cross-checks: {exc}")
         return errors
+
+    customer_attestation = None
+    if isinstance(attestation_desc, dict):
+        try:
+            attestation_path = artifact_path(Path(base_dir), attestation_desc)
+            customer_attestation = load_json_file(attestation_path)
+            schema_path = Path(__file__).resolve().parents[1] / "pilot" / "customer_execution_attestation.schema.json"
+            attestation_schema = load_json_file(schema_path)
+            schema_errors = sorted(
+                Draft202012Validator(attestation_schema).iter_errors(customer_attestation),
+                key=lambda item: tuple(item.absolute_path),
+            )
+            errors.extend(
+                f"customer execution attestation schema: {error.message}"
+                for error in schema_errors
+            )
+        except (OSError, ValueError, json.JSONDecodeError) as exc:
+            errors.append(f"customer execution attestation could not be loaded: {exc}")
 
     trace_desc = artifacts.get("trace") if isinstance(artifacts.get("trace"), dict) else {}
     expected_trace_hash = str(trace_desc.get("sha256") or "")
@@ -453,6 +576,15 @@ def validate_evidence_manifest(value: dict[str, Any], *, base_dir: str | Path) -
         policy_version=policy_version,
         semantic_match=not semantic_errors,
     )
+    if customer_attestation is not None:
+        expected_checks.extend(
+            attestation_integrity_checks(
+                customer_attestation,
+                trace=trace,
+                trace_hash=expected_trace_hash,
+                pack_hash=expected_pack_hash,
+            )
+        )
     for expected in expected_checks:
         actual = declared_by_name.get(expected["name"])
         if actual is None:
@@ -469,6 +601,8 @@ def validate_evidence_manifest(value: dict[str, Any], *, base_dir: str | Path) -
                     f"evidence manifest integrity check {expected['name']} has wrong {field}: "
                     f"expected {expected.get(field)}, observed {actual.get(field)}"
                 )
+        if expected.get("status") != "PASS":
+            errors.append(f"evidence manifest integrity check failed: {expected['name']}")
     expected_complete = all(item.get("status") == "PASS" for item in expected_checks)
     if integrity.get("complete") != expected_complete:
         errors.append(

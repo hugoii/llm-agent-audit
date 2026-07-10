@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import html
-import posixpath
 import re
 from pathlib import Path
 from urllib.parse import quote
@@ -412,7 +411,7 @@ def nav_html() -> str:
           </a>
         </div>
       </div>
-      <a href="../../index.html#report">Sample report</a>
+      <a href="../../index.html#report">Report format</a>
       <a href="../../index.html#pilot">Pilot</a>
       <a href="../../trust.html">Trust</a>
       <a href="../../index.html#intake">Start</a>
@@ -1352,7 +1351,7 @@ def render_page(article: dict[str, str]) -> str:
 <footer>
   <div class="footer-inner">
     <span>ActionBoundary by JZ Software Consulting. Reviews performed and signed by <a href="../../why.html">Jiahao Zhang</a>.</span>
-    <span><a href="../../index.html">Home</a> | <a href="../../why.html">About</a> | <a href="../">Evidence</a> | <a href="../../trust.html">Trust</a> | <a href="https://github.com/hugoii/llm-agent-audit">GitHub</a> | <a href="mailto:jiahao@actionboundary.dev">jiahao@actionboundary.dev</a></span>
+    <span><a href="../../index.html">Home</a> | <a href="../../why.html">About</a> | <a href="../">Evidence</a> | <a href="../../trust.html">Trust</a> | <a href="../../privacy.html">Privacy</a> | <a href="../../terms.html">Terms</a> | <a href="https://github.com/hugoii/llm-agent-audit">GitHub</a> | <a href="mailto:jiahao@actionboundary.dev">jiahao@actionboundary.dev</a></span>
   </div>
 </footer>
 <script>

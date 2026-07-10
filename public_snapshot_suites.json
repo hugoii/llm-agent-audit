@@ -1,0 +1,13 @@
+{
+  "schema_version": "public-snapshot-suites-1.0",
+  "contract_set_version": "actionboundary-contract-set-1.0",
+  "suites": [
+    {
+      "suite_id": "stripe-l3-coupon-2026-07-04",
+      "snapshot_dir": "pilot/stripe_customer_support/out/snapshots/2026-07-04-stripe-l3-coupon",
+      "scenario_pack": "pilot/stripe_customer_support/scenarios.json",
+      "submission_glob": "submission_*.json",
+      "verdict_prefix": "verdict_"
+    }
+  ]
+}

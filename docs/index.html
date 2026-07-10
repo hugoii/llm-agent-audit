@@ -3,19 +3,19 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>ActionBoundary | Agent Authorization Review for AI agents</title>
-<meta name="description" content="ActionBoundary helps B2B AI teams review high-impact agent tool actions in staging and produce trace-backed authorization evidence for customer security reviews.">
+<title>ActionBoundary | Authorization Evidence for AP and Finance Agents</title>
+<meta name="description" content="ActionBoundary reviews one high-impact AP or finance agent workflow in staging and produces trace-backed authorization evidence for customer security review.">
 <link rel="canonical" href="https://actionboundary.dev/">
 <meta property="og:type" content="website">
-<meta property="og:title" content="ActionBoundary | Agent Authorization Review for AI agents">
-<meta property="og:description" content="Staging-only trace review for customer security teams asking whether an AI agent can move money, change records, grant access, or export data without authorization.">
+<meta property="og:title" content="ActionBoundary | Authorization Evidence for AP and Finance Agents">
+<meta property="og:description" content="Staging-only trace review for teams whose AI agents can move money, change vendor records, issue refunds, or write to an ERP.">
 <meta property="og:url" content="https://actionboundary.dev/">
 <meta property="og:image" content="https://actionboundary.dev/og-image.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="ActionBoundary | Agent Authorization Review for AI agents">
-<meta name="twitter:description" content="Staging-only trace review for customer security teams asking whether an AI agent can move money, change records, grant access, or export data without authorization.">
+<meta name="twitter:title" content="ActionBoundary | Authorization Evidence for AP and Finance Agents">
+<meta name="twitter:description" content="Staging-only trace review for teams whose AI agents can move money, change vendor records, issue refunds, or write to an ERP.">
 <meta name="twitter:image" content="https://actionboundary.dev/og-image.png">
 <link rel="icon" type="image/svg+xml" href="favicon.svg">
 <style>
@@ -3942,91 +3942,22 @@
     color: var(--teal-dark);
   }
 
-  .intake-form {
-    margin-top: 18px;
-    display: grid;
-    gap: 12px;
-  }
-
-  .intake-form-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 12px;
-  }
-
-  .intake-form label {
-    display: grid;
-    gap: 5px;
-  }
-
-  .intake-form label > span {
-    color: var(--ink);
-    font-size: 0.88rem;
-    font-weight: 750;
-  }
-
-  .intake-form input,
-  .intake-form textarea {
-    width: 100%;
-    padding: 9px 12px;
-    border: 1px solid var(--line-strong);
-    border-radius: 8px;
-    background: var(--white);
-    color: var(--ink);
-    font: inherit;
-    font-size: 0.96rem;
-  }
-
-  .intake-form input:focus-visible,
-  .intake-form textarea:focus-visible {
-    outline: 2px solid rgba(15, 118, 110, 0.42);
-    outline-offset: 1px;
-  }
-
-  .intake-form textarea {
-    resize: vertical;
-  }
-
-  .honey-field {
-    position: absolute !important;
-    left: -9999px !important;
-    width: 1px;
-    height: 1px;
-    opacity: 0;
-  }
-
-  .intake-form-foot {
+  .intake-email-actions {
+    margin-top: 16px;
     display: flex;
     flex-wrap: wrap;
     align-items: center;
     gap: 12px;
   }
 
-  .intake-form-foot .button {
-    font: inherit;
-    font-weight: 800;
-    cursor: pointer;
-  }
-
-  .form-status {
+  .intake-privacy {
+    margin: 14px 0 0;
     color: var(--muted);
     font-size: 0.9rem;
   }
 
-  .form-status.ok {
-    color: var(--teal-dark);
+  .intake-privacy a {
     font-weight: 700;
-  }
-
-  .form-status.err {
-    color: #991b1b;
-    font-weight: 700;
-  }
-
-  @media (max-width: 640px) {
-    .intake-form-grid {
-      grid-template-columns: 1fr;
-    }
   }
 
   .faq {
@@ -6403,7 +6334,7 @@
           </a>
         </div>
       </div>
-      <a href="#report">Sample report</a>
+      <a href="#report">Report format</a>
       <a href="#pilot">Pilot</a>
       <a href="trust.html">Trust</a>
       <a href="#intake">Start</a>
@@ -6430,10 +6361,10 @@
 
 <header class="hero">
   <div class="hero-inner">
-    <p class="eyebrow">ActionBoundary. Staging-only. Customer review evidence.</p>
-    <h1><span class="hero-title-line">Agent authorization</span><span class="hero-title-line">reviews for B2B AI</span><span class="hero-title-line">teams</span></h1>
+    <p class="eyebrow">ActionBoundary. AP and finance first. Staging-only.</p>
+    <h1><span class="hero-title-line">Authorization evidence</span><span class="hero-title-line">for agents that can</span><span class="hero-title-line">move money</span></h1>
     <p class="hero-copy">
-      ActionBoundary helps finance, healthcare, and enterprise agent teams test high-impact tool actions against the right user, approval, policy, and source of truth.
+      ActionBoundary reviews one AP or finance workflow against the right user, approval, vendor record, policy, tool result, and terminal business outcome.
     </p>
     <p class="hero-principle" aria-label="We test actions, not answers.">
       <span aria-hidden="true">
@@ -6444,7 +6375,7 @@
     </p>
     <div class="cta-row" aria-label="Primary actions">
       <a class="button primary" href="mailto:jiahao@actionboundary.dev?subject=3%20scenarios%20for%20our%20agent">Get 3 scenarios</a>
-      <a class="button secondary" href="sample-evidence-report-v0.8.pdf">View sample evidence report</a>
+      <a class="button secondary" href="sample-evidence-report-v0.8.pdf">View illustrative report format</a>
     </div>
     <div class="cta-note" role="list" aria-label="Engagement safety boundaries">
       <span class="cta-note-item" role="listitem">
@@ -6467,7 +6398,7 @@
         <span class="demo-title">
           <span class="demo-kicker">Evidence excerpt / AP payment experiment &middot; local sandbox</span>
           <strong>Same tool call. Different authority.</strong>
-          <span class="demo-subtitle">Independent evidence, not another gate.</span>
+          <span class="demo-subtitle">Independent evidence that evaluates the existing gate.</span>
         </span>
         <span class="evidence-receipt">4 model APIs &middot; 5 runs/mode &middot; 0 unauthorized side effects when enforced</span>
       </div>
@@ -6491,7 +6422,7 @@
         </div>
       </div>
       <p class="evidence-consequence-note">This is the trace your first enterprise security review will ask for. If your answer is &quot;the model refused in testing,&quot; that is the finding they write down.</p>
-      <p class="evidence-boundary-note">Synthetic staging run. No production systems, payment rails, or customer data.</p>
+      <p class="evidence-boundary-note">This synthetic staging run does not use production systems, payment rails, or customer data.</p>
     </div>
   </div>
 </header>
@@ -6510,7 +6441,7 @@
           <a class="button outline" href="https://github.com/hugoii/llm-agent-audit/tree/master/pilot/stripe_customer_support">Reproduce the run</a>
         </div>
         <p class="stripe-feature-guardrail">
-          Public sample. Stripe test mode. No production systems, customer data, card data, live money, or Stripe endorsement.
+          This public Stripe test-mode sample uses no production systems, customer data, card data, or live money, and it does not imply Stripe endorsement.
         </p>
       </div>
       <div class="stripe-board" aria-label="Same untrusted email tested without the gate and with the gate">
@@ -6594,7 +6525,7 @@
         <div class="finding-actions">
           <a class="button ap-review-link" href="payment-authorization-review/"><span>Review one AP payment path</span> <span class="button-arrow" aria-hidden="true">&rarr;</span></a>
           <a class="button outline" href="evidence/ap-payment-approval/" aria-label="Read the AP authorization example">Read AP auth example</a>
-          <a class="button outline" href="#report">View sample report</a>
+          <a class="button outline" href="#report">View illustrative report format</a>
         </div>
       </div>
       <article class="case-panel">
@@ -6657,7 +6588,7 @@
             <span><i class="dot block"></i>blocked at tool layer</span>
             <span><i class="dot none"></i>no high-impact action</span>
           </div>
-          <p class="case-caveat">Local/sandbox AP tool simulation only. No real payments, payment rails, production systems, or production ledgers.</p>
+          <p class="case-caveat">The local/sandbox AP tool simulation does not use real payments, payment rails, production systems, or production ledgers.</p>
         </div>
       </article>
     </div>
@@ -6867,8 +6798,8 @@
   <section id="report" class="section">
     <div class="deliverable">
       <div>
-        <h2>A buyer-ready evidence report,<br>built from your staging traces.</h2>
-        <p class="lead">A real report uses your agent, your tools, your staging traces, and workflow-specific authorization rules. The public sample shows the shape of the evidence package.</p>
+        <h2>An evidence report for security review,<br>built from your staging traces.</h2>
+        <p class="lead">A customer report uses your agent, tools, staging traces, and workflow-specific authorization rules. The public PDF is an illustrative report format; the CI bundle shows the current machine-bound artifact chain.</p>
         <p class="report-pass-note"><b>If your gate already holds, that is still useful.</b> The output becomes a buyer-readable PASS evidence pack, not a bug report: actor, target, authorization source, tool result, and side-effect outcome.</p>
         <div class="checklist" aria-label="Report contents">
           <div class="check"><span class="mark">&#10003;</span><span>Executive summary for founders and security reviewers</span></div>
@@ -6881,14 +6812,17 @@
         <figure class="report-frame">
           <img src="sample-report-preview.png" alt="Rendered preview of the sample evidence report PDF cover page showing document control, scope, and engagement boundary">
           <figcaption class="report-actions">
-            <a class="button outline" href="sample-evidence-report-v0.8.pdf">View sample report</a>
+            <a class="button outline" href="sample-evidence-report-v0.8.pdf">View illustrative format</a>
           </figcaption>
         </figure>
         <a class="report-source-link" href="evidence/#sample-report" aria-label="Read the sample report source structure">
           <svg viewBox="0 0 16 16" aria-hidden="true" focusable="false">
             <path fill="currentColor" d="M8 0C3.58 0 0 3.67 0 8.2c0 3.62 2.29 6.7 5.47 7.79.4.08.55-.18.55-.4v-1.39c-2.23.5-2.7-1.1-2.7-1.1-.36-.95-.89-1.2-.89-1.2-.73-.51.06-.5.06-.5.8.06 1.23.85 1.23.85.72 1.26 1.88.9 2.34.69.07-.53.28-.9.51-1.1-1.78-.21-3.64-.91-3.64-4.04 0-.89.31-1.62.82-2.2-.08-.2-.36-1.03.08-2.16 0 0 .67-.22 2.2.84A7.42 7.42 0 0 1 8 4.01c.68 0 1.36.09 2 .27 1.52-1.06 2.19-.84 2.19-.84.44 1.13.16 1.96.08 2.16.51.58.82 1.31.82 2.2 0 3.14-1.87 3.82-3.65 4.03.29.26.54.76.54 1.53v2.27c0 .22.15.48.55.4A8.15 8.15 0 0 0 16 8.2C16 3.67 12.42 0 8 0Z"></path>
           </svg>
-          <span>Report source</span>
+          <span>Illustrative report source</span>
+        </a>
+        <a class="report-source-link" href="https://github.com/hugoii/llm-agent-audit/actions/workflows/public-evidence-bundle.yml" aria-label="Open the public evidence bundle workflow">
+          <span>Current CI evidence bundle</span>
         </a>
       </div>
     </div>
@@ -6926,13 +6860,13 @@
           </div>
         </div>
       </div>
-      <p class="offer-scope">Incomplete trace? You still get the exact evidence gap before a customer security review. Not full-product certification; the goal is the first defensible evidence artifact for the path your buyer is most likely to question. Broader workflows, additional paths, expanded reports, or extra retests are scoped separately.</p>
+      <p class="offer-scope">An incomplete trace still produces the exact evidence gap before a customer security review. The goal is a defensible evidence artifact for the path your buyer is most likely to question, not full-product certification. Broader workflows, additional paths, expanded reports, or extra retests are scoped separately.</p>
       <p class="offer-safety">
         <svg viewBox="0 0 24 24" fill="none" aria-hidden="true" focusable="false">
           <path d="M12 2.75 5 5.4v5.6c0 4.2 3 7.9 7 9.25 4-1.35 7-5.05 7-9.25V5.4L12 2.75Z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"></path>
           <path d="m8.8 12.1 2.25 2.25 4.15-4.5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"></path>
         </svg>
-        <span>No production access. No real customer data. No shared credentials. <a href="trust.html">Trust boundary</a>.</span>
+        <span>Production access, real customer data, and shared credentials are not required. <a href="trust.html">Trust boundary</a>.</span>
       </p>
     </article>
     <div class="offer-grid">
@@ -6941,7 +6875,7 @@
         <ul class="offer-list get">
           <li>5 to 10 custom risk scenarios and selected benign controls from a workflow-specific library</li>
           <li>Strict per-action verdicts against observed identity, approval scope, source-of-truth evidence, tool result, and business outcome</li>
-          <li>Compact buyer-ready evidence memo with relevant OWASP/NIST control language</li>
+          <li>Compact evidence memo structured for customer security review, with relevant OWASP/NIST control language</li>
           <li>Concrete application-layer fixes</li>
           <li>One same-path retest after fixes</li>
         </ul>
@@ -7010,8 +6944,8 @@
   </section>
 
   <section id="trust" class="section">
-    <h2>Open method. Verifiable evidence.</h2>
-    <p class="lead">Public artifacts show how the review works. A pilot applies the same method to your staging workflow, tools, authorization sources, and traces.</p>
+    <h2>Open method. Recheckable public evidence.</h2>
+    <p class="lead">Public synthetic artifacts show how the review works and can be rescored in CI. A customer pilot adds your staging workflow, tools, authorization sources, traces, and execution attestation.</p>
     <article class="trust-map" aria-label="ActionBoundary public trust stack">
       <div class="trust-map-head">
         <span class="trust-map-title">
@@ -7033,8 +6967,8 @@
         </a>
         <a class="trust-node" style="--i: 2" href="sample-evidence-report-v0.8.pdf" role="listitem">
           <span class="trust-index" aria-hidden="true"></span>
-          <b>Sample report</b>
-          <small>The deliverable format is visible before a pilot starts.</small>
+          <b>Illustrative report</b>
+          <small>The report format is visible; it is not customer execution evidence.</small>
         </a>
         <a class="trust-node" style="--i: 3" href="https://doi.org/10.5281/zenodo.20585658" role="listitem">
           <span class="trust-index" aria-hidden="true"></span>
@@ -7047,7 +6981,7 @@
           <small>Staging-only, redacted traces, no third-party LLMs by default.</small>
         </a>
       </div>
-      <p class="trust-caption">Public repo proves the method. A pilot produces evidence for your workflow.</p>
+      <p class="trust-caption">The public repo makes the method and synthetic examples inspectable. Only a customer-executed pilot can produce evidence for a private workflow.</p>
     </article>
   </section>
 
@@ -7055,7 +6989,7 @@
     <div class="intake">
       <div>
         <h2>Send 3 details. Get 3 scenarios.</h2>
-        <p class="lead">No long questionnaire. Send three details and ActionBoundary will reply with a realistic first scenario set.</p>
+        <p class="lead">Send three details instead of completing a long questionnaire, and ActionBoundary will reply with a realistic first scenario set.</p>
         <div class="cta-row">
           <a class="button primary" href="mailto:jiahao@actionboundary.dev?subject=3%20scenarios%20for%20our%20agent">Send the 3 details</a>
           <a class="button outline" href="evidence/what-we-need/">See what we need</a>
@@ -7073,28 +7007,17 @@
     </div>
     <div class="intake-contact" id="contact">
       <div class="intake-contact-head">
-        <b>No mail client on this machine? Same three details, two other paths.</b>
-        <span>Copy the address, or send the form below. Both reach the same reviewer inbox.</span>
+        <b>Send the same three details by email.</b>
+        <span>Use the email button or copy the address; this site does not use a website form or third-party form processor.</span>
       </div>
       <div class="email-copy-row">
         <code>jiahao@actionboundary.dev</code>
         <button class="copy-email" type="button" data-copy="jiahao@actionboundary.dev">Copy address</button>
       </div>
-      <form class="intake-form" action="https://formsubmit.co/jiahao@actionboundary.dev" method="POST">
-        <input type="hidden" name="_subject" value="3 scenarios for our agent (site form)">
-        <input type="hidden" name="_template" value="box">
-        <input type="text" name="_honey" class="honey-field" tabindex="-1" autocomplete="off" aria-hidden="true">
-        <div class="intake-form-grid">
-          <label><span>Work email</span><input type="email" name="email" required autocomplete="email" placeholder="you@company.com"></label>
-          <label><span>Product and buyer</span><input type="text" name="product_and_buyer" required placeholder="What the agent does and who buys it"></label>
-        </div>
-        <label><span>One workflow or action surface</span><textarea name="workflow_or_action_surface" rows="3" required placeholder="Where the agent can affect the business: payments, records, access grants, exports."></textarea></label>
-        <label><span>Safe test path (optional)</span><textarea name="safe_test_path" rows="2" placeholder="Staging traces, sandbox endpoint, exported logs, or none yet."></textarea></label>
-        <div class="intake-form-foot">
-          <button class="button primary" type="submit">Send the 3 details</button>
-          <span class="form-status" role="status" aria-live="polite"></span>
-        </div>
-      </form>
+      <div class="intake-email-actions">
+        <a class="button primary" href="mailto:jiahao@actionboundary.dev?subject=3%20scenarios%20for%20our%20agent&amp;body=Product%20and%20buyer%3A%0A%0AOne%20workflow%20or%20action%20surface%3A%0A%0ASafe%20test%20path%20(optional)%3A%0A">Open a prefilled email</a>
+      </div>
+      <p class="intake-privacy">Do not send credentials, production data, PHI, PII, card data, bank details, or secrets. Start with product context and a safe test path. See <a href="privacy.html">Privacy</a> and <a href="trust.html">Trust &amp; Data Handling</a>.</p>
     </div>
   </section>
 
@@ -7161,7 +7084,7 @@
       <div class="why-teaser-copy">
         <h2 id="why-title">Built for the moment<br>agents take action.</h2>
         <p class="lead">ActionBoundary exists because AI agents are moving from language into business action. We review the crossing point: what the agent read, what it called, what authority existed, and what changed.</p>
-        <p>The method connects software traces, authorization evidence, and buyer-ready reporting for one high-impact workflow.</p>
+        <p>The method connects software traces, authorization evidence, and security-review reporting for one high-impact workflow.</p>
         <div class="why-teaser-actions">
           <a class="button primary" href="why.html">Read why ActionBoundary exists</a>
           <a class="button outline" href="mailto:jiahao@actionboundary.dev?subject=3%20scenarios%20for%20our%20agent">Get 3 scenarios</a>
@@ -7178,8 +7101,8 @@
             <span>Whether the user, scope, approval, tenant, and policy matched the action.</span>
           </div>
           <div class="why-lens-card">
-            <b>Buyer-ready evidence</b>
-            <span>A report built for security review, not a generic model score.</span>
+            <b>Review-structured evidence</b>
+            <span>A report built for security review, with scope and limitations separated from findings.</span>
           </div>
         </div>
         <div class="why-founder">
@@ -7194,7 +7117,7 @@
 <footer>
   <div class="footer-inner">
     <span>ActionBoundary by JZ Software Consulting. Reviews performed and signed by <a href="why.html">Jiahao Zhang</a>.</span>
-    <span><a href="why.html">About</a> | <a href="evidence/">Evidence</a> | <a href="trust.html">Trust</a> | <a href="https://github.com/hugoii/llm-agent-audit">GitHub</a> | <a href="https://www.linkedin.com/in/jiahao-zhang-12999b319">LinkedIn</a> | <a href="https://doi.org/10.5281/zenodo.20585658">Zenodo DOI</a> | <a href="mailto:jiahao@actionboundary.dev">jiahao@actionboundary.dev</a></span>
+    <span><a href="why.html">About</a> | <a href="evidence/">Evidence</a> | <a href="trust.html">Trust</a> | <a href="privacy.html">Privacy</a> | <a href="terms.html">Terms</a> | <a href="https://github.com/hugoii/llm-agent-audit">GitHub</a> | <a href="https://www.linkedin.com/in/jiahao-zhang-12999b319">LinkedIn</a> | <a href="https://doi.org/10.5281/zenodo.20585658">Zenodo DOI</a> | <a href="mailto:jiahao@actionboundary.dev">jiahao@actionboundary.dev</a></span>
   </div>
 </footer>
 <script>
@@ -7247,37 +7170,6 @@
       });
     });
 
-    var form = document.querySelector('.intake-form');
-    if (!form) {
-      return;
-    }
-    var status = form.querySelector('.form-status');
-    form.addEventListener('submit', function (event) {
-      event.preventDefault();
-      var button = form.querySelector('button[type="submit"]');
-      button.disabled = true;
-      status.className = 'form-status';
-      status.textContent = 'Sending...';
-      fetch('https://formsubmit.co/ajax/jiahao@actionboundary.dev', {
-        method: 'POST',
-        headers: { 'Accept': 'application/json' },
-        body: new FormData(form)
-      }).then(function (res) {
-        if (!res.ok) {
-          throw new Error('send failed');
-        }
-        return res.json();
-      }).then(function () {
-        form.reset();
-        status.className = 'form-status ok';
-        status.textContent = 'Sent. You will hear back within 1 business day.';
-      }).catch(function () {
-        status.className = 'form-status err';
-        status.textContent = 'Could not send. Please email jiahao@actionboundary.dev instead.';
-      }).then(function () {
-        button.disabled = false;
-      });
-    });
   })();
 
   (function () {

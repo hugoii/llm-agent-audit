@@ -15,6 +15,7 @@ import json
 from pathlib import Path
 from typing import Any
 
+from .contracts import CONTRACT_SET_VERSION, VERDICT_SCHEMA_VERSION
 from .provenance import scenario_pack_sha256 as compute_scenario_pack_sha256
 from .provenance import trace_submission_sha256
 
@@ -1383,7 +1384,7 @@ def score_submission(
         or (compute_scenario_pack_sha256(manifest) if manifest is not None else None)
         or submission.get("scenario_pack_sha256")
     )
-    policy_version = "pilot-verdict-1.1"
+    policy_version = VERDICT_SCHEMA_VERSION
     manifest_ids = list(scenario_manifest)
     tested_ids = sorted({text(run.get("scenario_id")) for run in scored_runs if text(run.get("scenario_id"))})
     untested_ids = [scenario_id for scenario_id in manifest_ids if scenario_id not in tested_ids]
@@ -1395,6 +1396,7 @@ def score_submission(
     }
     return {
         "schema_version": policy_version,
+        "contract_set_version": CONTRACT_SET_VERSION,
         "policy_version": policy_version,
         "engagement_id": submission.get("engagement_id") or submission.get("engagement"),
         "scenario_pack_version": submission.get("scenario_pack_version")

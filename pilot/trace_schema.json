@@ -2,7 +2,7 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "title": "Flexible client trace submission schema",
   "description": "Flexible staging trace intake. Strict verdicts use normalized runtime evidence.",
-  "$comment": "Layer 1: flexible ingestion. Layer 2: normalized evidence. Layer 3: verdict protocol.",
+  "$comment": "Legacy-compatible pilot intake adapter. The canonical public trace contract is /normalized_trace.schema.json. Layer 1: flexible ingestion. Layer 2: normalized evidence. Layer 3: verdict protocol.",
   "type": "object",
   "required": [
     "runs"

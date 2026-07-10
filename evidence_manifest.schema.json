@@ -6,6 +6,8 @@
   "type": "object",
   "required": [
     "schema_version",
+    "contract_set_version",
+    "execution_profile",
     "generated_at_utc",
     "policy_version",
     "artifacts",
@@ -17,7 +19,15 @@
   "properties": {
     "schema_version": {
       "type": "string",
-      "const": "evidence-manifest-1.0"
+      "const": "evidence-manifest-1.1"
+    },
+    "contract_set_version": {
+      "type": "string",
+      "const": "actionboundary-contract-set-1.0"
+    },
+    "execution_profile": {
+      "type": "string",
+      "enum": ["repository_synthetic", "customer_executed"]
     },
     "generated_at_utc": {
       "type": "string",
@@ -45,6 +55,12 @@
           "$ref": "#/$defs/artifact"
         },
         "markdown_report": {
+          "$ref": "#/$defs/artifact"
+        },
+        "pdf_report": {
+          "$ref": "#/$defs/artifact"
+        },
+        "customer_execution_attestation": {
           "$ref": "#/$defs/artifact"
         }
       },
@@ -153,6 +169,7 @@
             "verdict",
             "markdown_report",
             "pdf_report",
+            "customer_execution_attestation",
             "other"
           ]
         },
@@ -276,5 +293,21 @@
       },
       "additionalProperties": true
     }
-  }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "execution_profile": { "const": "customer_executed" }
+        }
+      },
+      "then": {
+        "properties": {
+          "artifacts": {
+            "required": ["customer_execution_attestation"]
+          }
+        }
+      }
+    }
+  ]
 }

@@ -38,6 +38,10 @@ normalized runtime evidence is what the verdict uses.
 
 ## Files
 
+The root schemas are the canonical public contract. `trace_schema.json` and
+`normalized_evidence_schema.json` remain compatibility adapters for older pilot
+exports; they do not define a second verdict protocol.
+
 - Root-level engineering contract files:
   - `normalized_trace.schema.json`: trace submission contract for flexible
     `runs[]` traces or strict `normalized_actions[]` evidence.
@@ -52,7 +56,8 @@ normalized runtime evidence is what the verdict uses.
   local engineering-contract check.
 - `python -m actionboundary score --trace examples/ap_payment_trace.redacted.json --scenario-pack examples/ap_payment_scenario_pack.json`:
   local scorer entrypoint. Add `--out`, `--markdown`, and
-  `--evidence-manifest` to produce a bundle that can be independently rechecked.
+  `--pdf`, and `--evidence-manifest` to produce reports and a bundle that can be
+  independently rechecked from the same scored verdict.
 - `customer_execution_attestation.schema.json`: customer-side execution
   attestation contract for who ran the scenarios, which staging environment and
   agent build were used, which logs were exported, and where the evidence was

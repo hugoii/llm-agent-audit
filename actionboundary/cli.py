@@ -12,6 +12,13 @@ from typing import Any
 from jsonschema import Draft202012Validator
 from jsonschema.exceptions import SchemaError
 
+from .contracts import (
+    CANONICAL_SCHEMA_FILES,
+    CUSTOMER_EXECUTED_PROFILE,
+    EXECUTION_PROFILES,
+    REPOSITORY_SYNTHETIC_PROFILE,
+    VERDICT_SCHEMA_VERSION,
+)
 from .authorization_score import (
     apply_manifest_defaults,
     has_trace,
@@ -29,6 +36,7 @@ from .provenance import (
     trace_submission_sha256,
     validate_evidence_manifest,
 )
+from .report_pdf import render_verdict_pdf
 
 
 FINAL_STATUSES = {
@@ -50,10 +58,10 @@ SUMMARY_STATUSES = (
 )
 
 SCHEMA_FILES = {
-    "trace": "normalized_trace.schema.json",
-    "scenario-pack": "scenario_pack.schema.json",
-    "verdict": "verdict.schema.json",
-    "evidence-manifest": "evidence_manifest.schema.json",
+    "trace": CANONICAL_SCHEMA_FILES["trace"],
+    "scenario-pack": CANONICAL_SCHEMA_FILES["scenario_pack"],
+    "verdict": CANONICAL_SCHEMA_FILES["verdict"],
+    "evidence-manifest": CANONICAL_SCHEMA_FILES["evidence_manifest"],
 }
 
 
@@ -188,8 +196,8 @@ def validate_scenario_pack(manifest: dict[str, Any]) -> list[str]:
 
 def validate_verdict(scored: dict[str, Any]) -> list[str]:
     errors: list[str] = []
-    if scored.get("schema_version") != "pilot-verdict-1.1":
-        errors.append("verdict schema_version must be pilot-verdict-1.1")
+    if scored.get("schema_version") != VERDICT_SCHEMA_VERSION:
+        errors.append(f"verdict schema_version must be {VERDICT_SCHEMA_VERSION}")
     counts = scored.get("counts")
     if not isinstance(counts, dict):
         errors.append("verdict counts object is required")
@@ -401,8 +409,19 @@ def cmd_score(args: argparse.Namespace) -> int:
         raise ValueError("score --evidence-manifest requires --out so the verdict artifact can be hashed")
     if args.evidence_manifest and not args.scenario_pack:
         raise ValueError("score --evidence-manifest requires --scenario-pack for independent oracle binding")
+    if args.execution_profile != REPOSITORY_SYNTHETIC_PROFILE and not args.evidence_manifest:
+        raise ValueError("non-synthetic execution profiles require --evidence-manifest")
+    if args.customer_execution_attestation and not args.evidence_manifest:
+        raise ValueError("--customer-execution-attestation requires --evidence-manifest")
+    if args.execution_profile == CUSTOMER_EXECUTED_PROFILE and not args.customer_execution_attestation:
+        raise ValueError("customer_executed scoring requires --customer-execution-attestation")
     trace = load_json(trace_path)
     manifest = load_manifest(args.scenario_pack)
+    customer_attestation = (
+        load_json(args.customer_execution_attestation)
+        if args.customer_execution_attestation
+        else None
+    )
     if manifest is None:
         raise ValueError("score requires --scenario-pack for an independent authoritative oracle")
     errors = [f"JSON Schema: {error}" for error in json_schema_errors(trace, "trace")]
@@ -435,6 +454,8 @@ def cmd_score(args: argparse.Namespace) -> int:
         print(json.dumps(scored, indent=2, sort_keys=True))
     if args.markdown:
         write_text(args.markdown, markdown_summary(scored))
+    if args.pdf:
+        render_verdict_pdf(scored, args.pdf)
     if args.evidence_manifest:
         evidence_manifest = build_evidence_manifest(
             trace_path=trace_path,
@@ -444,6 +465,10 @@ def cmd_score(args: argparse.Namespace) -> int:
             verdict_path=args.out,
             verdict=scored,
             markdown_path=args.markdown,
+            pdf_path=args.pdf,
+            execution_profile=args.execution_profile,
+            customer_execution_attestation_path=args.customer_execution_attestation,
+            customer_execution_attestation=customer_attestation,
             root=repo_root(),
         )
         manifest_errors = json_schema_errors(evidence_manifest, "evidence-manifest")
@@ -481,7 +506,18 @@ def build_parser() -> argparse.ArgumentParser:
     score.add_argument("--scenario-pack", required=True, help="Authoritative scenario pack manifest JSON")
     score.add_argument("--out", help="Write scored verdict JSON to this path")
     score.add_argument("--markdown", help="Write Markdown summary to this path")
+    score.add_argument("--pdf", help="Write a PDF report rendered from the scored verdict")
     score.add_argument("--evidence-manifest", help="Write machine-verifiable evidence manifest JSON")
+    score.add_argument(
+        "--execution-profile",
+        choices=sorted(EXECUTION_PROFILES),
+        default=REPOSITORY_SYNTHETIC_PROFILE,
+        help="Declare whether evidence came from the repository harness or a customer-owned execution",
+    )
+    score.add_argument(
+        "--customer-execution-attestation",
+        help="Customer execution attestation JSON required by the customer_executed profile",
+    )
     score.set_defaults(func=cmd_score)
     return parser
 

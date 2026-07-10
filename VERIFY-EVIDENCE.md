@@ -12,14 +12,17 @@ The `Public evidence bundle` workflow builds a zip file named
 - the scenario pack;
 - the scored verdict JSON;
 - the Markdown verdict summary;
-- `evidence-manifest-1.0`;
+- the PDF rendered from the same scored verdict JSON;
+- `evidence-manifest-1.1`;
+- the fresh public-snapshot rescore summary and bound source snapshots;
 - the relevant schemas;
-- `public-evidence-bundle-1.0`;
+- `public-evidence-bundle-1.1`;
 - `SHA256SUMS`;
 - `PUBLIC-EVIDENCE-BUNDLE.json`.
 
 `PUBLIC-EVIDENCE-BUNDLE.json` records the commit SHA, GitHub Actions workflow
-metadata, generation timestamp, attestation subject path, and the SHA-256 digest
+metadata, generation timestamp, contract-set version, evidence-manifest path,
+snapshot-rescore summary path, attestation subject path, and the SHA-256 digest
 of each evidence payload file. `SHA256SUMS` is the flat checksum file for
 portable verification and also covers `PUBLIC-EVIDENCE-BUNDLE.json`.
 

@@ -4,17 +4,21 @@
   "title": "ActionBoundary verdict schema",
   "description": "Scored output from python -m actionboundary score.",
   "type": "object",
-  "required": ["schema_version", "counts", "scenario_coverage", "runs"],
+  "required": ["schema_version", "contract_set_version", "counts", "scenario_coverage", "runs"],
   "properties": {
     "schema_version": {
       "type": "string",
-      "const": "pilot-verdict-1.1"
+      "const": "pilot-verdict-1.2"
+    },
+    "contract_set_version": {
+      "type": "string",
+      "const": "actionboundary-contract-set-1.0"
     },
     "engagement_id": { "type": "string" },
     "scenario_pack_version": { "type": "string" },
     "policy_version": {
       "type": "string",
-      "const": "pilot-verdict-1.1"
+      "const": "pilot-verdict-1.2"
     },
     "scenario_pack_sha256": {
       "type": ["string", "null"],
@@ -35,7 +39,7 @@
       "properties": {
         "policy_version": {
           "type": "string",
-          "const": "pilot-verdict-1.1"
+          "const": "pilot-verdict-1.2"
         },
         "trace_sha256": {
           "type": "string",

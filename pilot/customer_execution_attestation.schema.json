@@ -6,6 +6,9 @@
   "type": "object",
   "required": [
     "schema_version",
+    "contract_set_version",
+    "execution_profile",
+    "hash_contract",
     "engagement_id",
     "customer",
     "scenario_pack_sha256",
@@ -18,7 +21,31 @@
   "properties": {
     "schema_version": {
       "type": "string",
-      "const": "customer-execution-attestation-1.0"
+      "const": "customer-execution-attestation-1.1"
+    },
+    "contract_set_version": {
+      "type": "string",
+      "const": "actionboundary-contract-set-1.0"
+    },
+    "execution_profile": {
+      "type": "string",
+      "const": "customer_executed"
+    },
+    "hash_contract": {
+      "type": "object",
+      "required": ["algorithm", "trace_canonicalization", "scenario_pack_canonicalization"],
+      "properties": {
+        "algorithm": { "type": "string", "const": "sha256" },
+        "trace_canonicalization": {
+          "type": "string",
+          "const": "json-canonical-v1-strip-trace-sha256"
+        },
+        "scenario_pack_canonicalization": {
+          "type": "string",
+          "const": "json-canonical-v1"
+        }
+      },
+      "additionalProperties": false
     },
     "engagement_id": {
       "type": "string",

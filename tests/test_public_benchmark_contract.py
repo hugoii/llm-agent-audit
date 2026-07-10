@@ -103,7 +103,11 @@ class PublicBenchmarkContractTests(unittest.TestCase):
     def test_homepage_chart_scope_labels_are_close_to_the_numbers(self) -> None:
         index = (ROOT / "docs" / "index.html").read_text(encoding="utf-8")
 
-        self.assertIn("No real payments, payment rails, production systems, or production ledgers.", index)
+        self.assertIn(
+            "The local/sandbox AP tool simulation does not use real payments, payment rails, "
+            "production systems, or production ledgers.",
+            index,
+        )
         self.assertIn("no downstream tools, side effects, or tool-result loop", index)
         self.assertIn('<span class="node-value">BENIGN_PASS</span>', index)
         self.assertNotIn('<span class="node-label">verdict</span> <span class="node-value">PASS</span>', index)

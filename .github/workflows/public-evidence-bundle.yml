@@ -39,9 +39,12 @@ jobs:
             --scenario-pack examples/ap_payment_scenario_pack.json \
             --out tmp/public-evidence/actionboundary-scored-example.json \
             --markdown tmp/public-evidence/actionboundary-scored-example.md \
+            --pdf tmp/public-evidence/actionboundary-scored-example.pdf \
             --evidence-manifest tmp/public-evidence/actionboundary-evidence-manifest.json
           python -m actionboundary validate \
             --evidence-manifest tmp/public-evidence/actionboundary-evidence-manifest.json
+          python scripts/rescore_public_snapshots.py \
+            --output-dir tmp/public-evidence
 
       - name: Build public evidence bundle
         run: |

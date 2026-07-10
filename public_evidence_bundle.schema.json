@@ -6,9 +6,11 @@
   "type": "object",
   "required": [
     "schema_version",
+    "contract_set_version",
     "generated_at_utc",
     "git_sha",
     "evidence_manifest_path",
+    "snapshot_rescore_summary_path",
     "ci",
     "attestation",
     "files"
@@ -16,7 +18,11 @@
   "properties": {
     "schema_version": {
       "type": "string",
-      "const": "public-evidence-bundle-1.0"
+      "const": "public-evidence-bundle-1.1"
+    },
+    "contract_set_version": {
+      "type": "string",
+      "const": "actionboundary-contract-set-1.0"
     },
     "generated_at_utc": {
       "type": "string",
@@ -26,6 +32,10 @@
       "type": "string"
     },
     "evidence_manifest_path": {
+      "type": "string",
+      "minLength": 1
+    },
+    "snapshot_rescore_summary_path": {
       "type": "string",
       "minLength": 1
     },

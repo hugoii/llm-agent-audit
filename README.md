@@ -158,14 +158,15 @@ The repository uses separate version numbers for separate review surfaces:
 
 | Surface | Current public version | What it means |
 |---|---:|---|
+| Authorization evidence contract set | `actionboundary-contract-set-1.0` | Canonical trace, scenario, verdict, manifest, and attestation contracts. |
 | GitHub release | `v1.5.1` | Public proof assets, documentation, and archived research package. |
 | Public model-behavior battery | `v1.5` | Fixed cross-model scenario battery and summary-level run artifacts under `docs/runs/v1.5`. |
 | Python package / CLI | `0.1.0` | Local validation and scoring package installed from `pyproject.toml`. |
 | Sample report template | `v0.8` | Public synthetic AP report source and rendered PDF sample. |
-| Pilot verdict contract | `pilot-verdict-1.1` | Machine-readable scored verdict schema used by the CLI and pilot tests. |
-| Evidence manifest contract | `evidence-manifest-1.0` | Machine-verifiable bundle linking trace, scenario pack, verdict, report, policy version, and evidence completeness. |
-| Public evidence bundle | `public-evidence-bundle-1.0` | CI-built zip with checksums, GitHub Actions provenance metadata, and artifact attestation. |
-| Customer execution attestation | `customer-execution-attestation-1.0` | Customer-side statement for execution environment, exported logs, trace hash, and custody metadata. |
+| Pilot verdict contract | `pilot-verdict-1.2` | Machine-readable scored verdict schema used by the CLI and pilot tests. |
+| Evidence manifest contract | `evidence-manifest-1.1` | Binds trace, pack, verdict, reports, execution profile, and completeness. |
+| Public evidence bundle | `public-evidence-bundle-1.1` | CI-built zip binding the contract set, fresh snapshot rescore summary, checksums, provenance, and artifact attestation. |
+| Customer execution attestation | `customer-execution-attestation-1.1` | Customer statement for environment, canonical hashes, log export, and custody. |
 
 These versions do not move in lockstep. A benchmark release can update public
 proof assets without implying a stable `1.x` Python package API, and a report
@@ -212,16 +213,16 @@ staging-only by default and do not require production credentials.
     width="820"
   >
 </p>
-<p align="center"><sub>Sample v0.8 - rendered from
+<p align="center"><sub>Illustrative report format v0.8 - rendered from
 <code>docs/sample-pilot-report-v0.8.md</code> by
-<code>scripts/render_sample_report.py</code>. Synthetic AP workflow; real
-reports use your agent, tools, traces, and workflow-specific authorization
-rules.</sub></p>
+<code>scripts/render_sample_report.py</code>. This hand-authored template is not
+the current scored JSON or manifest-bound PDF. The CI evidence bundle generates
+its PDF from the same scored artifact it binds in the manifest.</sub></p>
 
-- **[Sample evidence report](docs/sample-pilot-report-v0.8.md)**: what you
-  receive, with findings, trace evidence, severity, fixes, and retest rules.
-- **[Rendered PDF sample](docs/sample-evidence-report-v0.8.pdf)**: a polished
-  report-style preview generated from the public sample report source.
+- **[Illustrative report format](docs/sample-pilot-report-v0.8.md)**: the
+  hand-authored report structure, with findings, evidence, fixes, and limits.
+- **[Rendered format preview](docs/sample-evidence-report-v0.8.pdf)**: a visual
+  preview, explicitly separate from the current CI-scored artifact chain.
 - **[Verify evidence](VERIFY-EVIDENCE.md)**: how to verify the CI-built public
   evidence bundle, hashes, and GitHub artifact attestation.
 - **[Evidence flow](docs/evidence-flow.md)**: how runtime evidence becomes a
@@ -253,16 +254,19 @@ report and data are archived on
 API key, and the [offline smoke test](.github/workflows/offline-smoke.yml)
 checks that path in CI.
 
-**Sample deliverable.** The
-[rendered PDF sample](docs/sample-evidence-report-v0.8.pdf) is generated from
-[docs/sample-pilot-report-v0.8.md](docs/sample-pilot-report-v0.8.md), not a
-standalone marketing mockup.
+**Illustrative report format.** The
+[rendered format preview](docs/sample-evidence-report-v0.8.pdf) is generated
+from a hand-authored synthetic report template. It shows layout and report
+structure; it is not the current scored JSON, manifest-bound PDF, or customer
+execution evidence.
 
 **Public evidence bundle.** The
 [Public evidence bundle workflow](.github/workflows/public-evidence-bundle.yml)
 builds the public AP/payment example into a zip with `SHA256SUMS`,
-`PUBLIC-EVIDENCE-BUNDLE.json`, `evidence-manifest-1.0`, and GitHub artifact
-attestation. Verification steps are in [VERIFY-EVIDENCE.md](VERIFY-EVIDENCE.md).
+`PUBLIC-EVIDENCE-BUNDLE.json`, fresh public-snapshot rescore results, a PDF
+generated from the same scored verdict JSON, `evidence-manifest-1.1`, and
+GitHub artifact attestation. Verification steps are in
+[VERIFY-EVIDENCE.md](VERIFY-EVIDENCE.md).
 
 **Client pilot.** The public battery illustrates the method; a client pilot
 replaces generic scenarios with your staging tools, authorization sources, and

@@ -1,4 +1,4 @@
-# Agent Authorization Review: Sample Evidence Report
+# Agent Authorization Review: Illustrative Report Format
 
 | Field | Value |
 |---|---|
@@ -10,12 +10,17 @@
 | Frameworks | OWASP Top 10 for Agentic Applications 2026; OWASP AI Agent Security Cheat Sheet; OWASP Transaction Authorization Cheat Sheet; NIST AI RMF / TEVV, where applicable |
 | Report date | 2026-06-25 |
 | Version | Sample v0.8 |
-| Classification | Public sample. Client reports are confidential and prepared for the named client. |
+| Classification | Public illustrative format. Not a manifest-bound scored artifact or customer execution evidence. |
 
 > This is a synthetic sample, not a real client engagement.
 > A real report covers the client's own agent, tools, authorization sources,
 > and staging traces. This report is not a penetration test, compliance
 > certification, SOC report, legal opinion, or attestation opinion.
+>
+> This file is an illustrative report-format template rendered from this
+> hand-authored source. It is not the current scored JSON, manifest-bound PDF,
+> or customer execution evidence. The Public evidence bundle workflow builds
+> the current machine-bound synthetic example from one scored artifact.
 
 ---
 
@@ -80,17 +85,20 @@ normalized trace, scored verdict, and report artifact.
 | Trace SHA-256 | `see evidence manifest` | SHA-256 of the normalized trace evidence package. |
 | Verdict SHA-256 | `see evidence manifest` | SHA-256 of the scored verdict artifact. |
 | Report artifact SHA-256 | `see evidence manifest` | SHA-256 of the delivered report artifact. |
-| Evidence manifest version | `evidence-manifest-1.0` | Machine-readable bundle contract for artifact hashes and integrity checks. |
+| Contract set version | `actionboundary-contract-set-1.0` | Canonical trace, scenario, verdict, manifest, and attestation contract set. |
+| Evidence manifest version | `evidence-manifest-1.1` | Machine-readable bundle contract for artifact hashes, execution profile, and integrity checks. |
 | Evidence manifest SHA-256 | `delivered with report bundle` | SHA-256 of the manifest that links trace, scenario pack, verdict, and report. |
 | Test start / end | `2026-06-25T14:00:00Z` / `2026-06-25T14:11:00Z` | UTC timestamps for the evidence window. |
 
 ### Evidence package verification
 
-A real client bundle includes `evidence-manifest-1.0`. The manifest records the
-trace, scenario pack, scored verdict, and report artifact hashes, then checks
-policy version, trace/verdict consistency, scenario-pack/verdict consistency,
-and per-run evidence completeness. A reviewer can re-run manifest validation
-without trusting the prose report alone.
+A current client bundle includes `evidence-manifest-1.1`. The manifest records
+the trace, scenario pack, scored verdict, Markdown and PDF report hashes,
+execution profile, and customer execution attestation when applicable. It then
+checks policy version, trace/verdict consistency, scenario-pack/verdict
+consistency, attestation bindings, and per-run evidence completeness. A
+reviewer can re-run manifest validation without trusting the prose report
+alone.
 
 ### What was tested
 
@@ -149,7 +157,8 @@ what the system actually observed and returned.
 
 ```json
 {
-  "schema_version": "pilot-verdict-1.1",
+  "schema_version": "pilot-verdict-1.2",
+  "contract_set_version": "actionboundary-contract-set-1.0",
   "scenario_id": "S-7",
   "business_action": "schedule_payment",
   "scenario_setup": {

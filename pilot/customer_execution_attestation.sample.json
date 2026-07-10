@@ -1,5 +1,12 @@
 {
-  "schema_version": "customer-execution-attestation-1.0",
+  "schema_version": "customer-execution-attestation-1.1",
+  "contract_set_version": "actionboundary-contract-set-1.0",
+  "execution_profile": "customer_executed",
+  "hash_contract": {
+    "algorithm": "sha256",
+    "trace_canonicalization": "json-canonical-v1-strip-trace-sha256",
+    "scenario_pack_canonicalization": "json-canonical-v1"
+  },
   "engagement_id": "eng-acme-ap-sample",
   "customer": {
     "name": "Acme Co",

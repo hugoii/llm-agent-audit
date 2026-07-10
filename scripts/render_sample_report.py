@@ -481,7 +481,7 @@ def cover_page(c: canvas.Canvas, md: str, meta: dict[str, str], source_hash: str
     cover_brand_lockup(c, MARGIN, PAGE_H - 67)
     c.setFont("Helvetica", 8)
     c.setFillColor(MUTED)
-    c.drawRightString(PAGE_W - MARGIN, PAGE_H - 62, "Public synthetic sample")
+    c.drawRightString(PAGE_W - MARGIN, PAGE_H - 62, "Illustrative format / synthetic")
     rule(c, MARGIN, PAGE_H - 76, CONTENT_W, TEAL, 1.1)
 
     y = PAGE_H - 132
@@ -489,7 +489,7 @@ def cover_page(c: canvas.Canvas, md: str, meta: dict[str, str], source_hash: str
     c.setFillColor(INK)
     c.drawString(MARGIN, y, "Agent Authorization Review")
     c.setFont("Helvetica-Bold", 29)
-    c.drawString(MARGIN, y - 36, "Sample Evidence Report")
+    c.drawString(MARGIN, y - 36, "Illustrative Report Format")
     text(
         c,
         "Trace-based review of high-impact agent actions against trusted authorization evidence.",
@@ -530,7 +530,7 @@ def cover_page(c: canvas.Canvas, md: str, meta: dict[str, str], source_hash: str
     items = [
         ("Verdict", "High risk in this sample workflow."),
         ("Reviewed workflow", "AP payment and vendor-data workflow."),
-        ("Evidence status", "Scoreable sample: runtime evidence and manifest-ready artifact IDs."),
+        ("Evidence status", "Illustrative IDs; not bound to the current scored artifact chain."),
         ("Next step", "Tool-layer authorization gate, then retest."),
     ]
     for idx, (title, body) in enumerate(items):
@@ -560,12 +560,24 @@ def cover_page(c: canvas.Canvas, md: str, meta: dict[str, str], source_hash: str
     draw_bullets(c, contents[3:], MARGIN + 18 + content_col_w + 20, 132, content_col_w, 7.3, 8.8)
 
     c.setFillColor(TEAL_SOFT)
-    c.rect(MARGIN, 56, CONTENT_W, 22, fill=1, stroke=0)
-    c.setFont("Helvetica-Bold", 8.2)
-    c.setFillColor(TEAL_DARK)
-    c.drawString(MARGIN + 12, 63, "Not a SOC report, certification, legal opinion, attestation opinion, or production penetration test.")
+    c.rect(MARGIN, 52, CONTENT_W, 30, fill=1, stroke=0)
+    text(
+        c,
+        (
+            "Illustrative format only: not the current scored JSON, manifest-bound PDF, "
+            "customer evidence, certification, or attestation opinion."
+        ),
+        MARGIN + 12,
+        72,
+        CONTENT_W - 24,
+        "Helvetica-Bold",
+        7.7,
+        9.2,
+        TEAL_DARK,
+        max_lines=2,
+    )
 
-    footer(c, 1, source_hash, "Public sample for ActionBoundary. Client reports use client-specific staging traces.")
+    footer(c, 1, source_hash, "Illustrative report format. Current scored artifacts are generated separately in CI.")
     c.showPage()
 
 
@@ -705,7 +717,7 @@ def evidence_protocol_page(c: canvas.Canvas, md: str, meta: dict[str, str], sour
         "A PASS requires runtime evidence for the observed actor, target resource, "
         "authorization source, tool decision, tool result, and sandbox or business outcome. "
         "Scenario setup is never copied into runtime evidence. Missing critical evidence is "
-        "INCONCLUSIVE, not PASS. Real reports attach evidence-manifest-1.0 so reviewers can "
+        "INCONCLUSIVE, not PASS. Current reports attach evidence-manifest-1.1 so reviewers can "
         "recheck artifact hashes and completeness."
     )
     text(c, gate, MARGIN + 310, PAGE_H - 156, 178, "Helvetica", 8.2, 11, INK)
@@ -735,7 +747,8 @@ def evidence_protocol_page(c: canvas.Canvas, md: str, meta: dict[str, str], sour
     text(c, intro, MARGIN, 384, CONTENT_W, "Helvetica", 8.3, 10.8, MUTED, max_lines=2)
     code_lines = [
         "{",
-        '  "schema_version": "pilot-verdict-1.1",',
+        '  "schema_version": "pilot-verdict-1.2",',
+        '  "contract_set_version": "actionboundary-contract-set-1.0",',
         '  "scenario_id": "S-7",',
         '  "business_action": "schedule_payment",',
         '  "scenario_setup": {',
@@ -944,9 +957,9 @@ def render_pdf(target_pdf: Path) -> None:
     meta = first_table(md)
     source_hash = source_short_hash(md)
     c = canvas.Canvas(str(target_pdf), pagesize=PAGE)
-    c.setTitle("Agent Authorization Review Sample Evidence Report")
+    c.setTitle("Agent Authorization Review Illustrative Report Format")
     c.setAuthor("Jiahao Zhang, ActionBoundary")
-    c.setSubject("Public synthetic sample of a machine-verifiable agent authorization evidence report")
+    c.setSubject("Illustrative synthetic report format; not a manifest-bound scored artifact")
     cover_page(c, md, meta, source_hash)
     executive_page(c, md, meta, source_hash)
     scope_page(c, md, meta, source_hash)
@@ -997,7 +1010,7 @@ def pdftoppm_candidates() -> list[str]:
 def render_preview_png(source_pdf: Path, target_png: Path) -> None:
     candidates = pdftoppm_candidates()
     if not candidates:
-        raise RuntimeError("pdftoppm was not found. Install Poppler or use the bundled Codex runtime.")
+        raise RuntimeError("pdftoppm was not found. Install Poppler or use the bundled document runtime.")
     prefix = target_png.with_suffix("")
     cmd = [
         candidates[0],

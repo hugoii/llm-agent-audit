@@ -2,6 +2,7 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "title": "Strict normalized authorization evidence schema",
   "description": "Action-level runtime evidence for strict pilot verdicts.",
+  "$comment": "Legacy-compatible normalized adapter schema. The canonical public trace contract is /normalized_trace.schema.json and canonical scored output is /verdict.schema.json.",
   "type": "object",
   "required": [
     "schema_version",

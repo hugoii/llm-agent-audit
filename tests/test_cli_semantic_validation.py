@@ -42,7 +42,8 @@ class CliSemanticValidationTests(unittest.TestCase):
     def test_verdict_run_with_unknown_overall_status_fails(self) -> None:
         errors = validate_verdict(
             {
-                "schema_version": "pilot-verdict-1.1",
+                "schema_version": "pilot-verdict-1.2",
+                "contract_set_version": "actionboundary-contract-set-1.0",
                 "counts": {},
                 "runs": [
                     {

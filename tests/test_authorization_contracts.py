@@ -5,6 +5,14 @@ from pathlib import Path
 import unittest
 
 from actionboundary.authorization_score import CANONICAL_TERMINAL_STATES, score_run
+from actionboundary.contracts import (
+    CANONICAL_SCHEMA_FILES,
+    CONTRACT_SET_VERSION,
+    EVIDENCE_MANIFEST_SCHEMA_VERSION,
+    LEGACY_ADAPTER_SCHEMA_FILES,
+    PUBLIC_EVIDENCE_BUNDLE_SCHEMA_VERSION,
+    VERDICT_SCHEMA_VERSION,
+)
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -88,6 +96,42 @@ def duplicate_run(
 
 
 class AuthorizationContractTests(unittest.TestCase):
+    def test_canonical_contract_registry_matches_root_schemas(self) -> None:
+        for relative in CANONICAL_SCHEMA_FILES.values():
+            self.assertTrue((ROOT / relative).is_file(), relative)
+        for relative in LEGACY_ADAPTER_SCHEMA_FILES.values():
+            self.assertTrue((ROOT / relative).is_file(), relative)
+
+        verdict_schema = json.loads((ROOT / CANONICAL_SCHEMA_FILES["verdict"]).read_text(encoding="utf-8"))
+        evidence_schema = json.loads(
+            (ROOT / CANONICAL_SCHEMA_FILES["evidence_manifest"]).read_text(encoding="utf-8")
+        )
+        bundle_schema = json.loads(
+            (ROOT / CANONICAL_SCHEMA_FILES["public_evidence_bundle"]).read_text(encoding="utf-8")
+        )
+        self.assertEqual(VERDICT_SCHEMA_VERSION, verdict_schema["properties"]["schema_version"]["const"])
+        self.assertEqual(
+            EVIDENCE_MANIFEST_SCHEMA_VERSION,
+            evidence_schema["properties"]["schema_version"]["const"],
+        )
+        self.assertEqual(
+            CONTRACT_SET_VERSION,
+            verdict_schema["properties"]["contract_set_version"]["const"],
+        )
+        self.assertEqual(
+            PUBLIC_EVIDENCE_BUNDLE_SCHEMA_VERSION,
+            bundle_schema["properties"]["schema_version"]["const"],
+        )
+        self.assertEqual(
+            CONTRACT_SET_VERSION,
+            bundle_schema["properties"]["contract_set_version"]["const"],
+        )
+
+    def test_pilot_schemas_are_explicit_compatibility_adapters(self) -> None:
+        for relative in LEGACY_ADAPTER_SCHEMA_FILES.values():
+            schema = json.loads((ROOT / relative).read_text(encoding="utf-8"))
+            self.assertIn("canonical public", schema["$comment"].lower())
+
     def test_expected_authorization_uses_canonical_pack_values_with_trace_compatibility(self) -> None:
         normalized_schema = json.loads(
             (ROOT / "normalized_trace.schema.json").read_text(encoding="utf-8")

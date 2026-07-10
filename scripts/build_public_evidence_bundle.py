@@ -10,6 +10,11 @@ from pathlib import Path
 import shutil
 import zipfile
 
+from actionboundary.contracts import (
+    CONTRACT_SET_VERSION,
+    PUBLIC_EVIDENCE_BUNDLE_SCHEMA_VERSION,
+)
+
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -21,14 +26,38 @@ REQUIRED_SOURCE_FILES = [
     "verdict.schema.json",
     "evidence_manifest.schema.json",
     "public_evidence_bundle.schema.json",
+    "public_snapshot_suites.json",
     "VERIFY-EVIDENCE.md",
 ]
 
 GENERATED_ARTIFACTS = [
     "actionboundary-scored-example.json",
     "actionboundary-scored-example.md",
+    "actionboundary-scored-example.pdf",
     "actionboundary-evidence-manifest.json",
+    "public-snapshot-rescore-summary.json",
 ]
+
+
+def public_snapshot_source_files() -> list[str]:
+    registry = json.loads((ROOT / "public_snapshot_suites.json").read_text(encoding="utf-8"))
+    files: list[str] = []
+    for suite in registry.get("suites") or []:
+        snapshot_dir = ROOT / str(suite["snapshot_dir"])
+        scenario_pack = str(suite["scenario_pack"])
+        files.append(scenario_pack)
+        readme = snapshot_dir / "README.md"
+        if readme.is_file():
+            files.append(readme.relative_to(ROOT).as_posix())
+        files.extend(
+            path.relative_to(ROOT).as_posix()
+            for path in sorted(snapshot_dir.glob(str(suite["submission_glob"])))
+        )
+        files.extend(
+            path.relative_to(ROOT).as_posix()
+            for path in sorted(snapshot_dir.glob(f"{suite['verdict_prefix']}*.md"))
+        )
+    return sorted(set(files))
 
 
 def sha256_file(path: Path) -> str:
@@ -52,6 +81,18 @@ def write_json(path: Path, value: dict[str, object]) -> None:
     path.write_text(json.dumps(value, indent=2, sort_keys=True) + "\n", encoding="utf-8")
 
 
+def make_evidence_manifest_portable(path: Path) -> None:
+    manifest = json.loads(path.read_text(encoding="utf-8"))
+    artifacts = manifest.get("artifacts") or {}
+    for kind in ("verdict", "markdown_report", "pdf_report"):
+        descriptor = artifacts.get(kind)
+        if not isinstance(descriptor, dict) or not descriptor.get("path"):
+            continue
+        filename = Path(str(descriptor["path"])).name
+        descriptor["path"] = f"tmp/public-evidence/{filename}"
+    write_json(path, manifest)
+
+
 def build_bundle(
     generated_dir: Path,
     output_dir: Path,
@@ -72,7 +113,7 @@ def build_bundle(
         zip_path.unlink()
 
     copied: list[Path] = []
-    for item in REQUIRED_SOURCE_FILES:
+    for item in REQUIRED_SOURCE_FILES + public_snapshot_source_files():
         source = ROOT / item
         if not source.is_file():
             raise FileNotFoundError(source)
@@ -86,6 +127,8 @@ def build_bundle(
             raise FileNotFoundError(source)
         target = output_dir / "tmp" / "public-evidence" / item
         copy_file(source, target)
+        if item == "actionboundary-evidence-manifest.json":
+            make_evidence_manifest_portable(target)
         copied.append(target)
 
     file_entries = [
@@ -97,7 +140,8 @@ def build_bundle(
         for path in sorted(copied)
     ]
     bundle_manifest = {
-        "schema_version": "public-evidence-bundle-1.0",
+        "schema_version": PUBLIC_EVIDENCE_BUNDLE_SCHEMA_VERSION,
+        "contract_set_version": CONTRACT_SET_VERSION,
         "generated_at_utc": (
             datetime.now(timezone.utc)
             .replace(microsecond=0)
@@ -106,6 +150,7 @@ def build_bundle(
         ),
         "git_sha": git_sha,
         "evidence_manifest_path": "tmp/public-evidence/actionboundary-evidence-manifest.json",
+        "snapshot_rescore_summary_path": "tmp/public-evidence/public-snapshot-rescore-summary.json",
         "ci": {
             "provider": "github-actions",
             "repository": github_repository,
