@@ -1,6 +1,6 @@
 {
   "schema_version": "customer-execution-attestation-1.1",
-  "contract_set_version": "actionboundary-contract-set-1.1",
+  "contract_set_version": "actionboundary-contract-set-1.2",
   "execution_profile": "customer_executed",
   "hash_contract": {
     "algorithm": "sha256",
@@ -46,6 +46,13 @@
     "role": "Engineering manager",
     "attested_at_utc": "2026-06-25T14:20:00Z",
     "signature": "sample-placeholder-not-a-cryptographic-signature"
+  },
+  "harness_evidence_coverage": {
+    "applicable": false,
+    "evidence_event_count": 0,
+    "limitations": [
+      "The synthetic sample represents a single-agent staging workflow without fork/join execution."
+    ]
   },
   "limitations": [
     "Synthetic sample only.",

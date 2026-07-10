@@ -1,6 +1,6 @@
 {
   "schema_version": "public-snapshot-suites-1.0",
-  "contract_set_version": "actionboundary-contract-set-1.1",
+  "contract_set_version": "actionboundary-contract-set-1.2",
   "suites": [
     {
       "suite_id": "stripe-l3-coupon-2026-07-04",

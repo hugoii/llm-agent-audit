@@ -36,6 +36,7 @@ from .provenance import (
     trace_submission_sha256,
     validate_evidence_manifest,
 )
+from .readiness import assess_evidence_events
 from .report_pdf import render_verdict_pdf
 
 
@@ -59,6 +60,7 @@ SUMMARY_STATUSES = (
 
 SCHEMA_FILES = {
     "trace": CANONICAL_SCHEMA_FILES["trace"],
+    "evidence-events": CANONICAL_SCHEMA_FILES["evidence_events"],
     "scenario-pack": CANONICAL_SCHEMA_FILES["scenario_pack"],
     "verdict": CANONICAL_SCHEMA_FILES["verdict"],
     "evidence-manifest": CANONICAL_SCHEMA_FILES["evidence_manifest"],
@@ -325,9 +327,18 @@ def cmd_validate(args: argparse.Namespace) -> int:
     manifest = load_manifest(args.scenario_pack)
     verdict = load_json(args.verdict) if args.verdict else None
     evidence_manifest = load_json(args.evidence_manifest) if args.evidence_manifest else None
+    evidence_events = load_json(args.evidence_events) if args.evidence_events else None
 
-    if trace is None and manifest is None and verdict is None and evidence_manifest is None:
-        errors.append("provide --trace, --scenario-pack, --verdict, or --evidence-manifest")
+    if (
+        trace is None
+        and manifest is None
+        and verdict is None
+        and evidence_manifest is None
+        and evidence_events is None
+    ):
+        errors.append(
+            "provide --trace, --scenario-pack, --verdict, --evidence-manifest, or --evidence-events"
+        )
     if trace is not None and manifest is None:
         errors.append("trace scoring requires --scenario-pack for an independent authoritative oracle")
     if trace is not None:
@@ -357,6 +368,16 @@ def cmd_validate(args: argparse.Namespace) -> int:
         errors.extend(
             f"evidence-manifest: {error}"
             for error in validate_evidence_manifest(evidence_manifest, base_dir=evidence_root)
+        )
+    if evidence_events is not None:
+        errors.extend(
+            f"JSON Schema: {error}"
+            for error in json_schema_errors(evidence_events, "evidence-events")
+        )
+        readiness = assess_evidence_events(evidence_events)
+        errors.extend(
+            f"evidence-events: {error}"
+            for error in readiness["semantic_conflicts"]
         )
 
     scored = None
@@ -396,8 +417,40 @@ def cmd_validate(args: argparse.Namespace) -> int:
         print("ActionBoundary verdict checks: OK")
     elif evidence_manifest is not None:
         print("ActionBoundary evidence-manifest checks: OK")
+    elif evidence_events is not None:
+        readiness = assess_evidence_events(evidence_events)
+        print("ActionBoundary evidence-event checks: OK")
+        print(
+            "Minimal evidence coverage: "
+            + ("READY" if readiness["ready"] else "INCOMPLETE")
+        )
+        if readiness["missing_events"]:
+            print("Missing events: " + ", ".join(readiness["missing_events"]))
     else:
         print("ActionBoundary checks: OK")
+    return 0
+
+
+def cmd_readiness(args: argparse.Namespace) -> int:
+    evidence_events = load_json(args.evidence_events)
+    errors = json_schema_errors(evidence_events, "evidence-events")
+    if errors:
+        print("Readiness input failed validation:", file=sys.stderr)
+        print(format_errors(errors), file=sys.stderr)
+        return 1
+
+    result = assess_evidence_events(evidence_events)
+    if args.out:
+        write_json(args.out, result)
+    else:
+        print(json.dumps(result, indent=2, sort_keys=True))
+    print("Evidence readiness: " + ("READY" if result["ready"] else "INCOMPLETE"))
+    if result["missing_events"]:
+        print("Missing events: " + ", ".join(result["missing_events"]))
+    if result["semantic_conflicts"]:
+        print("Semantic conflicts: " + ", ".join(result["semantic_conflicts"]))
+    if args.out:
+        print(f"Readiness report: {args.out}")
     return 0
 
 
@@ -495,10 +548,26 @@ def build_parser() -> argparse.ArgumentParser:
     validate.add_argument("--verdict", help="Scored verdict JSON")
     validate.add_argument("--evidence-manifest", help="Machine-verifiable evidence manifest JSON")
     validate.add_argument(
+        "--evidence-events",
+        help="Vendor-neutral minimal evidence-event JSON",
+    )
+    validate.add_argument(
         "--evidence-root",
         help="Base directory for relative artifact paths recorded in --evidence-manifest",
     )
     validate.set_defaults(func=cmd_validate)
+
+    readiness = subcommands.add_parser(
+        "readiness",
+        help="Assess minimal event coverage before a customer pilot",
+    )
+    readiness.add_argument(
+        "--evidence-events",
+        required=True,
+        help="Vendor-neutral minimal evidence-event JSON",
+    )
+    readiness.add_argument("--out", help="Write the readiness gap report JSON")
+    readiness.set_defaults(func=cmd_readiness)
 
     score = subcommands.add_parser("score", help="Score a trace against an authoritative scenario pack")
     score.add_argument("trace_path", nargs="?", help="Trace submission JSON")

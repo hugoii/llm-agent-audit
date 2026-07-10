@@ -45,6 +45,8 @@ exports; they do not define a second verdict protocol.
 - Root-level engineering contract files:
   - `normalized_trace.schema.json`: trace submission contract for flexible
     `runs[]` traces or strict `normalized_actions[]` evidence.
+  - `evidence_event.schema.json`: vendor-neutral minimal event envelope for
+    existing logs or the smallest missing instrumentation point.
   - `scenario_pack.schema.json`: machine-readable scenario oracle contract.
   - `verdict.schema.json`: scored verdict output contract.
   - `evidence_manifest.schema.json`: machine-verifiable bundle contract linking
@@ -56,6 +58,11 @@ exports; they do not define a second verdict protocol.
     `examples/execution_bound_authorization_scenario_pack.json`: provenance,
     approval-binding, execution-revalidation, and postcondition examples for an
     execution-bound authorization receipt.
+  - `examples/harness_control_trace.redacted.json` and
+    `examples/harness_control_scenario_pack.json`: optional workflow phase,
+    delegation, tool-grant, gate, and fork/join evidence controls.
+  - `examples/minimal_evidence_events.redacted.json`: complete synthetic event
+    coverage for the evidence-readiness CLI.
 - `python -m actionboundary validate --trace examples/ap_payment_trace.redacted.json --scenario-pack examples/ap_payment_scenario_pack.json`:
   local engineering-contract check.
 - `python -m actionboundary score --trace examples/ap_payment_trace.redacted.json --scenario-pack examples/ap_payment_scenario_pack.json`:
@@ -66,9 +73,9 @@ exports; they do not define a second verdict protocol.
   attestation contract for who ran the scenarios, which staging environment and
   agent build were used, which logs were exported, and where the evidence was
   retained.
-  Contract set 1.1 also accepts an `action_receipt_coverage` statement for
+  Contract set 1.2 also accepts an `action_receipt_coverage` statement for
   approval-binding and postcondition coverage across observed high-impact
-  actions.
+  actions, plus optional `harness_evidence_coverage` when those controls apply.
 - `customer_execution_attestation.sample.json`: synthetic example of that
   customer-side statement.
 - `what-we-need.md`: the short first-contact checklist for sending three details before engineering setup.
@@ -76,6 +83,8 @@ exports; they do not define a second verdict protocol.
   the minimum trace export shape before a full adapter is wired.
 - `evidence-readiness-check.md`: the existing-trace-first check that decides
   whether a full trace-backed verdict is scoreable yet.
+- `minimal-evidence-instrumentation.md`: the no-SDK event dictionary and data
+  minimization rules used only when existing logs have a specific gap.
 - `client-handoff.md`: the technical handoff note for starting from an existing
   trace when available, choosing a safe staging path, running one setup
   scenario, and sending back traces.

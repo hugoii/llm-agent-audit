@@ -8,6 +8,7 @@ from actionboundary.authorization_score import CANONICAL_TERMINAL_STATES, score_
 from actionboundary.contracts import (
     CANONICAL_SCHEMA_FILES,
     CONTRACT_SET_VERSION,
+    EVIDENCE_EVENT_SCHEMA_VERSION,
     EVIDENCE_MANIFEST_SCHEMA_VERSION,
     LEGACY_ADAPTER_SCHEMA_FILES,
     PUBLIC_EVIDENCE_BUNDLE_SCHEMA_VERSION,
@@ -106,10 +107,19 @@ class AuthorizationContractTests(unittest.TestCase):
         evidence_schema = json.loads(
             (ROOT / CANONICAL_SCHEMA_FILES["evidence_manifest"]).read_text(encoding="utf-8")
         )
+        event_schema = json.loads(
+            (ROOT / CANONICAL_SCHEMA_FILES["evidence_events"]).read_text(
+                encoding="utf-8"
+            )
+        )
         bundle_schema = json.loads(
             (ROOT / CANONICAL_SCHEMA_FILES["public_evidence_bundle"]).read_text(encoding="utf-8")
         )
         self.assertEqual(VERDICT_SCHEMA_VERSION, verdict_schema["properties"]["schema_version"]["const"])
+        self.assertEqual(
+            EVIDENCE_EVENT_SCHEMA_VERSION,
+            event_schema["properties"]["schema_version"]["const"],
+        )
         self.assertEqual(
             EVIDENCE_MANIFEST_SCHEMA_VERSION,
             evidence_schema["properties"]["schema_version"]["const"],

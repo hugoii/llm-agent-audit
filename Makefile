@@ -14,6 +14,14 @@ validate:
 		--evidence-manifest tmp/actionboundary-evidence-manifest.json
 	$(PYTHON) -m actionboundary validate \
 		--evidence-manifest tmp/actionboundary-evidence-manifest.json
+	$(PYTHON) -m actionboundary validate \
+		--trace examples/harness_control_trace.redacted.json \
+		--scenario-pack examples/harness_control_scenario_pack.json
+	$(PYTHON) -m actionboundary validate \
+		--evidence-events examples/minimal_evidence_events.redacted.json
+	$(PYTHON) -m actionboundary readiness \
+		--evidence-events examples/minimal_evidence_events.redacted.json \
+		--out tmp/evidence-readiness.json
 	$(PYTHON) -m unittest discover -s tests -p "test_*.py"
 	$(PYTHON) -m unittest discover -s pilot/tests -p "test_*.py"
 	$(PYTHON) scripts/rescore_public_snapshots.py --output-dir tmp/public-snapshot-rescore

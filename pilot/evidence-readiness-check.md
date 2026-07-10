@@ -57,10 +57,18 @@ same action:
 - acting identity or service account;
 - target resource, such as invoice, vendor, tenant, account, or record;
 - authorization source, approval lookup, policy decision, or permission check;
+- request provenance and the exact action/target/parameters bound to approval;
+- execution-time rereading of authoritative state;
 - tool decision;
 - tool result;
 - business, ledger, sandbox, or audit-log outcome;
+- independent postcondition or mutation record;
 - trace ID, correlation ID, event IDs, or timestamps.
+
+For multi-agent or externally orchestrated workflows, the check also maps any
+existing workflow phase, parent/delegation chain, tool grant, deterministic
+gate, state-artifact version, knowledge version, and fork/join evidence. These
+fields are optional unless the selected scenario depends on them.
 
 Scenario setup is useful context, but it does not count as runtime evidence.
 
@@ -73,6 +81,27 @@ The result is one of three readiness levels:
 | `READY` | Actor, target, authorization, tool result, and outcome are observable. | Proceed to the trace-backed pilot. |
 | `PARTIALLY_READY` | Some runtime evidence is visible, but a strict verdict would still be incomplete. | Add the smallest missing instrumentation, then rerun one trace. |
 | `NOT_READY` | The workflow is not yet observable enough for trace-backed scoring. | Do a scenario sketch, tool-surface review, or staging evidence plan first. |
+
+## Machine-readable minimal event profile
+
+If existing logs do not expose enough evidence, use
+`evidence_event.schema.json` as a vendor-neutral field target. It does not
+require an ActionBoundary SDK. Existing OpenTelemetry spans/logs, internal JSON
+events, audit tables, and job records can be exported or mapped into the same
+event names.
+
+```bash
+python -m actionboundary validate \
+  --evidence-events examples/minimal_evidence_events.redacted.json
+python -m actionboundary readiness \
+  --evidence-events examples/minimal_evidence_events.redacted.json \
+  --out tmp/evidence-readiness.json
+```
+
+The minimal profile covers workflow state, authorization decision, exact
+approval binding, harness gate, tool attempt, execution revalidation, execution
+receipt, and independently observed postcondition. Missing event classes are
+reported as a gap map rather than treated as a failed security control.
 
 ## Engagement Ladder
 
@@ -120,9 +149,8 @@ Recommended instrumentation:
 The readiness check is not a full authorization review, penetration test,
 compliance certification, SOC report, or production security assessment.
 
-It is a buyer-readiness artifact: it tells the team whether they can produce the
-runtime evidence an enterprise security reviewer will expect for one
-high-impact agent action.
+It is an evidence-readiness diagnostic: it tells the team whether one
+high-impact action produces enough runtime evidence for an independent review.
 
 ## When To Use It
 

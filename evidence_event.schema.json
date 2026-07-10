@@ -1,0 +1,155 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://actionboundary.dev/schemas/evidence_event.schema.json",
+  "title": "ActionBoundary minimal evidence events",
+  "description": "A vendor-neutral event envelope for an existing agent harness to expose one high-impact action boundary without adopting an ActionBoundary runtime SDK.",
+  "type": "object",
+  "required": ["schema_version", "coverage_profile", "run_id", "trace_id", "events"],
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "const": "actionboundary-evidence-events-1.0"
+    },
+    "coverage_profile": {
+      "type": "string",
+      "const": "minimal_action_boundary_v1"
+    },
+    "run_id": { "type": "string", "minLength": 1 },
+    "trace_id": { "type": "string", "minLength": 1 },
+    "source_system": { "type": "string" },
+    "redaction": {
+      "type": "object",
+      "required": ["contains_production_secrets", "contains_raw_customer_data"],
+      "properties": {
+        "contains_production_secrets": { "type": "boolean" },
+        "contains_raw_customer_data": { "type": "boolean" },
+        "notes": { "type": "string" }
+      },
+      "additionalProperties": false
+    },
+    "events": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "#/$defs/event" }
+    }
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "baseAttributes": {
+      "type": "object",
+      "properties": {
+        "workflow_id": { "type": "string" },
+        "workflow_phase": { "type": "string" },
+        "state_artifact_sha256": { "$ref": "#/$defs/sha256" },
+        "knowledge_version": { "type": "string" },
+        "principal_id": { "type": "string" },
+        "agent_role": { "type": "string" },
+        "delegated_by": { "type": "string" },
+        "tool_grant_id": { "type": "string" },
+        "action": { "type": "string" },
+        "canonical_target": { "type": "object" },
+        "arguments_sha256": { "$ref": "#/$defs/sha256" },
+        "policy_version": { "type": "string" },
+        "decision": {
+          "type": "string",
+          "enum": ["allowed", "denied", "route_to_review", "unknown"]
+        },
+        "approval_id": { "type": "string" },
+        "binding_digest": { "$ref": "#/$defs/sha256" },
+        "gate_id": { "type": "string" },
+        "authoritative_sources": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "execution_id": { "type": "string" },
+        "result": { "type": "string" },
+        "fork_id": { "type": "string" },
+        "branch_id": { "type": "string" },
+        "join_id": { "type": "string" },
+        "join_status": {
+          "type": "string",
+          "enum": ["complete", "partial", "failed", "unknown"]
+        },
+        "atomicity_required": { "type": "boolean" },
+        "observer": { "type": "string" },
+        "state_changed": { "type": "boolean" },
+        "before_state_sha256": { "$ref": "#/$defs/sha256" },
+        "after_state_sha256": { "$ref": "#/$defs/sha256" },
+        "mutation_ids": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      },
+      "additionalProperties": false
+    },
+    "event": {
+      "type": "object",
+      "required": ["event_id", "event_name", "timestamp", "trace_id", "span_id", "attributes"],
+      "properties": {
+        "event_id": { "type": "string", "minLength": 1 },
+        "event_name": {
+          "type": "string",
+          "enum": [
+            "workflow.phase.changed",
+            "workflow.fork_join.observed",
+            "authorization.decision_made",
+            "approval.bound",
+            "harness.gate.evaluated",
+            "tool.call_attempted",
+            "execution.revalidated",
+            "action.executed",
+            "business.postcondition.observed"
+          ]
+        },
+        "timestamp": { "type": "string", "format": "date-time" },
+        "trace_id": { "type": "string", "minLength": 1 },
+        "span_id": { "type": "string", "minLength": 1 },
+        "parent_span_id": { "type": "string" },
+        "attributes": { "$ref": "#/$defs/baseAttributes" }
+      },
+      "allOf": [
+        {
+          "if": { "properties": { "event_name": { "const": "workflow.phase.changed" } } },
+          "then": { "properties": { "attributes": { "required": ["workflow_id", "workflow_phase", "state_artifact_sha256"] } } }
+        },
+        {
+          "if": { "properties": { "event_name": { "const": "workflow.fork_join.observed" } } },
+          "then": { "properties": { "attributes": { "required": ["workflow_id", "fork_id", "branch_id", "join_id", "join_status", "atomicity_required"] } } }
+        },
+        {
+          "if": { "properties": { "event_name": { "const": "authorization.decision_made" } } },
+          "then": { "properties": { "attributes": { "required": ["principal_id", "action", "canonical_target", "arguments_sha256", "decision", "policy_version"] } } }
+        },
+        {
+          "if": { "properties": { "event_name": { "const": "approval.bound" } } },
+          "then": { "properties": { "attributes": { "required": ["approval_id", "action", "canonical_target", "arguments_sha256", "binding_digest"] } } }
+        },
+        {
+          "if": { "properties": { "event_name": { "const": "harness.gate.evaluated" } } },
+          "then": { "properties": { "attributes": { "required": ["workflow_id", "workflow_phase", "gate_id", "decision"] } } }
+        },
+        {
+          "if": { "properties": { "event_name": { "const": "tool.call_attempted" } } },
+          "then": { "properties": { "attributes": { "required": ["principal_id", "agent_role", "tool_grant_id", "action", "canonical_target", "arguments_sha256"] } } }
+        },
+        {
+          "if": { "properties": { "event_name": { "const": "execution.revalidated" } } },
+          "then": { "properties": { "attributes": { "required": ["action", "canonical_target", "arguments_sha256", "decision", "authoritative_sources", "policy_version"] } } }
+        },
+        {
+          "if": { "properties": { "event_name": { "const": "action.executed" } } },
+          "then": { "properties": { "attributes": { "required": ["action", "canonical_target", "arguments_sha256", "execution_id", "result"] } } }
+        },
+        {
+          "if": { "properties": { "event_name": { "const": "business.postcondition.observed" } } },
+          "then": { "properties": { "attributes": { "required": ["observer", "state_changed", "before_state_sha256", "after_state_sha256", "mutation_ids"] } } }
+        }
+      ],
+      "additionalProperties": false
+    }
+  }
+}

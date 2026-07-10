@@ -22,7 +22,7 @@
     },
     "contract_set_version": {
       "type": "string",
-      "const": "actionboundary-contract-set-1.1"
+      "const": "actionboundary-contract-set-1.2"
     },
     "generated_at_utc": {
       "type": "string",

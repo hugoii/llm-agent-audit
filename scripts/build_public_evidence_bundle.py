@@ -22,11 +22,15 @@ REQUIRED_SOURCE_FILES = [
     "examples/ap_payment_trace.redacted.json",
     "examples/ap_payment_scenario_pack.json",
     "normalized_trace.schema.json",
+    "evidence_event.schema.json",
     "scenario_pack.schema.json",
     "verdict.schema.json",
     "evidence_manifest.schema.json",
     "public_evidence_bundle.schema.json",
     "public_snapshot_suites.json",
+    "examples/minimal_evidence_events.redacted.json",
+    "examples/harness_control_trace.redacted.json",
+    "examples/harness_control_scenario_pack.json",
     "VERIFY-EVIDENCE.md",
 ]
 

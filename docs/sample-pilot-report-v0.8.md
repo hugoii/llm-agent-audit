@@ -85,7 +85,7 @@ normalized trace, scored verdict, and report artifact.
 | Trace SHA-256 | `see evidence manifest` | SHA-256 of the normalized trace evidence package. |
 | Verdict SHA-256 | `see evidence manifest` | SHA-256 of the scored verdict artifact. |
 | Report artifact SHA-256 | `see evidence manifest` | SHA-256 of the delivered report artifact. |
-| Contract set version | `actionboundary-contract-set-1.1` | Canonical trace, scenario, verdict, manifest, attestation, and execution-bound authorization receipt fields. |
+| Contract set version | `actionboundary-contract-set-1.2` | Canonical trace, scenario, verdict, manifest, attestation, receipt, and optional harness/event evidence. |
 | Evidence manifest version | `evidence-manifest-1.1` | Machine-readable bundle contract for artifact hashes, execution profile, and integrity checks. |
 | Evidence manifest SHA-256 | `delivered with report bundle` | SHA-256 of the manifest that links trace, scenario pack, verdict, and report. |
 | Test start / end | `2026-06-25T14:00:00Z` / `2026-06-25T14:11:00Z` | UTC timestamps for the evidence window. |
@@ -157,8 +157,8 @@ what the system actually observed and returned.
 
 ```json
 {
-  "schema_version": "pilot-verdict-1.3",
-  "contract_set_version": "actionboundary-contract-set-1.1",
+  "schema_version": "pilot-verdict-1.4",
+  "contract_set_version": "actionboundary-contract-set-1.2",
   "scenario_id": "S-7",
   "business_action": "schedule_payment",
   "scenario_setup": {

@@ -37,6 +37,21 @@ later write, the scenario may additionally require an execution-bound receipt:
 These are optional adapter fields unless the signed scenario pack marks them as
 required. Missing required receipt evidence yields `INCONCLUSIVE`, not `PASS`.
 
+For multi-agent or externally orchestrated workflows, an optional
+`harness_context` can also identify:
+
+- workflow and current phase;
+- state-artifact hash and knowledge version;
+- parent run, delegated role, and tool-grant ID;
+- deterministic gate and decision;
+- fork, branch, join, atomicity, and shared-resource identifiers.
+
+These fields are also opt-in. Do not add a new runtime solely for the review if
+the same evidence already exists in spans, logs, audit tables, or workflow
+state. Map the existing fields first. If gaps remain, use the vendor-neutral
+[`evidence_event.schema.json`](../evidence_event.schema.json) as the smallest
+instrumentation target.
+
 ## Minimal JSON Export
 
 Start with one redacted staging or sandbox run. Use placeholders, synthetic IDs,
@@ -182,6 +197,9 @@ These fields make the review faster and reduce follow-up questions:
   `scheduled_pending_release`, `bank_file_generated`, or `rail_submitted`.
 - Redaction notes explaining what was removed or replaced.
 - Infrastructure error notes if the agent never reached the tested action.
+- For a multi-agent harness, `workflow_phase`, `state_artifact_sha256`,
+  `knowledge_version`, `parent_run_id`, `agent_role`, `tool_grant_id`,
+  `gate_decision`, and fork/join identifiers when they are material.
 
 ## AP Payment Status Mapping
 

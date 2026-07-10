@@ -1,0 +1,170 @@
+{
+  "schema_version": "actionboundary-evidence-events-1.0",
+  "coverage_profile": "minimal_action_boundary_v1",
+  "run_id": "run-events-ap-001",
+  "trace_id": "trace-events-ap-001",
+  "source_system": "customer_export_example",
+  "redaction": {
+    "contains_production_secrets": false,
+    "contains_raw_customer_data": false,
+    "notes": "Synthetic identifiers only."
+  },
+  "events": [
+    {
+      "event_id": "evt-01",
+      "event_name": "workflow.phase.changed",
+      "timestamp": "2026-07-10T14:00:00Z",
+      "trace_id": "trace-events-ap-001",
+      "span_id": "span-01",
+      "attributes": {
+        "workflow_id": "wf-ap-001",
+        "workflow_phase": "execution",
+        "state_artifact_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "knowledge_version": "kb-18"
+      }
+    },
+    {
+      "event_id": "evt-02",
+      "event_name": "workflow.fork_join.observed",
+      "timestamp": "2026-07-10T14:00:00.050Z",
+      "trace_id": "trace-events-ap-001",
+      "span_id": "span-02",
+      "parent_span_id": "span-01",
+      "attributes": {
+        "workflow_id": "wf-ap-001",
+        "fork_id": "fork-1",
+        "branch_id": "payment-branch",
+        "join_id": "join-1",
+        "join_status": "complete",
+        "atomicity_required": true
+      }
+    },
+    {
+      "event_id": "evt-03",
+      "event_name": "authorization.decision_made",
+      "timestamp": "2026-07-10T14:00:00.100Z",
+      "trace_id": "trace-events-ap-001",
+      "span_id": "span-03",
+      "parent_span_id": "span-01",
+      "attributes": {
+        "principal_id": "svc-ap-executor",
+        "action": "schedule_payment",
+        "canonical_target": {
+          "invoice_id": "INV-REDACTED",
+          "vendor_id": "V-REDACTED"
+        },
+        "arguments_sha256": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+        "decision": "allowed",
+        "policy_version": "policy-9"
+      }
+    },
+    {
+      "event_id": "evt-04",
+      "event_name": "approval.bound",
+      "timestamp": "2026-07-10T14:00:00.150Z",
+      "trace_id": "trace-events-ap-001",
+      "span_id": "span-04",
+      "parent_span_id": "span-03",
+      "attributes": {
+        "approval_id": "approval-redacted",
+        "action": "schedule_payment",
+        "canonical_target": {
+          "invoice_id": "INV-REDACTED",
+          "vendor_id": "V-REDACTED"
+        },
+        "arguments_sha256": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+        "binding_digest": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+      }
+    },
+    {
+      "event_id": "evt-05",
+      "event_name": "harness.gate.evaluated",
+      "timestamp": "2026-07-10T14:00:00.200Z",
+      "trace_id": "trace-events-ap-001",
+      "span_id": "span-05",
+      "parent_span_id": "span-04",
+      "attributes": {
+        "workflow_id": "wf-ap-001",
+        "workflow_phase": "execution",
+        "gate_id": "gate-payment-execution",
+        "decision": "allowed"
+      }
+    },
+    {
+      "event_id": "evt-06",
+      "event_name": "tool.call_attempted",
+      "timestamp": "2026-07-10T14:00:00.250Z",
+      "trace_id": "trace-events-ap-001",
+      "span_id": "span-06",
+      "parent_span_id": "span-05",
+      "attributes": {
+        "principal_id": "svc-ap-executor",
+        "agent_role": "payment_executor",
+        "tool_grant_id": "grant-payment-v3",
+        "action": "schedule_payment",
+        "canonical_target": {
+          "invoice_id": "INV-REDACTED",
+          "vendor_id": "V-REDACTED"
+        },
+        "arguments_sha256": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"
+      }
+    },
+    {
+      "event_id": "evt-07",
+      "event_name": "execution.revalidated",
+      "timestamp": "2026-07-10T14:00:00.300Z",
+      "trace_id": "trace-events-ap-001",
+      "span_id": "span-07",
+      "parent_span_id": "span-06",
+      "attributes": {
+        "action": "schedule_payment",
+        "canonical_target": {
+          "invoice_id": "INV-REDACTED",
+          "vendor_id": "V-REDACTED"
+        },
+        "arguments_sha256": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+        "decision": "allowed",
+        "authoritative_sources": [
+          "approval_service",
+          "erp_state"
+        ],
+        "policy_version": "policy-9"
+      }
+    },
+    {
+      "event_id": "evt-08",
+      "event_name": "action.executed",
+      "timestamp": "2026-07-10T14:00:00.350Z",
+      "trace_id": "trace-events-ap-001",
+      "span_id": "span-08",
+      "parent_span_id": "span-07",
+      "attributes": {
+        "action": "schedule_payment",
+        "canonical_target": {
+          "invoice_id": "INV-REDACTED",
+          "vendor_id": "V-REDACTED"
+        },
+        "arguments_sha256": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+        "execution_id": "exec-redacted",
+        "result": "committed"
+      }
+    },
+    {
+      "event_id": "evt-09",
+      "event_name": "business.postcondition.observed",
+      "timestamp": "2026-07-10T14:00:01Z",
+      "trace_id": "trace-events-ap-001",
+      "span_id": "span-09",
+      "parent_span_id": "span-08",
+      "attributes": {
+        "observer": "erp_readback",
+        "state_changed": true,
+        "before_state_sha256": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+        "after_state_sha256": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+        "mutation_ids": [
+          "mutation-redacted"
+        ]
+      }
+    }
+  ]
+}

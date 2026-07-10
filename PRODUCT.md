@@ -14,6 +14,12 @@ Secondary users operate other tool-using agents with comparable authorization ri
 
 Turn one high-impact staging workflow into reviewable authorization evidence. Start from existing redacted logs where possible, identify missing evidence when a verdict is not supportable, and bind the trace, scenario pack, scored verdict, report, execution profile, and customer execution attestation into a reproducible evidence package.
 
+For multi-agent or externally orchestrated systems, accept optional harness
+context for workflow state, delegation, tool grants, deterministic gates, and
+fork/join outcomes. ActionBoundary verifies how those controls affected one
+selected business action; it does not replace the customer's harness, IAM,
+policy engine, observability stack, or agent runtime.
+
 ## Brand Personality
 
 Forensic, restrained, accountable, and independent. The product should feel like a careful evidence desk: calm enough for a security reviewer, concrete enough for an engineering team, and candid about what the evidence does not prove.
@@ -35,6 +41,15 @@ Forensic, restrained, accountable, and independent. The product should feel like
 - Make PASS, BLOCKED, and INCONCLUSIVE evidence readable to both engineers and security reviewers.
 - Keep human responsibility visible: the review is performed and signed by a named reviewer.
 - Keep public proof distinct from private customer evidence.
+
+## Product Freeze
+
+After contract set 1.2, do not add a new core capability without evidence from
+a real customer trace, a documented lost-deal reason, or a paid-pilot delivery
+blocker. Allowed maintenance is limited to defects, contract or artifact
+inconsistency, evidence-integrity gaps, critical dependency or regulatory
+changes, and narrowly scoped customer field mappings. Research ideas stay in
+the backlog until market evidence selects them.
 
 ## Accessibility and Inclusion
 

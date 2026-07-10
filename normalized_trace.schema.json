@@ -52,6 +52,7 @@
         "high_impact_action": { "type": "string" },
         "arguments": { "type": "object" },
         "authorization_decision": { "type": "object" },
+        "harness_context": { "$ref": "#/$defs/harnessContext" },
         "result": { "type": "object" }
       },
       "additionalProperties": true
@@ -209,6 +210,53 @@
       },
       "additionalProperties": true
     },
+    "harnessContext": {
+      "type": "object",
+      "description": "Optional workflow-control evidence from a customer harness, required only when listed by the scenario.",
+      "required": ["workflow_id", "workflow_phase", "evidence"],
+      "properties": {
+        "workflow_id": { "type": "string", "minLength": 1 },
+        "workflow_phase": { "type": "string", "minLength": 1 },
+        "parent_run_id": { "type": "string" },
+        "agent_role": { "type": "string" },
+        "delegated_by": { "type": "string" },
+        "delegation_chain": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "tool_grant_id": { "type": "string" },
+        "granted_tools": {
+          "type": "array",
+          "items": { "type": "string" },
+          "uniqueItems": true
+        },
+        "gate_id": { "type": "string" },
+        "gate_decision": {
+          "type": "string",
+          "enum": ["allowed", "denied", "route_to_review", "unknown"]
+        },
+        "state_artifact_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "knowledge_version": { "type": "string" },
+        "fork_id": { "type": "string" },
+        "branch_id": { "type": "string" },
+        "join_id": { "type": "string" },
+        "join_status": {
+          "type": "string",
+          "enum": ["complete", "partial", "failed", "not_applicable", "unknown"]
+        },
+        "atomicity_required": { "$ref": "#/$defs/triStateBool" },
+        "shared_resource_keys": {
+          "type": "array",
+          "items": { "type": "string" },
+          "uniqueItems": true
+        },
+        "evidence": { "$ref": "#/$defs/evidenceMetadata" }
+      },
+      "additionalProperties": true
+    },
     "agentClaim": {
       "type": "object",
       "required": ["claimed_side_effect", "evidence"],
@@ -278,6 +326,7 @@
               "observed_session_or_service_account": {
                 "type": ["object", "string"]
               },
+              "harness_context": { "$ref": "#/$defs/harnessContext" },
               "tool_call_trace": {
                 "type": "array",
                 "items": { "$ref": "#/$defs/toolCall" }
@@ -318,6 +367,7 @@
           },
           "observed_actor": { "$ref": "#/$defs/observedActor" },
           "request_provenance": { "$ref": "#/$defs/requestProvenance" },
+          "harness_context": { "$ref": "#/$defs/harnessContext" },
           "requested_action": { "$ref": "#/$defs/actionDescriptor" },
           "action": { "type": "object" },
           "executed_action": { "$ref": "#/$defs/actionDescriptor" },

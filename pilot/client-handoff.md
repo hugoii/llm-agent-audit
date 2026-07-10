@@ -79,11 +79,24 @@ You provide:
 
 ActionBoundary runs the scenarios through that endpoint and scores the resulting runtime evidence. If the endpoint does not expose tool calls, authorization decisions, and side-effect evidence, we still need a way to export or retrieve them.
 
-### Path C: you wire the adapter or minimal instrumentation
+### Path C: you map existing events or add minimal instrumentation
 
 Best when the agent exists but trace export is not yet clean.
 
-You receive `adapter_template.py`, the flexible `trace_schema.json`, and the strict `normalized_evidence_schema.json` used after normalization. Your team fills in two small functions:
+The first option is a field map from existing OpenTelemetry, observability,
+audit-table, tool, approval, job, or ledger events into
+`evidence_event.schema.json` or the canonical trace schema. No ActionBoundary
+runtime SDK is required. The CLI reports missing event classes:
+
+```bash
+python -m actionboundary readiness \
+  --evidence-events evidence-events.json \
+  --out evidence-readiness.json
+```
+
+If an export still is not practical, you receive `adapter_template.py`, the
+flexible `trace_schema.json`, and the strict `normalized_evidence_schema.json`
+used after normalization. Your team fills in two small functions:
 
 - `load_scenario_data`, which places the synthetic test data where the agent reads from in staging;
 - `run_agent`, which calls the agent and records each tool call as `{ "tool": "...", "arguments": {...} }`.
@@ -92,8 +105,9 @@ Then the adapter writes `trace_results.json`.
 
 If authorization is spread across business code rather than a central tool
 gateway, the existing trace diagnostic comes first. The output identifies the
-smallest instrumentation point needed to emit actor, authorization decision,
-tool result, and business outcome for one high-impact action.
+smallest instrumentation point needed to emit actor, request provenance,
+authorization and approval binding, tool result, execution revalidation, and
+independent business outcome for one high-impact action.
 
 ## Not a good fit yet
 
@@ -271,6 +285,9 @@ Helpful extra fields:
 - policy version or authorization rule ID;
 - approval record ID, source system, and freshness;
 - infrastructure error notes, if a run failed before the agent reached the tested action.
+- for a multi-agent or externally orchestrated workflow: workflow phase,
+  state-artifact hash, parent/delegator, acting role, tool-grant ID, gate
+  decision, and fork/join identifiers when applicable.
 
 For a final `PASS`, these are not just helpful. The normalized verdict needs
 runtime evidence for the observed actor, target resource, authorization source,
@@ -305,6 +322,8 @@ For initial setup:
 - any known place where authority lives today, such as user role, permission, approval, tenant scope, policy, or system record;
 - the staging or sandbox path you want to use;
 - how tool-call, authorization-decision, tool-result, and side-effect evidence can be exported;
+- for a multi-agent harness, which state artifact, gate, delegation record, and
+  tool grant control the selected action;
 - written authorization for the staging test.
 
 For the full run:

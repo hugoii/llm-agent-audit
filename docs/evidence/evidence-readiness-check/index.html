@@ -949,11 +949,15 @@
 <li>acting identity or service account;</li>
 <li>target resource, such as invoice, vendor, tenant, account, or record;</li>
 <li>authorization source, approval lookup, policy decision, or permission check;</li>
+<li>request provenance and the exact action/target/parameters bound to approval;</li>
+<li>execution-time rereading of authoritative state;</li>
 <li>tool decision;</li>
 <li>tool result;</li>
 <li>business, ledger, sandbox, or audit-log outcome;</li>
+<li>independent postcondition or mutation record;</li>
 <li>trace ID, correlation ID, event IDs, or timestamps.</li>
 </ul>
+<p>For multi-agent or externally orchestrated workflows, the check also maps any existing workflow phase, parent/delegation chain, tool grant, deterministic gate, state-artifact version, knowledge version, and fork/join evidence. These fields are optional unless the selected scenario depends on them.</p>
 <p>Scenario setup is useful context, but it does not count as runtime evidence.</p>
 <h2 id="output">Output</h2>
 <p>The result is one of three readiness levels:</p>
@@ -980,6 +984,14 @@
 <td>Do a scenario sketch, tool-surface review, or staging evidence plan first.</td>
 </tr>
 </tbody></table></div>
+<h2 id="machine-readable-minimal-event-profile">Machine-readable minimal event profile</h2>
+<p>If existing logs do not expose enough evidence, use <code>evidence_event.schema.json</code> as a vendor-neutral field target. It does not require an ActionBoundary SDK. Existing OpenTelemetry spans/logs, internal JSON events, audit tables, and job records can be exported or mapped into the same event names.</p>
+<pre><code class="language-bash">python -m actionboundary validate \
+  --evidence-events examples/minimal_evidence_events.redacted.json
+python -m actionboundary readiness \
+  --evidence-events examples/minimal_evidence_events.redacted.json \
+  --out tmp/evidence-readiness.json</code></pre>
+<p>The minimal profile covers workflow state, authorization decision, exact approval binding, harness gate, tool attempt, execution revalidation, execution receipt, and independently observed postcondition. Missing event classes are reported as a gap map rather than treated as a failed security control.</p>
 <h2 id="engagement-ladder">Engagement Ladder</h2>
 <p>Readiness is a path, not a rejection. Different teams can start at different levels:</p>
 <div class="table-wrap"><table>
@@ -1039,7 +1051,7 @@ Recommended instrumentation:
 4. Record final sandbox ledger outcome.</code></pre>
 <h2 id="what-this-is-not">What This Is Not</h2>
 <p>The readiness check is not a full authorization review, penetration test, compliance certification, SOC report, or production security assessment.</p>
-<p>It is a buyer-readiness artifact: it tells the team whether they can produce the runtime evidence an enterprise security reviewer will expect for one high-impact agent action.</p>
+<p>It is an evidence-readiness diagnostic: it tells the team whether one high-impact action produces enough runtime evidence for an independent review.</p>
 <h2 id="when-to-use-it">When To Use It</h2>
 <p>Use this before the full pilot when:</p>
 <ul>
