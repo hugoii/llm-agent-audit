@@ -23,7 +23,7 @@
     },
     "contract_set_version": {
       "type": "string",
-      "const": "actionboundary-contract-set-1.0"
+      "const": "actionboundary-contract-set-1.1"
     },
     "execution_profile": {
       "type": "string",
@@ -262,6 +262,10 @@
           "items": {
             "type": "string"
           }
+        },
+        "control_evidence": {
+          "type": "object",
+          "description": "Receipt-level coverage summary copied from the scored verdict."
         }
       },
       "additionalProperties": true

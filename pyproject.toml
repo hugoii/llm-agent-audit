@@ -30,3 +30,7 @@ actionboundary = "actionboundary.cli:main"
 
 [tool.setuptools.packages.find]
 include = ["actionboundary*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests", "pilot/tests"]
+norecursedirs = ["private", "tmp", ".venv*"]

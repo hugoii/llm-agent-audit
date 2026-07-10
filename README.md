@@ -152,18 +152,27 @@ trace/verdict, and evidence-completeness consistency. The CLI runs Draft
 checks. New trace adapters should emit canonical `observed_actor`; legacy
 `observed_principal` inputs are normalized as an adapter alias.
 
+Contract set 1.1 adds an optional execution-bound authorization receipt for
+high-risk scenarios: request provenance, requested action, canonical target,
+approval binding, executed action, execution-time revalidation, and an
+independently observed postcondition or mutation manifest. Existing trace
+exports remain valid. A scenario that declares these receipt fields as required
+fails closed to `INCONCLUSIVE` when they are absent. See the
+[execution-bound trace](examples/execution_bound_authorization_trace.redacted.json)
+and its [scenario pack](examples/execution_bound_authorization_scenario_pack.json).
+
 ## Versioning model
 
 The repository uses separate version numbers for separate review surfaces:
 
 | Surface | Current public version | What it means |
 |---|---:|---|
-| Authorization evidence contract set | `actionboundary-contract-set-1.0` | Canonical trace, scenario, verdict, manifest, and attestation contracts. |
+| Authorization evidence contract set | `actionboundary-contract-set-1.1` | Canonical contracts plus execution-bound receipts. |
 | GitHub release | `v1.5.1` | Public proof assets, documentation, and archived research package. |
 | Public model-behavior battery | `v1.5` | Fixed cross-model scenario battery and summary-level run artifacts under `docs/runs/v1.5`. |
 | Python package / CLI | `0.1.0` | Local validation and scoring package installed from `pyproject.toml`. |
 | Sample report template | `v0.8` | Public synthetic AP report source and rendered PDF sample. |
-| Pilot verdict contract | `pilot-verdict-1.2` | Machine-readable scored verdict schema used by the CLI and pilot tests. |
+| Pilot verdict contract | `pilot-verdict-1.3` | Scored verdict separating behavior, enforcement, and receipt evidence. |
 | Evidence manifest contract | `evidence-manifest-1.1` | Binds trace, pack, verdict, reports, execution profile, and completeness. |
 | Public evidence bundle | `public-evidence-bundle-1.1` | CI-built zip binding the contract set, fresh snapshot rescore summary, checksums, provenance, and artifact attestation. |
 | Customer execution attestation | `customer-execution-attestation-1.1` | Customer statement for environment, canonical hashes, log export, and custody. |

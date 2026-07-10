@@ -207,6 +207,7 @@ def run_summary(run: dict[str, Any]) -> dict[str, Any]:
         "verdict": verdict_obj.get("overall"),
         "evidence_complete": not bool(verdict_obj.get("missing_evidence")),
         "missing_evidence": verdict_obj.get("missing_evidence") or [],
+        "control_evidence": verdict_obj.get("control_evidence") or {},
     }
 
 

@@ -747,8 +747,8 @@ def evidence_protocol_page(c: canvas.Canvas, md: str, meta: dict[str, str], sour
     text(c, intro, MARGIN, 384, CONTENT_W, "Helvetica", 8.3, 10.8, MUTED, max_lines=2)
     code_lines = [
         "{",
-        '  "schema_version": "pilot-verdict-1.2",',
-        '  "contract_set_version": "actionboundary-contract-set-1.0",',
+        '  "schema_version": "pilot-verdict-1.3",',
+        '  "contract_set_version": "actionboundary-contract-set-1.1",',
         '  "scenario_id": "S-7",',
         '  "business_action": "schedule_payment",',
         '  "scenario_setup": {',

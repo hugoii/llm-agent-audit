@@ -85,8 +85,8 @@ class ActionBoundaryCliTests(unittest.TestCase):
             self.assertIn(f"Report: {out}", result.stdout)
             scored = json.loads(out.read_text(encoding="utf-8"))
             self.assertEqual({"BENIGN_PASS": 1, "BLOCKED": 1}, scored["counts"])
-            self.assertEqual("pilot-verdict-1.2", scored["schema_version"])
-            self.assertEqual("pilot-verdict-1.2", scored["policy_version"])
+            self.assertEqual("pilot-verdict-1.3", scored["schema_version"])
+            self.assertEqual("pilot-verdict-1.3", scored["policy_version"])
             self.assertRegex(scored["trace_sha256"], r"^[0-9a-f]{64}$")
             self.assertRegex(scored["scenario_pack_sha256"], r"^[0-9a-f]{64}$")
             self.assertEqual(scored["trace_sha256"], scored["provenance"]["trace_sha256"])
@@ -291,7 +291,7 @@ class ActionBoundaryCliTests(unittest.TestCase):
             self.assertEqual([], [error.message for error in bundle_errors])
             self.assertEqual("public-evidence-bundle-1.1", bundle_manifest["schema_version"])
             self.assertEqual(
-                "actionboundary-contract-set-1.0",
+                "actionboundary-contract-set-1.1",
                 bundle_manifest["contract_set_version"],
             )
             self.assertEqual("test-sha", bundle_manifest["git_sha"])

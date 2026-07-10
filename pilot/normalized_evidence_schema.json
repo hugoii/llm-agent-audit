@@ -112,6 +112,17 @@
         },
         "remit_to_account": {
           "type": "string"
+        },
+        "raw_identity": {},
+        "canonical_identity": {},
+        "identity_resolver": {
+          "type": "string"
+        },
+        "equivalence_key": {
+          "type": "string"
+        },
+        "canonicalization_evidence": {
+          "$ref": "#/definitions/evidence_metadata"
         }
       },
       "additionalProperties": true
@@ -190,6 +201,45 @@
           },
           "additionalProperties": true
         },
+        "request_provenance": {
+          "type": "object",
+          "required": [
+            "source_type",
+            "trusted_for_authorization",
+            "evidence"
+          ],
+          "properties": {
+            "source_type": { "type": "string" },
+            "source_id": { "type": "string" },
+            "trusted_for_authorization": { "$ref": "#/definitions/tri_state_bool" },
+            "authenticity_verified": { "$ref": "#/definitions/tri_state_bool" },
+            "used_as_authorization": { "$ref": "#/definitions/tri_state_bool" },
+            "evidence": { "$ref": "#/definitions/evidence_metadata" }
+          },
+          "additionalProperties": true
+        },
+        "requested_action": {
+          "type": "object",
+          "required": ["name", "parameters"],
+          "properties": {
+            "name": { "type": "string", "minLength": 1 },
+            "parameters": { "type": "object" },
+            "target_resource": { "$ref": "#/definitions/target_resource" },
+            "evidence": { "$ref": "#/definitions/evidence_metadata" }
+          },
+          "additionalProperties": true
+        },
+        "executed_action": {
+          "type": "object",
+          "required": ["name", "parameters"],
+          "properties": {
+            "name": { "type": "string", "minLength": 1 },
+            "parameters": { "type": "object" },
+            "target_resource": { "$ref": "#/definitions/target_resource" },
+            "evidence": { "$ref": "#/definitions/evidence_metadata" }
+          },
+          "additionalProperties": true
+        },
         "observed_actor": {
           "type": "object",
           "required": [
@@ -247,6 +297,69 @@
             "evidence": {
               "$ref": "#/definitions/evidence_metadata"
             }
+          },
+          "additionalProperties": true
+        },
+        "approval_binding": {
+          "type": "object",
+          "required": [
+            "approval_id",
+            "authority_source",
+            "bound_action",
+            "binding_payload",
+            "hash_algorithm",
+            "canonicalization",
+            "binding_digest",
+            "matches_executed_action",
+            "evidence"
+          ],
+          "properties": {
+            "approval_id": { "type": "string", "minLength": 1 },
+            "authority_source": { "type": "string", "minLength": 1 },
+            "bound_action": { "type": "string", "minLength": 1 },
+            "bound_target": { "$ref": "#/definitions/target_resource" },
+            "binding_payload": { "type": "object", "minProperties": 1 },
+            "hash_algorithm": { "type": "string", "const": "sha256" },
+            "canonicalization": {
+              "type": "string",
+              "const": "json-canonical-v1"
+            },
+            "bound_parameters_sha256": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            "binding_digest": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            "current": { "$ref": "#/definitions/tri_state_bool" },
+            "single_use": { "$ref": "#/definitions/tri_state_bool" },
+            "reused": { "$ref": "#/definitions/tri_state_bool" },
+            "matches_executed_action": { "$ref": "#/definitions/tri_state_bool" },
+            "issued_at": { "type": "string" },
+            "expires_at": { "type": "string" },
+            "evidence": { "$ref": "#/definitions/evidence_metadata" }
+          },
+          "additionalProperties": true
+        },
+        "execution_revalidation": {
+          "type": "object",
+          "required": ["performed", "decision", "evidence"],
+          "properties": {
+            "performed": { "$ref": "#/definitions/tri_state_bool" },
+            "decision": {
+              "type": "string",
+              "enum": ["allowed", "denied", "route_to_review", "unknown"]
+            },
+            "authoritative_sources": {
+              "type": "array",
+              "items": { "type": "string" }
+            },
+            "recomputed_fields": {
+              "type": "array",
+              "items": { "type": "string" }
+            },
+            "evidence": { "$ref": "#/definitions/evidence_metadata" }
           },
           "additionalProperties": true
         },
@@ -320,7 +433,44 @@
                 }
               },
               "additionalProperties": true
+            },
+            "postcondition": {
+              "type": "object",
+              "required": ["observer", "state_changed", "evidence"],
+              "properties": {
+                "observer": { "type": "string", "minLength": 1 },
+                "observed_at": { "type": "string" },
+                "state_changed": { "$ref": "#/definitions/tri_state_bool" },
+                "before_state_sha256": {
+                  "type": "string",
+                  "pattern": "^[0-9a-f]{64}$"
+                },
+                "after_state_sha256": {
+                  "type": "string",
+                  "pattern": "^[0-9a-f]{64}$"
+                },
+                "observed_mutations": {
+                  "type": "array",
+                  "items": { "type": "object" }
+                },
+                "evidence": { "$ref": "#/definitions/evidence_metadata" }
+              },
+              "additionalProperties": true
+            },
+            "mutation_manifest": {
+              "type": "array",
+              "items": { "type": "object" }
             }
+          },
+          "additionalProperties": true
+        },
+        "agent_claim": {
+          "type": "object",
+          "required": ["claimed_side_effect", "evidence"],
+          "properties": {
+            "claimed_action": { "type": "string" },
+            "claimed_side_effect": { "type": "string" },
+            "evidence": { "$ref": "#/definitions/evidence_metadata" }
           },
           "additionalProperties": true
         },

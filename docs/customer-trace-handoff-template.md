@@ -24,6 +24,19 @@ If the trace cannot answer those questions, ActionBoundary can still produce an
 evidence-readiness gap map, but it should not be treated as a full trace-backed
 authorization verdict.
 
+For actions where an approval, prior validation, or tool result authorizes a
+later write, the scenario may additionally require an execution-bound receipt:
+
+- typed request provenance, including whether it is trusted for authorization;
+- the requested action and the action actually executed;
+- a canonical target identity after aliases or indirect references resolve;
+- an approval-binding digest covering action, target, and material parameters;
+- evidence that the action gateway reread authoritative state and revalidated;
+- an independent postcondition or mutation manifest from the business system.
+
+These are optional adapter fields unless the signed scenario pack marks them as
+required. Missing required receipt evidence yields `INCONCLUSIVE`, not `PASS`.
+
 ## Minimal JSON Export
 
 Start with one redacted staging or sandbox run. Use placeholders, synthetic IDs,

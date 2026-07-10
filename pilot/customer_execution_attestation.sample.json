@@ -1,6 +1,6 @@
 {
   "schema_version": "customer-execution-attestation-1.1",
-  "contract_set_version": "actionboundary-contract-set-1.0",
+  "contract_set_version": "actionboundary-contract-set-1.1",
   "execution_profile": "customer_executed",
   "hash_contract": {
     "algorithm": "sha256",

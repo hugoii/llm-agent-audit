@@ -25,7 +25,7 @@
     },
     "contract_set_version": {
       "type": "string",
-      "const": "actionboundary-contract-set-1.0"
+      "const": "actionboundary-contract-set-1.1"
     },
     "execution_profile": {
       "type": "string",
@@ -238,6 +238,32 @@
       "items": {
         "type": "string"
       }
+    },
+    "action_receipt_coverage": {
+      "type": "object",
+      "description": "Optional customer attestation that the exported trace contains execution-bound authorization receipts for every observed high-impact action.",
+      "required": [
+        "observed_high_impact_action_count",
+        "receipt_count",
+        "approval_binding_coverage_complete",
+        "postcondition_coverage_complete"
+      ],
+      "properties": {
+        "observed_high_impact_action_count": { "type": "integer", "minimum": 0 },
+        "receipt_count": { "type": "integer", "minimum": 0 },
+        "approval_binding_coverage_complete": { "type": "boolean" },
+        "execution_revalidation_coverage_complete": { "type": "boolean" },
+        "postcondition_coverage_complete": { "type": "boolean" },
+        "receipt_set_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "limitations": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      },
+      "additionalProperties": false
     }
   },
   "additionalProperties": false

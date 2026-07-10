@@ -3,8 +3,8 @@
 from __future__ import annotations
 
 
-CONTRACT_SET_VERSION = "actionboundary-contract-set-1.0"
-VERDICT_SCHEMA_VERSION = "pilot-verdict-1.2"
+CONTRACT_SET_VERSION = "actionboundary-contract-set-1.1"
+VERDICT_SCHEMA_VERSION = "pilot-verdict-1.3"
 EVIDENCE_MANIFEST_SCHEMA_VERSION = "evidence-manifest-1.1"
 CUSTOMER_EXECUTION_ATTESTATION_SCHEMA_VERSION = "customer-execution-attestation-1.1"
 PUBLIC_EVIDENCE_BUNDLE_SCHEMA_VERSION = "public-evidence-bundle-1.1"

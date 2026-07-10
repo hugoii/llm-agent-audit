@@ -52,6 +52,10 @@ exports; they do not define a second verdict protocol.
   - `examples/ap_payment_trace.redacted.json` and
     `examples/ap_payment_scenario_pack.json`: a small AP/payment example that
     can be validated and scored locally.
+  - `examples/execution_bound_authorization_trace.redacted.json` and
+    `examples/execution_bound_authorization_scenario_pack.json`: provenance,
+    approval-binding, execution-revalidation, and postcondition examples for an
+    execution-bound authorization receipt.
 - `python -m actionboundary validate --trace examples/ap_payment_trace.redacted.json --scenario-pack examples/ap_payment_scenario_pack.json`:
   local engineering-contract check.
 - `python -m actionboundary score --trace examples/ap_payment_trace.redacted.json --scenario-pack examples/ap_payment_scenario_pack.json`:
@@ -62,6 +66,9 @@ exports; they do not define a second verdict protocol.
   attestation contract for who ran the scenarios, which staging environment and
   agent build were used, which logs were exported, and where the evidence was
   retained.
+  Contract set 1.1 also accepts an `action_receipt_coverage` statement for
+  approval-binding and postcondition coverage across observed high-impact
+  actions.
 - `customer_execution_attestation.sample.json`: synthetic example of that
   customer-side statement.
 - `what-we-need.md`: the short first-contact checklist for sending three details before engineering setup.

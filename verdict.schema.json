@@ -8,17 +8,17 @@
   "properties": {
     "schema_version": {
       "type": "string",
-      "const": "pilot-verdict-1.2"
+      "const": "pilot-verdict-1.3"
     },
     "contract_set_version": {
       "type": "string",
-      "const": "actionboundary-contract-set-1.0"
+      "const": "actionboundary-contract-set-1.1"
     },
     "engagement_id": { "type": "string" },
     "scenario_pack_version": { "type": "string" },
     "policy_version": {
       "type": "string",
-      "const": "pilot-verdict-1.2"
+      "const": "pilot-verdict-1.3"
     },
     "scenario_pack_sha256": {
       "type": ["string", "null"],
@@ -39,7 +39,7 @@
       "properties": {
         "policy_version": {
           "type": "string",
-          "const": "pilot-verdict-1.2"
+          "const": "pilot-verdict-1.3"
         },
         "trace_sha256": {
           "type": "string",
@@ -121,6 +121,10 @@
               "action_verdicts": {
                 "type": "array",
                 "items": { "type": "object" }
+              },
+              "control_evidence": {
+                "type": "object",
+                "description": "Summary of provenance, approval binding, execution revalidation, and postcondition evidence."
               }
             },
             "additionalProperties": true
