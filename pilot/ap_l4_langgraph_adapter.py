@@ -11,7 +11,7 @@ Offline:
     .\\.venv-s5\\Scripts\\python.exe pilot\\ap_l4_langgraph_adapter.py --offline
 
 Real model, advisory mode:
-    $env:PROVIDER = "anthropic"        # anthropic | openai | google
+    $env:PROVIDER = "anthropic"        # anthropic | openai | google | orcarouter
     $env:LG_MODEL = "claude-sonnet-4-6"
     $env:ANTHROPIC_API_KEY = "sk-ant-..."
     .\\.venv-s5\\Scripts\\python.exe pilot\\ap_l4_langgraph_adapter.py
@@ -39,7 +39,10 @@ from langchain_core.tools import tool
 
 ROOT = Path(__file__).resolve().parent
 PROVIDER = os.environ.get("PROVIDER", "anthropic").lower()
-LG_MODEL = os.environ.get("LG_MODEL", "claude-sonnet-4-6" if PROVIDER == "anthropic" else "gpt-5.5")
+DEFAULT_LG_MODEL = {"anthropic": "claude-sonnet-4-6", "orcarouter": "orcarouter/auto"}.get(
+    PROVIDER, "gpt-5.5"
+)
+LG_MODEL = os.environ.get("LG_MODEL", DEFAULT_LG_MODEL)
 LG_RUNS = int(os.environ.get("L4_LG_RUNS", "1"))
 LG_TEMPERATURE = os.environ.get("LG_TEMPERATURE")
 LG_MAX_TOKENS = int(os.environ.get("LG_MAX_TOKENS", "768"))
@@ -185,18 +188,27 @@ def get_model():
         from langchain_anthropic import ChatAnthropic
 
         return ChatAnthropic(model=LG_MODEL, max_tokens=LG_MAX_TOKENS, timeout=120, **kwargs)
-    if PROVIDER == "openai":
+    if PROVIDER in {"openai", "orcarouter"}:
         from langchain_openai import ChatOpenAI
 
-        base_url = os.environ.get("OPENAI_BASE_URL")
-        if base_url:
-            kwargs["base_url"] = base_url
+        if PROVIDER == "orcarouter":
+            # Named OrcaRouter Cyber Inference provider: reads ORCAROUTER_API_KEY, and
+            # only routes to OrcaRouter's OpenAI-compatible base URL.
+            from actionboundary.providers import orcarouter
+
+            if not os.environ.get("ORCAROUTER_API_KEY"):
+                raise SystemExit("Set ORCAROUTER_API_KEY before running with PROVIDER=orcarouter.")
+            kwargs["base_url"] = orcarouter.base_url()
+        else:
+            base_url = os.environ.get("OPENAI_BASE_URL")
+            if base_url:
+                kwargs["base_url"] = base_url
         return ChatOpenAI(model=LG_MODEL, timeout=120, **kwargs)
     if PROVIDER in {"google", "gemini"}:
         from langchain_google_genai import ChatGoogleGenerativeAI
 
         return ChatGoogleGenerativeAI(model=LG_MODEL, max_output_tokens=LG_MAX_TOKENS, timeout=120, **kwargs)
-    raise SystemExit(f"PROVIDER must be anthropic, openai, or google; got {PROVIDER!r}")
+    raise SystemExit(f"PROVIDER must be anthropic, openai, google, or orcarouter; got {PROVIDER!r}")
 
 
 class ScriptedModel(BaseChatModel):

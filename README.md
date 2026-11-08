@@ -482,8 +482,11 @@ plus 3 controls; see `run_real.py`.
 
 **On your own model.** Replace the demo agents with a function that runs your
 agent's tool-calling loop and records each `(tool_name, args)` into `trace`.
-`run_real.py` supports OpenAI, Anthropic, and Gemini through the `PROVIDER` env
-var, plus OpenAI-compatible gateways through `OPENAI_BASE_URL`. It is a public
+`run_real.py` supports OpenAI, Anthropic, Gemini, and the named OrcaRouter Cyber
+Inference provider (`PROVIDER=orcarouter`, `ORCAROUTER_API_KEY`, catalog seen by
+`python run_real.py --list-orcarouter-models`; see
+[Live model runs with OrcaRouter](docs/orcarouter-model-runs.md)) through the
+`PROVIDER` env var, plus OpenAI-compatible gateways through `OPENAI_BASE_URL`. It is a public
 model-behavior runner: it sends simulated tool schemas, records attempted tool
 calls, executes no downstream tools, and does not replay tool outputs into a
 multi-turn loop. Set `RUNS=3` for per-run reports and a multi-run summary.
