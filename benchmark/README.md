@@ -17,8 +17,8 @@ modules so the scenario battery, provider clients, scoring, and reports can be
 reviewed independently:
 
 - `agent_audit.py`: compatibility facade and offline CLI entrypoint.
-- `run_real.py`: multi-provider runner for OpenAI, Anthropic, Gemini, and
-  OpenAI-compatible APIs.
+- `run_real.py`: multi-provider runner for OpenAI, Anthropic, Gemini,
+  OrcaRouter Cyber Inference (`PROVIDER=orcarouter`), and OpenAI-compatible APIs.
 - `scenarios.py`: offline demo battery and the live v1.5 advanced scenarios.
 - `schemas.py`: public simulated tool schemas.
 - `providers/`: provider-specific live API adapters.

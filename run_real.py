@@ -3,8 +3,8 @@
 Run the audit battery against a REAL model and save evidence.
 
 Pick a provider and model with environment variables, then run:
-    $env:PROVIDER = "anthropic"           # openai | anthropic | gemini
-    $env:ANTHROPIC_MODEL = "claude-..."   # or OPENAI_MODEL / GEMINI_MODEL
+    $env:PROVIDER = "anthropic"           # openai | anthropic | gemini | orcarouter
+    $env:ANTHROPIC_MODEL = "claude-..."   # or OPENAI_MODEL / GEMINI_MODEL / ORCAROUTER_MODEL
     $env:ANTHROPIC_API_KEY = "..."        # the matching *_API_KEY
     $env:RUNS = "3"                        # optional, default 1
     python run_real.py
@@ -12,6 +12,11 @@ Pick a provider and model with environment variables, then run:
 For an OpenAI-compatible endpoint, keep PROVIDER="openai", set OPENAI_BASE_URL,
 and optionally set PROVIDER_LABEL="deepseek" or "qwen" so reports are labeled
 with the actual model provider.
+
+PROVIDER="orcarouter" is the named OrcaRouter Cyber Inference provider: it reads
+ORCAROUTER_API_KEY and ORCAROUTER_MODEL (default orcarouter/auto) and sends the
+same OpenAI-compatible tool-calling request to https://api.orcarouter.ai/v1.
+List the models your key can call first:  python run_real.py --list-orcarouter-models
 
 This is a first-step public model-behavior battery. It supplies simulated tool
 schemas to the model, records requested tool/function calls, executes no
@@ -25,13 +30,18 @@ and which scenarios are stable vs intermittent. We report ranges, not one-off sc
 Optional REQUEST_DELAY adds seconds between calls for rate-limited free tiers.
 No client retest has happened, so the reports do not claim any fix is proven.
 """
-import os
-import json
-import re
-import time
 import datetime
+import json
+import os
+import re
+import sys
+import time
 
-from actionboundary.providers import anthropic_agent, gemini_agent, openai_agent
+from actionboundary.providers import (
+    ORCAROUTER_PROVIDER_NAME,
+    PROVIDERS,
+    orcarouter_models,
+)
 from actionboundary.report import build_report
 from actionboundary.scenarios import ADVANCED, ATTACKS, BATTERY_VERSION
 from actionboundary.scoring import (
@@ -43,14 +53,27 @@ from actionboundary.scoring import (
 )
 
 API_PROVIDER = os.environ.get("PROVIDER", "openai").lower()
-PROVIDER_LABEL = os.environ.get("PROVIDER_LABEL", API_PROVIDER).lower()
-AGENTS = {"openai": openai_agent, "anthropic": anthropic_agent, "gemini": gemini_agent}
-MODEL_ENV = {"openai": "OPENAI_MODEL", "anthropic": "ANTHROPIC_MODEL", "gemini": "GEMINI_MODEL"}
-KEY_ENV = {"openai": "OPENAI_API_KEY", "anthropic": "ANTHROPIC_API_KEY", "gemini": "GEMINI_API_KEY"}
-if API_PROVIDER not in AGENTS:
-    raise SystemExit(f"PROVIDER must be one of {sorted(AGENTS)}; got {API_PROVIDER!r}")
-agent = AGENTS[API_PROVIDER]
-model = os.environ.get(MODEL_ENV[API_PROVIDER], "")
+if API_PROVIDER not in PROVIDERS:
+    raise SystemExit(f"PROVIDER must be one of {sorted(PROVIDERS)}; got {API_PROVIDER!r}")
+provider = PROVIDERS[API_PROVIDER]
+PROVIDER_LABEL = os.environ.get("PROVIDER_LABEL", provider["label"]).lower()
+MODEL_ENV = {name: entry["model_env"] for name, entry in PROVIDERS.items()}
+KEY_ENV = {name: entry["key_env"] for name, entry in PROVIDERS.items()}
+if "--list-orcarouter-models" in sys.argv:
+    # Prints the live (or verified fallback) model catalog so users pick a real id
+    # instead of guessing; the key itself is never printed.
+    catalog = orcarouter_models()
+    print(f"{ORCAROUTER_PROVIDER_NAME} model catalog ({catalog['source']}): {catalog['base_url']}")
+    for entry in catalog["models"]:
+        mark = " (recommended cyber tier)" if entry["id"] in catalog["recommended"] else ""
+        print(f"  {entry['id']}{mark}")
+    print(f"Default model: {catalog['default']}")
+    if catalog["error"]:
+        print(f"Live discovery failed ({catalog['error']}); showing the verified cold-start seed.")
+    raise SystemExit(0)
+agent = provider["agent"]  # openai / anthropic / gemini / orcarouter agents
+# orcarouter/auto is OrcaRouter's documented default; any catalog model id overrides it.
+model = os.environ.get(MODEL_ENV[API_PROVIDER], provider.get("default_model", ""))
 if not os.environ.get(KEY_ENV[API_PROVIDER]):
     raise SystemExit(f"Set {KEY_ENV[API_PROVIDER]} before running with PROVIDER={API_PROVIDER}.")
 if not model:
@@ -134,7 +157,11 @@ def raw_json(rows, errors):
     }
 
 
-compat_note = "" if PROVIDER_LABEL == API_PROVIDER else f" (via {API_PROVIDER}-compatible API)"
+compat_note = ""
+if PROVIDER_LABEL in {API_PROVIDER, provider["label"]}:
+    pass
+else:
+    compat_note = f" (via {API_PROVIDER}-compatible API)"
 print(
     f"Provider: {PROVIDER_LABEL}{compat_note} | model: {model} | "
     f"battery {BATTERY_VERSION} | {total} scenarios x {RUNS} run(s)\n",
